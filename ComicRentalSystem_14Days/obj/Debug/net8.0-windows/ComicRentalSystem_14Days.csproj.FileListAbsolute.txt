@@ -8,12 +8,14 @@ C:\Users\ASUS\source\repos\ComicRentalSystem_14Days\ComicRentalSystem_14Days\obj
 C:\Users\ASUS\source\repos\ComicRentalSystem_14Days\ComicRentalSystem_14Days\obj\Debug\net8.0-windows\ComicRentalSystem_14Days.Forms.ComicManagementForm.resources
 C:\Users\ASUS\source\repos\ComicRentalSystem_14Days\ComicRentalSystem_14Days\obj\Debug\net8.0-windows\ComicRentalSystem_14Days.Forms.MemberEditForm.resources
 C:\Users\ASUS\source\repos\ComicRentalSystem_14Days\ComicRentalSystem_14Days\obj\Debug\net8.0-windows\ComicRentalSystem_14Days.Forms.MemberManagementForm.resources
+C:\Users\ASUS\source\repos\ComicRentalSystem_14Days\ComicRentalSystem_14Days\obj\Debug\net8.0-windows\ComicRentalSystem_14Days.Forms.RentalForm.resources
 C:\Users\ASUS\source\repos\ComicRentalSystem_14Days\ComicRentalSystem_14Days\obj\Debug\net8.0-windows\ComicRentalSystem_14Days.MainForm.resources
 C:\Users\ASUS\source\repos\ComicRentalSystem_14Days\ComicRentalSystem_14Days\obj\Debug\net8.0-windows\ComicRentalSystem_14Days.csproj.GenerateResource.cache
 C:\Users\ASUS\source\repos\ComicRentalSystem_14Days\ComicRentalSystem_14Days\obj\Debug\net8.0-windows\ComicRentalSystem_14Days.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\ASUS\source\repos\ComicRentalSystem_14Days\ComicRentalSystem_14Days\obj\Debug\net8.0-windows\ComicRentalSystem_14Days.AssemblyInfoInputs.cache
 C:\Users\ASUS\source\repos\ComicRentalSystem_14Days\ComicRentalSystem_14Days\obj\Debug\net8.0-windows\ComicRentalSystem_14Days.AssemblyInfo.cs
 C:\Users\ASUS\source\repos\ComicRentalSystem_14Days\ComicRentalSystem_14Days\obj\Debug\net8.0-windows\ComicRentalSystem_14Days.csproj.CoreCompileInputs.cache
+C:\Users\ASUS\source\repos\ComicRentalSystem_14Days\ComicRentalSystem_14Days\obj\Debug\net8.0-windows\ComicRentalSystem_14Days.sourcelink.json
 C:\Users\ASUS\source\repos\ComicRentalSystem_14Days\ComicRentalSystem_14Days\obj\Debug\net8.0-windows\ComicRentalSystem_14Days.dll
 C:\Users\ASUS\source\repos\ComicRentalSystem_14Days\ComicRentalSystem_14Days\obj\Debug\net8.0-windows\refint\ComicRentalSystem_14Days.dll
 C:\Users\ASUS\source\repos\ComicRentalSystem_14Days\ComicRentalSystem_14Days\obj\Debug\net8.0-windows\ComicRentalSystem_14Days.pdb
