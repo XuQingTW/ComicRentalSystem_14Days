@@ -3,56 +3,24 @@
   "WorkspaceRootPath": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\asus\\source\\repos\\comicrentalsystem_14days\\comicrentalsystem_14days\\forms\\membereditform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\forms\\membereditform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\asus\\source\\repos\\comicrentalsystem_14days\\comicrentalsystem_14days\\services\\memberservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\services\\memberservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\asus\\source\\repos\\comicrentalsystem_14days\\comicrentalsystem_14days\\forms\\rentalform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\forms\\rentalform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
       "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\asus\\source\\repos\\comicrentalsystem_14days\\comicrentalsystem_14days\\services\\comicservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\services\\comicservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\asus\\source\\repos\\comicrentalsystem_14days\\comicrentalsystem_14days\\logging\\filelogger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\logging\\filelogger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\asus\\source\\repos\\comicrentalsystem_14days\\comicrentalsystem_14days\\interfaces\\ilogger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\interfaces\\ilogger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\asus\\source\\repos\\comicrentalsystem_14days\\comicrentalsystem_14days\\forms\\comiceditform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\forms\\comiceditform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\asus\\source\\repos\\comicrentalsystem_14days\\comicrentalsystem_14days\\forms\\membermanagementform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\forms\\membermanagementform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\asus\\source\\repos\\comicrentalsystem_14days\\comicrentalsystem_14days\\forms\\comiceditform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\forms\\comiceditform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\asus\\source\\repos\\comicrentalsystem_14days\\comicrentalsystem_14days\\forms\\comicmanagementform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\forms\\comicmanagementform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\asus\\source\\repos\\comicrentalsystem_14days\\comicrentalsystem_14days\\baseform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\baseform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\asus\\source\\repos\\comicrentalsystem_14days\\comicrentalsystem_14days\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\asus\\source\\repos\\comicrentalsystem_14days\\comicrentalsystem_14days\\services\\memberservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\services\\memberservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\asus\\source\\repos\\comicrentalsystem_14days\\comicrentalsystem_14days\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\asus\\source\\repos\\comicrentalsystem_14days\\comicrentalsystem_14days\\comicrentalsystem_14days.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\comicrentalsystem_14days.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\asus\\source\\repos\\comicrentalsystem_14days\\comicrentalsystem_14days\\forms\\rentalform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\forms\\rentalform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -62,7 +30,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Bookmark",
@@ -74,172 +42,67 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "MemberEditForm.cs",
-              "DocumentMoniker": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Forms\\MemberEditForm.cs",
-              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Forms\\MemberEditForm.cs",
-              "ToolTip": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Forms\\MemberEditForm.cs",
-              "RelativeToolTip": "ComicRentalSystem_14Days\\Forms\\MemberEditForm.cs",
-              "ViewState": "AgIAADUAAAAAAAAAAAAAABkAAAArAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-20T04:57:27.454Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "ComicEditForm.Designer.cs",
-              "DocumentMoniker": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Forms\\ComicEditForm.Designer.cs",
-              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Forms\\ComicEditForm.Designer.cs",
-              "ToolTip": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Forms\\ComicEditForm.Designer.cs",
-              "RelativeToolTip": "ComicRentalSystem_14Days\\Forms\\ComicEditForm.Designer.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAuAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-20T04:55:32.526Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "ComicService.cs",
-              "DocumentMoniker": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Services\\ComicService.cs",
-              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Services\\ComicService.cs",
-              "ToolTip": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Services\\ComicService.cs",
-              "RelativeToolTip": "ComicRentalSystem_14Days\\Services\\ComicService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAABAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-20T04:52:21.993Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "BaseForm.cs",
-              "DocumentMoniker": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\BaseForm.cs",
-              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\BaseForm.cs",
-              "ToolTip": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\BaseForm.cs",
-              "RelativeToolTip": "ComicRentalSystem_14Days\\BaseForm.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-20T04:48:30.459Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "MainForm.cs",
-              "DocumentMoniker": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\MainForm.cs",
-              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\MainForm.cs",
-              "ToolTip": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\MainForm.cs",
-              "RelativeToolTip": "ComicRentalSystem_14Days\\MainForm.cs",
-              "ViewState": "AgIAAAEAAAAAAAAAAAAQwAwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-20T04:47:05.497Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "ILogger.cs",
-              "DocumentMoniker": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Interfaces\\ILogger.cs",
-              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Interfaces\\ILogger.cs",
-              "ToolTip": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Interfaces\\ILogger.cs",
-              "RelativeToolTip": "ComicRentalSystem_14Days\\Interfaces\\ILogger.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-20T04:42:30.233Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "FileLogger.cs",
-              "DocumentMoniker": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Logging\\FileLogger.cs",
-              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Logging\\FileLogger.cs",
-              "ToolTip": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Logging\\FileLogger.cs",
-              "RelativeToolTip": "ComicRentalSystem_14Days\\Logging\\FileLogger.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAASAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-20T04:44:52.555Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
               "Title": "MemberService.cs",
               "DocumentMoniker": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Services\\MemberService.cs",
               "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Services\\MemberService.cs",
               "ToolTip": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Services\\MemberService.cs",
               "RelativeToolTip": "ComicRentalSystem_14Days\\Services\\MemberService.cs",
-              "ViewState": "AgIAAMsAAAAAAAAAAAAYwOsAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAWwA4AAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-20T04:53:41.77Z",
+              "WhenOpened": "2025-05-21T06:09:29.948Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "ComicManagementForm.cs",
-              "DocumentMoniker": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Forms\\ComicManagementForm.cs",
-              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Forms\\ComicManagementForm.cs",
-              "ToolTip": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Forms\\ComicManagementForm.cs",
-              "RelativeToolTip": "ComicRentalSystem_14Days\\Forms\\ComicManagementForm.cs",
-              "ViewState": "AgIAAKoAAAAAAAAAAAAYwLEAAAAVAAAAAAAAAA==",
+              "DocumentIndex": 1,
+              "Title": "ComicService.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Services\\ComicService.cs",
+              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Services\\ComicService.cs",
+              "ToolTip": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Services\\ComicService.cs",
+              "RelativeToolTip": "ComicRentalSystem_14Days\\Services\\ComicService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAswA4AAAA5AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-20T04:49:45.258Z",
+              "WhenOpened": "2025-05-21T06:09:00.569Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "MemberManagementForm.cs",
-              "DocumentMoniker": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Forms\\MemberManagementForm.cs",
-              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Forms\\MemberManagementForm.cs",
-              "ToolTip": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Forms\\MemberManagementForm.cs",
-              "RelativeToolTip": "ComicRentalSystem_14Days\\Forms\\MemberManagementForm.cs",
-              "ViewState": "AgIAALUAAAAAAAAAAAAYwNUAAAABAAAAAAAAAA==",
+              "DocumentIndex": 4,
+              "Title": "RentalForm.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Forms\\RentalForm.cs",
+              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Forms\\RentalForm.cs",
+              "ToolTip": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Forms\\RentalForm.cs",
+              "RelativeToolTip": "ComicRentalSystem_14Days\\Forms\\RentalForm.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAABMAAAA1AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-20T04:56:54.847Z",
+              "WhenOpened": "2025-05-21T06:08:32.144Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Program.cs",
-              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Program.cs",
-              "ToolTip": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Program.cs",
-              "RelativeToolTip": "ComicRentalSystem_14Days\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAD4AAAABAAAAAAAAAA==",
+              "DocumentIndex": 2,
+              "Title": "BaseForm.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\BaseForm.cs",
+              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\BaseForm.cs",
+              "ToolTip": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\BaseForm.cs",
+              "RelativeToolTip": "ComicRentalSystem_14Days\\BaseForm.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAALAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-20T04:46:00.963Z",
+              "WhenOpened": "2025-05-21T06:02:33.232Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "ComicEditForm.cs",
-              "DocumentMoniker": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Forms\\ComicEditForm.cs",
-              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Forms\\ComicEditForm.cs",
-              "ToolTip": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Forms\\ComicEditForm.cs",
-              "RelativeToolTip": "ComicRentalSystem_14Days\\Forms\\ComicEditForm.cs",
-              "ViewState": "AgIAAJMAAAAAAAAAAAAYwLMAAAABAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "RentalForm.cs [\u8A2D\u8A08]",
+              "DocumentMoniker": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Forms\\RentalForm.cs",
+              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Forms\\RentalForm.cs",
+              "ToolTip": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Forms\\RentalForm.cs [\u8A2D\u8A08]",
+              "RelativeToolTip": "ComicRentalSystem_14Days\\Forms\\RentalForm.cs [\u8A2D\u8A08]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-20T04:34:48.996Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "ComicRentalSystem_14Days",
-              "DocumentMoniker": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj",
-              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj",
-              "ToolTip": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj",
-              "RelativeToolTip": "ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-05-20T04:41:16.323Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-21T05:59:29.099Z",
+              "EditorCaption": " [\u8A2D\u8A08]"
             }
           ]
         }
