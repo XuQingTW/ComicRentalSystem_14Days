@@ -18,6 +18,13 @@ namespace ComicRentalSystem_14Days.Services
         public delegate void ComicDataChangedEventHandler(object? sender, EventArgs e);
         public event ComicDataChangedEventHandler? ComicsChanged;
 
+
+        public void Reload()
+        {
+            LoadComics();
+            OnComicsChanged();
+        }
+        
         public ComicService(FileHelper fileHelper, ILogger? logger)
         {
             _fileHelper = fileHelper ?? throw new ArgumentNullException(nameof(fileHelper));
