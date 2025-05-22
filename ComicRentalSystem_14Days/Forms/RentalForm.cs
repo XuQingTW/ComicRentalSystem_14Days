@@ -3,12 +3,8 @@ using ComicRentalSystem_14Days.Interfaces;
 using ComicRentalSystem_14Days.Models;
 using ComicRentalSystem_14Days.Services;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -19,6 +15,9 @@ namespace ComicRentalSystem_14Days.Forms
         // 將欄位宣告為可為 Null
         private readonly ComicService? _comicService;
         private readonly MemberService? _memberService;
+        private readonly IReloadService? _reloadService;
+        private ILogger logger;
+
         // Logger is inherited from BaseForm (protected ILogger? Logger)
 
         public RentalForm() : base()
@@ -31,12 +30,18 @@ namespace ComicRentalSystem_14Days.Forms
             // }
         }
 
-        public RentalForm(ComicService comicService, MemberService memberService, ILogger logger) : base(logger)
+        public RentalForm(
+            ComicService comicService, 
+            MemberService memberService, 
+            ILogger logger,
+            IReloadService reloadService
+            ) : base(logger)
         {
             InitializeComponent();
 
             _comicService = comicService ?? throw new ArgumentNullException(nameof(comicService));
             _memberService = memberService ?? throw new ArgumentNullException(nameof(memberService));
+            _reloadService = reloadService ?? throw new ArgumentException(nameof(reloadService));
 
             if (_comicService != null)
             {
@@ -58,6 +63,19 @@ namespace ComicRentalSystem_14Days.Forms
             {
                 SetupRentedComicsDataGridView();
                 LoadMembers();
+                LoadAvailableComics();
+                LoadRentedComicsForSelectedMember();
+
+                _reloadService?.Start(
+                    async () =>
+                    {
+                        LogActivity("auto reloading data start");
+                        _comicService.Reload();
+                        RefreshUIDataSafely();
+                        await Task.CompletedTask;
+                    },
+                    TimeSpan.FromSeconds(1)
+                );
 
                 if (cmbMembers.Items.Count == 0)
                 {
@@ -397,6 +415,9 @@ namespace ComicRentalSystem_14Days.Forms
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             LogActivity("RentalForm closing. Unsubscribing from service events.");
+
+            _reloadService?.Stop();
+
             if (_comicService != null)
             {
                 _comicService.ComicsChanged -= Service_DataChanged;
@@ -407,5 +428,6 @@ namespace ComicRentalSystem_14Days.Forms
             }
             base.OnFormClosing(e);
         }
+
     }
 }

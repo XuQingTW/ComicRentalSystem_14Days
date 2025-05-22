@@ -8,7 +8,7 @@ namespace ComicRentalSystem_14Days
     {
         public static ILogger? AppLogger { get; private set; } // 全局可訪問的 Logger 實例
 
-        [STAThread]
+        
         static void Main()
         {
             ApplicationConfiguration.Initialize();

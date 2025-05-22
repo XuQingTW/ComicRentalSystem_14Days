@@ -37,6 +37,7 @@
             會員管理ToolStripMenuItem = new ToolStripMenuItem();
             工具ToolStripMenuItem = new ToolStripMenuItem();
             檢視日誌ToolStripMenuItem = new ToolStripMenuItem();
+            rentalManagementToolStripMenuItem = new ToolStripMenuItem();
             menuStrip2.SuspendLayout();
             SuspendLayout();
             // 
@@ -44,7 +45,8 @@
             // 
             menuStrip1.Location = new Point(0, 28);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(800, 24);
+            menuStrip1.Padding = new Padding(8, 2, 0, 2);
+            menuStrip1.Size = new Size(1000, 24);
             menuStrip1.TabIndex = 0;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -53,7 +55,8 @@
             menuStrip2.Items.AddRange(new ToolStripItem[] { 檔案ToolStripMenuItem, 管理ToolStripMenuItem, 工具ToolStripMenuItem });
             menuStrip2.Location = new Point(0, 0);
             menuStrip2.Name = "menuStrip2";
-            menuStrip2.Size = new Size(800, 28);
+            menuStrip2.Padding = new Padding(8, 2, 0, 2);
+            menuStrip2.Size = new Size(1000, 28);
             menuStrip2.TabIndex = 1;
             menuStrip2.Text = "menuStrip2";
             // 
@@ -73,7 +76,7 @@
             // 
             // 管理ToolStripMenuItem
             // 
-            管理ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { 漫畫管理ToolStripMenuItem, 會員管理ToolStripMenuItem });
+            管理ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { 漫畫管理ToolStripMenuItem, 會員管理ToolStripMenuItem, rentalManagementToolStripMenuItem });
             管理ToolStripMenuItem.Name = "管理ToolStripMenuItem";
             管理ToolStripMenuItem.Size = new Size(53, 24);
             管理ToolStripMenuItem.Text = "管理";
@@ -105,14 +108,22 @@
             檢視日誌ToolStripMenuItem.Size = new Size(142, 24);
             檢視日誌ToolStripMenuItem.Text = "檢視日誌";
             // 
+            // rentalManagementToolStripMenuItem
+            // 
+            rentalManagementToolStripMenuItem.Name = "rentalManagementToolStripMenuItem";
+            rentalManagementToolStripMenuItem.Size = new Size(180, 24);
+            rentalManagementToolStripMenuItem.Text = "租借管理";
+            rentalManagementToolStripMenuItem.Click += rentalManagementToolStripMenuItem_Click;
+            // 
             // MainForm
             // 
-            AutoScaleDimensions = new SizeF(8F, 17F);
+            AutoScaleDimensions = new SizeF(10F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(1000, 529);
             Controls.Add(menuStrip1);
             Controls.Add(menuStrip2);
             MainMenuStrip = menuStrip1;
+            Margin = new Padding(4, 4, 4, 4);
             Name = "MainForm";
             Text = "MainForm";
             menuStrip2.ResumeLayout(false);
@@ -132,5 +143,6 @@
         private ToolStripMenuItem 會員管理ToolStripMenuItem;
         private ToolStripMenuItem 工具ToolStripMenuItem;
         private ToolStripMenuItem 檢視日誌ToolStripMenuItem;
+        private ToolStripMenuItem rentalManagementToolStripMenuItem;
     }
 }

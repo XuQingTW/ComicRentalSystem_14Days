@@ -116,4 +116,6 @@
         private System.Windows.Forms.Button btnRent;
         private System.Windows.Forms.DataGridView dgvRentedComics; // CORRECTED
     }
+
+
 }
