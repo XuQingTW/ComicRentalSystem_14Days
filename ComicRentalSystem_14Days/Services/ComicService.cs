@@ -78,7 +78,8 @@ namespace ComicRentalSystem_14Days.Services
         public List<Comic> GetAllComics()
         {
             _logger.Log("GetAllComics called.");
-            return new List<Comic>(_comics);
+            LoadComics();
+            return _comics;
         }
 
         public Comic? GetComicById(int id)

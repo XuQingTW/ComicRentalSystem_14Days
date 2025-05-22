@@ -83,8 +83,18 @@ namespace ComicRentalSystem_14Days.Forms
         // 技術點 #6: 視窗應用程式的事件處理
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-            LogActivity("Refresh button clicked.");
-            LoadComicsData();
+            LogActivity("Refresh button clicked. Will reload comics from file.");
+            try
+            {
+                _comicService.Reload(); // 強制重新讀取 comics.csv
+                                        // 由於 Reload() 內已觸發 ComicsChanged，DataGridView 會自動刷新
+                                        // 若要立即重刷，也可補呼叫 LoadComicsData();
+            }
+            catch (Exception ex)
+            {
+                LogErrorActivity("Error refreshing comics data from file.", ex);
+                MessageBox.Show($"重新載入漫畫資料時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void btnAddComic_Click(object sender, EventArgs e)

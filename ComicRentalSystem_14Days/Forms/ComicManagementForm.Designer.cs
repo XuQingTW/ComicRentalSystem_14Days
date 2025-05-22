@@ -45,11 +45,12 @@
             dgvComics.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvComics.Dock = DockStyle.Fill;
             dgvComics.Location = new Point(0, 0);
+            dgvComics.Margin = new Padding(4, 4, 4, 4);
             dgvComics.MultiSelect = false;
             dgvComics.Name = "dgvComics";
             dgvComics.ReadOnly = true;
             dgvComics.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvComics.Size = new Size(800, 450);
+            dgvComics.Size = new Size(1000, 529);
             dgvComics.TabIndex = 0;
             // 
             // panel1
@@ -59,38 +60,43 @@
             panel1.Controls.Add(btnDeleteComic);
             panel1.Controls.Add(btnEditComic);
             panel1.Controls.Add(btnAddComic);
-            panel1.Location = new Point(179, 399);
+            panel1.Location = new Point(224, 469);
+            panel1.Margin = new Padding(4, 4, 4, 4);
             panel1.Name = "panel1";
-            panel1.Size = new Size(449, 39);
+            panel1.Size = new Size(561, 46);
             panel1.TabIndex = 1;
             // 
             // btnRefresh
             // 
             btnRefresh.AutoSize = true;
-            btnRefresh.Location = new Point(346, 4);
+            btnRefresh.Location = new Point(432, 5);
+            btnRefresh.Margin = new Padding(4, 4, 4, 4);
             btnRefresh.Name = "btnRefresh";
-            btnRefresh.Size = new Size(83, 30);
+            btnRefresh.Size = new Size(104, 35);
             btnRefresh.TabIndex = 3;
             btnRefresh.Text = "重新整理";
             btnRefresh.UseVisualStyleBackColor = true;
+            btnRefresh.Click += btnRefresh_Click;
             // 
             // btnDeleteComic
             // 
             btnDeleteComic.AutoSize = true;
-            btnDeleteComic.Location = new Point(238, 4);
+            btnDeleteComic.Location = new Point(298, 5);
+            btnDeleteComic.Margin = new Padding(4, 4, 4, 4);
             btnDeleteComic.Name = "btnDeleteComic";
-            btnDeleteComic.Size = new Size(115, 30);
+            btnDeleteComic.Size = new Size(144, 35);
             btnDeleteComic.TabIndex = 2;
             btnDeleteComic.Text = "刪除選定漫畫";
             btnDeleteComic.UseVisualStyleBackColor = true;
-            this.btnDeleteComic.Click += new System.EventHandler(this.btnDeleteComic_Click);
+            btnDeleteComic.Click += btnDeleteComic_Click;
             // 
             // btnEditComic
             // 
             btnEditComic.AutoSize = true;
-            btnEditComic.Location = new Point(129, 4);
+            btnEditComic.Location = new Point(161, 5);
+            btnEditComic.Margin = new Padding(4, 4, 4, 4);
             btnEditComic.Name = "btnEditComic";
-            btnEditComic.Size = new Size(115, 30);
+            btnEditComic.Size = new Size(144, 35);
             btnEditComic.TabIndex = 1;
             btnEditComic.Text = "編輯選定漫畫";
             btnEditComic.UseVisualStyleBackColor = true;
@@ -98,9 +104,10 @@
             // btnAddComic
             // 
             btnAddComic.AutoSize = true;
-            btnAddComic.Location = new Point(3, 4);
+            btnAddComic.Location = new Point(4, 5);
+            btnAddComic.Margin = new Padding(4, 4, 4, 4);
             btnAddComic.Name = "btnAddComic";
-            btnAddComic.Size = new Size(120, 30);
+            btnAddComic.Size = new Size(150, 35);
             btnAddComic.TabIndex = 0;
             btnAddComic.Text = "新增漫畫";
             btnAddComic.UseVisualStyleBackColor = true;
@@ -108,11 +115,12 @@
             // 
             // ComicManagementForm
             // 
-            AutoScaleDimensions = new SizeF(8F, 17F);
+            AutoScaleDimensions = new SizeF(10F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(1000, 529);
             Controls.Add(panel1);
             Controls.Add(dgvComics);
+            Margin = new Padding(4, 4, 4, 4);
             Name = "ComicManagementForm";
             Text = "ComicManagementForm";
             ((System.ComponentModel.ISupportInitialize)dgvComics).EndInit();
