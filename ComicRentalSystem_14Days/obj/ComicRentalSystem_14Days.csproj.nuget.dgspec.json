@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj": {}
+    "C:\\Users\\Hyman\\OneDrive\\桌面\\C#-Project\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj": {
+    "C:\\Users\\Hyman\\OneDrive\\桌面\\C#-Project\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj",
+        "projectUniqueName": "C:\\Users\\Hyman\\OneDrive\\桌面\\C#-Project\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj",
         "projectName": "ComicRentalSystem_14Days",
-        "projectPath": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj",
-        "packagesPath": "C:\\Users\\ASUS\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\obj\\",
+        "projectPath": "C:\\Users\\Hyman\\OneDrive\\桌面\\C#-Project\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj",
+        "packagesPath": "C:\\Users\\Hyman\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Hyman\\OneDrive\\桌面\\C#-Project\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\ASUS\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Hyman\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],

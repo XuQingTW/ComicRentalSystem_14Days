@@ -4,6 +4,7 @@ using ComicRentalSystem_14Days.Helpers;
 using ComicRentalSystem_14Days.Interfaces;
 using ComicRentalSystem_14Days.Services;
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 // using System.ComponentModel; // 如果使用 this.DesignMode，則不需要特別為 LicenseManager 引入
 
@@ -88,13 +89,41 @@ namespace ComicRentalSystem_14Days
                 ComicService comicService = new ComicService(fileHelper, logger);
                 MemberService memberService = new MemberService(fileHelper, logger);
 
-                RentalForm rentalForm = new RentalForm(comicService, memberService, logger,reloadService);
+                RentalForm rentalForm = new RentalForm(comicService, memberService, logger, reloadService);
                 rentalForm.ShowDialog(this); // ShowDialog makes it a modal dialog
             }
             catch (Exception ex)
             {
                 _logger?.LogError("Failed to open RentalForm.", ex);
                 MessageBox.Show($"Error opening rental form: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void 檢視日誌ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _logger?.Log("View Log menu item clicked.");
+            try
+            {
+                // 從 FileLogger 的邏輯重新組合出日誌檔案的完整路徑
+                string logDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ComicRentalApp", "Logs");
+                string logFilePath = Path.Combine(logDirectory, "ComicRentalSystemLog.txt"); // 對應 Program.cs 中的設定
+
+                if (File.Exists(logFilePath))
+                {
+                    // 使用 Process.Start 來打開檔案。
+                    // 這會用系統預設的 .txt 檔案編輯器開啟它。
+                    // 我們需要設定 UseShellExecute = true 才能這樣做。
+                    Process.Start(new ProcessStartInfo(logFilePath) { UseShellExecute = true });
+                }
+                else
+                {
+                    MessageBox.Show("日誌檔案尚未建立或找不到。", "資訊", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogError("Failed to open the log file.", ex);
+                MessageBox.Show($"無法開啟日誌檔案: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
