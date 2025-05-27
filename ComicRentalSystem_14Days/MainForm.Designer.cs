@@ -1,4 +1,6 @@
-﻿namespace ComicRentalSystem_14Days
+﻿// In ComicRentalSystem_14Days/MainForm.Designer.cs
+
+namespace ComicRentalSystem_14Days
 {
     partial class MainForm
     {
@@ -38,13 +40,16 @@
             rentalManagementToolStripMenuItem = new ToolStripMenuItem();
             工具ToolStripMenuItem = new ToolStripMenuItem();
             檢視日誌ToolStripMenuItem = new ToolStripMenuItem();
+            dgvAvailableComics = new DataGridView();
+            lblAvailableComics = new Label();
             menuStrip2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvAvailableComics).BeginInit();
             SuspendLayout();
             // 
             // menuStrip1
             // 
             menuStrip1.ImageScalingSize = new Size(20, 20);
-            menuStrip1.Location = new Point(0, 28);
+            menuStrip1.Location = new Point(0, 27);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Padding = new Padding(7, 2, 0, 2);
             menuStrip1.Size = new Size(900, 24);
@@ -58,7 +63,7 @@
             menuStrip2.Location = new Point(0, 0);
             menuStrip2.Name = "menuStrip2";
             menuStrip2.Padding = new Padding(7, 2, 0, 2);
-            menuStrip2.Size = new Size(900, 28);
+            menuStrip2.Size = new Size(900, 27);
             menuStrip2.TabIndex = 1;
             menuStrip2.Text = "menuStrip2";
             // 
@@ -66,7 +71,7 @@
             // 
             檔案ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { 離開ToolStripMenuItem });
             檔案ToolStripMenuItem.Name = "檔案ToolStripMenuItem";
-            檔案ToolStripMenuItem.Size = new Size(53, 24);
+            檔案ToolStripMenuItem.Size = new Size(53, 23);
             檔案ToolStripMenuItem.Text = "檔案";
             // 
             // 離開ToolStripMenuItem
@@ -80,7 +85,7 @@
             // 
             管理ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { 漫畫管理ToolStripMenuItem, 會員管理ToolStripMenuItem, rentalManagementToolStripMenuItem });
             管理ToolStripMenuItem.Name = "管理ToolStripMenuItem";
-            管理ToolStripMenuItem.Size = new Size(53, 24);
+            管理ToolStripMenuItem.Size = new Size(53, 23);
             管理ToolStripMenuItem.Text = "管理";
             // 
             // 漫畫管理ToolStripMenuItem
@@ -108,29 +113,60 @@
             // 
             工具ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { 檢視日誌ToolStripMenuItem });
             工具ToolStripMenuItem.Name = "工具ToolStripMenuItem";
-            工具ToolStripMenuItem.Size = new Size(53, 24);
+            工具ToolStripMenuItem.Size = new Size(53, 23);
             工具ToolStripMenuItem.Text = "工具";
             // 
             // 檢視日誌ToolStripMenuItem
             // 
             檢視日誌ToolStripMenuItem.Name = "檢視日誌ToolStripMenuItem";
-            檢視日誌ToolStripMenuItem.Size = new Size(224, 26);
+            檢視日誌ToolStripMenuItem.Size = new Size(152, 26);
             檢視日誌ToolStripMenuItem.Text = "檢視日誌";
             檢視日誌ToolStripMenuItem.Click += 檢視日誌ToolStripMenuItem_Click;
+            // 
+            // dgvAvailableComics
+            // 
+            dgvAvailableComics.AllowUserToAddRows = false;
+            dgvAvailableComics.AllowUserToDeleteRows = false;
+            dgvAvailableComics.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvAvailableComics.Dock = DockStyle.Fill;
+            dgvAvailableComics.Location = new Point(0, 86);
+            dgvAvailableComics.Margin = new Padding(4);
+            dgvAvailableComics.Name = "dgvAvailableComics";
+            dgvAvailableComics.ReadOnly = true;
+            dgvAvailableComics.RowHeadersWidth = 51;
+            dgvAvailableComics.Size = new Size(900, 417);
+            dgvAvailableComics.TabIndex = 2;
+            // 
+            // lblAvailableComics
+            // 
+            lblAvailableComics.AutoSize = true;
+            lblAvailableComics.Dock = DockStyle.Top;
+            lblAvailableComics.Font = new Font("Microsoft JhengHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 136);
+            lblAvailableComics.Location = new Point(0, 51);
+            lblAvailableComics.Margin = new Padding(4, 0, 4, 0);
+            lblAvailableComics.Name = "lblAvailableComics";
+            lblAvailableComics.Padding = new Padding(5);
+            lblAvailableComics.Size = new Size(182, 35);
+            lblAvailableComics.TabIndex = 3;
+            lblAvailableComics.Text = "目前可借閱的漫畫";
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(9F, 19F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(900, 503);
+            Controls.Add(dgvAvailableComics);
+            Controls.Add(lblAvailableComics);
             Controls.Add(menuStrip1);
             Controls.Add(menuStrip2);
             MainMenuStrip = menuStrip1;
             Margin = new Padding(4);
             Name = "MainForm";
-            Text = "MainForm";
+            Text = "漫畫租借系統";
+            Load += MainForm_Load;
             menuStrip2.ResumeLayout(false);
             menuStrip2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvAvailableComics).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -147,5 +183,7 @@
         private ToolStripMenuItem 工具ToolStripMenuItem;
         private ToolStripMenuItem 檢視日誌ToolStripMenuItem;
         private ToolStripMenuItem rentalManagementToolStripMenuItem;
+        private DataGridView dgvAvailableComics;
+        private Label lblAvailableComics;
     }
 }

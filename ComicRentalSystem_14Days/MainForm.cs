@@ -1,25 +1,28 @@
-﻿// ComicRentalSystem_14Days/MainForm.cs
+﻿// In ComicRentalSystem_14Days/MainForm.cs
+
 using ComicRentalSystem_14Days.Forms;
 using ComicRentalSystem_14Days.Helpers;
 using ComicRentalSystem_14Days.Interfaces;
+using ComicRentalSystem_14Days.Models; // 引用 Models
 using ComicRentalSystem_14Days.Services;
 using System;
+using System.Data; // 引用 System.Data
 using System.Diagnostics;
+using System.Linq; // 引用 Linq
 using System.Windows.Forms;
-// using System.ComponentModel; // 如果使用 this.DesignMode，則不需要特別為 LicenseManager 引入
 
 namespace ComicRentalSystem_14Days
 {
     public partial class MainForm : BaseForm
     {
-        // 將欄位宣告為可為 Null
         private readonly ILogger? _logger;
         private readonly IReloadService? _reloadService;
+        private ComicService? _comicService; // 新增 ComicService 欄位
 
         public MainForm() : base()
         {
             InitializeComponent();
-            if (this.DesignMode) // 使用 this.DesignMode
+            if (this.DesignMode)
             {
                 // this.Text = "MainForm (設計模式)";
             }
@@ -28,9 +31,84 @@ namespace ComicRentalSystem_14Days
         public MainForm(ILogger logger) : this()
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            base.SetLogger(logger); // 將 logger 實例傳遞給 BaseForm
+            base.SetLogger(logger);
             _reloadService = new ReloadService();
-            _logger.Log("MainForm initialized with logger.");
+
+            // 初始化 FileHelper 和 ComicService
+            var fileHelper = new FileHelper();
+            _comicService = new ComicService(fileHelper, _logger);
+
+            _logger.Log("MainForm initialized with logger and services.");
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            _logger?.Log("MainForm is loading.");
+            if (_comicService != null)
+            {
+                SetupDataGridView();
+                LoadAvailableComics();
+                // 訂閱事件，以便在漫畫資料變更時自動更新列表
+                _comicService.ComicsChanged += ComicService_ComicsChanged;
+            }
+        }
+
+        private void ComicService_ComicsChanged(object? sender, EventArgs e)
+        {
+            // 當資料變更時，重新載入可借閱漫畫列表
+            _logger?.Log("ComicsChanged event received, reloading available comics.");
+            LoadAvailableComics();
+        }
+
+        private void SetupDataGridView()
+        {
+            _logger?.Log("Setting up DataGridView for available comics.");
+            dgvAvailableComics.AutoGenerateColumns = false;
+            dgvAvailableComics.Columns.Clear();
+            dgvAvailableComics.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Title", HeaderText = "書名", FillWeight = 40 });
+            dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Author", HeaderText = "作者", FillWeight = 30 });
+            dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Genre", HeaderText = "類型", FillWeight = 20 });
+            dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Isbn", HeaderText = "ISBN", FillWeight = 30 });
+
+            dgvAvailableComics.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvAvailableComics.MultiSelect = false;
+            dgvAvailableComics.ReadOnly = true;
+            dgvAvailableComics.AllowUserToAddRows = false;
+        }
+
+        private void LoadAvailableComics()
+        {
+            if (_comicService == null) return;
+            _logger?.Log("Loading available comics into MainForm DataGridView.");
+
+            try
+            {
+                // 從服務取得所有漫畫，並篩選出未被租借的
+                var availableComics = _comicService.GetAllComics().Where(c => !c.IsRented).ToList();
+
+                // 使用Invoke確保UI操作在主執行緒上執行
+                if (this.InvokeRequired)
+                {
+                    this.Invoke(new Action(() => {
+                        dgvAvailableComics.DataSource = null;
+                        dgvAvailableComics.DataSource = availableComics;
+                    }));
+                }
+                else
+                {
+                    dgvAvailableComics.DataSource = null;
+                    dgvAvailableComics.DataSource = availableComics;
+                }
+
+                _logger?.Log($"Successfully loaded {availableComics.Count} available comics.");
+            }
+            catch (Exception ex)
+            {
+                LogErrorActivity("Error loading available comics.", ex);
+                MessageBox.Show($"載入可用漫畫列表時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void 離開ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -42,7 +120,6 @@ namespace ComicRentalSystem_14Days
         private void 漫畫管理ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _logger?.Log("Opening ComicManagementForm.");
-            // 確保 _logger 不是 null 才傳遞，或者 ComicManagementForm 能處理 null logger
             if (_logger != null)
             {
                 ComicManagementForm comicMgmtForm = new ComicManagementForm(_logger);
@@ -50,7 +127,6 @@ namespace ComicRentalSystem_14Days
             }
             else
             {
-                // 處理 logger 為 null 的情況，例如顯示錯誤或使用備用 logger
                 MessageBox.Show("Logger 未初始化，無法開啟漫畫管理。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -71,31 +147,27 @@ namespace ComicRentalSystem_14Days
 
         private void rentalManagementToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            _logger?.Log("Opening RentalForm."); // Assuming _logger is available in MainForm
-            if (_logger == null)
+            _logger?.Log("Opening RentalForm.");
+            if (_logger == null || _reloadService == null)
             {
-                MessageBox.Show("Logger is not available. Cannot open Rental Form.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Logger 或 ReloadService 未初始化，無法開啟租借管理。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             try
             {
-                // It's good practice to use the application-wide logger instance if available
-                // Program.AppLogger can be used if it's public static, or pass the _logger from MainForm
-                ILogger logger = _logger; // Or Program.AppLogger;
-                IReloadService reloadService = _reloadService;
-
                 FileHelper fileHelper = new FileHelper();
-                ComicService comicService = new ComicService(fileHelper, logger);
-                MemberService memberService = new MemberService(fileHelper, logger);
+                // 租借表單會自己建立新的 Service 實例，這裡傳入 Logger 和 ReloadService 即可
+                ComicService comicServiceForRental = new ComicService(fileHelper, _logger);
+                MemberService memberServiceForRental = new MemberService(fileHelper, _logger);
 
-                RentalForm rentalForm = new RentalForm(comicService, memberService, logger, reloadService);
-                rentalForm.ShowDialog(this); // ShowDialog makes it a modal dialog
+                RentalForm rentalForm = new RentalForm(comicServiceForRental, memberServiceForRental, _logger, _reloadService);
+                rentalForm.ShowDialog(this);
             }
             catch (Exception ex)
             {
                 _logger?.LogError("Failed to open RentalForm.", ex);
-                MessageBox.Show($"Error opening rental form: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"開啟租借表單時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -104,15 +176,12 @@ namespace ComicRentalSystem_14Days
             _logger?.Log("View Log menu item clicked.");
             try
             {
-                // 從 FileLogger 的邏輯重新組合出日誌檔案的完整路徑
                 string logDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ComicRentalApp", "Logs");
-                string logFilePath = Path.Combine(logDirectory, "ComicRentalSystemLog.txt"); // 對應 Program.cs 中的設定
+                // Program.cs 中設定的日誌檔名為 "ComicRentalSystemLog.txt"
+                string logFilePath = Path.Combine(logDirectory, "ComicRentalSystemLog.txt");
 
                 if (File.Exists(logFilePath))
                 {
-                    // 使用 Process.Start 來打開檔案。
-                    // 這會用系統預設的 .txt 檔案編輯器開啟它。
-                    // 我們需要設定 UseShellExecute = true 才能這樣做。
                     Process.Start(new ProcessStartInfo(logFilePath) { UseShellExecute = true });
                 }
                 else
@@ -125,6 +194,17 @@ namespace ComicRentalSystem_14Days
                 _logger?.LogError("Failed to open the log file.", ex);
                 MessageBox.Show($"無法開啟日誌檔案: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        // 覆寫 OnFormClosing 來取消訂閱事件，避免記憶體洩漏
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            _logger?.Log("MainForm is closing. Unsubscribing from events.");
+            if (_comicService != null)
+            {
+                _comicService.ComicsChanged -= ComicService_ComicsChanged;
+            }
+            base.OnFormClosing(e);
         }
     }
 }
