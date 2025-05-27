@@ -1,36 +1,61 @@
 // In Program.cs
-using ComicRentalSystem_14Days.Interfaces; // 加入 using
-using ComicRentalSystem_14Days.Logging;    // 加入 using
+using ComicRentalSystem_14Days.Helpers;
+using ComicRentalSystem_14Days.Interfaces;
+using ComicRentalSystem_14Days.Logging;
+using ComicRentalSystem_14Days.Services;
 
 namespace ComicRentalSystem_14Days
 {
     internal static class Program
     {
-        public static ILogger? AppLogger { get; private set; } // 全局可訪問的 Logger 實例
+        // 全局可訪問的 Logger 和服務實例
+        public static ILogger? AppLogger { get; private set; }
+        public static FileHelper? AppFileHelper { get; private set; }
+        public static ComicService? AppComicService { get; private set; }
+        public static MemberService? AppMemberService { get; private set; }
+        public static IReloadService? AppReloadService { get; private set; }
 
-        
+
+        [STAThread]
         static void Main()
         {
             ApplicationConfiguration.Initialize();
 
             // 初始化 Logger
-            // 技術點4: 多型 (FileLogger 物件可以用 ILogger 型別的變數來引用)
             AppLogger = new FileLogger("ComicRentalSystemLog.txt");
-            AppLogger.Log("Application starting..."); // 技術點3: 透過介面呼叫 Log()
+            AppLogger.Log("Application starting...");
 
-            // 範例：處理未處理的例外 (可選，但建議)
+            // 初始化共享的 Helper 和服務
+            AppFileHelper = new FileHelper();
+            AppReloadService = new ReloadService();
+            // 確保 Logger 已成功初始化後再建立服務
+            if (AppFileHelper != null && AppLogger != null)
+            {
+                AppComicService = new ComicService(AppFileHelper, AppLogger);
+                AppMemberService = new MemberService(AppFileHelper, AppLogger);
+            }
+
+            // 設定全域例外處理
             Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
-
             try
             {
-                Application.Run(new MainForm(AppLogger)); // 將 Logger 傳遞給 MainForm
+                // 檢查核心服務是否成功建立，再啟動主表單
+                if (AppLogger != null && AppComicService != null)
+                {
+                    Application.Run(new MainForm(AppLogger, AppComicService)); // 將共享的 Logger 和 ComicService 傳遞給 MainForm
+                }
+                else
+                {
+                    // 如果服務初始化失敗，顯示錯誤訊息並終止應用程式
+                    MessageBox.Show("無法初始化核心服務，應用程式即將關閉。", "嚴重錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    AppLogger?.LogError("Application terminated because core services (Logger or ComicService) failed to initialize.");
+                }
             }
             catch (Exception ex)
             {
                 AppLogger?.LogError("Application terminated due to an unhandled exception in Main.", ex);
-                // 可以選擇顯示一個錯誤訊息給使用者
                 MessageBox.Show("應用程式發生嚴重錯誤，即將關閉。\n詳情請查看日誌檔案。", "嚴重錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
@@ -43,7 +68,6 @@ namespace ComicRentalSystem_14Days
         private static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
         {
             AppLogger?.LogError("Unhandled UI Thread Exception", e.Exception);
-            // 可以顯示錯誤訊息
             MessageBox.Show($"發生未預期的UI執行緒錯誤: {e.Exception.Message}\n詳情請查看日誌。", "UI 錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
@@ -51,11 +75,8 @@ namespace ComicRentalSystem_14Days
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             AppLogger?.LogError("Unhandled Non-UI Thread Exception", e.ExceptionObject as Exception);
-            // 可以顯示錯誤訊息 (如果是在主執行緒或有UI互動的情況下)
-            // 注意：非UI執行緒的例外直接用MessageBox可能會有問題
             if (e.IsTerminating)
             {
-                // 記錄程式即將終止
                 AppLogger?.Log("Application is terminating due to an unhandled exception.");
             }
         }

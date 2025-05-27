@@ -12,43 +12,49 @@ namespace ComicRentalSystem_14Days.Forms
 {
     public partial class MemberManagementForm : ComicRentalSystem_14Days.BaseForm
     {
-        private MemberService? _memberService; // 改為可為 Null
+        private MemberService? _memberService; // 接收共享的實例
 
-        // **新增**：為設計工具提供無參數的建構函式
+        // 為設計工具提供無參數的建構函式
         public MemberManagementForm()
         {
             InitializeComponent();
         }
 
-        // 修改建構函式以接收 ILogger 並傳遞給 BaseForm
-        public MemberManagementForm(ILogger logger) : base(logger)
+        // 修改建構函式以接收共享的 ILogger 和 MemberService
+        public MemberManagementForm(ILogger logger, MemberService memberService) : base(logger)
         {
             InitializeComponent();
-            LogActivity("MemberManagementForm initializing.");
+            _memberService = memberService; // 直接使用傳入的共享實例
+            LogActivity("MemberManagementForm initializing with shared services.");
         }
 
-        // **修改**：將初始化和資料載入邏輯移至 Load 事件
+        // 修改 Load 事件，移除服務的初始化，只做事件訂閱和資料載入
         private void MemberManagementForm_Load(object sender, EventArgs e)
         {
-            if (this.DesignMode)
+            // 在設計模式下，Logger 和 Service 會是 null，直接返回
+            if (this.DesignMode || Logger == null || _memberService == null)
             {
                 return;
             }
 
-            // --- 以下為執行時期的程式碼 ---
-
-            // 在設計模式下，Logger 會是 null，直接返回 (保留這個做為雙重保險)
-            if (Logger == null) return;
-
             LogActivity("MemberManagementForm is loading runtime components.");
-            var fileHelper = new FileHelper();
-            _memberService = new MemberService(fileHelper, Logger);
 
+            // 訂閱共享服務的事件
             _memberService.MembersChanged += MemberService_MembersChanged;
 
             SetupDataGridView();
             LoadMembersData();
             LogActivity("MemberManagementForm initialized successfully.");
+        }
+
+        // 表單關閉時，取消訂閱事件
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            if (_memberService != null)
+            {
+                _memberService.MembersChanged -= MemberService_MembersChanged;
+            }
+            base.OnFormClosing(e);
         }
 
         private void MemberService_MembersChanged(object? sender, EventArgs e)
@@ -60,7 +66,6 @@ namespace ComicRentalSystem_14Days.Forms
 
         private void SetupDataGridView()
         {
-            // ... (此處程式碼不變) ...
             LogActivity("Setting up DataGridView columns for members.");
             dgvMembers.AutoGenerateColumns = false;
             dgvMembers.Columns.Clear();
@@ -73,7 +78,6 @@ namespace ComicRentalSystem_14Days.Forms
             dgvMembers.MultiSelect = false;
             dgvMembers.ReadOnly = true;
             dgvMembers.AllowUserToAddRows = false;
-
             LogActivity("DataGridView setup complete for members.");
         }
 
@@ -95,8 +99,6 @@ namespace ComicRentalSystem_14Days.Forms
             }
         }
 
-        // ... (btnAdd, btnEdit, btnDelete, btnRefresh 等事件處理方法維持不變) ...
-
         private void btnRefreshMembers_Click(object sender, EventArgs e)
         {
             LogActivity("Refresh Members button clicked.");
@@ -107,6 +109,7 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (_memberService == null || Logger == null) return;
             LogActivity("Add Member button clicked. Opening MemberEditForm for new member.");
+            // 將共享的 service 傳遞給編輯表單
             using (MemberEditForm editForm = new MemberEditForm(null, _memberService, Logger))
             {
                 if (editForm.ShowDialog(this) == DialogResult.OK)
@@ -129,6 +132,7 @@ namespace ComicRentalSystem_14Days.Forms
                 if (selectedMember != null)
                 {
                     LogActivity($"Opening MemberEditForm for editing member ID: {selectedMember.Id}, Name: '{selectedMember.Name}'.");
+                    // 將共享的 service 傳遞給編輯表單
                     using (MemberEditForm editForm = new MemberEditForm(selectedMember, _memberService, Logger))
                     {
                         if (editForm.ShowDialog(this) == DialogResult.OK)

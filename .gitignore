@@ -1,0 +1,109 @@
+# ---------------------------
+# 基本 Visual Studio 忽略項目
+# ---------------------------
+
+## VS 工程設定
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## 編譯產物
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.apphost.exe
+
+## .NET Core 產物
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## NuGet
+*.nupkg
+*.snupkg
+packages/
+*.nuspec
+*.psmdcp
+*.cache
+*.nuproj
+
+## 分析工具產物
+*.log
+*.tlog
+*.vspscc
+*.vssscc
+*.vsp
+*.scc
+
+## 快速還原/暫存
+_ReSharper*/
+*.DotSettings.user
+.idea/
+*.sln.ide
+*.dbmdl
+
+## Rider
+.idea/
+*.sln.iml
+
+## VS for Mac
+*.pidb
+*.userprefs
+
+## ASP.NET 靜態資源
+wwwroot/
+node_modules/
+dist/
+bower_components/
+
+# ---------------------------
+# 特殊工具/外掛檔案
+# ---------------------------
+
+## Copilot Index (VS GitHub Copilot 產物)
+.vs/*/CopilotIndices/
+
+## 設計時快取
+.vs/*/DesignTimeBuild/
+.vs/*/v*/DocumentLayout.json
+.vs/*/v*/.futdcache.v2
+.vs/*/v*/.suo
+
+# ---------------------------
+# 作業系統層級忽略
+# ---------------------------
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+.cache
+.Trash-*
+
+# ---------------------------
+# Git 層級忽略
+# ---------------------------
+*.orig
+*.rej
+*.bak
+
+# ---------------------------
+# 可選：暫時性紀錄檔
+# ---------------------------
+*.log
+*.tmp
+*.temp
+*.backup

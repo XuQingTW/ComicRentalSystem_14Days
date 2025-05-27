@@ -3,12 +3,12 @@
 using ComicRentalSystem_14Days.Forms;
 using ComicRentalSystem_14Days.Helpers;
 using ComicRentalSystem_14Days.Interfaces;
-using ComicRentalSystem_14Days.Models; // 引用 Models
+using ComicRentalSystem_14Days.Models;
 using ComicRentalSystem_14Days.Services;
 using System;
-using System.Data; // 引用 System.Data
+using System.Data;
 using System.Diagnostics;
-using System.Linq; // 引用 Linq
+using System.Linq;
 using System.Windows.Forms;
 
 namespace ComicRentalSystem_14Days
@@ -16,8 +16,7 @@ namespace ComicRentalSystem_14Days
     public partial class MainForm : BaseForm
     {
         private readonly ILogger? _logger;
-        private readonly IReloadService? _reloadService;
-        private ComicService? _comicService; // 新增 ComicService 欄位
+        private readonly ComicService? _comicService; // 接收共享的實例，不再自己 new
 
         public MainForm() : base()
         {
@@ -28,17 +27,14 @@ namespace ComicRentalSystem_14Days
             }
         }
 
-        public MainForm(ILogger logger) : this()
+        // 修改建構函式以接收共享的 ILogger 和 ComicService
+        public MainForm(ILogger logger, ComicService comicService) : this()
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            base.SetLogger(logger);
-            _reloadService = new ReloadService();
+            _comicService = comicService ?? throw new ArgumentNullException(nameof(comicService));
+            base.SetLogger(logger); // 設定基底類別的 Logger
 
-            // 初始化 FileHelper 和 ComicService
-            var fileHelper = new FileHelper();
-            _comicService = new ComicService(fileHelper, _logger);
-
-            _logger.Log("MainForm initialized with logger and services.");
+            _logger.Log("MainForm initialized with shared logger and services.");
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -85,10 +81,8 @@ namespace ComicRentalSystem_14Days
 
             try
             {
-                // 從服務取得所有漫畫，並篩選出未被租借的
                 var availableComics = _comicService.GetAllComics().Where(c => !c.IsRented).ToList();
 
-                // 使用Invoke確保UI操作在主執行緒上執行
                 if (this.InvokeRequired)
                 {
                     this.Invoke(new Action(() => {
@@ -120,48 +114,47 @@ namespace ComicRentalSystem_14Days
         private void 漫畫管理ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _logger?.Log("Opening ComicManagementForm.");
-            if (_logger != null)
+            // 確保共享的服務實例存在，並將它們傳遞給管理表單
+            if (_logger != null && Program.AppComicService != null)
             {
-                ComicManagementForm comicMgmtForm = new ComicManagementForm(_logger);
+                ComicManagementForm comicMgmtForm = new ComicManagementForm(_logger, Program.AppComicService);
                 comicMgmtForm.ShowDialog(this);
             }
             else
             {
-                MessageBox.Show("Logger 未初始化，無法開啟漫畫管理。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Logger 或 ComicService 未初始化，無法開啟漫畫管理。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void 會員管理ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _logger?.Log("Opening MemberManagementForm.");
-            if (_logger != null)
+            // 確保共享的服務實例存在，並將它們傳遞給管理表單
+            if (_logger != null && Program.AppMemberService != null)
             {
-                MemberManagementForm memberMgmtForm = new MemberManagementForm(_logger);
+                MemberManagementForm memberMgmtForm = new MemberManagementForm(_logger, Program.AppMemberService);
                 memberMgmtForm.ShowDialog(this);
             }
             else
             {
-                MessageBox.Show("Logger 未初始化，無法開啟會員管理。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Logger 或 MemberService 未初始化，無法開啟會員管理。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void rentalManagementToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _logger?.Log("Opening RentalForm.");
-            if (_logger == null || _reloadService == null)
+            // 確保所有需要的共享服務都存在
+            if (_logger == null || Program.AppComicService == null || Program.AppMemberService == null || Program.AppReloadService == null)
             {
-                MessageBox.Show("Logger 或 ReloadService 未初始化，無法開啟租借管理。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("核心服務未初始化，無法開啟租借管理。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             try
             {
-                FileHelper fileHelper = new FileHelper();
-                // 租借表單會自己建立新的 Service 實例，這裡傳入 Logger 和 ReloadService 即可
-                ComicService comicServiceForRental = new ComicService(fileHelper, _logger);
-                MemberService memberServiceForRental = new MemberService(fileHelper, _logger);
-
-                RentalForm rentalForm = new RentalForm(comicServiceForRental, memberServiceForRental, _logger, _reloadService);
+                // 將 Program.cs 中建立的共享服務實例傳遞給 RentalForm
+                RentalForm rentalForm = new RentalForm(Program.AppComicService, Program.AppMemberService, _logger, Program.AppReloadService);
                 rentalForm.ShowDialog(this);
             }
             catch (Exception ex)
@@ -177,7 +170,7 @@ namespace ComicRentalSystem_14Days
             try
             {
                 string logDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ComicRentalApp", "Logs");
-                // Program.cs 中設定的日誌檔名為 "ComicRentalSystemLog.txt"
+                // Program.cs 中設定的日誌檔名
                 string logFilePath = Path.Combine(logDirectory, "ComicRentalSystemLog.txt");
 
                 if (File.Exists(logFilePath))
@@ -196,7 +189,6 @@ namespace ComicRentalSystem_14Days
             }
         }
 
-        // 覆寫 OnFormClosing 來取消訂閱事件，避免記憶體洩漏
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             _logger?.Log("MainForm is closing. Unsubscribing from events.");

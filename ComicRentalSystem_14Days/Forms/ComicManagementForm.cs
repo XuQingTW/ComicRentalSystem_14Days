@@ -12,41 +12,49 @@ namespace ComicRentalSystem_14Days.Forms
 {
     public partial class ComicManagementForm : ComicRentalSystem_14Days.BaseForm
     {
-        private ComicService? _comicService; // 改為可為 Null
+        private ComicService? _comicService; // 接收共享的實例
 
-        // **新增**：為設計工具提供無參數的建構函式
+        // 為設計工具提供無參數的建構函式
         public ComicManagementForm()
         {
             InitializeComponent();
         }
 
-        // 修改建構函式以接收 ILogger 並傳遞給 BaseForm
-        public ComicManagementForm(ILogger logger) : base(logger)
+        // 修改建構函式以接收共享的 ILogger 和 ComicService
+        public ComicManagementForm(ILogger logger, ComicService comicService) : base(logger)
         {
             InitializeComponent();
-            LogActivity("ComicManagementForm initializing."); // 使用 BaseForm 的 LogActivity
+            _comicService = comicService; // 直接使用傳入的共享實例
+            LogActivity("ComicManagementForm initializing with shared services.");
         }
 
-        // **修改**：將初始化和資料載入邏輯移至 Load 事件
+        // 修改 Load 事件，移除服務的初始化，只做事件訂閱和資料載入
         private void ComicManagementForm_Load(object sender, EventArgs e)
         {
-            // 在設計模式下，Logger 會是 null，直接返回
-            if(this.DesignMode)
-    {
+            // 在設計模式下，Logger 和 Service 會是 null，直接返回
+            if (this.DesignMode || Logger == null || _comicService == null)
+            {
                 return;
             }
 
-            if (Logger == null) return;
-
             LogActivity("ComicManagementForm is loading runtime components.");
-            var fileHelper = new FileHelper();
-            _comicService = new ComicService(fileHelper, Logger);
 
+            // 訂閱共享服務的事件
             _comicService.ComicsChanged += ComicService_ComicsChanged;
 
             SetupDataGridView();
             LoadComicsData();
             LogActivity("ComicManagementForm initialized successfully.");
+        }
+
+        // 表單關閉時，取消訂閱事件
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            if (_comicService != null)
+            {
+                _comicService.ComicsChanged -= ComicService_ComicsChanged;
+            }
+            base.OnFormClosing(e);
         }
 
         private void ComicService_ComicsChanged(object? sender, EventArgs e)
@@ -58,7 +66,6 @@ namespace ComicRentalSystem_14Days.Forms
 
         private void SetupDataGridView()
         {
-            // ... (此處程式碼不變) ...
             LogActivity("Setting up DataGridView columns for comics.");
             dgvComics.AutoGenerateColumns = false;
             dgvComics.Columns.Clear();
@@ -75,7 +82,6 @@ namespace ComicRentalSystem_14Days.Forms
             dgvComics.MultiSelect = false;
             dgvComics.ReadOnly = true;
             dgvComics.AllowUserToAddRows = false;
-
             LogActivity("DataGridView setup complete.");
         }
 
@@ -97,7 +103,6 @@ namespace ComicRentalSystem_14Days.Forms
             }
         }
 
-        // ... (btnAdd, btnEdit, btnDelete 等事件處理方法維持不變) ...
         private void btnRefresh_Click(object sender, EventArgs e)
         {
             if (_comicService == null) return;
@@ -117,6 +122,7 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (_comicService == null || Logger == null) return;
             LogActivity("Add Comic button clicked. Opening ComicEditForm for new comic.");
+            // 將共享的 service 傳遞給編輯表單
             using (ComicEditForm editForm = new ComicEditForm(null, _comicService, Logger))
             {
                 if (editForm.ShowDialog(this) == DialogResult.OK)
@@ -139,6 +145,7 @@ namespace ComicRentalSystem_14Days.Forms
                 if (selectedComic != null)
                 {
                     LogActivity($"Opening ComicEditForm for editing comic ID: {selectedComic.Id}, Title: '{selectedComic.Title}'.");
+                    // 將共享的 service 傳遞給編輯表單
                     using (ComicEditForm editForm = new ComicEditForm(selectedComic, _comicService, Logger))
                     {
                         if (editForm.ShowDialog(this) == DialogResult.OK)
