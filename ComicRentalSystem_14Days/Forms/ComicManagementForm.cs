@@ -15,17 +15,15 @@ namespace ComicRentalSystem_14Days.Forms
         private ComicService? _comicService; // 接收共享的實例
 
         // 為設計工具提供無參數的建構函式
-        public ComicManagementForm()
-        {
-            InitializeComponent();
-        }
-
-        // 修改建構函式以接收共享的 ILogger 和 ComicService
         public ComicManagementForm(ILogger logger, ComicService comicService) : base(logger)
         {
             InitializeComponent();
-            _comicService = comicService; // 直接使用傳入的共享實例
-            LogActivity("ComicManagementForm initializing with shared services.");
+            _comicService = comicService;
+            // 立即初始化 DataGridView 欄位與資料
+            SetupDataGridView();
+            LoadComicsData();
+            // 訂閱事件
+            _comicService.ComicsChanged += ComicService_ComicsChanged;
         }
 
         // 修改 Load 事件，移除服務的初始化，只做事件訂閱和資料載入

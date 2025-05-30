@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Hyman\\OneDrive\\桌面\\C#-Project\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj",
+      "projectUniqueName": "C:\\Users\\Hyman\\Desktop\\ComicRentalSystem\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj",
       "projectName": "ComicRentalSystem_14Days",
-      "projectPath": "C:\\Users\\Hyman\\OneDrive\\桌面\\C#-Project\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj",
+      "projectPath": "C:\\Users\\Hyman\\Desktop\\ComicRentalSystem\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj",
       "packagesPath": "C:\\Users\\Hyman\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Hyman\\OneDrive\\桌面\\C#-Project\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\obj\\",
+      "outputPath": "C:\\Users\\Hyman\\Desktop\\ComicRentalSystem\\ComicRentalSystem_14Days\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -33,7 +33,6 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
