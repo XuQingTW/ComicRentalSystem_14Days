@@ -15,8 +15,6 @@ namespace ComicRentalSystem_14Days.Forms
         private readonly ComicService? _comicService;
         private readonly MemberService? _memberService;
         private readonly IReloadService? _reloadService;
-        private ILogger logger;
-
         // Logger 繼承自 BaseForm (protected ILogger? Logger)
 
         public RentalForm() : base()
@@ -25,11 +23,11 @@ namespace ComicRentalSystem_14Days.Forms
         }
 
         public RentalForm(
-            ComicService comicService, 
-            MemberService memberService, 
+            ComicService comicService,
+            MemberService memberService,
             ILogger logger,
             IReloadService reloadService
-            ) : base(logger)
+        ) : base(logger)
         {
             InitializeComponent();
 
@@ -198,8 +196,8 @@ namespace ComicRentalSystem_14Days.Forms
                 try
                 {
                     var rentedComics = _comicService.GetAllComics()
-                                                      .Where(c => c.IsRented && c.RentedToMemberId == memberId)
-                                                      .ToList();
+                                                    .Where(c => c.IsRented && c.RentedToMemberId == memberId)
+                                                    .ToList();
                     if (dgvRentedComics != null)
                     {
                         dgvRentedComics.DataSource = null;
@@ -421,6 +419,5 @@ namespace ComicRentalSystem_14Days.Forms
             }
             base.OnFormClosing(e);
         }
-
     }
 }

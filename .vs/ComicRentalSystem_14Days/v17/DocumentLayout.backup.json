@@ -3,6 +3,14 @@
   "WorkspaceRootPath": "C:\\Users\\Hyman\\Desktop\\ComicRentalSystem\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\hyman\\desktop\\comicrentalsystem\\comicrentalsystem_14days\\helpers\\filehelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\helpers\\filehelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\hyman\\desktop\\comicrentalsystem\\comicrentalsystem_14days\\forms\\rentalform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\forms\\rentalform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\hyman\\desktop\\comicrentalsystem\\comicrentalsystem_14days\\forms\\comiceditform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\forms\\comiceditform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -21,14 +29,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\hyman\\desktop\\comicrentalsystem\\comicrentalsystem_14days\\forms\\membermanagementform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\forms\\membermanagementform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\hyman\\desktop\\comicrentalsystem\\comicrentalsystem_14days\\forms\\rentalform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\forms\\rentalform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\hyman\\desktop\\comicrentalsystem\\comicrentalsystem_14days\\helpers\\filehelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\helpers\\filehelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\hyman\\desktop\\comicrentalsystem\\comicrentalsystem_14days\\interfaces\\ilogger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -74,24 +74,23 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "ComicEditForm.cs",
               "DocumentMoniker": "C:\\Users\\Hyman\\Desktop\\ComicRentalSystem\\ComicRentalSystem_14Days\\Forms\\ComicEditForm.cs",
               "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Forms\\ComicEditForm.cs",
               "ToolTip": "C:\\Users\\Hyman\\Desktop\\ComicRentalSystem\\ComicRentalSystem_14Days\\Forms\\ComicEditForm.cs",
               "RelativeToolTip": "ComicRentalSystem_14Days\\Forms\\ComicEditForm.cs",
-              "ViewState": "AgIAAA4AAAAAAAAAAADwvwgAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAADsAAAAAAAAAAAAQwEQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-30T08:29:16.401Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-30T08:29:16.401Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "ComicEditForm.Designer.cs",
               "DocumentMoniker": "C:\\Users\\Hyman\\Desktop\\ComicRentalSystem\\ComicRentalSystem_14Days\\Forms\\ComicEditForm.Designer.cs",
               "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Forms\\ComicEditForm.Designer.cs",
@@ -103,7 +102,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "ComicManagementForm.cs",
               "DocumentMoniker": "C:\\Users\\Hyman\\Desktop\\ComicRentalSystem\\ComicRentalSystem_14Days\\Forms\\ComicManagementForm.cs",
               "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Forms\\ComicManagementForm.cs",
@@ -115,7 +114,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 5,
               "Title": "MemberEditForm.cs",
               "DocumentMoniker": "C:\\Users\\Hyman\\Desktop\\ComicRentalSystem\\ComicRentalSystem_14Days\\Forms\\MemberEditForm.cs",
               "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Forms\\MemberEditForm.cs",
@@ -127,7 +126,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 6,
               "Title": "MemberManagementForm.cs",
               "DocumentMoniker": "C:\\Users\\Hyman\\Desktop\\ComicRentalSystem\\ComicRentalSystem_14Days\\Forms\\MemberManagementForm.cs",
               "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Forms\\MemberManagementForm.cs",
@@ -139,19 +138,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 1,
               "Title": "RentalForm.cs",
               "DocumentMoniker": "C:\\Users\\Hyman\\Desktop\\ComicRentalSystem\\ComicRentalSystem_14Days\\Forms\\RentalForm.cs",
               "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Forms\\RentalForm.cs",
               "ToolTip": "C:\\Users\\Hyman\\Desktop\\ComicRentalSystem\\ComicRentalSystem_14Days\\Forms\\RentalForm.cs",
               "RelativeToolTip": "ComicRentalSystem_14Days\\Forms\\RentalForm.cs",
-              "ViewState": "AgIAAJEBAAAAAAAAAAAqwJ8BAAAoAAAAAAAAAA==",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAIwCoAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-30T08:25:14.636Z"
+              "WhenOpened": "2025-05-30T08:25:14.636Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 0,
               "Title": "FileHelper.cs",
               "DocumentMoniker": "C:\\Users\\Hyman\\Desktop\\ComicRentalSystem\\ComicRentalSystem_14Days\\Helpers\\FileHelper.cs",
               "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Helpers\\FileHelper.cs",
@@ -159,7 +159,8 @@
               "RelativeToolTip": "ComicRentalSystem_14Days\\Helpers\\FileHelper.cs",
               "ViewState": "AgIAAFgAAAAAAAAAAAAUwFkAAABDAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-30T08:23:49.586Z"
+              "WhenOpened": "2025-05-30T08:23:49.586Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
