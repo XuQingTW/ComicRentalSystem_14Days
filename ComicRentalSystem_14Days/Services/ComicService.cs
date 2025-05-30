@@ -1,5 +1,4 @@
-﻿// ComicRentalSystem_14Days/Services/ComicService.cs
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using ComicRentalSystem_14Days.Helpers;
@@ -12,13 +11,12 @@ namespace ComicRentalSystem_14Days.Services
     {
         private readonly FileHelper _fileHelper;
         private readonly string _comicFileName = "comics.csv";
-        private List<Comic> _comics = new List<Comic>(); // 這裡的拼字也修正了
+        private List<Comic> _comics = new List<Comic>();
         private readonly ILogger _logger;
 
         public delegate void ComicDataChangedEventHandler(object? sender, EventArgs e);
         public event ComicDataChangedEventHandler? ComicsChanged;
 
-        // 這個方法讓外部可以觸發重新整理
         public void Reload()
         {
             LoadComics();
@@ -32,7 +30,6 @@ namespace ComicRentalSystem_14Days.Services
 
             _logger.Log("ComicService initializing.");
 
-            // Service 建立時，從檔案載入一次初始資料
             LoadComics();
             _logger.Log($"ComicService initialized. Loaded {_comics.Count} comics.");
         }
@@ -73,13 +70,9 @@ namespace ComicRentalSystem_14Days.Services
             ComicsChanged?.Invoke(this, EventArgs.Empty);
             _logger.Log("ComicsChanged event invoked.");
         }
-
-        // *** 主要修改點在這裡 ***
-        // GetAllComics 現在只回傳記憶體中的列表，不再重新讀取檔案
         public List<Comic> GetAllComics()
         {
             _logger.Log("GetAllComics called.");
-            // LoadComics(); // <<<<<<<<<<<<< 移除這一行
             return _comics;
         }
 

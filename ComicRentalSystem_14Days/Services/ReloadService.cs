@@ -17,13 +17,12 @@ namespace ComicRentalSystem_14Days.Services
 
             public void Start(Func<Task> reloadAction, TimeSpan interval)
             {
-                // 若已啟動，先停止舊的
+
                 Stop();
 
                 _cts = new CancellationTokenSource();
                 var token = _cts.Token;
 
-                // 背景執行非同步迴圈
                 Task.Run(async () =>
                 {
                     while (!token.IsCancellationRequested)
@@ -36,11 +35,9 @@ namespace ComicRentalSystem_14Days.Services
                         }
                         catch (OperationCanceledException)
                         {
-                            // 正常取消
                         }
                         catch (Exception ex)
                         {
-                            // TODO: 日誌記錄 ex
                         }
                     }
                 }, token);

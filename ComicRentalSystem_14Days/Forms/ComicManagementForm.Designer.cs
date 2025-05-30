@@ -128,7 +128,9 @@
             panel1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
+            this.Load += new System.EventHandler(this.ComicManagementForm_Load);
         }
+
 
         #endregion
 

@@ -109,6 +109,7 @@
             ((System.ComponentModel.ISupportInitialize)dgvMembers).EndInit();
             panel1.ResumeLayout(false);
             ResumeLayout(false);
+            this.Load += new System.EventHandler(this.MemberManagementForm_Load);
         }
 
         #endregion

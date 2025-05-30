@@ -1,11 +1,9 @@
-﻿// ComicRentalSystem_14Days/Forms/ComicEditForm.cs
-using ComicRentalSystem_14Days.Models;
+﻿using ComicRentalSystem_14Days.Models;
 using ComicRentalSystem_14Days.Services;
 using ComicRentalSystem_14Days.Interfaces;
 using System;
 using System.IO;
 using System.Windows.Forms;
-// using System.ComponentModel; // 如果使用 this.DesignMode，則不需要特別為 LicenseManager 引入
 
 namespace ComicRentalSystem_14Days.Forms
 {
@@ -19,11 +17,9 @@ namespace ComicRentalSystem_14Days.Forms
         public ComicEditForm() : base()
         {
             InitializeComponent();
-            if (this.DesignMode) // 使用 this.DesignMode
+            if (this.DesignMode) 
             {
-                // txtTitle.Text = "設計模式標題";
-                // btnSave.Enabled = false;
-                chkIsRented.Enabled = false; // 設計模式下通常禁用與服務相關的控制項
+                chkIsRented.Enabled = false;
             }
         }
 
@@ -73,7 +69,6 @@ namespace ComicRentalSystem_14Days.Forms
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            // 執行時期，_comicService 應該已經被賦值
             if (_comicService == null)
             {
                 MessageBox.Show("服務未初始化，無法儲存。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -90,7 +85,6 @@ namespace ComicRentalSystem_14Days.Forms
                 txtTitle.Focus();
                 return;
             }
-            // ... 其他驗證 ...
 
             try
             {

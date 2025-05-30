@@ -1,5 +1,4 @@
-﻿// ComicRentalSystem_14Days/Forms/RentalForm.cs
-using ComicRentalSystem_14Days.Interfaces;
+﻿using ComicRentalSystem_14Days.Interfaces;
 using ComicRentalSystem_14Days.Models;
 using ComicRentalSystem_14Days.Services;
 using System;
@@ -18,16 +17,11 @@ namespace ComicRentalSystem_14Days.Forms
         private readonly IReloadService? _reloadService;
         private ILogger logger;
 
-        // Logger is inherited from BaseForm (protected ILogger? Logger)
+        // Logger 繼承自 BaseForm (protected ILogger? Logger)
 
         public RentalForm() : base()
         {
             InitializeComponent();
-            // 在設計模式或無參數建構函式中，_comicService 和 _memberService 會是 null
-            // if (this.DesignMode) // 或者 LicenseManager.UsageMode == LicenseUsageMode.Designtime
-            // {
-            //     // 範例: btnRent.Enabled = false;
-            // }
         }
 
         public RentalForm(
@@ -58,7 +52,6 @@ namespace ComicRentalSystem_14Days.Forms
         private void RentalForm_Load(object sender, EventArgs e)
         {
             LogActivity("RentalForm loading data.");
-            // 只有在服務可用時才載入資料 (執行時期)
             if (_comicService != null && _memberService != null)
             {
                 SetupRentedComicsDataGridView();
