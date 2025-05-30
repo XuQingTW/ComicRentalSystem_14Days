@@ -1,4 +1,3 @@
-// In Program.cs
 using ComicRentalSystem_14Days.Helpers;
 using ComicRentalSystem_14Days.Interfaces;
 using ComicRentalSystem_14Days.Logging;
@@ -8,7 +7,6 @@ namespace ComicRentalSystem_14Days
 {
     internal static class Program
     {
-        // 全局可訪問的 Logger 和服務實例
         public static ILogger? AppLogger { get; private set; }
         public static FileHelper? AppFileHelper { get; private set; }
         public static ComicService? AppComicService { get; private set; }
@@ -21,34 +19,29 @@ namespace ComicRentalSystem_14Days
         {
             ApplicationConfiguration.Initialize();
 
-            // 初始化 Logger
             AppLogger = new FileLogger("ComicRentalSystemLog.txt");
             AppLogger.Log("Application starting...");
 
-            // 初始化共享的 Helper 和服務
             AppFileHelper = new FileHelper();
             AppReloadService = new ReloadService();
-            // 確保 Logger 已成功初始化後再建立服務
+
             if (AppFileHelper != null && AppLogger != null)
             {
                 AppComicService = new ComicService(AppFileHelper, AppLogger);
                 AppMemberService = new MemberService(AppFileHelper, AppLogger);
             }
 
-            // 設定全域例外處理
             Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
             try
             {
-                // 檢查核心服務是否成功建立，再啟動主表單
                 if (AppLogger != null && AppComicService != null)
                 {
-                    Application.Run(new MainForm(AppLogger, AppComicService)); // 將共享的 Logger 和 ComicService 傳遞給 MainForm
+                    Application.Run(new MainForm(AppLogger, AppComicService));
                 }
                 else
                 {
-                    // 如果服務初始化失敗，顯示錯誤訊息並終止應用程式
                     MessageBox.Show("無法初始化核心服務，應用程式即將關閉。", "嚴重錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     AppLogger?.LogError("Application terminated because core services (Logger or ComicService) failed to initialize.");
                 }
