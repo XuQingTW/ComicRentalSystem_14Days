@@ -1,6 +1,4 @@
-﻿// In ComicRentalSystem_14Days/Forms/ComicManagementForm.cs
-
-using ComicRentalSystem_14Days.Models;
+﻿using ComicRentalSystem_14Days.Models;
 using ComicRentalSystem_14Days.Services;
 using ComicRentalSystem_14Days.Helpers;
 using ComicRentalSystem_14Days.Interfaces;
@@ -12,24 +10,19 @@ namespace ComicRentalSystem_14Days.Forms
 {
     public partial class ComicManagementForm : ComicRentalSystem_14Days.BaseForm
     {
-        private ComicService? _comicService; // 接收共享的實例
+        private ComicService? _comicService;
 
-        // 為設計工具提供無參數的建構函式
         public ComicManagementForm(ILogger logger, ComicService comicService) : base(logger)
         {
             InitializeComponent();
             _comicService = comicService;
-            // 立即初始化 DataGridView 欄位與資料
             SetupDataGridView();
             LoadComicsData();
-            // 訂閱事件
             _comicService.ComicsChanged += ComicService_ComicsChanged;
         }
 
-        // 修改 Load 事件，移除服務的初始化，只做事件訂閱和資料載入
         private void ComicManagementForm_Load(object sender, EventArgs e)
         {
-            // 在設計模式下，Logger 和 Service 會是 null，直接返回
             if (this.DesignMode || Logger == null || _comicService == null)
             {
                 return;
@@ -37,7 +30,6 @@ namespace ComicRentalSystem_14Days.Forms
 
             LogActivity("ComicManagementForm is loading runtime components.");
 
-            // 訂閱共享服務的事件
             _comicService.ComicsChanged += ComicService_ComicsChanged;
 
             SetupDataGridView();
@@ -45,7 +37,6 @@ namespace ComicRentalSystem_14Days.Forms
             LogActivity("ComicManagementForm initialized successfully.");
         }
 
-        // 表單關閉時，取消訂閱事件
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             if (_comicService != null)
@@ -120,7 +111,6 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (_comicService == null || Logger == null) return;
             LogActivity("Add Comic button clicked. Opening ComicEditForm for new comic.");
-            // 將共享的 service 傳遞給編輯表單
             using (ComicEditForm editForm = new ComicEditForm(null, _comicService, Logger))
             {
                 if (editForm.ShowDialog(this) == DialogResult.OK)
@@ -143,7 +133,6 @@ namespace ComicRentalSystem_14Days.Forms
                 if (selectedComic != null)
                 {
                     LogActivity($"Opening ComicEditForm for editing comic ID: {selectedComic.Id}, Title: '{selectedComic.Title}'.");
-                    // 將共享的 service 傳遞給編輯表單
                     using (ComicEditForm editForm = new ComicEditForm(selectedComic, _comicService, Logger))
                     {
                         if (editForm.ShowDialog(this) == DialogResult.OK)

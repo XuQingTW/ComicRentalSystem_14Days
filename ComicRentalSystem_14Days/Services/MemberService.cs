@@ -13,20 +13,19 @@ namespace ComicRentalSystem_14Days.Services
         private readonly FileHelper _fileHelper;
         private readonly string _memberFileName = "members.csv";
         private List<Member> _members = new List<Member> { };
-        private readonly ILogger _logger; // 保持 non-nullable
+        private readonly ILogger _logger;
 
         public delegate void MemberDataChangedEventHandler(object? sender, EventArgs e);
         public event MemberDataChangedEventHandler? MembersChanged;
 
-        // 將 ILogger logger 改為 ILogger? logger
         public MemberService(FileHelper fileHelper, ILogger? logger)
         {
             _fileHelper = fileHelper ?? throw new ArgumentNullException(nameof(fileHelper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger), "Logger cannot be null for MemberService.");
 
-            #pragma warning disable CS8602 // 暫時禁用「可能 null 參考的取值」警告 (因為我們知道 _logger 在此處非 null)
-            _logger.Log("MemberService initializing."); // 這是您收到警告的那一行 (請確認行號)
-            #pragma warning restore CS8602 // 恢復警告檢查
+            #pragma warning disable CS8602 
+            _logger.Log("MemberService initializing."); 
+            #pragma warning restore CS8602 
 
             LoadMembers();
             _logger.Log($"MemberService initialized. Loaded {_members.Count} members.");

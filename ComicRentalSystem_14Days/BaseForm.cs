@@ -1,32 +1,29 @@
-﻿// In ComicRentalSystem_14Days/BaseForm.cs
-using System;
-using ComicRentalSystem_14Days.Interfaces; // 確保這個 using 存在
+﻿using System;
+using ComicRentalSystem_14Days.Interfaces;
 using System.Windows.Forms;
-using System.Drawing; // For Font
-using System.ComponentModel; // For DesignerCategory
+using System.Drawing; 
+using System.ComponentModel; 
 
 namespace ComicRentalSystem_14Days
 {
-    [DesignerCategory("Form")] // 保留此屬性
-    public class BaseForm : Form // 恢復 abstract
+    [DesignerCategory("Form")]
+    public class BaseForm : Form
     {
         protected ILogger? Logger { get; private set; }
 
-        // 無參數建構函式，供設計工具和衍生類別使用
         protected BaseForm()
         {
             InitializeBaseFormProperties();
         }
 
-        // 帶 ILogger 參數的建構函式，供運行時使用
-        protected BaseForm(ILogger logger) : this() // 呼叫無參數建構函式以執行 InitializeBaseFormProperties
+        protected BaseForm(ILogger logger) : this()
         {
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         private void InitializeBaseFormProperties()
         {
-            // 保持這些註解，除非您確定它們不是問題
+            // 保持註解，除非確定它們不是問題
             // this.Font = new Font("Microsoft JhengHei UI", 10F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(136)));
             // this.StartPosition = FormStartPosition.CenterScreen;
             // this.FormBorderStyle = FormBorderStyle.FixedSingle;

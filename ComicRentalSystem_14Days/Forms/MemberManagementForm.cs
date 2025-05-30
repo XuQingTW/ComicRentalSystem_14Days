@@ -1,6 +1,4 @@
-﻿// In ComicRentalSystem_14Days/Forms/MemberManagementForm.cs
-
-using ComicRentalSystem_14Days.Models;
+﻿using ComicRentalSystem_14Days.Models;
 using ComicRentalSystem_14Days.Services;
 using ComicRentalSystem_14Days.Helpers;
 using ComicRentalSystem_14Days.Interfaces;
@@ -12,26 +10,22 @@ namespace ComicRentalSystem_14Days.Forms
 {
     public partial class MemberManagementForm : ComicRentalSystem_14Days.BaseForm
     {
-        private MemberService? _memberService; // 接收共享的實例
+        private MemberService? _memberService; 
 
-        // 為設計工具提供無參數的建構函式
         public MemberManagementForm()
         {
             InitializeComponent();
         }
 
-        // 修改建構函式以接收共享的 ILogger 和 MemberService
         public MemberManagementForm(ILogger logger, MemberService memberService) : base(logger)
         {
             InitializeComponent();
-            _memberService = memberService; // 直接使用傳入的共享實例
+            _memberService = memberService; 
             LogActivity("MemberManagementForm initializing with shared services.");
         }
 
-        // 修改 Load 事件，移除服務的初始化，只做事件訂閱和資料載入
         private void MemberManagementForm_Load(object sender, EventArgs e)
         {
-            // 在設計模式下，Logger 和 Service 會是 null，直接返回
             if (this.DesignMode || Logger == null || _memberService == null)
             {
                 return;
@@ -39,7 +33,6 @@ namespace ComicRentalSystem_14Days.Forms
 
             LogActivity("MemberManagementForm is loading runtime components.");
 
-            // 訂閱共享服務的事件
             _memberService.MembersChanged += MemberService_MembersChanged;
 
             SetupDataGridView();
@@ -47,7 +40,6 @@ namespace ComicRentalSystem_14Days.Forms
             LogActivity("MemberManagementForm initialized successfully.");
         }
 
-        // 表單關閉時，取消訂閱事件
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             if (_memberService != null)
@@ -109,7 +101,6 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (_memberService == null || Logger == null) return;
             LogActivity("Add Member button clicked. Opening MemberEditForm for new member.");
-            // 將共享的 service 傳遞給編輯表單
             using (MemberEditForm editForm = new MemberEditForm(null, _memberService, Logger))
             {
                 if (editForm.ShowDialog(this) == DialogResult.OK)
@@ -132,7 +123,6 @@ namespace ComicRentalSystem_14Days.Forms
                 if (selectedMember != null)
                 {
                     LogActivity($"Opening MemberEditForm for editing member ID: {selectedMember.Id}, Name: '{selectedMember.Name}'.");
-                    // 將共享的 service 傳遞給編輯表單
                     using (MemberEditForm editForm = new MemberEditForm(selectedMember, _memberService, Logger))
                     {
                         if (editForm.ShowDialog(this) == DialogResult.OK)

@@ -1,6 +1,4 @@
-﻿// In ComicRentalSystem_14Days/MainForm.cs
-
-using ComicRentalSystem_14Days.Forms;
+﻿using ComicRentalSystem_14Days.Forms;
 using ComicRentalSystem_14Days.Helpers;
 using ComicRentalSystem_14Days.Interfaces;
 using ComicRentalSystem_14Days.Models;
@@ -27,12 +25,11 @@ namespace ComicRentalSystem_14Days
             }
         }
 
-        // 修改建構函式以接收共享的 ILogger 和 ComicService
         public MainForm(ILogger logger, ComicService comicService) : this()
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _comicService = comicService ?? throw new ArgumentNullException(nameof(comicService));
-            base.SetLogger(logger); // 設定基底類別的 Logger
+            base.SetLogger(logger);
 
             _logger.Log("MainForm initialized with shared logger and services.");
         }
@@ -44,14 +41,12 @@ namespace ComicRentalSystem_14Days
             {
                 SetupDataGridView();
                 LoadAvailableComics();
-                // 訂閱事件，以便在漫畫資料變更時自動更新列表
                 _comicService.ComicsChanged += ComicService_ComicsChanged;
             }
         }
 
         private void ComicService_ComicsChanged(object? sender, EventArgs e)
         {
-            // 當資料變更時，重新載入可借閱漫畫列表
             _logger?.Log("ComicsChanged event received, reloading available comics.");
             LoadAvailableComics();
         }
@@ -114,7 +109,6 @@ namespace ComicRentalSystem_14Days
         private void 漫畫管理ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _logger?.Log("Opening ComicManagementForm.");
-            // 確保共享的服務實例存在，並將它們傳遞給管理表單
             if (_logger != null && Program.AppComicService != null)
             {
                 ComicManagementForm comicMgmtForm = new ComicManagementForm(_logger, Program.AppComicService);
@@ -129,7 +123,6 @@ namespace ComicRentalSystem_14Days
         private void 會員管理ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _logger?.Log("Opening MemberManagementForm.");
-            // 確保共享的服務實例存在，並將它們傳遞給管理表單
             if (_logger != null && Program.AppMemberService != null)
             {
                 MemberManagementForm memberMgmtForm = new MemberManagementForm(_logger, Program.AppMemberService);
@@ -144,7 +137,6 @@ namespace ComicRentalSystem_14Days
         private void rentalManagementToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _logger?.Log("Opening RentalForm.");
-            // 確保所有需要的共享服務都存在
             if (_logger == null || Program.AppComicService == null || Program.AppMemberService == null || Program.AppReloadService == null)
             {
                 MessageBox.Show("核心服務未初始化，無法開啟租借管理。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -153,7 +145,6 @@ namespace ComicRentalSystem_14Days
 
             try
             {
-                // 將 Program.cs 中建立的共享服務實例傳遞給 RentalForm
                 RentalForm rentalForm = new RentalForm(Program.AppComicService, Program.AppMemberService, _logger, Program.AppReloadService);
                 rentalForm.ShowDialog(this);
             }
@@ -170,7 +161,6 @@ namespace ComicRentalSystem_14Days
             try
             {
                 string logDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ComicRentalApp", "Logs");
-                // Program.cs 中設定的日誌檔名
                 string logFilePath = Path.Combine(logDirectory, "ComicRentalSystemLog.txt");
 
                 if (File.Exists(logFilePath))

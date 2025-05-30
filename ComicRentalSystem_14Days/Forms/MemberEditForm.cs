@@ -1,11 +1,9 @@
-﻿// ComicRentalSystem_14Days/Forms/MemberEditForm.cs
-using ComicRentalSystem_14Days.Models;
+﻿using ComicRentalSystem_14Days.Models;
 using ComicRentalSystem_14Days.Services;
 using ComicRentalSystem_14Days.Interfaces;
 using System;
 using System.IO;
 using System.Windows.Forms;
-// using System.ComponentModel; // 如果使用 this.DesignMode，則不需要特別為 LicenseManager 引入
 using System.Text.RegularExpressions;
 
 namespace ComicRentalSystem_14Days.Forms
@@ -20,10 +18,8 @@ namespace ComicRentalSystem_14Days.Forms
         public MemberEditForm() : base()
         {
             InitializeComponent();
-            if (this.DesignMode) // 使用 this.DesignMode
+            if (this.DesignMode)
             {
-                // txtName.Text = "設計模式姓名";
-                // btnSaveMember.Enabled = false;
             }
         }
 
@@ -74,8 +70,6 @@ namespace ComicRentalSystem_14Days.Forms
             }
 
             LogActivity("Save Member button clicked.");
-
-            // ... (輸入驗證) ...
 
             try
             {

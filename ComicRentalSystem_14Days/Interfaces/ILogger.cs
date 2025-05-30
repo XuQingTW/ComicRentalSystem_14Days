@@ -10,6 +10,6 @@ namespace ComicRentalSystem_14Days.Interfaces
     {
         void Log(string message);
         void Log(string message, Exception ex); // 技術點4: 過載 (Log 方法的過載)
-        void LogError(string message, Exception? ex = null); // 新增一個專門記錄錯誤的過載
+        void LogError(string message, Exception? ex = null);
     }
 }
