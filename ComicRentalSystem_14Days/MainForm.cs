@@ -81,14 +81,14 @@ namespace ComicRentalSystem_14Days
             if (_currentUser == null) return; // Should not happen if form is loaded correctly
 
             bool isMember = _currentUser.Role == UserRole.Member;
-            if (isMember)
-            {
-                btnRentComic.Enabled = dgvAvailableComics.SelectedRows.Count > 0;
-            }
-            else
-            {
-                btnRentComic.Enabled = false;
-            }
+            // if (isMember)
+            // {
+            //     btnRentComic.Enabled = dgvAvailableComics.SelectedRows.Count > 0;
+            // }
+            // else
+            // {
+            //     btnRentComic.Enabled = false;
+            // }
         }
 
         private void ComicService_ComicsChanged(object? sender, EventArgs e)
@@ -216,28 +216,30 @@ namespace ComicRentalSystem_14Days
             }
 
             // Setup for btnRentComic and related member-specific UI
-            if (btnRentComic != null && lblMyRentedComicsHeader != null && dgvMyRentedComics != null)
+            // if (btnRentComic != null && lblMyRentedComicsHeader != null && dgvMyRentedComics != null)
+            if (lblMyRentedComicsHeader != null && dgvMyRentedComics != null)
             {
                 if (!isAdmin) // User is a Member
                 {
-                    btnRentComic.Visible = true;
-                    btnRentComic.Enabled = dgvAvailableComics.SelectedRows.Count > 0;
+                    // btnRentComic.Visible = true;
+                    // btnRentComic.Enabled = dgvAvailableComics.SelectedRows.Count > 0;
                     lblMyRentedComicsHeader.Visible = true;
                     dgvMyRentedComics.Visible = true;
                 }
                 else // User is an Admin
                 {
-                    btnRentComic.Visible = false;
-                    btnRentComic.Enabled = false;
+                    // btnRentComic.Visible = false;
+                    // btnRentComic.Enabled = false;
                     lblMyRentedComicsHeader.Visible = false;
                     dgvMyRentedComics.Visible = false;
                 }
-                _logger.Log($"btnRentComic visibility set to {!isAdmin}, enabled state based on selection/role.");
+                // _logger.Log($"btnRentComic visibility set to {!isAdmin}, enabled state based on selection/role.");
                 _logger.Log($"lblMyRentedComicsHeader and dgvMyRentedComics visibility set to {!isAdmin}.");
             }
             else
             {
-                _logger.LogWarning("One or more UI controls (btnRentComic, lblMyRentedComicsHeader, dgvMyRentedComics) not found during SetupUIAccessControls.");
+                // Updated log message to reflect that btnRentComic is not checked here anymore
+                _logger.LogWarning("One or more UI controls (lblMyRentedComicsHeader, dgvMyRentedComics) not found during SetupUIAccessControls.");
             }
         }
 
