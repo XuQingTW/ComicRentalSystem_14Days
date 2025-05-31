@@ -214,6 +214,7 @@ C:\Users\Hyman\Desktop\ComicRentalSystem\ComicRentalSystem_14Days\obj\Debug\net8
 C:\Users\Hyman\Desktop\ComicRentalSystem\ComicRentalSystem_14Days\obj\Debug\net8.0-windows\ComicRentalSystem_14Days.Forms.RentalForm.resources
 C:\Users\Hyman\Desktop\ComicRentalSystem\ComicRentalSystem_14Days\obj\Debug\net8.0-windows\ComicRentalSystem_14Days.Forms.RentalPeriodForm.resources
 C:\Users\Hyman\Desktop\ComicRentalSystem\ComicRentalSystem_14Days\obj\Debug\net8.0-windows\ComicRentalSystem_14Days.MainForm.resources
+C:\Users\Hyman\Desktop\ComicRentalSystem\ComicRentalSystem_14Days\obj\Debug\net8.0-windows\ComicRentalSystem_14Days.ModernBaseForm.resources
 C:\Users\Hyman\Desktop\ComicRentalSystem\ComicRentalSystem_14Days\obj\Debug\net8.0-windows\ComicRentalSystem_14Days.csproj.GenerateResource.cache
 C:\Users\Hyman\Desktop\ComicRentalSystem\ComicRentalSystem_14Days\obj\Debug\net8.0-windows\ComicRentalSystem_14Days.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\Hyman\Desktop\ComicRentalSystem\ComicRentalSystem_14Days\obj\Debug\net8.0-windows\ComicRentalSystem_14Days.AssemblyInfoInputs.cache

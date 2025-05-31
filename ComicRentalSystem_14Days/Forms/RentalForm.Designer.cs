@@ -7,6 +7,12 @@
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
+        // === 修正：補齊所有缺少的欄位宣告 ===
+        private System.Windows.Forms.Label lblMember;
+        private System.Windows.Forms.Label lblComic;
+        private System.Windows.Forms.Label lblActualReturnTime;
+        private System.Windows.Forms.Label lblRentedComics;
+
         /// <summary>
         /// Clean up any resources being used.
         /// </summary>
@@ -34,10 +40,13 @@
             btnRent = new Button();
             dgvRentedComics = new DataGridView();
             dtpActualReturnTime = new DateTimePicker();
+
+            // === 修正：初始化所有 Label ===
             lblMember = new Label();
             lblComic = new Label();
             lblActualReturnTime = new Label();
             lblRentedComics = new Label();
+
             ((System.ComponentModel.ISupportInitialize)dgvRentedComics).BeginInit();
             SuspendLayout();
             // 
@@ -58,7 +67,6 @@
             cmbMembers.Name = "cmbMembers";
             cmbMembers.Size = new Size(120, 23); // Adjusted Size
             cmbMembers.TabIndex = 0;
-            // cmbMembers.Text = "選擇會員"; // Initial text can be removed if populated on load
             cmbMembers.SelectedIndexChanged += cmbMembers_SelectedIndexChanged;
             // 
             // lblComic
@@ -78,7 +86,6 @@
             cmbComics.Name = "cmbComics";
             cmbComics.Size = new Size(120, 23); // Adjusted Size
             cmbComics.TabIndex = 1;
-            // cmbComics.Text = "選擇漫畫"; // Initial text can be removed
             // 
             // btnRent
             // 
@@ -132,7 +139,7 @@
             //
             // dgvRentedComics
             //
-            dgvRentedComics.Anchor = ((AnchorStyles.Top | AnchorStyles.Bottom) | AnchorStyles.Left) | AnchorStyles.Right; // Added Anchor for resizing
+            dgvRentedComics.Anchor = ((AnchorStyles.Top | AnchorStyles.Bottom) | AnchorStyles.Left) | AnchorStyles.Right;
             dgvRentedComics.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvRentedComics.Location = new Point(10, 65); // Adjusted Y
             dgvRentedComics.Margin = new Padding(2, 3, 2, 3);
@@ -158,12 +165,11 @@
             Controls.Add(cmbMembers);
             Margin = new Padding(2, 3, 2, 3);
             Name = "RentalForm";
-            Text = "租借管理"; // Changed Form Title
+            Text = "租借管理";
             Load += RentalForm_Load;
             ((System.ComponentModel.ISupportInitialize)dgvRentedComics).EndInit();
             ResumeLayout(false);
-            PerformLayout(); // Added to apply AutoSize of labels
-
+            PerformLayout();
         }
 
         #endregion
@@ -172,9 +178,8 @@
         private System.Windows.Forms.ComboBox cmbComics;
         private System.Windows.Forms.Button btnReturn;
         private System.Windows.Forms.Button btnRent;
-        private System.Windows.Forms.DataGridView dgvRentedComics; // CORRECTED
-        private System.Windows.Forms.DateTimePicker dtpActualReturnTime; // Added
+        private System.Windows.Forms.DataGridView dgvRentedComics;
+        private System.Windows.Forms.DateTimePicker dtpActualReturnTime;
+        // Label 欄位宣告已移至類別頂部
     }
-
-
 }
