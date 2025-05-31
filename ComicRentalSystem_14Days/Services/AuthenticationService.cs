@@ -138,5 +138,24 @@ namespace ComicRentalSystem_14Days.Services
                 _logger.Log("Admin user already exists.");
             }
         }
+
+        public bool DeleteUser(string username)
+        {
+            _logger.Log($"Attempting to delete user: {username}");
+            User? userToDelete = _users.FirstOrDefault(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
+
+            if (userToDelete != null)
+            {
+                _users.Remove(userToDelete);
+                SaveUsers();
+                _logger.Log($"User '{username}' deleted successfully.");
+                return true;
+            }
+            else
+            {
+                _logger.Log($"Delete failed: User '{username}' not found.");
+                return false;
+            }
+        }
     }
 }

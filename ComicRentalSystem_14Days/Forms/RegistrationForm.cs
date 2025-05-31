@@ -76,10 +76,12 @@ namespace ComicRentalSystem_14Days.Forms
 
             if (success)
             {
-                _logger.Log($"User '{username}' registered successfully as {selectedRole}.");
-                Member newMember = new Member { Name = name, PhoneNumber = phoneNumber };
+                _logger.Log($"User '{username}' (from txtUsername) registered successfully as {selectedRole}.");
+                // Create Member object, ensuring Username is populated from txtUsername.Text
+                // Name (for display/other purposes) is from txtName.Text
+                Member newMember = new Member { Name = name, PhoneNumber = phoneNumber, Username = username };
                 _memberService.AddMember(newMember);
-                _logger.Log($"Member record created for Name: {name}, Phone: {phoneNumber}");
+                _logger.Log($"Member record created for Name: {name}, Username: {username}, Phone: {phoneNumber}");
 
                 MessageBox.Show($"使用者 '{username}' (姓名: {name}) 已成功註冊為 {selectedRole}。", "註冊成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 // Optionally close the form or clear fields
