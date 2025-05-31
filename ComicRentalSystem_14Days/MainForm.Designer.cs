@@ -73,6 +73,12 @@ namespace ComicRentalSystem_14Days
             menuStrip2.TabIndex = 1;
             menuStrip2.Text = "menuStrip2";
             // 
+            // this.btnRentComic = new System.Windows.Forms.Button();
+            //
+            this.lblMyRentedComicsHeader = new System.Windows.Forms.Label();
+            // this.dgvMyRentedComics = new System.Windows.Forms.DataGridView();
+            // ((System.ComponentModel.ISupportInitialize)(this.dgvMyRentedComics)).BeginInit();
+            //
             // 檔案ToolStripMenuItem
             // 
             檔案ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { 離開ToolStripMenuItem });
@@ -190,15 +196,15 @@ namespace ComicRentalSystem_14Days
             //
             // btnRentComic
             //
-            this.btnRentComic.Location = new System.Drawing.Point(12, 445);
-            this.btnRentComic.Name = "btnRentComic";
-            this.btnRentComic.Size = new System.Drawing.Size(120, 30);
-            this.btnRentComic.TabIndex = 5;
-            this.btnRentComic.Text = "租借";
-            this.btnRentComic.UseVisualStyleBackColor = true;
-            this.btnRentComic.Visible = false;
-            this.btnRentComic.Enabled = false;
-            this.btnRentComic.Click += new System.EventHandler(this.btnRentComic_Click);
+            // this.btnRentComic.Location = new System.Drawing.Point(12, 445);
+            // this.btnRentComic.Name = "btnRentComic";
+            // this.btnRentComic.Size = new System.Drawing.Size(120, 30);
+            // this.btnRentComic.TabIndex = 5;
+            // this.btnRentComic.Text = "租借";
+            // this.btnRentComic.UseVisualStyleBackColor = true;
+            // this.btnRentComic.Visible = false;
+            // this.btnRentComic.Enabled = false;
+            // this.btnRentComic.Click += new System.EventHandler(this.btnRentComic_Click);
             //
             // lblMyRentedComicsHeader
             //
@@ -213,17 +219,17 @@ namespace ComicRentalSystem_14Days
             //
             // dgvMyRentedComics
             //
-            this.dgvMyRentedComics.AllowUserToAddRows = false;
-            this.dgvMyRentedComics.AllowUserToDeleteRows = false;
-            this.dgvMyRentedComics.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvMyRentedComics.Location = new System.Drawing.Point(12, 510); // Positioned below lblMyRentedComicsHeader
-            this.dgvMyRentedComics.Name = "dgvMyRentedComics";
-            this.dgvMyRentedComics.ReadOnly = true;
-            this.dgvMyRentedComics.RowHeadersWidth = 51;
-            this.dgvMyRentedComics.RowTemplate.Height = 27; // Standard height
-            this.dgvMyRentedComics.Size = new System.Drawing.Size(876, 150); // Takes most of the width, 150px height
-            this.dgvMyRentedComics.TabIndex = 7;
-            this.dgvMyRentedComics.Visible = false;
+            // this.dgvMyRentedComics.AllowUserToAddRows = false;
+            // this.dgvMyRentedComics.AllowUserToDeleteRows = false;
+            // this.dgvMyRentedComics.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            // this.dgvMyRentedComics.Location = new System.Drawing.Point(12, 510); // Positioned below lblMyRentedComicsHeader
+            // this.dgvMyRentedComics.Name = "dgvMyRentedComics";
+            // this.dgvMyRentedComics.ReadOnly = true;
+            // this.dgvMyRentedComics.RowHeadersWidth = 51;
+            // this.dgvMyRentedComics.RowTemplate.Height = 27; // Standard height
+            // this.dgvMyRentedComics.Size = new System.Drawing.Size(876, 150); // Takes most of the width, 150px height
+            // this.dgvMyRentedComics.TabIndex = 7;
+            // this.dgvMyRentedComics.Visible = false;
             //
             // MainForm
             // 
@@ -231,8 +237,8 @@ namespace ComicRentalSystem_14Days
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(900, 690); // Increased client height to accommodate new controls + status bar
             Controls.Add(this.lblMyRentedComicsHeader); // Added
-            Controls.Add(this.dgvMyRentedComics); // Added
-            Controls.Add(this.btnRentComic);
+            // Controls.Add(this.dgvMyRentedComics); // Added
+            // Controls.Add(this.btnRentComic);
             Controls.Add(dgvAvailableComics);
             Controls.Add(lblAvailableComics);
             Controls.Add(menuStrip1); // This menuStrip1 seems to be secondary or unused for items
@@ -248,7 +254,7 @@ namespace ComicRentalSystem_14Days
             ((System.ComponentModel.ISupportInitialize)dgvAvailableComics).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvMyRentedComics)).EndInit(); // Added
+            // ((System.ComponentModel.ISupportInitialize)(this.dgvMyRentedComics)).EndInit(); // Added
             ResumeLayout(false);
             PerformLayout();
         }
@@ -271,8 +277,8 @@ namespace ComicRentalSystem_14Days
         private System.Windows.Forms.ToolStripMenuItem logoutToolStripMenuItem;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelUser;
-        private System.Windows.Forms.Button btnRentComic;
+        // private System.Windows.Forms.Button btnRentComic;
         private System.Windows.Forms.Label lblMyRentedComicsHeader; // Added
-        private System.Windows.Forms.DataGridView dgvMyRentedComics; // Added
+        // private System.Windows.Forms.DataGridView dgvMyRentedComics; // Added
     }
 }
