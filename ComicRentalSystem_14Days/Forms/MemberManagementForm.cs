@@ -12,6 +12,7 @@ namespace ComicRentalSystem_14Days.Forms
     {
         private MemberService? _memberService;
         private AuthenticationService? _authenticationService; // Added AuthenticationService
+        private readonly User? _currentUser;
 
         public MemberManagementForm()
         {
@@ -19,11 +20,12 @@ namespace ComicRentalSystem_14Days.Forms
         }
 
         // Updated constructor to include AuthenticationService
-        public MemberManagementForm(ILogger logger, MemberService memberService, AuthenticationService authenticationService) : base(logger)
+        public MemberManagementForm(ILogger logger, MemberService memberService, AuthenticationService authenticationService, User? currentUser) : base(logger)
         {
             InitializeComponent();
             _memberService = memberService ?? throw new ArgumentNullException(nameof(memberService));
             _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
+            _currentUser = currentUser;
             LogActivity("MemberManagementForm initializing with MemberService and AuthenticationService.");
         }
 
@@ -45,7 +47,7 @@ namespace ComicRentalSystem_14Days.Forms
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            LogActivity($"MemberManagementForm closing. User: {CurrentUser?.Username ?? "N/A"}");
+            LogActivity($"MemberManagementForm closing. User: {_currentUser?.Username ?? "N/A"}");
             if (_memberService != null)
             {
                 _memberService.MembersChanged -= MemberService_MembersChanged;
