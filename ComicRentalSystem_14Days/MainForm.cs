@@ -534,7 +534,6 @@ namespace ComicRentalSystem_14Days
                 return;
             }
 
-            // _logger?.Log($"LoadMyRentedComics: Loading comics for member '{_currentUser.Username}'."); // Original log
             _logger?.LogInformation($"LoadMyRentedComics: Attempting to load rentals for user: '{_currentUser?.Username ?? "Unknown user"}'.");
 
             try
@@ -558,8 +557,6 @@ namespace ComicRentalSystem_14Days
                     return;
                 }
 
-                // Log count before Where filter (already done by logging allComics.Count)
-
                 _logger?.LogDebug($"LoadMyRentedComics: Filtering for comics rented by Member ID: {currentMember.Id}.");
 
                 var myRentedComics = allComics
@@ -570,8 +567,6 @@ namespace ComicRentalSystem_14Days
                         Author = c.Author,
                         RentalDate = c.RentalDate,
                         ExpectedReturnDate = c.ReturnDate
-                        // Other properties of RentalDetailViewModel like MemberId, MemberName, etc.,
-                        // can be left to their default values as they are not currently displayed in dgvMyRentedComics.
                     })
                     .ToList();
 
@@ -579,9 +574,7 @@ namespace ComicRentalSystem_14Days
 
                 if (myRentedComics.Any())
                 {
-                    // Log details of each rented comic (or a summary)
-                    // For brevity in logs, let's log the count and titles. For more detail, could serialize the whole list.
-                    var comicTitles = string.Join(", ", myRentedComics.Select(c => $"'{c.Title}'"));
+                    var comicTitles = string.Join(", ", myRentedComics.Select(c => $"'{c.ComicTitle}'"));
                     _logger?.LogDebug($"LoadMyRentedComics: Details of rented comics for Member ID {currentMember.Id}: [{comicTitles}]");
                 }
                 else
@@ -596,8 +589,6 @@ namespace ComicRentalSystem_14Days
 
                 if (dgvMyRentedComics.IsHandleCreated && this.InvokeRequired) { this.Invoke(updateGrid); }
                 else if (dgvMyRentedComics.IsHandleCreated) { updateGrid(); }
-
-                // _logger?.Log($"LoadMyRentedComics: Successfully loaded {myRentedComics.Count} rented comics for member ID {currentMember.Id}."); // Covered by more specific logs
             }
             catch (Exception ex)
             {
@@ -1147,14 +1138,6 @@ namespace ComicRentalSystem_14Days
                 _logger?.LogWarning("ApplyAvailableComicsFilter: Critical components are null. Skipping filter application.");
                 return;
             }
-
-            // This filter is designed for the member's view of available comics.
-            // If an admin is viewing dgvAvailableComics (e.g., in Comic Management), this filter might not be appropriate
-            // or might need to operate on a different dataset (_allAdminComicStatuses).
-            // The IsMemberViewActive() check in event handlers helps restrict when this is called.
-            // However, LoadAvailableComics() also needs to be updated or this method needs to be smart
-            // about which underlying list to filter if dgvAvailableComics is shared.
-            // For now, we assume it filters the list of comics that are NOT rented.
 
             try
             {

@@ -64,6 +64,16 @@ namespace ComicRentalSystem_14Days.Logging
             WriteLogEntry("警告", message);
         }
 
+        public void LogInformation(string message)
+        {
+            WriteLogEntry("資訊", message);
+        }
+
+        public void LogDebug(string message)
+        {
+            WriteLogEntry("偵錯", message);
+        }
+
         private void WriteLogEntry(string level, string message)
         {
             // 技術點8: 檔案與資料夾處理
