@@ -28,186 +28,198 @@
         /// </summary>
         private void InitializeComponent()
         {
-            lblTitle = new Label();
-            lblAuthor = new Label();
-            lblIsbn = new Label();
-            lblGenre = new Label();
-            txtAuthor = new TextBox();
-            txtIsbn = new TextBox();
-            txtGenre = new TextBox();
-            chkIsRented = new CheckBox();
-            tableLayoutPanel1 = new TableLayoutPanel();
-            txtTitle = new TextBox();
-            tableLayoutPanel2 = new TableLayoutPanel();
-            btnSave = new Button();
-            btnCancel = new Button();
-            tableLayoutPanel1.SuspendLayout();
-            tableLayoutPanel2.SuspendLayout();
-            SuspendLayout();
+            this.lblTitle = new System.Windows.Forms.Label();
+            this.txtTitle = new System.Windows.Forms.TextBox();
+            this.lblAuthor = new System.Windows.Forms.Label();
+            this.txtAuthor = new System.Windows.Forms.TextBox();
+            this.lblIsbn = new System.Windows.Forms.Label();
+            this.txtIsbn = new System.Windows.Forms.TextBox();
+            this.lblGenre = new System.Windows.Forms.Label();
+            this.txtGenre = new System.Windows.Forms.TextBox();
+            this.chkIsRented = new System.Windows.Forms.CheckBox();
+            this.btnSave = new System.Windows.Forms.Button();
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.gbComicDetails = new System.Windows.Forms.GroupBox();
+            this.gbStatus = new System.Windows.Forms.GroupBox();
+
+            this.gbComicDetails.SuspendLayout();
+            this.gbStatus.SuspendLayout();
+            this.SuspendLayout();
+            //
+            // gbComicDetails
+            //
+            this.gbComicDetails.Controls.Add(this.lblTitle);
+            this.gbComicDetails.Controls.Add(this.txtTitle);
+            this.gbComicDetails.Controls.Add(this.lblAuthor);
+            this.gbComicDetails.Controls.Add(this.txtAuthor);
+            this.gbComicDetails.Controls.Add(this.lblIsbn);
+            this.gbComicDetails.Controls.Add(this.txtIsbn);
+            this.gbComicDetails.Controls.Add(this.lblGenre);
+            this.gbComicDetails.Controls.Add(this.txtGenre);
+            this.gbComicDetails.Location = new System.Drawing.Point(15, 15);
+            this.gbComicDetails.Name = "gbComicDetails";
+            this.gbComicDetails.Padding = new System.Windows.Forms.Padding(10);
+            this.gbComicDetails.Size = new System.Drawing.Size(450, 155); // Adjusted height
+            this.gbComicDetails.TabIndex = 0;
+            this.gbComicDetails.TabStop = false;
+            this.gbComicDetails.Text = "Comic Information";
             // 
             // lblTitle
             // 
-            lblTitle.AutoSize = true;
-            lblTitle.Location = new Point(3, 0);
-            lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(31, 15);
-            lblTitle.TabIndex = 0;
-            lblTitle.Text = "書名";
-            // 
-            // lblAuthor
-            // 
-            lblAuthor.AutoSize = true;
-            lblAuthor.Location = new Point(3, 25);
-            lblAuthor.Name = "lblAuthor";
-            lblAuthor.Size = new Size(31, 15);
-            lblAuthor.TabIndex = 1;
-            lblAuthor.Text = "作者";
-            // 
-            // lblIsbn
-            // 
-            lblIsbn.AutoSize = true;
-            lblIsbn.Location = new Point(3, 0);
-            lblIsbn.Name = "lblIsbn";
-            lblIsbn.Size = new Size(34, 15);
-            lblIsbn.TabIndex = 2;
-            lblIsbn.Text = "ISBN";
-            // 
-            // lblGenre
-            // 
-            lblGenre.AutoSize = true;
-            lblGenre.Location = new Point(3, 25);
-            lblGenre.Name = "lblGenre";
-            lblGenre.Size = new Size(31, 15);
-            lblGenre.TabIndex = 3;
-            lblGenre.Text = "類型";
-            // 
-            // txtAuthor
-            // 
-            txtAuthor.Location = new Point(44, 28);
-            txtAuthor.Name = "txtAuthor";
-            txtAuthor.Size = new Size(88, 23);
-            txtAuthor.TabIndex = 5;
-            // 
-            // txtIsbn
-            // 
-            txtIsbn.Location = new Point(45, 3);
-            txtIsbn.Name = "txtIsbn";
-            txtIsbn.Size = new Size(88, 23);
-            txtIsbn.TabIndex = 6;
-            // 
-            // txtGenre
-            // 
-            txtGenre.Location = new Point(45, 28);
-            txtGenre.Name = "txtGenre";
-            txtGenre.Size = new Size(88, 23);
-            txtGenre.TabIndex = 7;
-            // 
-            // chkIsRented
-            // 
-            chkIsRented.AutoSize = true;
-            chkIsRented.Enabled = false;
-            chkIsRented.Location = new Point(245, 171);
-            chkIsRented.Name = "chkIsRented";
-            chkIsRented.Size = new Size(86, 19);
-            chkIsRented.TabIndex = 8;
-            chkIsRented.Text = "是否已租借";
-            chkIsRented.UseVisualStyleBackColor = true;
-            // 
-            // tableLayoutPanel1
-            // 
-            tableLayoutPanel1.ColumnCount = 2;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 19.1740417F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 80.82596F));
-            tableLayoutPanel1.Controls.Add(lblAuthor, 0, 1);
-            tableLayoutPanel1.Controls.Add(lblTitle, 0, 0);
-            tableLayoutPanel1.Controls.Add(txtTitle, 1, 0);
-            tableLayoutPanel1.Controls.Add(txtAuthor, 1, 1);
-            tableLayoutPanel1.Location = new Point(242, 59);
-            tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 2;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel1.Size = new Size(218, 51);
-            tableLayoutPanel1.TabIndex = 9;
+            this.lblTitle.Location = new System.Drawing.Point(15, 30);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(95, 23);
+            this.lblTitle.TabIndex = 0;
+            this.lblTitle.Text = "Title:";
+            this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // txtTitle
             // 
-            txtTitle.Location = new Point(44, 3);
-            txtTitle.Name = "txtTitle";
-            txtTitle.Size = new Size(88, 23);
-            txtTitle.TabIndex = 4;
+            this.txtTitle.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                | System.Windows.Forms.AnchorStyles.Right);
+            this.txtTitle.Location = new System.Drawing.Point(120, 30);
+            this.txtTitle.Name = "txtTitle";
+            this.txtTitle.Size = new System.Drawing.Size(315, 23);
+            this.txtTitle.TabIndex = 1;
+            this.txtTitle.Validating += new System.ComponentModel.CancelEventHandler(this.txtTitle_Validating);
             // 
-            // tableLayoutPanel2
+            // lblAuthor
             // 
-            tableLayoutPanel2.ColumnCount = 2;
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 19.6428566F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 80.35714F));
-            tableLayoutPanel2.Controls.Add(txtIsbn, 1, 0);
-            tableLayoutPanel2.Controls.Add(lblIsbn, 0, 0);
-            tableLayoutPanel2.Controls.Add(lblGenre, 0, 1);
-            tableLayoutPanel2.Controls.Add(txtGenre, 1, 1);
-            tableLayoutPanel2.Location = new Point(242, 116);
-            tableLayoutPanel2.Name = "tableLayoutPanel2";
-            tableLayoutPanel2.RowCount = 2;
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel2.Size = new Size(218, 50);
-            tableLayoutPanel2.TabIndex = 10;
+            this.lblAuthor.Location = new System.Drawing.Point(15, 60);
+            this.lblAuthor.Name = "lblAuthor";
+            this.lblAuthor.Size = new System.Drawing.Size(95, 23);
+            this.lblAuthor.TabIndex = 2;
+            this.lblAuthor.Text = "Author:";
+            this.lblAuthor.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // txtAuthor
+            // 
+            this.txtAuthor.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                | System.Windows.Forms.AnchorStyles.Right);
+            this.txtAuthor.Location = new System.Drawing.Point(120, 60);
+            this.txtAuthor.Name = "txtAuthor";
+            this.txtAuthor.Size = new System.Drawing.Size(315, 23);
+            this.txtAuthor.TabIndex = 3;
+            this.txtAuthor.Validating += new System.ComponentModel.CancelEventHandler(this.txtAuthor_Validating);
+            // 
+            // lblIsbn
+            // 
+            this.lblIsbn.Location = new System.Drawing.Point(15, 90);
+            this.lblIsbn.Name = "lblIsbn";
+            this.lblIsbn.Size = new System.Drawing.Size(95, 23);
+            this.lblIsbn.TabIndex = 4;
+            this.lblIsbn.Text = "ISBN:";
+            this.lblIsbn.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // txtIsbn
+            // 
+            this.txtIsbn.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                | System.Windows.Forms.AnchorStyles.Right);
+            this.txtIsbn.Location = new System.Drawing.Point(120, 90);
+            this.txtIsbn.Name = "txtIsbn";
+            this.txtIsbn.Size = new System.Drawing.Size(315, 23);
+            this.txtIsbn.TabIndex = 5;
+            this.txtIsbn.Validating += new System.ComponentModel.CancelEventHandler(this.txtIsbn_Validating);
+            // 
+            // lblGenre
+            // 
+            this.lblGenre.Location = new System.Drawing.Point(15, 120);
+            this.lblGenre.Name = "lblGenre";
+            this.lblGenre.Size = new System.Drawing.Size(95, 23);
+            this.lblGenre.TabIndex = 6;
+            this.lblGenre.Text = "Genre:";
+            this.lblGenre.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // txtGenre
+            // 
+            this.txtGenre.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                | System.Windows.Forms.AnchorStyles.Right);
+            this.txtGenre.Location = new System.Drawing.Point(120, 120);
+            this.txtGenre.Name = "txtGenre";
+            this.txtGenre.Size = new System.Drawing.Size(315, 23);
+            this.txtGenre.TabIndex = 7;
+            this.txtGenre.Validating += new System.ComponentModel.CancelEventHandler(this.txtGenre_Validating);
+            //
+            // gbStatus
+            //
+            this.gbStatus.Controls.Add(this.chkIsRented);
+            this.gbStatus.Location = new System.Drawing.Point(15, 180); // Positioned below gbComicDetails
+            this.gbStatus.Name = "gbStatus";
+            this.gbStatus.Padding = new System.Windows.Forms.Padding(10);
+            this.gbStatus.Size = new System.Drawing.Size(450, 60);
+            this.gbStatus.TabIndex = 1;
+            this.gbStatus.TabStop = false;
+            this.gbStatus.Text = "Rental Status";
+            // 
+            // chkIsRented
+            // 
+            this.chkIsRented.AutoSize = true;
+            this.chkIsRented.Enabled = false;
+            this.chkIsRented.Location = new System.Drawing.Point(15, 25);
+            this.chkIsRented.Name = "chkIsRented";
+            this.chkIsRented.Size = new System.Drawing.Size(100, 19); // Adjusted size
+            this.chkIsRented.TabIndex = 0; // TabIndex within this groupbox
+            this.chkIsRented.Text = "Is Rented";
+            this.chkIsRented.UseVisualStyleBackColor = true;
             // 
             // btnSave
             // 
-            btnSave.Location = new Point(326, 170);
-            btnSave.Name = "btnSave";
-            btnSave.Size = new Size(66, 20);
-            btnSave.TabIndex = 11;
-            btnSave.Text = "儲存";
-            btnSave.UseVisualStyleBackColor = true;
-            btnSave.Click += btnSave_Click;
+            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right);
+            this.btnSave.Location = new System.Drawing.Point(279, 262); // Positioned at bottom right
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(90, 30);
+            this.btnSave.TabIndex = 2;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // btnCancel
             // 
-            btnCancel.Location = new Point(396, 170);
-            btnCancel.Name = "btnCancel";
-            btnCancel.Size = new Size(66, 20);
-            btnCancel.TabIndex = 12;
-            btnCancel.Text = "取消";
-            btnCancel.UseVisualStyleBackColor = true;
-            btnCancel.Click += btnCancel_Click;
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right);
+            this.btnCancel.Location = new System.Drawing.Point(375, 262); // Positioned at bottom right
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(90, 30);
+            this.btnCancel.TabIndex = 3;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // ComicEditForm
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(700, 397);
-            Controls.Add(btnCancel);
-            Controls.Add(btnSave);
-            Controls.Add(tableLayoutPanel2);
-            Controls.Add(tableLayoutPanel1);
-            Controls.Add(chkIsRented);
-            Name = "ComicEditForm";
-            Text = "ComicEditForm";
-            tableLayoutPanel1.ResumeLayout(false);
-            tableLayoutPanel1.PerformLayout();
-            tableLayoutPanel2.ResumeLayout(false);
-            tableLayoutPanel2.PerformLayout();
-            ResumeLayout(false);
-            PerformLayout();
+            this.AcceptButton = this.btnSave;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoValidate = System.Windows.Forms.AutoValidate.EnableAllowFocusChange;
+            this.CancelButton = this.btnCancel;
+            this.ClientSize = new System.Drawing.Size(480, 307); // Adjusted client size
+            this.Controls.Add(this.gbComicDetails);
+            this.Controls.Add(this.gbStatus);
+            this.Controls.Add(this.btnSave);
+            this.Controls.Add(this.btnCancel);
+            this.Name = "ComicEditForm";
+            this.Padding = new System.Windows.Forms.Padding(15);
+            this.Text = "Edit Comic"; // Default title
+            this.gbComicDetails.ResumeLayout(false);
+            this.gbComicDetails.PerformLayout();
+            this.gbStatus.ResumeLayout(false);
+            this.gbStatus.PerformLayout();
+            this.ResumeLayout(false);
         }
 
         #endregion
 
-        private Label lblTitle;
-        private Label lblAuthor;
-        private Label lblIsbn;
-        private Label lblGenre;
-        private TextBox txtAuthor;
-        private TextBox txtIsbn;
-        private TextBox txtGenre;
-        private CheckBox chkIsRented;
-        private TableLayoutPanel tableLayoutPanel1;
-        private TextBox txtTitle;
-        private TableLayoutPanel tableLayoutPanel2;
-        private Button btnSave;
-        private Button btnCancel;
+        private System.Windows.Forms.Label lblTitle;
+        private System.Windows.Forms.TextBox txtTitle;
+        private System.Windows.Forms.Label lblAuthor;
+        private System.Windows.Forms.TextBox txtAuthor;
+        private System.Windows.Forms.Label lblIsbn;
+        private System.Windows.Forms.TextBox txtIsbn;
+        private System.Windows.Forms.Label lblGenre;
+        private System.Windows.Forms.TextBox txtGenre;
+        private System.Windows.Forms.CheckBox chkIsRented;
+        private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.GroupBox gbComicDetails;
+        private System.Windows.Forms.GroupBox gbStatus;
     }
 }

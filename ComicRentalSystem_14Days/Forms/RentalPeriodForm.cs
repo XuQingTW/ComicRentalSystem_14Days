@@ -1,9 +1,11 @@
 using System;
 using System.Windows.Forms;
 
+using System.Drawing; // Required for Color
+
 namespace ComicRentalSystem_14Days.Forms
 {
-    public partial class RentalPeriodForm : Form
+    public partial class RentalPeriodForm : BaseForm // Changed inheritance
     {
         public DateTime SelectedReturnDate { get; private set; }
 
@@ -11,6 +13,26 @@ namespace ComicRentalSystem_14Days.Forms
         {
             InitializeComponent();
 
+            // Apply Modern Styling
+            if (btnConfirmRental != null) StyleModernButton(btnConfirmRental);
+            if (btnCancelRental != null) StyleSecondaryButton(btnCancelRental);
+
+            if (lblInfo != null)
+            {
+                lblInfo.Font = ModernBaseForm.PrimaryFont ?? new System.Drawing.Font("Segoe UI", 9F);
+                lblInfo.ForeColor = ModernBaseForm.TextColor;
+            }
+
+            if (monthCalendarRental != null)
+            {
+                monthCalendarRental.BackColor = ModernBaseForm.SecondaryColor;
+                monthCalendarRental.ForeColor = ModernBaseForm.TextColor; // Affects day numbers
+                monthCalendarRental.TitleBackColor = ModernBaseForm.PrimaryColor;
+                monthCalendarRental.TitleForeColor = Color.White;
+                monthCalendarRental.TrailingForeColor = Color.Gray; // Dates not in the current month
+            }
+
+            // Original logic for setting dates
             monthCalendarRental.MinDate = minDate;
             monthCalendarRental.MaxDate = maxDate;
 
