@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using System.Linq; // Added for All() method
 
 namespace ComicRentalSystem_14Days.Forms
 {
@@ -14,10 +15,12 @@ namespace ComicRentalSystem_14Days.Forms
         private readonly MemberService? _memberService;
         private Member? _editableMember;
         private bool _isEditMode;
+        private System.Windows.Forms.ErrorProvider errorProvider1;
 
         public MemberEditForm() : base()
         {
             InitializeComponent();
+            this.errorProvider1 = new System.Windows.Forms.ErrorProvider();
             if (this.DesignMode)
             {
             }
@@ -25,7 +28,24 @@ namespace ComicRentalSystem_14Days.Forms
 
         public MemberEditForm(Member? memberToEdit, MemberService memberService, ILogger logger) : this()
         {
-            base.SetLogger(logger);
+            base.SetLogger(logger); // Ensure logger is set for BaseForm methods like StyleModern...
+
+            // Apply Modern Styling after InitializeComponent has run (called from :this())
+            if (btnSaveMember != null) StyleModernButton(btnSaveMember);
+            if (btnCancelMember != null) StyleSecondaryButton(btnCancelMember);
+
+            // Style GroupBox - using Controls.Find as a safe way if direct field access is an issue
+            // In a typical WinForms setup, this.gbMemberDetails would be directly accessible.
+            Control[] foundControls = this.Controls.Find("gbMemberDetails", true);
+            if (foundControls.Length > 0 && foundControls[0] is GroupBox gb)
+            {
+                StyleModernGroupBox(gb);
+            }
+            // else if (this.gbMemberDetails != null) // Fallback if designer made it a direct field
+            // {
+            // StyleModernGroupBox(this.gbMemberDetails);
+            // }
+
 
             _memberService = memberService ?? throw new ArgumentNullException(nameof(memberService));
             _editableMember = memberToEdit;
@@ -71,48 +91,17 @@ namespace ComicRentalSystem_14Days.Forms
 
             LogActivity("儲存會員按鈕已點擊。");
 
+            if (!this.ValidateChildren()) {
+                 MessageBox.Show("Please correct the highlighted errors.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                 LogActivity("Validation failed for member edit. Highlighted errors present.");
+                 return;
+            }
+
             string name = txtName.Text.Trim();
             string phoneNumber = txtPhoneNumber.Text.Trim();
 
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                LogActivity("驗證失敗: 姓名不得為空。");
-                MessageBox.Show("姓名不得為空。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtName.Focus();
-                return;
-            }
-
-            if (!name.All(c => char.IsLetter(c) || char.IsWhiteSpace(c)))
-            {
-                LogActivity("驗證失敗: 姓名包含無效字元。");
-                MessageBox.Show("姓名只能包含字母和空格。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtName.Focus();
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(phoneNumber))
-            {
-                LogActivity("驗證失敗: 電話號碼不得為空。");
-                MessageBox.Show("電話號碼不得為空。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtPhoneNumber.Focus();
-                return;
-            }
-
-            if (!phoneNumber.All(char.IsDigit))
-            {
-                LogActivity("驗證失敗: 電話號碼包含非數字字元。");
-                MessageBox.Show("電話號碼只能包含數字。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtPhoneNumber.Focus();
-                return;
-            }
-
-            if (phoneNumber.Length < 7 || phoneNumber.Length > 15)
-            {
-                LogActivity("驗證失敗: 電話號碼長度無效。");
-                MessageBox.Show("電話號碼長度應在 7 到 15 位數字之間。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtPhoneNumber.Focus();
-                return;
-            }
+            // Specific logic for uniqueness or other business rules can remain if needed,
+            // but basic presence/format checks are now handled by Validating events.
 
             try
             {
@@ -163,6 +152,55 @@ namespace ComicRentalSystem_14Days.Forms
         private void MemberEditForm_Load(object sender, EventArgs e)
         {
             LogActivity("會員編輯表單已完成載入。");
+        }
+
+        // Validating Event Handlers
+        private void txtName_Validating(object? sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (sender is TextBox txt)
+            {
+                if (string.IsNullOrWhiteSpace(txt.Text))
+                {
+                    errorProvider1?.SetError(txt, "Name cannot be empty.");
+                    e.Cancel = true;
+                }
+                else if (!txt.Text.Trim().All(c => char.IsLetter(c) || char.IsWhiteSpace(c)))
+                {
+                    errorProvider1?.SetError(txt, "Name can only contain letters and spaces.");
+                    e.Cancel = true;
+                }
+                else
+                {
+                    errorProvider1?.SetError(txt, ""); // Clear error
+                }
+            }
+        }
+
+        private void txtPhoneNumber_Validating(object? sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (sender is TextBox txt)
+            {
+                string phoneNumber = txt.Text.Trim();
+                if (string.IsNullOrWhiteSpace(phoneNumber))
+                {
+                    errorProvider1?.SetError(txt, "Phone number cannot be empty.");
+                    e.Cancel = true;
+                }
+                else if (!phoneNumber.All(char.IsDigit))
+                {
+                    errorProvider1?.SetError(txt, "Phone number can only contain digits.");
+                    e.Cancel = true;
+                }
+                else if (phoneNumber.Length < 7 || phoneNumber.Length > 15)
+                {
+                    errorProvider1?.SetError(txt, "Phone number must be between 7 and 15 digits.");
+                    e.Cancel = true;
+                }
+                else
+                {
+                    errorProvider1?.SetError(txt, ""); // Clear error
+                }
+            }
         }
     }
 }

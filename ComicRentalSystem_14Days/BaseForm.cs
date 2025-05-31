@@ -7,13 +7,13 @@ using System.ComponentModel;
 namespace ComicRentalSystem_14Days
 {
     [DesignerCategory("Form")]
-    public class BaseForm : Form
+    public class BaseForm : ModernBaseForm // Changed inheritance
     {
         protected ILogger? Logger { get; private set; }
 
-        protected BaseForm()
+        protected BaseForm() : base() // Added call to base constructor
         {
-            InitializeBaseFormProperties();
+            // InitializeBaseFormProperties(); // Properties now set by ModernBaseForm or can be removed
         }
 
         protected BaseForm(ILogger logger) : this()
@@ -21,14 +21,8 @@ namespace ComicRentalSystem_14Days
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        private void InitializeBaseFormProperties()
-        {
-            // 保持註解，除非確定它們不是問題
-            // this.Font = new Font("Microsoft JhengHei UI", 10F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(136)));
-            // this.StartPosition = FormStartPosition.CenterScreen;
-            // this.FormBorderStyle = FormBorderStyle.FixedSingle;
-            // this.MaximizeBox = false;
-        }
+        // Removed InitializeBaseFormProperties as its settings are covered by ModernBaseForm
+        // or are default/undesired in the new styling context.
 
         public void SetLogger(ILogger logger)
         {

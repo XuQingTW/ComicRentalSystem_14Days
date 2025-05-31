@@ -16,6 +16,8 @@ namespace ComicRentalSystem_14Days.Forms
         private System.Windows.Forms.Label lblPhoneNumber;
         private System.Windows.Forms.TextBox txtPhoneNumber;
         private System.Windows.Forms.Button btnRegister;
+        private System.Windows.Forms.GroupBox gbAccountCredentials;
+        private System.Windows.Forms.GroupBox gbMemberInfo;
 
         protected override void Dispose(bool disposing)
         {
@@ -41,167 +43,196 @@ namespace ComicRentalSystem_14Days.Forms
             this.lblPhoneNumber = new System.Windows.Forms.Label();
             this.txtPhoneNumber = new System.Windows.Forms.TextBox();
             this.btnRegister = new System.Windows.Forms.Button();
+            this.gbAccountCredentials = new System.Windows.Forms.GroupBox();
+            this.gbMemberInfo = new System.Windows.Forms.GroupBox();
+
+            this.gbAccountCredentials.SuspendLayout();
+            this.gbMemberInfo.SuspendLayout();
             this.SuspendLayout();
+            //
+            // gbAccountCredentials
+            //
+            this.gbAccountCredentials.Controls.Add(this.lblUsername);
+            this.gbAccountCredentials.Controls.Add(this.txtUsername);
+            this.gbAccountCredentials.Controls.Add(this.lblPassword);
+            this.gbAccountCredentials.Controls.Add(this.txtPassword);
+            this.gbAccountCredentials.Controls.Add(this.lblConfirmPassword);
+            this.gbAccountCredentials.Controls.Add(this.txtConfirmPassword);
+            this.gbAccountCredentials.Location = new System.Drawing.Point(15, 15);
+            this.gbAccountCredentials.Name = "gbAccountCredentials";
+            this.gbAccountCredentials.Padding = new System.Windows.Forms.Padding(10);
+            this.gbAccountCredentials.Size = new System.Drawing.Size(420, 130); // Adjusted size
+            this.gbAccountCredentials.TabIndex = 0;
+            this.gbAccountCredentials.TabStop = false;
+            this.gbAccountCredentials.Text = "Account Credentials";
             //
             // lblUsername
             //
-            this.lblUsername.AutoSize = true;
-            this.lblUsername.Location = new System.Drawing.Point(30, 30);
+            this.lblUsername.Location = new System.Drawing.Point(15, 30);
             this.lblUsername.Name = "lblUsername";
-            this.lblUsername.Size = new System.Drawing.Size(73, 15);
+            this.lblUsername.Size = new System.Drawing.Size(125, 23); // Adjusted width
             this.lblUsername.TabIndex = 0;
-            this.lblUsername.Text = "使用者名稱:";
+            this.lblUsername.Text = "Username:";
+            this.lblUsername.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             //
             // txtUsername
             //
-            this.txtUsername.Location = new System.Drawing.Point(130, 27);
+            this.txtUsername.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                | System.Windows.Forms.AnchorStyles.Right);
+            this.txtUsername.Location = new System.Drawing.Point(150, 30);
             this.txtUsername.Name = "txtUsername";
-            this.txtUsername.Size = new System.Drawing.Size(200, 23);
+            this.txtUsername.Size = new System.Drawing.Size(250, 23);
             this.txtUsername.TabIndex = 1;
+            this.txtUsername.Validating += new System.ComponentModel.CancelEventHandler(this.txtUsername_Validating);
             //
             // lblPassword
             //
-            this.lblPassword.AutoSize = true;
-            this.lblPassword.Location = new System.Drawing.Point(30, 70);
+            this.lblPassword.Location = new System.Drawing.Point(15, 60);
             this.lblPassword.Name = "lblPassword";
-            this.lblPassword.Size = new System.Drawing.Size(31, 15);
+            this.lblPassword.Size = new System.Drawing.Size(125, 23);
             this.lblPassword.TabIndex = 2;
-            this.lblPassword.Text = "密碼:";
+            this.lblPassword.Text = "Password:";
+            this.lblPassword.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             //
             // txtPassword
             //
-            this.txtPassword.Location = new System.Drawing.Point(130, 67);
+            this.txtPassword.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                | System.Windows.Forms.AnchorStyles.Right);
+            this.txtPassword.Location = new System.Drawing.Point(150, 60);
             this.txtPassword.Name = "txtPassword";
-            this.txtPassword.Size = new System.Drawing.Size(200, 23);
+            this.txtPassword.Size = new System.Drawing.Size(250, 23);
             this.txtPassword.TabIndex = 3;
+            this.txtPassword.Validating += new System.ComponentModel.CancelEventHandler(this.txtPassword_Validating);
             //
             // lblConfirmPassword
             //
-            this.lblConfirmPassword.AutoSize = true;
-            this.lblConfirmPassword.Location = new System.Drawing.Point(30, 110);
+            this.lblConfirmPassword.Location = new System.Drawing.Point(15, 90);
             this.lblConfirmPassword.Name = "lblConfirmPassword";
-            this.lblConfirmPassword.Size = new System.Drawing.Size(59, 15);
+            this.lblConfirmPassword.Size = new System.Drawing.Size(125, 23);
             this.lblConfirmPassword.TabIndex = 4;
-            this.lblConfirmPassword.Text = "確認密碼:";
+            this.lblConfirmPassword.Text = "Confirm Password:";
+            this.lblConfirmPassword.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             //
             // txtConfirmPassword
             //
-            this.txtConfirmPassword.Location = new System.Drawing.Point(130, 107);
+            this.txtConfirmPassword.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                | System.Windows.Forms.AnchorStyles.Right);
+            this.txtConfirmPassword.Location = new System.Drawing.Point(150, 90);
             this.txtConfirmPassword.Name = "txtConfirmPassword";
-            this.txtConfirmPassword.Size = new System.Drawing.Size(200, 23);
+            this.txtConfirmPassword.Size = new System.Drawing.Size(250, 23);
             this.txtConfirmPassword.TabIndex = 5;
+            this.txtConfirmPassword.Validating += new System.ComponentModel.CancelEventHandler(this.txtConfirmPassword_Validating);
             //
-            // lblRole
+            // gbMemberInfo
             //
-            this.lblRole.AutoSize = true;
-            this.lblRole.Location = new System.Drawing.Point(30, 150);
-            this.lblRole.Name = "lblRole";
-            this.lblRole.Size = new System.Drawing.Size(31, 15);
-            this.lblRole.TabIndex = 6;
-            this.lblRole.Text = "角色:";
-            this.lblRole.Visible = false; // Hide Role Label
-            //
-            // cmbRole
-            //
-            this.cmbRole.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbRole.FormattingEnabled = true;
-            this.cmbRole.Location = new System.Drawing.Point(130, 147);
-            this.cmbRole.Name = "cmbRole";
-            this.cmbRole.Size = new System.Drawing.Size(200, 23);
-            this.cmbRole.TabIndex = 7;
-            this.cmbRole.Visible = false; // Hide Role ComboBox
+            this.gbMemberInfo.Controls.Add(this.lblName);
+            this.gbMemberInfo.Controls.Add(this.txtName);
+            this.gbMemberInfo.Controls.Add(this.lblPhoneNumber);
+            this.gbMemberInfo.Controls.Add(this.txtPhoneNumber);
+            this.gbMemberInfo.Controls.Add(this.lblRole);
+            this.gbMemberInfo.Controls.Add(this.cmbRole);
+            this.gbMemberInfo.Location = new System.Drawing.Point(15, 155); // Adjusted Y
+            this.gbMemberInfo.Name = "gbMemberInfo";
+            this.gbMemberInfo.Padding = new System.Windows.Forms.Padding(10);
+            this.gbMemberInfo.Size = new System.Drawing.Size(420, 160); // Adjusted size
+            this.gbMemberInfo.TabIndex = 1;
+            this.gbMemberInfo.TabStop = false;
+            this.gbMemberInfo.Text = "Member Information";
             //
             // lblName
             //
-            this.lblName.AutoSize = true;
-            this.lblName.Location = new System.Drawing.Point(30, 150);
+            this.lblName.Location = new System.Drawing.Point(15, 30);
             this.lblName.Name = "lblName";
-            this.lblName.Size = new System.Drawing.Size(39, 15);
-            this.lblName.TabIndex = 6; // Kept as is, will be re-ordered later if needed by actual designer
-            this.lblName.Text = "姓名:";
+            this.lblName.Size = new System.Drawing.Size(125, 23);
+            this.lblName.TabIndex = 0;
+            this.lblName.Text = "Name:";
+            this.lblName.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             //
             // txtName
             //
-            this.txtName.Location = new System.Drawing.Point(130, 147);
+            this.txtName.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                | System.Windows.Forms.AnchorStyles.Right);
+            this.txtName.Location = new System.Drawing.Point(150, 30);
             this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(200, 23);
-            this.txtName.TabIndex = 7; // Kept as is
+            this.txtName.Size = new System.Drawing.Size(250, 23);
+            this.txtName.TabIndex = 1;
+            this.txtName.Validating += new System.ComponentModel.CancelEventHandler(this.txtName_Validating);
             //
             // lblPhoneNumber
             //
-            this.lblPhoneNumber.AutoSize = true;
-            this.lblPhoneNumber.Location = new System.Drawing.Point(30, 190);
+            this.lblPhoneNumber.Location = new System.Drawing.Point(15, 60);
             this.lblPhoneNumber.Name = "lblPhoneNumber";
-            this.lblPhoneNumber.Size = new System.Drawing.Size(63, 15);
-            this.lblPhoneNumber.TabIndex = 8; // Kept as is
-            this.lblPhoneNumber.Text = "電話號碼:";
+            this.lblPhoneNumber.Size = new System.Drawing.Size(125, 23);
+            this.lblPhoneNumber.TabIndex = 2;
+            this.lblPhoneNumber.Text = "Phone Number:";
+            this.lblPhoneNumber.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             //
             // txtPhoneNumber
             //
-            this.txtPhoneNumber.Location = new System.Drawing.Point(130, 187);
+            this.txtPhoneNumber.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                | System.Windows.Forms.AnchorStyles.Right);
+            this.txtPhoneNumber.Location = new System.Drawing.Point(150, 60);
             this.txtPhoneNumber.Name = "txtPhoneNumber";
-            this.txtPhoneNumber.Size = new System.Drawing.Size(200, 23);
-            this.txtPhoneNumber.TabIndex = 9; // Kept as is
+            this.txtPhoneNumber.Size = new System.Drawing.Size(250, 23);
+            this.txtPhoneNumber.TabIndex = 3;
+            this.txtPhoneNumber.Validating += new System.ComponentModel.CancelEventHandler(this.txtPhoneNumber_Validating);
             //
             // lblRole
             //
-            this.lblRole.AutoSize = true;
-            this.lblRole.Location = new System.Drawing.Point(30, 227); // Adjusted Y
+            this.lblRole.Location = new System.Drawing.Point(15, 90);
             this.lblRole.Name = "lblRole";
-            this.lblRole.Size = new System.Drawing.Size(31, 15);
-            this.lblRole.TabIndex = 10; // New TabIndex
-            this.lblRole.Text = "角色:";
+            this.lblRole.Size = new System.Drawing.Size(125, 23);
+            this.lblRole.TabIndex = 4;
+            this.lblRole.Text = "Role:";
+            this.lblRole.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.lblRole.Visible = false;
             //
             // cmbRole
             //
+            this.cmbRole.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                | System.Windows.Forms.AnchorStyles.Right);
             this.cmbRole.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbRole.FormattingEnabled = true;
-            this.cmbRole.Location = new System.Drawing.Point(130, 224); // Adjusted Y
+            this.cmbRole.Location = new System.Drawing.Point(150, 90);
             this.cmbRole.Name = "cmbRole";
-            this.cmbRole.Size = new System.Drawing.Size(200, 23);
-            this.cmbRole.TabIndex = 11; // New TabIndex
+            this.cmbRole.Size = new System.Drawing.Size(250, 23);
+            this.cmbRole.TabIndex = 5;
             this.cmbRole.Visible = false;
             //
             // btnRegister
             //
-            this.btnRegister.Location = new System.Drawing.Point(130, 267); // Adjusted Y
+            this.btnRegister.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.btnRegister.Location = new System.Drawing.Point(175, 330); // Adjusted Y for new form height
             this.btnRegister.Name = "btnRegister";
-            this.btnRegister.Size = new System.Drawing.Size(100, 30);
-            this.btnRegister.TabIndex = 12; // New TabIndex
-            this.btnRegister.Text = "註冊";
+            this.btnRegister.Size = new System.Drawing.Size(100, 35);
+            this.btnRegister.TabIndex = 2; // Form-level tab index
+            this.btnRegister.Text = "Register";
             this.btnRegister.UseVisualStyleBackColor = true;
             this.btnRegister.Click += new System.EventHandler(this.btnRegister_Click);
             //
             // RegistrationForm
             //
+            this.AcceptButton = this.btnRegister;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(384, 320); // Adjusted ClientSize
+            this.AutoValidate = System.Windows.Forms.AutoValidate.EnableAllowFocusChange;
+            this.ClientSize = new System.Drawing.Size(450, 380); // Adjusted ClientSize
+            this.Controls.Add(this.gbAccountCredentials);
+            this.Controls.Add(this.gbMemberInfo);
             this.Controls.Add(this.btnRegister);
-            this.Controls.Add(this.txtPhoneNumber);
-            this.Controls.Add(this.lblPhoneNumber);
-            this.Controls.Add(this.txtName);
-            this.Controls.Add(this.lblName);
-            // cmbRole and lblRole are already in Controls collection from their original declaration
-            // So, ensure they are not added twice. The diff should handle their property changes.
-            // this.Controls.Add(this.cmbRole);  // Already present
-            // this.Controls.Add(this.lblRole); // Already present
-            this.Controls.Add(this.txtConfirmPassword);
-            this.Controls.Add(this.lblConfirmPassword);
-            this.Controls.Add(this.txtPassword);
-            this.Controls.Add(this.lblPassword);
-            this.Controls.Add(this.txtUsername);
-            this.Controls.Add(this.lblUsername);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "RegistrationForm";
+            this.Padding = new System.Windows.Forms.Padding(15);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "使用者註冊";
+            this.Text = "User Registration";
             this.Load += new System.EventHandler(this.RegistrationForm_Load);
+            this.gbAccountCredentials.ResumeLayout(false);
+            this.gbAccountCredentials.PerformLayout();
+            this.gbMemberInfo.ResumeLayout(false);
+            this.gbMemberInfo.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
         }
     }
 }

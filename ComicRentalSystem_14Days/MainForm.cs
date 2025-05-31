@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using ComicRentalSystem_14Days.Controls; // Added for AdminDashboardUserControl
 
 namespace ComicRentalSystem_14Days
 {
@@ -23,6 +24,9 @@ namespace ComicRentalSystem_14Days
         private List<AdminComicStatusViewModel>? _allAdminComicStatuses;
         private string _currentSortColumnName = string.Empty;
         private ListSortDirection _currentSortDirection = ListSortDirection.Ascending;
+
+        private Button? _currentSelectedNavButton; // Added for new UI
+        private AdminDashboardUserControl? _adminDashboardControl; // Added for Admin Dashboard UC
 
         public MainForm() : base()
         {
@@ -54,13 +58,57 @@ namespace ComicRentalSystem_14Days
         private async void MainForm_Load(object sender, EventArgs e)
         {
             this._logger?.Log("MainForm is loading.");
-            SetupDataGridView();
+            // Style MenuStrip and StatusStrip using ModernBaseForm
+            if (this.menuStrip2 != null)
+            {
+                this.menuStrip2.BackColor = ModernBaseForm.SecondaryColor;
+                this.menuStrip2.ForeColor = ModernBaseForm.TextColor;
+                this.menuStrip2.Font = ModernBaseForm.PrimaryFontBold ?? new Font("Segoe UI", 9F, FontStyle.Bold);
+                foreach (ToolStripMenuItem item in this.menuStrip2.Items.OfType<ToolStripMenuItem>())
+                {
+                    item.Font = ModernBaseForm.PrimaryFontBold ?? new Font("Segoe UI", 9F, FontStyle.Bold);
+                    item.ForeColor = ModernBaseForm.TextColor;
+                }
+            }
+            if (this.statusStrip1 != null)
+            {
+                this.statusStrip1.BackColor = ModernBaseForm.SecondaryColor;
+                this.statusStrip1.Font = ModernBaseForm.PrimaryFont ?? new Font("Segoe UI", 9F);
+                if (this.toolStripStatusLabelUser != null) this.toolStripStatusLabelUser.ForeColor = ModernBaseForm.TextColor;
+            }
+
+            // Attach Event Handlers and Style Nav Buttons
+            if (this.leftNavPanel != null)
+            {
+                // Ensure direct field references for buttons are used
+                Button[] navButtons = { this.btnNavDashboard, this.btnNavComicMgmt, this.btnNavMemberMgmt, this.btnNavRentalMgmt, this.btnNavUserReg, this.btnNavLogs };
+                foreach (Button navBtn in navButtons)
+                {
+                    if (navBtn != null) // Ensure button exists from Designer.cs
+                    {
+                        // Initial styling (can be refined in SelectNavButton)
+                        navBtn.BackColor = ModernBaseForm.SecondaryColor;
+                        navBtn.ForeColor = ModernBaseForm.TextColor;
+                        navBtn.Font = ModernBaseForm.ButtonFont ?? new Font("Segoe UI Semibold", 9.75F);
+
+                        // Assign click handlers
+                        if (navBtn == this.btnNavDashboard) navBtn.Click += btnNavDashboard_Click;
+                        else if (navBtn == this.btnNavComicMgmt) navBtn.Click += btnNavComicMgmt_Click;
+                        else if (navBtn == this.btnNavMemberMgmt) navBtn.Click += btnNavMemberMgmt_Click;
+                        else if (navBtn == this.btnNavRentalMgmt) navBtn.Click += btnNavRentalMgmt_Click;
+                        else if (navBtn == this.btnNavUserReg) navBtn.Click += btnNavUserReg_Click;
+                        else if (navBtn == this.btnNavLogs) navBtn.Click += btnNavLogs_Click;
+                    }
+                }
+            }
+
+            SetupDataGridView(); // Original call
 
             if (_currentUser.Role == UserRole.Admin)
             {
                 await LoadAllComicsStatusForAdminAsync();
-                // Subscribe to DGV column header click for sorting
-                this.dgvAvailableComics.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvAvailableComics_ColumnHeaderMouseClick);
+                if(this.dgvAvailableComics != null) // Null check
+                   this.dgvAvailableComics.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvAvailableComics_ColumnHeaderMouseClick);
             }
             else
             {
@@ -68,23 +116,121 @@ namespace ComicRentalSystem_14Days
                 LoadMyRentedComics();
             }
 
-            this._comicService.ComicsChanged += ComicService_ComicsChanged;
-            if (dgvAvailableComics != null)
+            if (this._comicService != null) // Null check
+                this._comicService.ComicsChanged += ComicService_ComicsChanged;
+
+            if (this.dgvAvailableComics != null) // Null check
             {
-                dgvAvailableComics.SelectionChanged += dgvAvailableComics_SelectionChanged;
+                this.dgvAvailableComics.SelectionChanged += dgvAvailableComics_SelectionChanged;
                 dgvAvailableComics_SelectionChanged(this, EventArgs.Empty);
             }
 
-            // Initialize ComboBox for Admin filter
-            Control? cmbCtrl = this.Controls.Find("cmbAdminComicFilterStatus", true).FirstOrDefault();
-            if (cmbCtrl is ComboBox cmbFilter)
+            // Initialize ComboBox for Admin filter using direct field reference
+            if (this.cmbAdminComicFilterStatus != null) // This is part of Comic Management view
             {
-                cmbFilter.Items.Clear();
-                cmbFilter.Items.Add("All");
-                cmbFilter.Items.Add("Rented");
-                cmbFilter.Items.Add("Available");
-                cmbFilter.SelectedItem = "All";
-                cmbFilter.SelectedIndexChanged += new System.EventHandler(this.cmbAdminComicFilterStatus_SelectedIndexChanged);
+                this.cmbAdminComicFilterStatus.Items.Clear();
+                this.cmbAdminComicFilterStatus.Items.Add("All");
+                this.cmbAdminComicFilterStatus.Items.Add("Rented");
+                this.cmbAdminComicFilterStatus.Items.Add("Available");
+                this.cmbAdminComicFilterStatus.SelectedItem = "All";
+                this.cmbAdminComicFilterStatus.SelectedIndexChanged += new System.EventHandler(this.cmbAdminComicFilterStatus_SelectedIndexChanged);
+            }
+
+            // Initialize AdminDashboardUserControl for Admin users
+            if (_currentUser.Role == UserRole.Admin && _comicService != null && _memberService != null && _logger != null) // Ensure services are available
+            {
+                _adminDashboardControl = new AdminDashboardUserControl(_comicService, _memberService, _logger); // Pass services
+                _adminDashboardControl.Dock = DockStyle.Fill;
+                _adminDashboardControl.Visible = false;
+                if (mainContentPanel != null)
+                {
+                     mainContentPanel.Controls.Add(_adminDashboardControl);
+                }
+                else
+                {
+                    _logger.LogError("MainForm_Load: mainContentPanel is null. Cannot add AdminDashboardUserControl.");
+                }
+            }
+
+            // Style controls now inside TabPages for Member view
+            if (_currentUser.Role == UserRole.Member)
+            {
+                if (btnRentComic != null) StyleModernButton(btnRentComic); // Method from ModernBaseForm
+                if (dgvAvailableComics != null) StyleModernDataGridView(dgvAvailableComics); // Method from ModernBaseForm
+                if (dgvMyRentedComics != null) StyleModernDataGridView(dgvMyRentedComics); // Method from ModernBaseForm
+            }
+            // Style TabControl
+            if (memberViewTabControl != null)
+            {
+                // memberViewTabControl.Appearance = TabAppearance.FlatButtons; // Optional
+                // memberViewTabControl.ItemSize = new Size(100, 28); // Optional
+                foreach(TabPage page in memberViewTabControl.TabPages)
+                {
+                    page.BackColor = ModernBaseForm.SecondaryColor;
+                }
+            }
+
+            // Placeholder text logic for txtSearchAvailableComics
+            if (txtSearchAvailableComics != null)
+            {
+                txtSearchAvailableComics.GotFocus += (s, ev) => { if (txtSearchAvailableComics.Text == "Search by Title/Author...") { txtSearchAvailableComics.Text = ""; txtSearchAvailableComics.ForeColor = ModernBaseForm.TextColor; } };
+                txtSearchAvailableComics.LostFocus += (s, ev) => { if (string.IsNullOrWhiteSpace(txtSearchAvailableComics.Text)) { txtSearchAvailableComics.Text = "Search by Title/Author..."; txtSearchAvailableComics.ForeColor = System.Drawing.Color.Gray; } };
+                // Styling
+                txtSearchAvailableComics.Font = ModernBaseForm.PrimaryFont ?? new System.Drawing.Font("Segoe UI", 9F);
+                txtSearchAvailableComics.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            }
+
+            // Populate cmbGenreFilter
+            if (cmbGenreFilter != null && _comicService != null)
+            {
+                cmbGenreFilter.Items.Clear();
+                cmbGenreFilter.Items.Add("All Genres");
+                try
+                {
+                    var genres = _comicService.GetAllComics().Select(c => c.Genre).Where(g => !string.IsNullOrWhiteSpace(g)).Distinct().OrderBy(g => g);
+                    foreach (var genre in genres) { cmbGenreFilter.Items.Add(genre); }
+                }
+                catch (Exception ex)
+                {
+                    _logger?.LogError("Failed to populate genre filter.", ex);
+                }
+                cmbGenreFilter.SelectedIndex = 0;
+                // Styling
+                cmbGenreFilter.Font = ModernBaseForm.PrimaryFont ?? new System.Drawing.Font("Segoe UI", 9F);
+            }
+
+            // Attach Event Handlers for filters
+            if (txtSearchAvailableComics != null)
+                txtSearchAvailableComics.TextChanged += (s, ev) => { if (IsMemberViewActive()) ApplyAvailableComicsFilter(); };
+            if (cmbGenreFilter != null)
+                cmbGenreFilter.SelectedIndexChanged += (s, ev) => { if (IsMemberViewActive()) ApplyAvailableComicsFilter(); };
+
+            // Attach event handler for dgvMyRentedComics CellFormatting (Member's rented comics)
+            if (dgvMyRentedComics != null)
+            {
+                dgvMyRentedComics.CellFormatting -= dgvMyRentedComics_CellFormatting;
+                dgvMyRentedComics.CellFormatting += dgvMyRentedComics_CellFormatting;
+            }
+
+            // Attach event handler for dgvAvailableComics CellFormatting (Admin's view of all comics)
+            if (dgvAvailableComics != null && _currentUser.Role == UserRole.Admin)
+            {
+                dgvAvailableComics.CellFormatting -= dgvAvailableComics_AdminView_CellFormatting;
+                dgvAvailableComics.CellFormatting += dgvAvailableComics_AdminView_CellFormatting;
+            }
+
+            // Attach event handler for TabControl SelectedIndexChanged
+            if (memberViewTabControl != null)
+            {
+                memberViewTabControl.SelectedIndexChanged -= memberViewTabControl_SelectedIndexChanged;
+                memberViewTabControl.SelectedIndexChanged += memberViewTabControl_SelectedIndexChanged;
+            }
+
+            // Style cmbAdminComicFilterStatus
+            if (cmbAdminComicFilterStatus != null)
+            {
+                cmbAdminComicFilterStatus.Font = ModernBaseForm.PrimaryFont ?? new Font("Segoe UI", 9F);
+                // Optional: cmbAdminComicFilterStatus.FlatStyle = FlatStyle.Flat; (might not look good on all OS)
             }
         }
 
@@ -135,27 +281,29 @@ namespace ComicRentalSystem_14Days
             if (_currentUser.Role == UserRole.Admin)
             {
                 _logger.Log("Configuring DataGridView for Admin view (All Comics Status).");
-                dgvAvailableComics!.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Title", HeaderText = "書名", FillWeight = 25 });
-                dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Author", HeaderText = "作者", FillWeight = 20 });
-                dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Status", HeaderText = "狀態", FillWeight = 10 });
-                dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "BorrowerName", HeaderText = "借閱會員", FillWeight = 15 });
-                dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "BorrowerPhoneNumber", HeaderText = "會員電話", FillWeight = 15 });
+                // Adjusted FillWeights for admin view
+                dgvAvailableComics!.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Title", HeaderText = "Title", FillWeight = 20 });
+                dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Author", HeaderText = "Author", FillWeight = 15 });
+                dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Status", HeaderText = "Status", FillWeight = 10 }); // For "被借閱", "在館中"
+                dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "BorrowerName", HeaderText = "Borrower", FillWeight = 15 });
+                dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "BorrowerPhoneNumber", HeaderText = "Borrower Phone", FillWeight = 15 });
 
                 var rentalDateColumn = new DataGridViewTextBoxColumn {
                     DataPropertyName = "RentalDate",
-                    HeaderText = "借閱日期",
-                    FillWeight = 15,
+                    HeaderText = "Rented On", // English header
+                    FillWeight = 12,
                     DefaultCellStyle = new DataGridViewCellStyle { Format = "yyyy-MM-dd" }
                 };
                 dgvAvailableComics.Columns.Add(rentalDateColumn);
 
                 var returnDateColumn = new DataGridViewTextBoxColumn {
                     DataPropertyName = "ReturnDate",
-                    HeaderText = "歸還日期",
-                    FillWeight = 15,
+                    HeaderText = "Due Date", // English header
+                    FillWeight = 13,
                     DefaultCellStyle = new DataGridViewCellStyle { Format = "yyyy-MM-dd" }
                 };
                 dgvAvailableComics.Columns.Add(returnDateColumn);
+                StyleModernDataGridView(dgvAvailableComics); // Apply styling after columns are set for Admin
             }
             else // Member view
             {
@@ -229,58 +377,74 @@ namespace ComicRentalSystem_14Days
             bool isAdmin = _currentUser.Role == UserRole.Admin;
             _logger.Log($"Setting up UI controls. User is Admin: {isAdmin}");
 
-            var menuStrip = this.Controls.Find("menuStrip2", true).FirstOrDefault() as MenuStrip;
-            if (menuStrip != null)
+            if (mainContentPanel == null) { _logger?.LogError("SetupUIAccessControls: mainContentPanel is null."); return; }
+
+            // Hide all major view containers/specific controls first
+            if (leftNavPanel != null) leftNavPanel.Visible = false;
+            if (_adminDashboardControl != null) _adminDashboardControl.Visible = false;
+            if (memberViewTabControl != null) memberViewTabControl.Visible = false; // Hide new TabControl
+
+            // Hide admin-specific controls that might be directly on mainContentPanel
+            if (cmbAdminComicFilterStatus != null) cmbAdminComicFilterStatus.Visible = false;
+            // dgvAvailableComics & lblAvailableComics are now managed by TabControl or Admin's ComicMgmt view
+
+            // Menu strip items visibility (already here, good)
+            if (this.menuStrip2 != null)
             {
-                var managementMenuItem = menuStrip.Items.OfType<ToolStripMenuItem>().FirstOrDefault(item => item.Name == "管理ToolStripMenuItem");
+                var managementMenuItem = this.menuStrip2.Items.OfType<ToolStripMenuItem>().FirstOrDefault(item => item.Name == "管理ToolStripMenuItem");
                 if (managementMenuItem != null) managementMenuItem.Visible = isAdmin;
 
-                var toolsMenuItem = menuStrip.Items.OfType<ToolStripMenuItem>().FirstOrDefault(item => item.Name == "工具ToolStripMenuItem");
+                var toolsMenuItem = this.menuStrip2.Items.OfType<ToolStripMenuItem>().FirstOrDefault(item => item.Name == "工具ToolStripMenuItem");
                 if (toolsMenuItem != null) toolsMenuItem.Visible = isAdmin;
 
-                var userRegItem = menuStrip.Items.OfType<ToolStripMenuItem>().FirstOrDefault(item => item.Name == "使用者註冊ToolStripMenuItem");
+                var userRegItem = this.menuStrip2.Items.OfType<ToolStripMenuItem>().FirstOrDefault(item => item.Name == "使用者註冊ToolStripMenuItem");
                 if (userRegItem != null) userRegItem.Visible = isAdmin;
             }
-            else { _logger.LogWarning("MenuStrip control 'menuStrip2' not found."); }
-
-            Control? cmbAdminFilterCtrl = this.Controls.Find("cmbAdminComicFilterStatus", true).FirstOrDefault();
-            if (cmbAdminFilterCtrl is ComboBox cmbAdminFilter)
-            {
-                cmbAdminFilter.Visible = isAdmin;
-            }
-
+            else { _logger.LogWarning("MenuStrip control 'menuStrip2' (field) not found or null."); }
 
             if (isAdmin)
             {
-                if (lblAvailableComics != null)
+                if (leftNavPanel != null) leftNavPanel.Visible = true;
+                this.Text = "Comic Rental System - Admin"; // Set Form title for Admin
+                if (btnNavDashboard != null)
                 {
-                    lblAvailableComics.Text = "所有漫畫狀態";
-                    lblAvailableComics.Visible = true;
+                    SelectNavButton(btnNavDashboard);
                 }
-                if (dgvAvailableComics != null) dgvAvailableComics.Visible = true;
-
-                if (lblMyRentedComicsHeader != null) lblMyRentedComicsHeader.Visible = false;
-                if (dgvMyRentedComics != null) dgvMyRentedComics.Visible = false;
-                if (btnRentComic != null)
+                else if (btnNavComicMgmt != null) // Fallback
                 {
-                    btnRentComic.Visible = false;
-                    btnRentComic.Enabled = false;
+                     SelectNavButton(btnNavComicMgmt);
                 }
             }
-            else // User is a Member
+            else // Member
             {
-                if (lblAvailableComics != null)
+                this.Text = "Comic Rental System"; // Set Form title for Member
+                if (memberViewTabControl != null)
                 {
-                    lblAvailableComics.Text = "目前可借閱的漫畫";
-                    lblAvailableComics.Visible = true;
+                    memberViewTabControl.Visible = true;
+                    // Update text for labels inside tabs for clarity
+                    if(lblAvailableComics != null) lblAvailableComics.Text = "Select a comic below to rent:";
+                    if(lblMyRentedComicsHeader != null) lblMyRentedComicsHeader.Text = "Your currently rented items:";
                 }
-                if (dgvAvailableComics != null) dgvAvailableComics.Visible = true;
-
-                if (lblMyRentedComicsHeader != null) lblMyRentedComicsHeader.Visible = true;
-                if (dgvMyRentedComics != null) dgvMyRentedComics.Visible = true;
-                if (btnRentComic != null)
+                else
                 {
-                    btnRentComic.Visible = true;
+                    _logger?.LogError("SetupUIAccessControls: memberViewTabControl is null for Member view. Showing fallback direct controls.");
+                    if(lblAvailableComics != null) { lblAvailableComics.Visible = true; lblAvailableComics.Text = "Available Comics"; }
+                    if(dgvAvailableComics != null) dgvAvailableComics.Visible = true;
+                    if(btnRentComic != null) btnRentComic.Visible = true;
+                    if(lblMyRentedComicsHeader != null) lblMyRentedComicsHeader.Visible = true;
+                    if(dgvMyRentedComics != null) dgvMyRentedComics.Visible = true;
+                }
+                // Initial call to load data for the initially selected tab
+                if (memberViewTabControl != null && memberViewTabControl.TabPages.Count > 0) // Ensure TabPages exist
+                {
+                    if (memberViewTabControl.SelectedTab == availableComicsTabPage)
+                    {
+                        ApplyAvailableComicsFilter();
+                    }
+                    else if (memberViewTabControl.SelectedTab == myRentalsTabPage)
+                    {
+                        LoadMyRentedComics();
+                    }
                 }
             }
             _logger.Log($"UI controls visibility and text updated based on admin status ({isAdmin}).");
@@ -288,18 +452,18 @@ namespace ComicRentalSystem_14Days
 
         private void UpdateStatusBar()
         {
-            var statusStrip = this.Controls.Find("statusStrip1", true).FirstOrDefault() as StatusStrip;
-            if (statusStrip != null)
+            // Use direct field reference for statusStrip1
+            if (this.statusStrip1 != null)
             {
-                var statusLabel = statusStrip.Items.OfType<ToolStripStatusLabel>().FirstOrDefault(item => item.Name == "toolStripStatusLabelUser");
-                if (statusLabel != null)
+                // Use direct field reference for toolStripStatusLabelUser
+                if (this.toolStripStatusLabelUser != null)
                 {
-                    statusLabel.Text = $"使用者: {_currentUser.Username} | 角色: {_currentUser.Role}";
+                    this.toolStripStatusLabelUser.Text = $"使用者: {_currentUser.Username} | 角色: {_currentUser.Role}";
                     this._logger.Log($"Status bar updated: User: {_currentUser.Username}, Role: {_currentUser.Role}");
                 }
-                else { this._logger.LogWarning("ToolStripStatusLabel 'toolStripStatusLabelUser' not found."); }
+                else { this._logger.LogWarning("ToolStripStatusLabel 'toolStripStatusLabelUser' (field) not found or null."); }
             }
-            else { this._logger.LogWarning("StatusStrip control 'statusStrip1' not found."); }
+            else { this._logger.LogWarning("StatusStrip control 'statusStrip1' (field) not found or null."); }
         }
 
         private void SetupMyRentedComicsDataGridView()
@@ -307,13 +471,13 @@ namespace ComicRentalSystem_14Days
             if (dgvMyRentedComics == null) return;
             _logger?.Log("Setting up DataGridView for member's rented comics (dgvMyRentedComics).");
             dgvMyRentedComics.AutoGenerateColumns = false;
-            dgvMyRentedComics.Columns.Clear();
+            dgvMyRentedComics.Columns.Clear(); // Clear existing columns before adding new ones
             dgvMyRentedComics.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
-            dgvMyRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Title", HeaderText = "書名", FillWeight = 35 });
-            dgvMyRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Author", HeaderText = "作者", FillWeight = 25 });
+            dgvMyRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Title", HeaderText = "書名", FillWeight = 30 });
+            dgvMyRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Author", HeaderText = "作者", FillWeight = 20 });
 
-            var rentalDateColumn = new DataGridViewTextBoxColumn { DataPropertyName = "RentalDate", HeaderText = "租借日期", FillWeight = 20 };
+            var rentalDateColumn = new DataGridViewTextBoxColumn { DataPropertyName = "RentalDate", HeaderText = "租借日期", FillWeight = 18 });
             if (rentalDateColumn.DefaultCellStyle == null)
             {
                 rentalDateColumn.DefaultCellStyle = new DataGridViewCellStyle();
@@ -321,13 +485,25 @@ namespace ComicRentalSystem_14Days
             rentalDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
             dgvMyRentedComics.Columns.Add(rentalDateColumn);
 
-            var returnDateColumn = new DataGridViewTextBoxColumn { DataPropertyName = "ReturnDate", HeaderText = "歸還日期", FillWeight = 20 };
+            var returnDateColumn = new DataGridViewTextBoxColumn { DataPropertyName = "ReturnDate", HeaderText = "歸還日期", FillWeight = 18 };
             if (returnDateColumn.DefaultCellStyle == null)
             {
                 returnDateColumn.DefaultCellStyle = new DataGridViewCellStyle();
             }
             returnDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
             dgvMyRentedComics.Columns.Add(returnDateColumn);
+
+            // Add Status column if it doesn't exist
+            if (!dgvMyRentedComics.Columns.Contains("statusColumn"))
+            {
+                var statusColumn = new DataGridViewTextBoxColumn
+                {
+                    Name = "statusColumn",
+                    HeaderText = "Status",
+                    FillWeight = 14 // Adjusted FillWeight to make space
+                };
+                dgvMyRentedComics.Columns.Add(statusColumn);
+            }
 
             dgvMyRentedComics.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvMyRentedComics.MultiSelect = false;
@@ -606,16 +782,15 @@ namespace ComicRentalSystem_14Days
 
         private void ApplyAdminComicsView()
         {
-            if (_allAdminComicStatuses == null || dgvAvailableComics == null) return;
-            if (!dgvAvailableComics.IsHandleCreated || dgvAvailableComics.IsDisposed) return;
+            if (_allAdminComicStatuses == null || this.dgvAvailableComics == null) return;
+            if (!this.dgvAvailableComics.IsHandleCreated || this.dgvAvailableComics.IsDisposed) return;
 
             IEnumerable<AdminComicStatusViewModel> viewToShow = _allAdminComicStatuses;
 
-            // 1. Apply Filter (using control cmbAdminComicFilterStatus)
-            Control? cmbCtrl = this.Controls.Find("cmbAdminComicFilterStatus", true).FirstOrDefault();
-            if (cmbCtrl is ComboBox cmbFilter && cmbFilter.SelectedItem != null)
+            // 1. Apply Filter (using field this.cmbAdminComicFilterStatus)
+            if (this.cmbAdminComicFilterStatus != null && this.cmbAdminComicFilterStatus.SelectedItem != null)
             {
-                string? selectedStatus = cmbFilter.SelectedItem.ToString();
+                string? selectedStatus = this.cmbAdminComicFilterStatus.SelectedItem.ToString();
                 if (selectedStatus == "Rented") // Assuming "被借閱" is represented as "Rented" in ComboBox
                 {
                     viewToShow = viewToShow.Where(vm => vm.Status == "被借閱");
@@ -661,19 +836,19 @@ namespace ComicRentalSystem_14Days
                 }
             };
 
-            if (dgvAvailableComics.InvokeRequired) { dgvAvailableComics.Invoke(updateGridAction); }
+            if (this.dgvAvailableComics.InvokeRequired) { this.dgvAvailableComics.Invoke(updateGridAction); }
             else { updateGridAction(); }
         }
 
         private void dgvAvailableComics_ColumnHeaderMouseClick(object? sender, DataGridViewCellMouseEventArgs e)
         {
             if (_currentUser == null || _currentUser.Role != UserRole.Admin) return;
-            if (e.ColumnIndex < 0 || e.ColumnIndex >= dgvAvailableComics.Columns.Count) return;
-            if (dgvAvailableComics.Columns[e.ColumnIndex].DataPropertyName == null) return;
+            if (this.dgvAvailableComics == null || e.ColumnIndex < 0 || e.ColumnIndex >= this.dgvAvailableComics.Columns.Count) return;
+            if (this.dgvAvailableComics.Columns[e.ColumnIndex].DataPropertyName == null) return;
 
-            string newSortColumnName = dgvAvailableComics.Columns[e.ColumnIndex].DataPropertyName;
+            string newSortColumnName = this.dgvAvailableComics.Columns[e.ColumnIndex].DataPropertyName;
 
-            if (string.IsNullOrEmpty(newSortColumnName)) return; // Should not happen if DataPropertyName is set
+            if (string.IsNullOrEmpty(newSortColumnName)) return;
 
             if (_currentSortColumnName == newSortColumnName)
             {
@@ -691,6 +866,282 @@ namespace ComicRentalSystem_14Days
         {
             if (_currentUser == null || _currentUser.Role != UserRole.Admin) return;
             ApplyAdminComicsView();
+        }
+
+        // --- New Navigation Methods ---
+        private void SelectNavButton(Button selectedButton)
+        {
+            if (_currentSelectedNavButton != null)
+            {
+                _currentSelectedNavButton.BackColor = ModernBaseForm.SecondaryColor;
+                _currentSelectedNavButton.ForeColor = ModernBaseForm.TextColor;
+                _currentSelectedNavButton.Font = ModernBaseForm.ButtonFont ?? new System.Drawing.Font("Segoe UI Semibold", 9.75F);
+            }
+            selectedButton.BackColor = ModernBaseForm.PrimaryColor;
+            selectedButton.ForeColor = Color.White;
+            // Ensure ModernBaseForm.ButtonFont is not null before creating a new Font based on it
+            Font baseFont = ModernBaseForm.ButtonFont ?? new System.Drawing.Font("Segoe UI Semibold", 9.75F);
+            selectedButton.Font = new Font(baseFont, FontStyle.Bold);
+            _currentSelectedNavButton = selectedButton;
+
+            if (mainContentPanel == null) return;
+            // Hide all major UserControls/TabControls in mainContentPanel first
+            if (_adminDashboardControl != null) _adminDashboardControl.Visible = false;
+            if (memberViewTabControl != null) memberViewTabControl.Visible = false; // Hide member tab control for admin views
+            // Example for future UserControls: if (_adminComicManagementControl != null) _adminComicManagementControl.Visible = false;
+
+            // Hide direct controls that might be used by other views (like Comic Management's own dgv/labels if not part of a UC)
+            // This is important if admin views use some of the same named controls as member views but not through the tab control.
+            // However, the current setup for admin's Comic Management reuses lblAvailableComics, cmbAdminComicFilterStatus, dgvAvailableComics.
+            // So, we only hide them if they are NOT part of the view being selected.
+
+            // Show the selected UserControl or view's specific controls
+            if (selectedButton == btnNavDashboard)
+            {
+                // Hide comic management specific controls if they were visible
+                if (lblAvailableComics != null) lblAvailableComics.Visible = false;
+                if (cmbAdminComicFilterStatus != null) cmbAdminComicFilterStatus.Visible = false;
+                if (dgvAvailableComics != null) dgvAvailableComics.Visible = false;
+
+                if (_adminDashboardControl != null)
+                {
+                    _adminDashboardControl.Visible = true;
+                    _adminDashboardControl.LoadDashboardData();
+                    this.Text = "Comic Rental System - Dashboard";
+                }
+                 _logger?.Log("Dashboard view selected.");
+            }
+            else if (selectedButton == btnNavComicMgmt)
+            {
+                if(lblAvailableComics != null) { lblAvailableComics.Text="所有漫畫狀態"; lblAvailableComics.Visible = true;} // Re-show and set text
+                if(cmbAdminComicFilterStatus != null) cmbAdminComicFilterStatus.Visible = true; // Re-show
+                if(dgvAvailableComics != null) dgvAvailableComics.Visible = true; // Re-show
+                this.Text = "Comic Rental System - Comic Management";
+                 _logger?.Log("Comic Management view selected.");
+            }
+            else if (selectedButton == btnNavMemberMgmt)
+            {
+                // Show Member Management related controls
+                _logger?.Log("Member Management view selected.");
+            }
+            else if (selectedButton == btnNavRentalMgmt)
+            {
+                // Show Rental Management related controls
+                _logger?.Log("Rental Management view selected.");
+            }
+            else if (selectedButton == btnNavUserReg)
+            {
+                // Show User Registration related controls
+                 _logger?.Log("User Registration view selected.");
+            }
+            else if (selectedButton == btnNavLogs)
+            {
+                // Show Logs related controls
+                 _logger?.Log("Logs view selected.");
+            }
+        }
+
+        private void btnNavDashboard_Click(object? sender, EventArgs e) { if (sender is Button cb) SelectNavButton(cb); _logger?.Log("Dashboard navigation button clicked."); }
+        private void btnNavComicMgmt_Click(object? sender, EventArgs e) { if (sender is Button cb) SelectNavButton(cb); _logger?.Log("Comic Mgmt navigation button clicked."); }
+        private void btnNavMemberMgmt_Click(object? sender, EventArgs e) { if (sender is Button cb) SelectNavButton(cb); _logger?.Log("Member Mgmt navigation button clicked."); }
+        private void btnNavRentalMgmt_Click(object? sender, EventArgs e) { if (sender is Button cb) SelectNavButton(cb); _logger?.Log("Rental Mgmt navigation button clicked."); }
+        private void btnNavUserReg_Click(object? sender, EventArgs e) { if (sender is Button cb) SelectNavButton(cb); _logger?.Log("User Reg navigation button clicked."); }
+        private void btnNavLogs_Click(object? sender, EventArgs e) { if (sender is Button cb) SelectNavButton(cb); _logger?.Log("Logs navigation button clicked."); }
+
+        // --- Admin dgvAvailableComics Cell Formatting ---
+        private void dgvAvailableComics_AdminView_CellFormatting(object? sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (_currentUser == null || _currentUser.Role != UserRole.Admin) return;
+            if (dgvAvailableComics == null || e.RowIndex < 0 || e.RowIndex >= dgvAvailableComics.Rows.Count) return;
+
+            DataGridViewRow row = dgvAvailableComics.Rows[e.RowIndex];
+            if (row.DataBoundItem is not AdminComicStatusViewModel comicStatus) return;
+
+            // Status column text color
+            if (dgvAvailableComics.Columns[e.ColumnIndex].DataPropertyName == "Status")
+            {
+                if (e.Value?.ToString() == "被借閱") // Rented
+                {
+                    e.CellStyle.ForeColor = ModernBaseForm.DangerColor;
+                }
+                else if (e.Value?.ToString() == "在館中") // Available
+                {
+                    e.CellStyle.ForeColor = ModernBaseForm.SuccessColor;
+                }
+            }
+
+            // ReturnDate cell background/foreground for overdue/due soon
+            if (dgvAvailableComics.Columns[e.ColumnIndex].DataPropertyName == "ReturnDate" ||
+                dgvAvailableComics.Columns[e.ColumnIndex].DataPropertyName == "Status") // Apply to status cell too for emphasis
+            {
+                if (comicStatus.Status == "被借閱" && comicStatus.ReturnDate.HasValue)
+                {
+                    DateTime returnDate = comicStatus.ReturnDate.Value;
+                    if (returnDate.Date < DateTime.Today) // Overdue
+                    {
+                        // Apply to the whole row for overdue items for high visibility
+                        row.DefaultCellStyle.BackColor = ModernBaseForm.DangerColor;
+                        row.DefaultCellStyle.ForeColor = Color.White;
+                        // Ensure selection style also contrasts if needed, though DGV usually handles this
+                    }
+                    else if (returnDate.Date <= DateTime.Today.AddDays(3)) // Due within 3 days
+                    {
+                        // Apply to the whole row for items due soon
+                        row.DefaultCellStyle.BackColor = ModernBaseForm.AccentColor;
+                        row.DefaultCellStyle.ForeColor = ModernBaseForm.TextColor;
+                    }
+                    else
+                    {
+                        // Reset to default if not overdue or due soon to handle reused rows
+                        // This might conflict with alternating row styles. A more robust solution
+                        // would be to set these properties only if they need to be non-default.
+                        // For now, let's assume DGV handles resetting on scroll if not explicitly set here.
+                        // Or, ensure that the default cell style is reapplied.
+                        // e.CellStyle.BackColor = dgvAvailableComics.DefaultCellStyle.BackColor;
+                        // e.CellStyle.ForeColor = dgvAvailableComics.DefaultCellStyle.ForeColor;
+                    }
+                }
+            }
+        }
+
+
+        // --- My Rentals Tab Enhancements ---
+        private void dgvMyRentedComics_CellFormatting(object? sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (dgvMyRentedComics == null || e.RowIndex < 0 || e.RowIndex >= dgvMyRentedComics.Rows.Count)
+                return;
+
+            DataGridViewRow row = dgvMyRentedComics.Rows[e.RowIndex];
+            if (row.DataBoundItem == null)
+                return;
+
+            DateTime? returnDate = null;
+            try
+            {
+                // Using reflection to get ReturnDate from anonymous type
+                var returnDateObj = row.DataBoundItem.GetType().GetProperty("ReturnDate")?.GetValue(row.DataBoundItem, null);
+                if (returnDateObj != null && returnDateObj != DBNull.Value) // Check for DBNull if data comes from DB directly
+                {
+                    returnDate = Convert.ToDateTime(returnDateObj);
+                }
+            }
+            catch(Exception ex)
+            {
+                _logger?.LogError($"Error getting ReturnDate via reflection in CellFormatting: {ex.Message} for item type {row.DataBoundItem.GetType().Name}");
+                return;
+            }
+
+            if (returnDate == null) return;
+
+            // Status column formatting
+            if (dgvMyRentedComics.Columns[e.ColumnIndex].Name == "statusColumn")
+            {
+                TimeSpan remainingTime = returnDate.Value.Date - DateTime.Today; // Compare date parts only
+                if (remainingTime.TotalDays < 0)
+                {
+                    e.Value = $"Overdue by {-remainingTime.TotalDays} day(s)";
+                }
+                else if (remainingTime.TotalDays == 0)
+                {
+                    e.Value = "Due Today";
+                }
+                else
+                {
+                    e.Value = $"{remainingTime.TotalDays} day(s) remaining";
+                }
+                e.FormattingApplied = true;
+            }
+
+            // Row style formatting based on due date (applied to all cells in the row)
+            // Ensure this styling is applied after any default/alternating row styles for it to take precedence.
+            // The CellFormatting event is suitable for this.
+            if (returnDate.Value.Date < DateTime.Today) // Overdue
+            {
+                e.CellStyle.BackColor = ModernBaseForm.DangerColor;
+                e.CellStyle.ForeColor = Color.White;
+            }
+            else if (returnDate.Value.Date <= DateTime.Today.AddDays(3)) // Due within 3 days (includes today)
+            {
+                e.CellStyle.BackColor = ModernBaseForm.AccentColor;
+                // Ensure good contrast with AccentColor (often yellow)
+                e.CellStyle.ForeColor = ModernBaseForm.TextColor; // Or Color.Black if TextColor is too light
+            }
+            // else default styling applies, no need to explicitly reset here unless default styles are complex
+        }
+
+        private void memberViewTabControl_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            if (memberViewTabControl == null) return;
+
+            if (memberViewTabControl.SelectedTab == myRentalsTabPage)
+            {
+                _logger?.Log("My Rentals tab selected. Reloading rented comics.");
+                LoadMyRentedComics(); // Ensure this method is efficient
+            }
+            else if (memberViewTabControl.SelectedTab == availableComicsTabPage)
+            {
+                _logger?.Log("Available Comics tab selected. Re-applying filters.");
+                ApplyAvailableComicsFilter();
+            }
+        }
+
+        // --- Filter Methods ---
+        private bool IsMemberViewActive()
+        {
+            return _currentUser != null &&
+                   _currentUser.Role == UserRole.Member &&
+                   memberViewTabControl != null &&
+                   memberViewTabControl.Visible &&
+                   memberViewTabControl.SelectedTab == availableComicsTabPage;
+        }
+
+        private void ApplyAvailableComicsFilter()
+        {
+            if (_comicService == null || dgvAvailableComics == null || _currentUser == null)
+            {
+                _logger?.LogWarning("ApplyAvailableComicsFilter: Critical components are null. Skipping filter application.");
+                return;
+            }
+
+            // This filter is designed for the member's view of available comics.
+            // If an admin is viewing dgvAvailableComics (e.g., in Comic Management), this filter might not be appropriate
+            // or might need to operate on a different dataset (_allAdminComicStatuses).
+            // The IsMemberViewActive() check in event handlers helps restrict when this is called.
+            // However, LoadAvailableComics() also needs to be updated or this method needs to be smart
+            // about which underlying list to filter if dgvAvailableComics is shared.
+            // For now, we assume it filters the list of comics that are NOT rented.
+
+            try
+            {
+                _logger?.Log("Applying available comics filter.");
+                string searchText = (txtSearchAvailableComics != null && txtSearchAvailableComics.Text != "Search by Title/Author...")
+                                    ? txtSearchAvailableComics.Text.ToLowerInvariant() : "";
+                string selectedGenre = (cmbGenreFilter != null && cmbGenreFilter.SelectedItem != null && cmbGenreFilter.SelectedIndex > 0)
+                                     ? cmbGenreFilter.SelectedItem.ToString()! : "All Genres";
+
+                var comicsToFilter = _comicService.GetAllComics().Where(c => !c.IsRented).ToList();
+
+                if (!string.IsNullOrWhiteSpace(searchText))
+                {
+                    comicsToFilter = comicsToFilter.Where(c =>
+                        (c.Title != null && c.Title.ToLowerInvariant().Contains(searchText)) ||
+                        (c.Author != null && c.Author.ToLowerInvariant().Contains(searchText))
+                    ).ToList();
+                }
+
+                if (selectedGenre != "All Genres")
+                {
+                    comicsToFilter = comicsToFilter.Where(c => c.Genre == selectedGenre).ToList();
+                }
+
+                dgvAvailableComics.DataSource = comicsToFilter;
+                _logger?.Log($"Filter applied. Search: '{searchText}', Genre: '{selectedGenre}'. Found {comicsToFilter.Count} comics.");
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogError("Error applying available comics filter.", ex);
+                if (dgvAvailableComics != null) dgvAvailableComics.DataSource = null; // Clear grid on error
+            }
         }
     }
 }
