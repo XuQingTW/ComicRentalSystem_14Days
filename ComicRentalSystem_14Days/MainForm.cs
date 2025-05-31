@@ -1,14 +1,12 @@
-﻿using ComicRentalSystem_14Days.Models; // Added
-using ComicRentalSystem_14Days.Services; // Existing, ensure it's comprehensive
-using ComicRentalSystem_14Days.Forms; // Existing, ensure it's comprehensive
-using ComicRentalSystem_14Days.Interfaces; // Existing
-using System; // For ArgumentNullException, EventArgs
-using System.Linq; // Added
-using System.Windows.Forms; // For MessageBox, etc.
-using System.Diagnostics; // Existing
-// Removed: using ComicRentalSystem_14Days.Helpers; (Not directly used in provided snippets of MainForm)
-// Removed: using System.Data; (Not directly used in provided snippets of MainForm)
-
+using ComicRentalSystem_14Days.Models; // Added for AdminComicStatusViewModel
+using ComicRentalSystem_14Days.Services;
+using ComicRentalSystem_14Days.Forms;
+using ComicRentalSystem_14Days.Interfaces;
+using System;
+using System.Collections.Generic; // Added for List
+using System.Linq;
+using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace ComicRentalSystem_14Days
 {
@@ -20,38 +18,28 @@ namespace ComicRentalSystem_14Days
         private readonly IReloadService _reloadService;
         private readonly ILogger _logger;
 
-        public MainForm() : base() // Parameterless constructor for Windows Forms designer
+        public MainForm() : base()
         {
             InitializeComponent();
-            // Initialize fields to null! for the designer context or if not properly initialized.
-            // This addresses CS8618 for these fields in the parameterless constructor.
             _currentUser = null!;
             _comicService = null!;
             _memberService = null!;
             _reloadService = null!;
-            _logger = null!; // BaseForm's logger might be initialized if BaseForm() handles it.
-
-            if (this.DesignMode)
-            {
-                // this.Text = "MainForm (設計模式)";
-            }
+            _logger = null!;
         }
-        // Primary constructor
+
         public MainForm(ILogger logger, ComicService comicService, MemberService memberService, IReloadService reloadService, User currentUser)
-            : base() // Explicitly call BaseForm's parameterless constructor
+            : base()
         {
-            // Initialize fields FIRST
             this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this._comicService = comicService ?? throw new ArgumentNullException(nameof(comicService));
             this._memberService = memberService ?? throw new ArgumentNullException(nameof(memberService));
             this._reloadService = reloadService ?? throw new ArgumentNullException(nameof(reloadService));
             this._currentUser = currentUser ?? throw new ArgumentNullException(nameof(currentUser));
 
-            base.SetLogger(logger); // Initialize BaseForm's logger
+            base.SetLogger(logger);
+            InitializeComponent();
 
-            InitializeComponent(); // NOW call InitializeComponent
-
-            // These are still needed to apply role-based UI logic
             _logger.Log($"MainForm initialized for user: {_currentUser.Username}, Role: {_currentUser.Role}");
             SetupUIAccessControls();
             UpdateStatusBar();
@@ -60,55 +48,103 @@ namespace ComicRentalSystem_14Days
         private void MainForm_Load(object sender, EventArgs e)
         {
             this._logger?.Log("MainForm is loading.");
-            // _comicService is guaranteed non-null by constructor, direct use.
-            SetupDataGridView(); // Sets up dgvAvailableComics
-            SetupMyRentedComicsDataGridView(); // Sets up dgvMyRentedComics
+            SetupDataGridView();
 
-            LoadAvailableComics(); // Loads data for available comics
-            LoadMyRentedComics();  // Loads data for member's rented comics
+            if (_currentUser.Role == UserRole.Admin)
+            {
+                LoadAllComicsStatusForAdmin();
+            }
+            else
+            {
+                LoadAvailableComics();
+                LoadMyRentedComics();
+            }
 
             this._comicService.ComicsChanged += ComicService_ComicsChanged;
-            dgvAvailableComics.SelectionChanged += dgvAvailableComics_SelectionChanged;
-
-            // Call selection changed logic to set initial state of btnRentComic
-            // This primarily affects btnRentComic based on dgvAvailableComics selection.
-            // And SetupUIAccessControls would have already run, setting initial visibility.
-            dgvAvailableComics_SelectionChanged(this, EventArgs.Empty);
+            if (dgvAvailableComics != null)
+            {
+                dgvAvailableComics.SelectionChanged += dgvAvailableComics_SelectionChanged;
+                dgvAvailableComics_SelectionChanged(this, EventArgs.Empty);
+            }
         }
 
         private void dgvAvailableComics_SelectionChanged(object? sender, EventArgs e)
         {
-            if (_currentUser == null) return; // Should not happen if form is loaded correctly
+            if (_currentUser == null) return;
 
             bool isMember = _currentUser.Role == UserRole.Member;
             if (isMember)
             {
-                btnRentComic.Enabled = dgvAvailableComics.SelectedRows.Count > 0;
+                if (btnRentComic != null && dgvAvailableComics != null) btnRentComic.Enabled = dgvAvailableComics.SelectedRows.Count > 0;
             }
             else
             {
-                btnRentComic.Enabled = false;
+                if (btnRentComic != null) btnRentComic.Enabled = false;
             }
         }
 
         private void ComicService_ComicsChanged(object? sender, EventArgs e)
         {
-            this._logger?.Log("ComicsChanged event received, reloading available comics and member's rented comics.");
-            LoadAvailableComics();
-            LoadMyRentedComics(); // Also reload member's rented comics
+            this._logger?.Log("ComicsChanged event received.");
+            if (_currentUser.Role == UserRole.Admin)
+            {
+                this._logger?.Log("Reloading all comics status for admin.");
+                LoadAllComicsStatusForAdmin();
+            }
+            else
+            {
+                this._logger?.Log("Reloading available comics and member's rented comics.");
+                LoadAvailableComics();
+                LoadMyRentedComics();
+            }
         }
 
         private void SetupDataGridView()
         {
-            this._logger?.Log("Setting up DataGridView for available comics.");
+            if (dgvAvailableComics == null)
+            {
+                _logger?.LogError("SetupDataGridView: dgvAvailableComics is null.");
+                return;
+            }
+
+            this._logger?.Log("Setting up DataGridView for comics.");
             dgvAvailableComics.AutoGenerateColumns = false;
             dgvAvailableComics.Columns.Clear();
             dgvAvailableComics.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
-            dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Title", HeaderText = "書名", FillWeight = 40 });
-            dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Author", HeaderText = "作者", FillWeight = 30 });
-            dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Genre", HeaderText = "類型", FillWeight = 20 });
-            dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Isbn", HeaderText = "ISBN", FillWeight = 30 });
+            if (_currentUser.Role == UserRole.Admin)
+            {
+                _logger.Log("Configuring DataGridView for Admin view (All Comics Status).");
+                dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Title", HeaderText = "書名", FillWeight = 25 });
+                dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Author", HeaderText = "作者", FillWeight = 20 });
+                dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Status", HeaderText = "狀態", FillWeight = 10 });
+                dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "BorrowerName", HeaderText = "借閱會員", FillWeight = 15 });
+                dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "BorrowerPhoneNumber", HeaderText = "會員電話", FillWeight = 15 });
+
+                var rentalDateColumn = new DataGridViewTextBoxColumn {
+                    DataPropertyName = "RentalDate",
+                    HeaderText = "借閱日期",
+                    FillWeight = 15
+                };
+                rentalDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
+                dgvAvailableComics.Columns.Add(rentalDateColumn);
+
+                var returnDateColumn = new DataGridViewTextBoxColumn {
+                    DataPropertyName = "ReturnDate",
+                    HeaderText = "歸還日期",
+                    FillWeight = 15
+                };
+                returnDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
+                dgvAvailableComics.Columns.Add(returnDateColumn);
+            }
+            else // Member view
+            {
+                _logger.Log("Configuring DataGridView for Member view (Available Comics).");
+                dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Title", HeaderText = "書名", FillWeight = 40 });
+                dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Author", HeaderText = "作者", FillWeight = 30 });
+                dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Genre", HeaderText = "類型", FillWeight = 20 });
+                dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Isbn", HeaderText = "ISBN", FillWeight = 30 });
+            }
 
             dgvAvailableComics.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvAvailableComics.MultiSelect = false;
@@ -118,33 +154,86 @@ namespace ComicRentalSystem_14Days
 
         private void LoadAvailableComics()
         {
-            // _comicService is guaranteed non-null by constructor
+            if (dgvAvailableComics == null) return;
             this._logger?.Log("Loading available comics into MainForm DataGridView.");
-
             try
             {
                 var availableComics = this._comicService.GetAllComics().Where(c => !c.IsRented).ToList();
-
-                if (this.InvokeRequired)
-                {
-                    this.Invoke(new Action(() => {
-                        dgvAvailableComics.DataSource = null;
-                        dgvAvailableComics.DataSource = availableComics;
-                    }));
-                }
-                else
-                {
+                Action updateGrid = () => {
                     dgvAvailableComics.DataSource = null;
                     dgvAvailableComics.DataSource = availableComics;
-                }
+                };
+
+                if (dgvAvailableComics.IsHandleCreated && this.InvokeRequired) { this.Invoke(updateGrid); }
+                else if (dgvAvailableComics.IsHandleCreated) { updateGrid(); }
 
                 this._logger?.Log($"Successfully loaded {availableComics.Count} available comics.");
             }
             catch (Exception ex)
             {
-                // Assuming LogErrorActivity is a method in BaseForm or this class
                 LogErrorActivity("Error loading available comics.", ex);
                 MessageBox.Show($"載入可用漫畫列表時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void LoadAllComicsStatusForAdmin()
+        {
+            if (dgvAvailableComics == null) return;
+            _logger?.Log("Loading all comics status for Admin view.");
+            try
+            {
+                var allComics = _comicService.GetAllComics();
+                var comicStatuses = new List<AdminComicStatusViewModel>();
+
+                foreach (var comic in allComics)
+                {
+                    var viewModel = new AdminComicStatusViewModel
+                    {
+                        Id = comic.Id,
+                        Title = comic.Title,
+                        Author = comic.Author,
+                        Genre = comic.Genre,
+                        Isbn = comic.Isbn,
+                        RentalDate = comic.RentalDate,
+                        ReturnDate = comic.ReturnDate
+                    };
+
+                    if (comic.IsRented)
+                    {
+                        viewModel.Status = "被借閱";
+                        Member? member = _memberService.GetMemberById(comic.RentedToMemberId);
+                        if (member != null)
+                        {
+                            viewModel.BorrowerName = member.Name;
+                            viewModel.BorrowerPhoneNumber = member.PhoneNumber;
+                        }
+                        else
+                        {
+                            viewModel.BorrowerName = "不明";
+                            _logger?.LogWarning($"Could not find member with ID {comic.RentedToMemberId} for rented comic ID {comic.Id}");
+                        }
+                    }
+                    else
+                    {
+                        viewModel.Status = "在館中";
+                    }
+                    comicStatuses.Add(viewModel);
+                }
+
+                Action updateGrid = () => {
+                    dgvAvailableComics.DataSource = null;
+                    dgvAvailableComics.DataSource = comicStatuses;
+                };
+
+                if (dgvAvailableComics.IsHandleCreated && this.InvokeRequired) { this.Invoke(updateGrid); }
+                else if (dgvAvailableComics.IsHandleCreated) { updateGrid(); }
+
+                _logger?.Log($"Successfully loaded {comicStatuses.Count} comics for admin view.");
+            }
+            catch (Exception ex)
+            {
+                LogErrorActivity("Error loading all comics status for admin.", ex);
+                MessageBox.Show($"載入所有漫畫狀態時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -156,117 +245,72 @@ namespace ComicRentalSystem_14Days
             var menuStrip = this.Controls.Find("menuStrip2", true).FirstOrDefault() as MenuStrip;
             if (menuStrip != null)
             {
-                var managementMenuItem = menuStrip.Items.OfType<ToolStripMenuItem>()
-                                                 .FirstOrDefault(item => item.Name == "管理ToolStripMenuItem");
-                if (managementMenuItem != null)
-                {
-                    managementMenuItem.Visible = isAdmin;
-                    _logger.Log($"管理ToolStripMenuItem visibility set to {isAdmin}");
-                }
-                else
-                {
-                    _logger.LogWarning("管理ToolStripMenuItem not found in menuStrip2.");
-                }
+                var managementMenuItem = menuStrip.Items.OfType<ToolStripMenuItem>().FirstOrDefault(item => item.Name == "管理ToolStripMenuItem");
+                if (managementMenuItem != null) managementMenuItem.Visible = isAdmin;
 
-                var toolsMenuItem = menuStrip.Items.OfType<ToolStripMenuItem>()
-                                             .FirstOrDefault(item => item.Name == "工具ToolStripMenuItem");
-                if (toolsMenuItem != null)
-                {
-                    toolsMenuItem.Visible = isAdmin;
-                    _logger.Log($"工具ToolStripMenuItem visibility set to {isAdmin}");
-                }
-                else
-                {
-                    _logger.LogWarning("工具ToolStripMenuItem not found in menuStrip2.");
-                }
+                var toolsMenuItem = menuStrip.Items.OfType<ToolStripMenuItem>().FirstOrDefault(item => item.Name == "工具ToolStripMenuItem");
+                if (toolsMenuItem != null) toolsMenuItem.Visible = isAdmin;
 
-                // Specific items under "管理ToolStripMenuItem" that might still need individual control
-                // For example, rentalManagementToolStripMenuItem is visible to all users.
-                var rentalMgmtItem = managementMenuItem?.DropDownItems.OfType<ToolStripMenuItem>()
-                                                       .FirstOrDefault(item => item.Name == "rentalManagementToolStripMenuItem");
-                if (rentalMgmtItem != null)
-                {
-                    rentalMgmtItem.Visible = true;
-                    rentalMgmtItem.Enabled = true;
-                    _logger.Log("rentalManagementToolStripMenuItem is visible and enabled for all users.");
-                }
-                else if (managementMenuItem != null) // Only log warning if parent was found
-                {
-                    _logger.LogWarning("rentalManagementToolStripMenuItem not found under 管理ToolStripMenuItem.");
-                }
-
-
-                // Handle top-level "使用者註冊ToolStripMenuItem" - this seems to be a top-level item based on Designer.cs
-                var userRegItem = menuStrip.Items.OfType<ToolStripMenuItem>()
-                                                 .FirstOrDefault(item => item.Name == "使用者註冊ToolStripMenuItem");
-                if (userRegItem != null)
-                {
-                    userRegItem.Visible = isAdmin;
-                    userRegItem.Enabled = isAdmin;
-                    _logger.Log($"使用者註冊ToolStripMenuItem visibility/enabled set to {isAdmin}");
-                }
-                else
-                {
-                    _logger.LogWarning("使用者註冊ToolStripMenuItem (top level) not found in menuStrip2.");
-                }
+                var userRegItem = menuStrip.Items.OfType<ToolStripMenuItem>().FirstOrDefault(item => item.Name == "使用者註冊ToolStripMenuItem");
+                if (userRegItem != null) userRegItem.Visible = isAdmin;
             }
-            else
-            {
-                _logger.LogWarning("MenuStrip control 'menuStrip2' not found on the form.");
-            }
+            else { _logger.LogWarning("MenuStrip control 'menuStrip2' not found."); }
 
-            // Setup for btnRentComic and related member-specific UI
-            if (lblMyRentedComicsHeader != null && dgvMyRentedComics != null)
+            if (isAdmin)
             {
-                if (!isAdmin) // User is a Member
+                if (lblAvailableComics != null)
                 {
-                    lblMyRentedComicsHeader.Visible = true;
-                    dgvMyRentedComics.Visible = true;
-                    btnRentComic.Visible = true;
-                    btnRentComic.Enabled = dgvAvailableComics.SelectedRows.Count > 0;
+                    lblAvailableComics.Text = "所有漫畫狀態";
+                    lblAvailableComics.Visible = true;
                 }
-                else // User is an Admin
+                if (dgvAvailableComics != null) dgvAvailableComics.Visible = true;
+
+                if (lblMyRentedComicsHeader != null) lblMyRentedComicsHeader.Visible = false;
+                if (dgvMyRentedComics != null) dgvMyRentedComics.Visible = false;
+                if (btnRentComic != null)
                 {
-                    lblMyRentedComicsHeader.Visible = false;
-                    dgvMyRentedComics.Visible = false;
                     btnRentComic.Visible = false;
                     btnRentComic.Enabled = false;
                 }
-                _logger.Log($"lblMyRentedComicsHeader, dgvMyRentedComics, and btnRentComic visibility/enabled state set based on admin status.");
             }
-            else
+            else // User is a Member
             {
-                _logger.LogWarning("Some member-specific UI controls (lblMyRentedComicsHeader or dgvMyRentedComics) not found during SetupUIAccessControls.");
+                if (lblAvailableComics != null)
+                {
+                    lblAvailableComics.Text = "目前可借閱的漫畫";
+                    lblAvailableComics.Visible = true;
+                }
+                if (dgvAvailableComics != null) dgvAvailableComics.Visible = true;
+
+                if (lblMyRentedComicsHeader != null) lblMyRentedComicsHeader.Visible = true;
+                if (dgvMyRentedComics != null) dgvMyRentedComics.Visible = true;
+                if (btnRentComic != null)
+                {
+                    btnRentComic.Visible = true;
+                }
             }
-            // Keep other parts of SetupUIAccessControls (menu items etc.) as they are.
+            _logger.Log($"UI controls visibility and text updated based on admin status ({isAdmin}).");
         }
 
         private void UpdateStatusBar()
         {
-            // Assuming the StatusStrip control is named 'statusStrip1'. This should be verified from MainForm.Designer.cs.
             var statusStrip = this.Controls.Find("statusStrip1", true).FirstOrDefault() as StatusStrip;
             if (statusStrip != null)
             {
-                var statusLabel = statusStrip.Items.OfType<ToolStripStatusLabel>()
-                                           .FirstOrDefault(item => item.Name == "toolStripStatusLabelUser");
+                var statusLabel = statusStrip.Items.OfType<ToolStripStatusLabel>().FirstOrDefault(item => item.Name == "toolStripStatusLabelUser");
                 if (statusLabel != null)
                 {
                     statusLabel.Text = $"使用者: {_currentUser.Username} | 角色: {_currentUser.Role}";
                     this._logger.Log($"Status bar updated: User: {_currentUser.Username}, Role: {_currentUser.Role}");
                 }
-                else
-                {
-                    this._logger.LogWarning("ToolStripStatusLabel 'toolStripStatusLabelUser' not found in statusStrip1.");
-                }
+                else { this._logger.LogWarning("ToolStripStatusLabel 'toolStripStatusLabelUser' not found."); }
             }
-            else
-            {
-                this._logger.LogWarning("StatusStrip control 'statusStrip1' not found on the form.");
-            }
+            else { this._logger.LogWarning("StatusStrip control 'statusStrip1' not found."); }
         }
 
         private void SetupMyRentedComicsDataGridView()
         {
+            if (dgvMyRentedComics == null) return;
             _logger?.Log("Setting up DataGridView for member's rented comics (dgvMyRentedComics).");
             dgvMyRentedComics.AutoGenerateColumns = false;
             dgvMyRentedComics.Columns.Clear();
@@ -275,20 +319,12 @@ namespace ComicRentalSystem_14Days
             dgvMyRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Title", HeaderText = "書名", FillWeight = 35 });
             dgvMyRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Author", HeaderText = "作者", FillWeight = 25 });
 
-            var rentalDateColumn = new DataGridViewTextBoxColumn {
-                DataPropertyName = "RentalDate",
-                HeaderText = "租借日期",
-                FillWeight = 20
-            };
-            rentalDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd"; // Format as date only
+            var rentalDateColumn = new DataGridViewTextBoxColumn { DataPropertyName = "RentalDate", HeaderText = "租借日期", FillWeight = 20 };
+            rentalDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
             dgvMyRentedComics.Columns.Add(rentalDateColumn);
 
-            var returnDateColumn = new DataGridViewTextBoxColumn {
-                DataPropertyName = "ReturnDate",
-                HeaderText = "歸還日期",
-                FillWeight = 20
-            };
-            returnDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd"; // Format as date only
+            var returnDateColumn = new DataGridViewTextBoxColumn { DataPropertyName = "ReturnDate", HeaderText = "歸還日期", FillWeight = 20 };
+            returnDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
             dgvMyRentedComics.Columns.Add(returnDateColumn);
 
             dgvMyRentedComics.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
@@ -299,73 +335,65 @@ namespace ComicRentalSystem_14Days
 
         private void LoadMyRentedComics()
         {
+            if (dgvMyRentedComics == null) return;
             if (_currentUser == null || _comicService == null || _memberService == null || _logger == null)
             {
                 _logger?.LogWarning("LoadMyRentedComics: CurrentUser or critical services are null. Clearing DGV.");
-                if (dgvMyRentedComics.IsHandleCreated && this.InvokeRequired) { this.Invoke(new Action(() => dgvMyRentedComics.DataSource = null)); }
-                else if (dgvMyRentedComics.IsHandleCreated) { dgvMyRentedComics.DataSource = null; }
+                ClearDgvMyRentedComics();
                 return;
             }
-
             if (_currentUser.Role != UserRole.Member)
             {
                 _logger?.Log("LoadMyRentedComics: User is not a Member. Clearing DGV.");
-                 if (dgvMyRentedComics.IsHandleCreated && this.InvokeRequired) { this.Invoke(new Action(() => dgvMyRentedComics.DataSource = null)); }
-                else if (dgvMyRentedComics.IsHandleCreated) { dgvMyRentedComics.DataSource = null; }
+                ClearDgvMyRentedComics();
                 return;
             }
 
             _logger?.Log($"LoadMyRentedComics: Loading comics for member '{_currentUser.Username}'.");
-
             try
             {
-                Member? currentMember = null;
-                try
-                {
-                    currentMember = _memberService.GetMemberByUsername(_currentUser.Username);
-                }
-                catch (NotImplementedException nie)
-                {
-                    _logger?.LogError($"LoadMyRentedComics: _memberService.GetMemberByUsername is not implemented. {nie.Message}");
-                    if (dgvMyRentedComics.IsHandleCreated && this.InvokeRequired) { this.Invoke(new Action(() => dgvMyRentedComics.DataSource = null)); }
-                    else if (dgvMyRentedComics.IsHandleCreated) { dgvMyRentedComics.DataSource = null; }
-                    return;
-                }
-
+                Member? currentMember = _memberService.GetMemberByUsername(_currentUser.Username);
                 if (currentMember == null)
                 {
                     _logger?.LogWarning($"LoadMyRentedComics: Member profile not found for username '{_currentUser.Username}'.");
-                     if (dgvMyRentedComics.IsHandleCreated && this.InvokeRequired) { this.Invoke(new Action(() => dgvMyRentedComics.DataSource = null)); }
-                    else if (dgvMyRentedComics.IsHandleCreated) { dgvMyRentedComics.DataSource = null; }
+                    ClearDgvMyRentedComics();
                     return;
                 }
-                int currentMemberId = currentMember.Id;
 
-                var allComics = _comicService.GetAllComics();
-                var myRentedComics = allComics.Where(c => c.IsRented && c.RentedToMemberId == currentMemberId).ToList();
+                var myRentedComics = _comicService.GetAllComics()
+                    .Where(c => c.IsRented && c.RentedToMemberId == currentMember.Id)
+                    .Select(c => new {
+                        c.Title,
+                        c.Author,
+                        RentalDate = c.RentalDate,
+                        ReturnDate = c.ReturnDate
+                    })
+                    .ToList();
 
-                Action updateDataSource = () => {
+                Action updateGrid = () => {
                     dgvMyRentedComics.DataSource = null;
                     dgvMyRentedComics.DataSource = myRentedComics;
                 };
 
-                if (dgvMyRentedComics.IsHandleCreated && this.InvokeRequired)
-                {
-                    this.Invoke(updateDataSource);
-                }
-                else if (dgvMyRentedComics.IsHandleCreated)
-                {
-                    updateDataSource();
-                }
-                _logger?.Log($"LoadMyRentedComics: Successfully loaded {myRentedComics.Count} rented comics for member ID {currentMemberId}.");
+                if (dgvMyRentedComics.IsHandleCreated && this.InvokeRequired) { this.Invoke(updateGrid); }
+                else if (dgvMyRentedComics.IsHandleCreated) { updateGrid(); }
+
+                _logger?.Log($"LoadMyRentedComics: Successfully loaded {myRentedComics.Count} rented comics for member ID {currentMember.Id}.");
             }
             catch (Exception ex)
             {
                 _logger?.LogError("LoadMyRentedComics: Error loading member's rented comics.", ex);
                 MessageBox.Show($"載入您的租借漫畫列表時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                if (dgvMyRentedComics.IsHandleCreated && this.InvokeRequired) { this.Invoke(new Action(() => dgvMyRentedComics.DataSource = null)); }
-                else if (dgvMyRentedComics.IsHandleCreated) { dgvMyRentedComics.DataSource = null; }
+                ClearDgvMyRentedComics();
             }
+        }
+
+        private void ClearDgvMyRentedComics()
+        {
+            if (dgvMyRentedComics == null) return;
+            Action clearGrid = () => dgvMyRentedComics.DataSource = null;
+            if (dgvMyRentedComics.IsHandleCreated && this.InvokeRequired) { this.Invoke(clearGrid); }
+            else if (dgvMyRentedComics.IsHandleCreated) { clearGrid(); }
         }
 
         private void 離開ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -377,8 +405,6 @@ namespace ComicRentalSystem_14Days
         private void 漫畫管理ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this._logger?.Log("Opening ComicManagementForm.");
-            // Services are guaranteed non-null by constructor
-            // Applied null-forgiving operator to _logger as it's expected to be non-null here.
             ComicManagementForm comicMgmtForm = new ComicManagementForm(this._logger!, this._comicService);
             comicMgmtForm.ShowDialog(this);
         }
@@ -386,11 +412,8 @@ namespace ComicRentalSystem_14Days
         private void 會員管理ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this._logger?.Log("Opening MemberManagementForm.");
-            // Services are guaranteed non-null by constructor
-            // Also ensure Program.AppAuthService is available and not null
             if (Program.AppAuthService != null)
             {
-                // Applied null-forgiving operator to _logger as it's expected to be non-null here.
                 MemberManagementForm memberMgmtForm = new MemberManagementForm(this._logger!, this._memberService, Program.AppAuthService);
                 memberMgmtForm.ShowDialog(this);
             }
@@ -404,12 +427,8 @@ namespace ComicRentalSystem_14Days
         private void rentalManagementToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this._logger?.Log("Opening RentalForm.");
-            // Services are guaranteed non-null by constructor here
-            // No need for explicit null check of this._logger, this._comicService, this._memberService, this._reloadService
-            // as they are checked in the constructor.
             try
             {
-                // Applied null-forgiving operator to _logger as it's expected to be non-null here.
                 RentalForm rentalForm = new RentalForm(this._comicService, this._memberService, this._logger!, this._reloadService);
                 rentalForm.ShowDialog(this);
             }
@@ -458,9 +477,15 @@ namespace ComicRentalSystem_14Days
                 return;
             }
 
-            if (dgvAvailableComics.SelectedRows.Count == 0)
+            if (dgvAvailableComics == null || dgvAvailableComics.SelectedRows.Count == 0)
             {
                 MessageBox.Show("請先選擇一本漫畫。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            if (_currentUser.Role == UserRole.Admin)
+            {
+                _logger?.LogWarning("Admin user attempted to click Rent button. This action is for members only.");
                 return;
             }
 
@@ -472,10 +497,10 @@ namespace ComicRentalSystem_14Days
                 return;
             }
 
-            if (selectedComic.IsRented) // Should not happen if dgvAvailableComics is up-to-date
+            if (selectedComic.IsRented)
             {
                 MessageBox.Show($"漫畫 '{selectedComic.Title}' 已經被借出。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                LoadAvailableComics(); // Refresh list in case of stale data
+                LoadAvailableComics();
                 return;
             }
 
@@ -488,30 +513,7 @@ namespace ComicRentalSystem_14Days
                 if (rentalDialog.ShowDialog(this) == DialogResult.OK)
                 {
                     DateTime selectedReturnDate = rentalDialog.SelectedReturnDate;
-
-                    // Assumption: _memberService.GetMemberByUsername(string username) exists or will be implemented.
-                    // This part might need adjustment based on the actual MemberService capabilities.
-                    Member? member = null;
-                    try
-                    {
-                        // For now, we'll assume GetMemberByUsername exists and works as expected.
-                        // If MemberService is not yet updated, this line will cause a compile error
-                        // or runtime issue if the method is not found/implemented.
-                        member = _memberService.GetMemberByUsername(_currentUser.Username);
-                    }
-                    catch (NotImplementedException nie)
-                    {
-                         _logger?.LogError($"btnRentComic_Click: _memberService.GetMemberByUsername is not implemented. {nie.Message}");
-                         MessageBox.Show("無法驗證會員身份，租借功能暫時無法使用 (開發者提示: GetMemberByUsername 未實現)。", "功能錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                         return;
-                    }
-                    catch (Exception ex) // Catch other potential exceptions from member service
-                    {
-                        _logger?.LogError($"btnRentComic_Click: Error calling _memberService.GetMemberByUsername. {ex.Message}", ex);
-                        MessageBox.Show("驗證會員身份時發生錯誤。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-
+                    Member? member = _memberService.GetMemberByUsername(_currentUser.Username);
 
                     if (member == null)
                     {
@@ -522,7 +524,7 @@ namespace ComicRentalSystem_14Days
 
                     selectedComic.IsRented = true;
                     selectedComic.RentedToMemberId = member.Id;
-                    selectedComic.RentalDate = DateTime.Now; // Record current date and time of rental
+                    selectedComic.RentalDate = DateTime.Now;
                     selectedComic.ReturnDate = selectedReturnDate;
 
                     try
@@ -530,17 +532,15 @@ namespace ComicRentalSystem_14Days
                         _comicService.UpdateComic(selectedComic);
                         _logger?.Log($"Comic '{selectedComic.Title}' (ID: {selectedComic.Id}) rented to member ID {member.Id} (Username: {_currentUser.Username}) until {selectedReturnDate:yyyy-MM-dd}.");
                         MessageBox.Show($"漫畫 '{selectedComic.Title}' 已成功租借至 {selectedReturnDate:yyyy-MM-dd}。", "租借成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        LoadAvailableComics(); // Refresh the list of available comics
-                        LoadMyRentedComics();  // Refresh the list of member's rented comics
-                        dgvAvailableComics_SelectionChanged(null, EventArgs.Empty); // Update button state for btnRentComic
+                        LoadAvailableComics();
+                        LoadMyRentedComics();
+                        if (dgvAvailableComics != null) dgvAvailableComics_SelectionChanged(null, EventArgs.Empty);
                     }
                     catch (Exception ex)
                     {
                         _logger?.LogError($"btnRentComic_Click: Failed to update comic (ID: {selectedComic.Id}) after rental attempt. {ex.Message}", ex);
                         MessageBox.Show($"更新漫畫狀態時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        // Potentially revert comic object's state if persistence failed, though this might be complex.
-                        // For now, just log and inform user. The comic might be in an inconsistent state in memory vs. file.
-                        selectedComic.IsRented = false; // Try to revert in-memory state
+                        selectedComic.IsRented = false;
                         selectedComic.RentedToMemberId = 0;
                         selectedComic.RentalDate = null;
                         selectedComic.ReturnDate = null;
@@ -556,13 +556,11 @@ namespace ComicRentalSystem_14Days
         private void 檢視日誌ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this._logger?.Log($"View Log menu item clicked by user '{_currentUser.Username}'.");
-
             if (_currentUser.Role == UserRole.Admin)
             {
                 this._logger?.Log($"Admin user '{_currentUser.Username}' viewing logs.");
                 try
                 {
-                    // Assuming Path.Combine and File.Exists are from System.IO
                     string logDirectory = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ComicRentalApp", "Logs");
                     string logFilePath = System.IO.Path.Combine(logDirectory, "ComicRentalSystemLog.txt");
 
@@ -591,8 +589,14 @@ namespace ComicRentalSystem_14Days
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             this._logger?.Log("MainForm is closing. Unsubscribing from events.");
-            // _comicService is guaranteed non-null here
-            this._comicService.ComicsChanged -= ComicService_ComicsChanged;
+            if (this._comicService != null)
+            {
+                this._comicService.ComicsChanged -= ComicService_ComicsChanged;
+            }
+            if (dgvAvailableComics != null)
+            {
+                 dgvAvailableComics.SelectionChanged -= dgvAvailableComics_SelectionChanged;
+            }
             base.OnFormClosing(e);
         }
     }
