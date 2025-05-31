@@ -217,7 +217,8 @@ namespace ComicRentalSystem_14Days
         {
             this._logger?.Log("Opening ComicManagementForm.");
             // Services are guaranteed non-null by constructor
-            ComicManagementForm comicMgmtForm = new ComicManagementForm(this._logger, this._comicService);
+            // Applied null-forgiving operator to _logger as it's expected to be non-null here.
+            ComicManagementForm comicMgmtForm = new ComicManagementForm(this._logger!, this._comicService);
             comicMgmtForm.ShowDialog(this);
         }
 
@@ -228,7 +229,8 @@ namespace ComicRentalSystem_14Days
             // Also ensure Program.AppAuthService is available and not null
             if (Program.AppAuthService != null)
             {
-                MemberManagementForm memberMgmtForm = new MemberManagementForm(this._logger, this._memberService, Program.AppAuthService);
+                // Applied null-forgiving operator to _logger as it's expected to be non-null here.
+                MemberManagementForm memberMgmtForm = new MemberManagementForm(this._logger!, this._memberService, Program.AppAuthService);
                 memberMgmtForm.ShowDialog(this);
             }
             else
@@ -246,7 +248,8 @@ namespace ComicRentalSystem_14Days
             // as they are checked in the constructor.
             try
             {
-                RentalForm rentalForm = new RentalForm(this._comicService, this._memberService, this._logger, this._reloadService);
+                // Applied null-forgiving operator to _logger as it's expected to be non-null here.
+                RentalForm rentalForm = new RentalForm(this._comicService, this._memberService, this._logger!, this._reloadService);
                 rentalForm.ShowDialog(this);
             }
             catch (Exception ex)
