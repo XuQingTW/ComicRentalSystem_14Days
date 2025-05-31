@@ -75,8 +75,7 @@ namespace ComicRentalSystem_14Days
             // 
             // this.btnRentComic = new System.Windows.Forms.Button();
             //
-
-            // this.lblMyRentedComicsHeader = new System.Windows.Forms.Label();
+            this.lblMyRentedComicsHeader = new System.Windows.Forms.Label();
             // this.dgvMyRentedComics = new System.Windows.Forms.DataGridView();
             // ((System.ComponentModel.ISupportInitialize)(this.dgvMyRentedComics)).BeginInit();
             //
@@ -237,7 +236,7 @@ namespace ComicRentalSystem_14Days
             AutoScaleDimensions = new SizeF(9F, 19F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(900, 690); // Increased client height to accommodate new controls + status bar
-            // Controls.Add(this.lblMyRentedComicsHeader); // Added
+            Controls.Add(this.lblMyRentedComicsHeader); // Added
             // Controls.Add(this.dgvMyRentedComics); // Added
             // Controls.Add(this.btnRentComic);
             Controls.Add(dgvAvailableComics);
@@ -279,7 +278,7 @@ namespace ComicRentalSystem_14Days
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelUser;
         // private System.Windows.Forms.Button btnRentComic;
-        // private System.Windows.Forms.Label lblMyRentedComicsHeader; // Added
+        private System.Windows.Forms.Label lblMyRentedComicsHeader; // Added
         // private System.Windows.Forms.DataGridView dgvMyRentedComics; // Added
     }
 }

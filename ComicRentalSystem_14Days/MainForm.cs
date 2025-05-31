@@ -216,32 +216,24 @@ namespace ComicRentalSystem_14Days
             }
 
             // Setup for btnRentComic and related member-specific UI
-            // Setup for btnRentComic and related member-specific UI
-            // if (btnRentComic != null && lblMyRentedComicsHeader != null && dgvMyRentedComics != null)
-            // if (lblMyRentedComicsHeader != null && dgvMyRentedComics != null)
-            // {
-            //     if (!isAdmin) // User is a Member
-            //     {
-            //         // btnRentComic.Visible = true;
-            //         // btnRentComic.Enabled = dgvAvailableComics.SelectedRows.Count > 0;
-            //         // lblMyRentedComicsHeader.Visible = true;
-            //         // dgvMyRentedComics.Visible = true;
-            //     }
-            //     else // User is an Admin
-            //     {
-            //         // btnRentComic.Visible = false;
-            //         // btnRentComic.Enabled = false;
-            //         // lblMyRentedComicsHeader.Visible = false;
-            //         // dgvMyRentedComics.Visible = false;
-            //     }
-            //     // _logger.Log($"btnRentComic visibility set to {!isAdmin}, enabled state based on selection/role.");
-            //     // _logger.Log($"lblMyRentedComicsHeader and dgvMyRentedComics visibility set to {!isAdmin}.");
-            // }
-            // else
-            // {
-            //     // Updated log message to reflect that btnRentComic is not checked here anymore
-            //     _logger.LogWarning("One or more UI controls (lblMyRentedComicsHeader, dgvMyRentedComics) not found during SetupUIAccessControls.");
-            // }
+            // Assuming btnRentComic and dgvMyRentedComics related lines are still commented out.
+            if (lblMyRentedComicsHeader != null) // Check specifically for lblMyRentedComicsHeader
+            {
+                if (!isAdmin) // User is a Member
+                {
+                    lblMyRentedComicsHeader.Visible = true;
+                }
+                else // User is an Admin
+                {
+                    lblMyRentedComicsHeader.Visible = false;
+                }
+                _logger.Log($"lblMyRentedComicsHeader visibility set based on admin status.");
+            }
+            else
+            {
+                _logger.LogWarning("lblMyRentedComicsHeader control not found during SetupUIAccessControls.");
+            }
+            // Keep other parts of SetupUIAccessControls (menu items etc.) as they are.
         }
 
         private void UpdateStatusBar()
