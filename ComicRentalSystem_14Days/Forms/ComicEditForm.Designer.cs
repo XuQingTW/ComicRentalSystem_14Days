@@ -204,6 +204,7 @@
             this.gbStatus.ResumeLayout(false);
             this.gbStatus.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
         }
 
         #endregion

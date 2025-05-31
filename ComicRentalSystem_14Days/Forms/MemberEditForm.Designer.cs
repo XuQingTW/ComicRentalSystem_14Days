@@ -130,6 +130,7 @@
             this.gbMemberDetails.ResumeLayout(false);
             this.gbMemberDetails.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
         }
 
         #endregion
