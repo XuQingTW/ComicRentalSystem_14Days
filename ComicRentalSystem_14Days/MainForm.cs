@@ -144,25 +144,17 @@ namespace ComicRentalSystem_14Days
                 var rentalDateColumn = new DataGridViewTextBoxColumn {
                     DataPropertyName = "RentalDate",
                     HeaderText = "借閱日期",
-                    FillWeight = 15
+                    FillWeight = 15,
+                    DefaultCellStyle = new DataGridViewCellStyle { Format = "yyyy-MM-dd" }
                 };
-                if (rentalDateColumn.DefaultCellStyle == null)
-                {
-                    rentalDateColumn.DefaultCellStyle = new DataGridViewCellStyle();
-                }
-                rentalDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
                 dgvAvailableComics.Columns.Add(rentalDateColumn);
 
                 var returnDateColumn = new DataGridViewTextBoxColumn {
                     DataPropertyName = "ReturnDate",
                     HeaderText = "歸還日期",
-                    FillWeight = 15
+                    FillWeight = 15,
+                    DefaultCellStyle = new DataGridViewCellStyle { Format = "yyyy-MM-dd" }
                 };
-                if (returnDateColumn.DefaultCellStyle == null)
-                {
-                    returnDateColumn.DefaultCellStyle = new DataGridViewCellStyle();
-                }
-                returnDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
                 dgvAvailableComics.Columns.Add(returnDateColumn);
             }
             else // Member view
@@ -186,16 +178,18 @@ namespace ComicRentalSystem_14Days
             this._logger?.Log("Loading available comics into MainForm DataGridView.");
             try
             {
-                var availableComics = this._comicService.GetAllComics().Where(c => !c.IsRented).ToList();
+                var queryResult = this._comicService.GetAllComics().Where(c => !c.IsRented).ToList();
+                var availableComics = queryResult ?? new List<Comic>(); // Ensure availableComics is not null
+
                 Action updateGrid = () => {
                     dgvAvailableComics.DataSource = null;
-                    dgvAvailableComics.DataSource = availableComics ?? new List<Comic>();
+                    dgvAvailableComics.DataSource = availableComics;
                 };
 
                 if (dgvAvailableComics.IsHandleCreated && this.InvokeRequired) { this.Invoke(updateGrid); }
                 else if (dgvAvailableComics.IsHandleCreated) { updateGrid(); }
 
-                this._logger?.Log($"Successfully loaded {(availableComics?.Count ?? 0)} available comics.");
+                this._logger?.Log($"Successfully loaded {availableComics.Count} available comics.");
             }
             catch (Exception ex)
             {
@@ -380,7 +374,7 @@ namespace ComicRentalSystem_14Days
 
                 Action updateGrid = () => {
                     dgvMyRentedComics.DataSource = null;
-                    dgvMyRentedComics.DataSource = myRentedComics ?? new List<object>();
+                    dgvMyRentedComics.DataSource = myRentedComics;
                 };
 
                 if (dgvMyRentedComics.IsHandleCreated && this.InvokeRequired) { this.Invoke(updateGrid); }
