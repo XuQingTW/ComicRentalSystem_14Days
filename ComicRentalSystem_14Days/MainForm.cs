@@ -126,7 +126,10 @@ namespace ComicRentalSystem_14Days
                     HeaderText = "借閱日期",
                     FillWeight = 15
                 };
-                rentalDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
+                if (rentalDateColumn.DefaultCellStyle != null)
+                {
+                    rentalDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
+                }
                 dgvAvailableComics.Columns.Add(rentalDateColumn);
 
                 var returnDateColumn = new DataGridViewTextBoxColumn {
@@ -134,7 +137,10 @@ namespace ComicRentalSystem_14Days
                     HeaderText = "歸還日期",
                     FillWeight = 15
                 };
-                returnDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
+                if (returnDateColumn.DefaultCellStyle != null)
+                {
+                    returnDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
+                }
                 dgvAvailableComics.Columns.Add(returnDateColumn);
             }
             else // Member view
@@ -405,7 +411,7 @@ namespace ComicRentalSystem_14Days
         private void 漫畫管理ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this._logger?.Log("Opening ComicManagementForm.");
-            ComicManagementForm comicMgmtForm = new ComicManagementForm(this._logger!, this._comicService);
+            ComicManagementForm comicMgmtForm = new ComicManagementForm(this._logger!, this._comicService, this._currentUser);
             comicMgmtForm.ShowDialog(this);
         }
 
@@ -414,7 +420,7 @@ namespace ComicRentalSystem_14Days
             this._logger?.Log("Opening MemberManagementForm.");
             if (Program.AppAuthService != null)
             {
-                MemberManagementForm memberMgmtForm = new MemberManagementForm(this._logger!, this._memberService, Program.AppAuthService);
+                MemberManagementForm memberMgmtForm = new MemberManagementForm(this._logger!, this._memberService, Program.AppAuthService, this._currentUser);
                 memberMgmtForm.ShowDialog(this);
             }
             else
@@ -479,6 +485,7 @@ namespace ComicRentalSystem_14Days
 
             if (dgvAvailableComics == null || dgvAvailableComics.SelectedRows.Count == 0)
             {
+                _logger?.Log("btnRentComic_Click: No comic selected by user.");
                 MessageBox.Show("請先選擇一本漫畫。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
@@ -499,6 +506,7 @@ namespace ComicRentalSystem_14Days
 
             if (selectedComic.IsRented)
             {
+                _logger?.Log($"btnRentComic_Click: User '{_currentUser.Username}' attempted to rent comic '{selectedComic.Title}' (ID: {selectedComic.Id}) which is already rented.");
                 MessageBox.Show($"漫畫 '{selectedComic.Title}' 已經被借出。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 LoadAvailableComics();
                 return;

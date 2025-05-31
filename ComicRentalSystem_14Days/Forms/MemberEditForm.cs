@@ -71,6 +71,30 @@ namespace ComicRentalSystem_14Days.Forms
 
             LogActivity("Save Member button clicked.");
 
+            if (string.IsNullOrWhiteSpace(txtName.Text))
+            {
+                LogActivity("Validation failed: Name is empty.");
+                MessageBox.Show("姓名不得為空。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtName.Focus();
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtPhoneNumber.Text))
+            {
+                LogActivity("Validation failed: Phone number is empty.");
+                MessageBox.Show("電話號碼不得為空。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtPhoneNumber.Focus();
+                return;
+            }
+
+            if (!txtPhoneNumber.Text.All(char.IsDigit))
+            {
+                LogActivity("Validation failed: Phone number contains non-digit characters.");
+                MessageBox.Show("電話號碼只能包含數字。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtPhoneNumber.Focus();
+                return;
+            }
+
             try
             {
                 if (_isEditMode && _editableMember != null)

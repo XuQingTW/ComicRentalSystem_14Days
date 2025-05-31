@@ -11,11 +11,13 @@ namespace ComicRentalSystem_14Days.Forms
     public partial class ComicManagementForm : ComicRentalSystem_14Days.BaseForm
     {
         private ComicService? _comicService;
+        private readonly User? _currentUser;
 
-        public ComicManagementForm(ILogger logger, ComicService comicService) : base(logger)
+        public ComicManagementForm(ILogger logger, ComicService comicService, User? currentUser) : base(logger)
         {
             InitializeComponent();
             _comicService = comicService;
+            _currentUser = currentUser;
             SetupDataGridView();
             LoadComicsData();
             _comicService.ComicsChanged += ComicService_ComicsChanged;
@@ -39,9 +41,11 @@ namespace ComicRentalSystem_14Days.Forms
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
+            LogActivity($"ComicManagementForm closing. User: {_currentUser?.Username ?? "N/A"}");
             if (_comicService != null)
             {
                 _comicService.ComicsChanged -= ComicService_ComicsChanged;
+                LogActivity("Unsubscribed from ComicService.ComicsChanged event.");
             }
             base.OnFormClosing(e);
         }

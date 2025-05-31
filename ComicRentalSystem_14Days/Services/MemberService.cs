@@ -16,16 +16,18 @@ namespace ComicRentalSystem_14Days.Services
         private readonly string _memberFileName = "members.csv";
         private List<Member> _members = new List<Member> { };
         private readonly ILogger _logger;
+        private readonly ComicService _comicService; // Added ComicService field
 
         public delegate void MemberDataChangedEventHandler(object? sender, EventArgs e);
         public event MemberDataChangedEventHandler? MembersChanged;
 
-        public MemberService(IFileHelper fileHelper, ILogger? logger) // Changed parameter to IFileHelper
+        public MemberService(IFileHelper fileHelper, ILogger? logger, ComicService comicService) // Changed parameter to IFileHelper
         {
             _fileHelper = fileHelper ?? throw new ArgumentNullException(nameof(fileHelper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger), "Logger cannot be null for MemberService.");
+            _comicService = comicService ?? throw new ArgumentNullException(nameof(comicService)); // Initialize ComicService
 
-            _logger.Log("MemberService initializing."); 
+            _logger.Log("MemberService initializing.");
 
             LoadMembers();
             _logger.Log($"MemberService initialized. Loaded {_members.Count} members.");
@@ -122,7 +124,7 @@ namespace ComicRentalSystem_14Days.Services
             }
             if (_members.Any(m => m.PhoneNumber == member.PhoneNumber))
             {
-                _logger.Log($"Warning: A member with the same phone number '{member.PhoneNumber}' already exists (Name='{_members.First(m => m.PhoneNumber == member.PhoneNumber).Name}').");
+                _logger.LogWarning($"A member with the same phone number '{member.PhoneNumber}' already exists (Name='{_members.First(m => m.PhoneNumber == member.PhoneNumber).Name}'). Proceeding with addition.");
             }
 
             if (member.Id == 0)
@@ -173,6 +175,14 @@ namespace ComicRentalSystem_14Days.Services
                 var ex = new InvalidOperationException($"Member with ID {id} not found for deletion.");
                 _logger.LogError($"Failed to delete member: ID {id} not found.", ex);
                 throw ex;
+            }
+
+            // Check for active rentals before deleting
+            var allComics = _comicService.GetAllComics();
+            if (allComics.Any(c => c.IsRented && c.RentedToMemberId == id))
+            {
+                _logger.LogWarning($"Attempt to delete member ID {id} ('{memberToRemove.Name}') with active rentals prevented.");
+                throw new InvalidOperationException("Cannot delete member: Member has active comic rentals.");
             }
 
             _members.Remove(memberToRemove);
