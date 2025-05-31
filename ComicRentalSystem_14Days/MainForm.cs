@@ -922,22 +922,26 @@ namespace ComicRentalSystem_14Days
             else if (selectedButton == btnNavMemberMgmt)
             {
                 // Show Member Management related controls
-                _logger?.Log("Member Management view selected.");
+                // _logger?.Log("Member Management view selected."); // Original logging
+                this.會員管理ToolStripMenuItem_Click(this, EventArgs.Empty);
             }
             else if (selectedButton == btnNavRentalMgmt)
             {
                 // Show Rental Management related controls
-                _logger?.Log("Rental Management view selected.");
+                // _logger?.Log("Rental Management view selected."); // Original logging
+                this.rentalManagementToolStripMenuItem_Click(this, EventArgs.Empty);
             }
             else if (selectedButton == btnNavUserReg)
             {
                 // Show User Registration related controls
-                 _logger?.Log("User Registration view selected.");
+                // _logger?.Log("User Registration view selected."); // Original logging
+                this.使用者註冊ToolStripMenuItem_Click(this, EventArgs.Empty);
             }
             else if (selectedButton == btnNavLogs)
             {
                 // Show Logs related controls
-                 _logger?.Log("Logs view selected.");
+                // _logger?.Log("Logs view selected."); // Original logging
+                this.檢視日誌ToolStripMenuItem_Click(this, EventArgs.Empty);
             }
         }
 
