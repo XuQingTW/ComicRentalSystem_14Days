@@ -216,22 +216,27 @@ namespace ComicRentalSystem_14Days
             }
 
             // Setup for btnRentComic and related member-specific UI
-            // Assuming btnRentComic and dgvMyRentedComics related lines are still commented out.
-            if (lblMyRentedComicsHeader != null) // Check specifically for lblMyRentedComicsHeader
+            if (lblMyRentedComicsHeader != null && dgvMyRentedComics != null)
             {
                 if (!isAdmin) // User is a Member
                 {
                     lblMyRentedComicsHeader.Visible = true;
+                    dgvMyRentedComics.Visible = true;
+                    // btnRentComic.Visible = true; (remains commented)
+                    // btnRentComic.Enabled = dgvAvailableComics.SelectedRows.Count > 0; (remains commented)
                 }
                 else // User is an Admin
                 {
                     lblMyRentedComicsHeader.Visible = false;
+                    dgvMyRentedComics.Visible = false;
+                    // btnRentComic.Visible = false; (remains commented)
+                    // btnRentComic.Enabled = false; (remains commented)
                 }
-                _logger.Log($"lblMyRentedComicsHeader visibility set based on admin status.");
+                _logger.Log($"lblMyRentedComicsHeader and dgvMyRentedComics visibility set based on admin status.");
             }
             else
             {
-                _logger.LogWarning("lblMyRentedComicsHeader control not found during SetupUIAccessControls.");
+                _logger.LogWarning("Some member-specific UI controls (lblMyRentedComicsHeader or dgvMyRentedComics) not found during SetupUIAccessControls.");
             }
             // Keep other parts of SetupUIAccessControls (menu items etc.) as they are.
         }

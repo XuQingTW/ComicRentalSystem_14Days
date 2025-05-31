@@ -76,8 +76,8 @@ namespace ComicRentalSystem_14Days
             // this.btnRentComic = new System.Windows.Forms.Button();
             //
             this.lblMyRentedComicsHeader = new System.Windows.Forms.Label();
-            // this.dgvMyRentedComics = new System.Windows.Forms.DataGridView();
-            // ((System.ComponentModel.ISupportInitialize)(this.dgvMyRentedComics)).BeginInit();
+            this.dgvMyRentedComics = new System.Windows.Forms.DataGridView();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvMyRentedComics)).BeginInit();
             //
             // 檔案ToolStripMenuItem
             // 
@@ -237,7 +237,7 @@ namespace ComicRentalSystem_14Days
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(900, 690); // Increased client height to accommodate new controls + status bar
             Controls.Add(this.lblMyRentedComicsHeader); // Added
-            // Controls.Add(this.dgvMyRentedComics); // Added
+            Controls.Add(this.dgvMyRentedComics); // Added
             // Controls.Add(this.btnRentComic);
             Controls.Add(dgvAvailableComics);
             Controls.Add(lblAvailableComics);
