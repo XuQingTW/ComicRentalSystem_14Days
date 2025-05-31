@@ -62,10 +62,10 @@ namespace ComicRentalSystem_14Days
             this._logger?.Log("MainForm is loading.");
             // _comicService is guaranteed non-null by constructor, direct use.
             SetupDataGridView(); // Sets up dgvAvailableComics
-            // SetupMyRentedComicsDataGridView(); // Sets up dgvMyRentedComics
+            SetupMyRentedComicsDataGridView(); // Sets up dgvMyRentedComics
 
             LoadAvailableComics(); // Loads data for available comics
-            // LoadMyRentedComics();  // Loads data for member's rented comics
+            LoadMyRentedComics();  // Loads data for member's rented comics
 
             this._comicService.ComicsChanged += ComicService_ComicsChanged;
             dgvAvailableComics.SelectionChanged += dgvAvailableComics_SelectionChanged;
@@ -95,7 +95,7 @@ namespace ComicRentalSystem_14Days
         {
             this._logger?.Log("ComicsChanged event received, reloading available comics and member's rented comics.");
             LoadAvailableComics();
-            // LoadMyRentedComics(); // Also reload member's rented comics
+            LoadMyRentedComics(); // Also reload member's rented comics
         }
 
         private void SetupDataGridView()
@@ -265,108 +265,108 @@ namespace ComicRentalSystem_14Days
             }
         }
 
-        // private void SetupMyRentedComicsDataGridView()
-        // {
-        //     _logger?.Log("Setting up DataGridView for member's rented comics (dgvMyRentedComics).");
-        //     dgvMyRentedComics.AutoGenerateColumns = false;
-        //     dgvMyRentedComics.Columns.Clear();
-        //     dgvMyRentedComics.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        private void SetupMyRentedComicsDataGridView()
+        {
+            _logger?.Log("Setting up DataGridView for member's rented comics (dgvMyRentedComics).");
+            dgvMyRentedComics.AutoGenerateColumns = false;
+            dgvMyRentedComics.Columns.Clear();
+            dgvMyRentedComics.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
-        //     dgvMyRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Title", HeaderText = "書名", FillWeight = 35 });
-        //     dgvMyRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Author", HeaderText = "作者", FillWeight = 25 });
+            dgvMyRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Title", HeaderText = "書名", FillWeight = 35 });
+            dgvMyRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Author", HeaderText = "作者", FillWeight = 25 });
 
-        //     var rentalDateColumn = new DataGridViewTextBoxColumn {
-        //         DataPropertyName = "RentalDate",
-        //         HeaderText = "租借日期",
-        //         FillWeight = 20
-        //     };
-        //     rentalDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd"; // Format as date only
-        //     dgvMyRentedComics.Columns.Add(rentalDateColumn);
+            var rentalDateColumn = new DataGridViewTextBoxColumn {
+                DataPropertyName = "RentalDate",
+                HeaderText = "租借日期",
+                FillWeight = 20
+            };
+            rentalDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd"; // Format as date only
+            dgvMyRentedComics.Columns.Add(rentalDateColumn);
 
-        //     var returnDateColumn = new DataGridViewTextBoxColumn {
-        //         DataPropertyName = "ReturnDate",
-        //         HeaderText = "歸還日期",
-        //         FillWeight = 20
-        //     };
-        //     returnDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd"; // Format as date only
-        //     dgvMyRentedComics.Columns.Add(returnDateColumn);
+            var returnDateColumn = new DataGridViewTextBoxColumn {
+                DataPropertyName = "ReturnDate",
+                HeaderText = "歸還日期",
+                FillWeight = 20
+            };
+            returnDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd"; // Format as date only
+            dgvMyRentedComics.Columns.Add(returnDateColumn);
 
-        //     dgvMyRentedComics.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-        //     dgvMyRentedComics.MultiSelect = false;
-        //     dgvMyRentedComics.ReadOnly = true;
-        //     dgvMyRentedComics.AllowUserToAddRows = false;
-        // }
+            dgvMyRentedComics.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvMyRentedComics.MultiSelect = false;
+            dgvMyRentedComics.ReadOnly = true;
+            dgvMyRentedComics.AllowUserToAddRows = false;
+        }
 
-        // private void LoadMyRentedComics()
-        // {
-        //     if (_currentUser == null || _comicService == null || _memberService == null || _logger == null)
-        //     {
-        //         _logger?.LogWarning("LoadMyRentedComics: CurrentUser or critical services are null. Clearing DGV.");
-        //         if (dgvMyRentedComics.IsHandleCreated && this.InvokeRequired) { this.Invoke(new Action(() => dgvMyRentedComics.DataSource = null)); }
-        //         else if (dgvMyRentedComics.IsHandleCreated) { dgvMyRentedComics.DataSource = null; }
-        //         return;
-        //     }
+        private void LoadMyRentedComics()
+        {
+            if (_currentUser == null || _comicService == null || _memberService == null || _logger == null)
+            {
+                _logger?.LogWarning("LoadMyRentedComics: CurrentUser or critical services are null. Clearing DGV.");
+                if (dgvMyRentedComics.IsHandleCreated && this.InvokeRequired) { this.Invoke(new Action(() => dgvMyRentedComics.DataSource = null)); }
+                else if (dgvMyRentedComics.IsHandleCreated) { dgvMyRentedComics.DataSource = null; }
+                return;
+            }
 
-        //     if (_currentUser.Role != UserRole.Member)
-        //     {
-        //         _logger?.Log("LoadMyRentedComics: User is not a Member. Clearing DGV.");
-        //          if (dgvMyRentedComics.IsHandleCreated && this.InvokeRequired) { this.Invoke(new Action(() => dgvMyRentedComics.DataSource = null)); }
-        //         else if (dgvMyRentedComics.IsHandleCreated) { dgvMyRentedComics.DataSource = null; }
-        //         return;
-        //     }
+            if (_currentUser.Role != UserRole.Member)
+            {
+                _logger?.Log("LoadMyRentedComics: User is not a Member. Clearing DGV.");
+                 if (dgvMyRentedComics.IsHandleCreated && this.InvokeRequired) { this.Invoke(new Action(() => dgvMyRentedComics.DataSource = null)); }
+                else if (dgvMyRentedComics.IsHandleCreated) { dgvMyRentedComics.DataSource = null; }
+                return;
+            }
 
-        //     _logger?.Log($"LoadMyRentedComics: Loading comics for member '{_currentUser.Username}'.");
+            _logger?.Log($"LoadMyRentedComics: Loading comics for member '{_currentUser.Username}'.");
 
-        //     try
-        //     {
-        //         Member? currentMember = null;
-        //         try
-        //         {
-        //             currentMember = _memberService.GetMemberByUsername(_currentUser.Username);
-        //         }
-        //         catch (NotImplementedException nie)
-        //         {
-        //             _logger?.LogError($"LoadMyRentedComics: _memberService.GetMemberByUsername is not implemented. {nie.Message}");
-        //             if (dgvMyRentedComics.IsHandleCreated && this.InvokeRequired) { this.Invoke(new Action(() => dgvMyRentedComics.DataSource = null)); }
-        //             else if (dgvMyRentedComics.IsHandleCreated) { dgvMyRentedComics.DataSource = null; }
-        //             return;
-        //         }
+            try
+            {
+                Member? currentMember = null;
+                try
+                {
+                    currentMember = _memberService.GetMemberByUsername(_currentUser.Username);
+                }
+                catch (NotImplementedException nie)
+                {
+                    _logger?.LogError($"LoadMyRentedComics: _memberService.GetMemberByUsername is not implemented. {nie.Message}");
+                    if (dgvMyRentedComics.IsHandleCreated && this.InvokeRequired) { this.Invoke(new Action(() => dgvMyRentedComics.DataSource = null)); }
+                    else if (dgvMyRentedComics.IsHandleCreated) { dgvMyRentedComics.DataSource = null; }
+                    return;
+                }
 
-        //         if (currentMember == null)
-        //         {
-        //             _logger?.LogWarning($"LoadMyRentedComics: Member profile not found for username '{_currentUser.Username}'.");
-        //              if (dgvMyRentedComics.IsHandleCreated && this.InvokeRequired) { this.Invoke(new Action(() => dgvMyRentedComics.DataSource = null)); }
-        //             else if (dgvMyRentedComics.IsHandleCreated) { dgvMyRentedComics.DataSource = null; }
-        //             return;
-        //         }
-        //         int currentMemberId = currentMember.Id;
+                if (currentMember == null)
+                {
+                    _logger?.LogWarning($"LoadMyRentedComics: Member profile not found for username '{_currentUser.Username}'.");
+                     if (dgvMyRentedComics.IsHandleCreated && this.InvokeRequired) { this.Invoke(new Action(() => dgvMyRentedComics.DataSource = null)); }
+                    else if (dgvMyRentedComics.IsHandleCreated) { dgvMyRentedComics.DataSource = null; }
+                    return;
+                }
+                int currentMemberId = currentMember.Id;
 
-        //         var allComics = _comicService.GetAllComics();
-        //         var myRentedComics = allComics.Where(c => c.IsRented && c.RentedToMemberId == currentMemberId).ToList();
+                var allComics = _comicService.GetAllComics();
+                var myRentedComics = allComics.Where(c => c.IsRented && c.RentedToMemberId == currentMemberId).ToList();
 
-        //         Action updateDataSource = () => {
-        //             dgvMyRentedComics.DataSource = null;
-        //             dgvMyRentedComics.DataSource = myRentedComics;
-        //         };
+                Action updateDataSource = () => {
+                    dgvMyRentedComics.DataSource = null;
+                    dgvMyRentedComics.DataSource = myRentedComics;
+                };
 
-        //         if (dgvMyRentedComics.IsHandleCreated && this.InvokeRequired)
-        //         {
-        //             this.Invoke(updateDataSource);
-        //         }
-        //         else if (dgvMyRentedComics.IsHandleCreated)
-        //         {
-        //             updateDataSource();
-        //         }
-        //         _logger?.Log($"LoadMyRentedComics: Successfully loaded {myRentedComics.Count} rented comics for member ID {currentMemberId}.");
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         _logger?.LogError("LoadMyRentedComics: Error loading member's rented comics.", ex);
-        //         MessageBox.Show($"載入您的租借漫畫列表時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //         if (dgvMyRentedComics.IsHandleCreated && this.InvokeRequired) { this.Invoke(new Action(() => dgvMyRentedComics.DataSource = null)); }
-        //         else if (dgvMyRentedComics.IsHandleCreated) { dgvMyRentedComics.DataSource = null; }
-        //     }
-        // }
+                if (dgvMyRentedComics.IsHandleCreated && this.InvokeRequired)
+                {
+                    this.Invoke(updateDataSource);
+                }
+                else if (dgvMyRentedComics.IsHandleCreated)
+                {
+                    updateDataSource();
+                }
+                _logger?.Log($"LoadMyRentedComics: Successfully loaded {myRentedComics.Count} rented comics for member ID {currentMemberId}.");
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogError("LoadMyRentedComics: Error loading member's rented comics.", ex);
+                MessageBox.Show($"載入您的租借漫畫列表時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (dgvMyRentedComics.IsHandleCreated && this.InvokeRequired) { this.Invoke(new Action(() => dgvMyRentedComics.DataSource = null)); }
+                else if (dgvMyRentedComics.IsHandleCreated) { dgvMyRentedComics.DataSource = null; }
+            }
+        }
 
         private void 離開ToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -531,7 +531,7 @@ namespace ComicRentalSystem_14Days
                         _logger?.Log($"Comic '{selectedComic.Title}' (ID: {selectedComic.Id}) rented to member ID {member.Id} (Username: {_currentUser.Username}) until {selectedReturnDate:yyyy-MM-dd}.");
                         MessageBox.Show($"漫畫 '{selectedComic.Title}' 已成功租借至 {selectedReturnDate:yyyy-MM-dd}。", "租借成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         LoadAvailableComics(); // Refresh the list of available comics
-                        // LoadMyRentedComics();  // Refresh the list of member's rented comics
+                        LoadMyRentedComics();  // Refresh the list of member's rented comics
                         dgvAvailableComics_SelectionChanged(null, EventArgs.Empty); // Update button state for btnRentComic
                     }
                     catch (Exception ex)
