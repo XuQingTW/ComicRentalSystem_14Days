@@ -28,48 +28,48 @@ namespace ComicRentalSystem_14Days.Services
         public ComicService(IFileHelper fileHelper, ILogger? logger) // Changed parameter to IFileHelper
         {
             _fileHelper = fileHelper ?? throw new ArgumentNullException(nameof(fileHelper));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger), "Logger cannot be null for ComicService.");
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger), "ComicService 的記錄器不可為空。");
 
-            _logger.Log("ComicService initializing.");
+            _logger.Log("ComicService 初始化中。");
 
             LoadComics();
-            _logger.Log($"ComicService initialized. Loaded {_comics.Count} comics.");
+            _logger.Log($"ComicService 初始化完成。已載入 {_comics.Count} 本漫畫。");
         }
 
         private void LoadComics()
         {
-            _logger.Log($"Attempting to load comics from file: '{_comicFileName}'.");
+            _logger.Log($"正在嘗試從檔案載入漫畫: '{_comicFileName}'。");
             try
             {
                 _comics = _fileHelper.ReadFile<Comic>(_comicFileName, Comic.FromCsvString);
-                _logger.Log($"Successfully loaded {_comics.Count} comics from '{_comicFileName}'.");
+                _logger.Log($"成功從 '{_comicFileName}' 載入 {_comics.Count} 本漫畫。");
             }
             catch (Exception ex) when (ex is FormatException || ex is IOException)
             {
-                _logger.LogError($"Critical error: Comic data file '{_comicFileName}' is corrupted or unreadable. Details: {ex.Message}", ex);
+                _logger.LogError($"嚴重錯誤: 漫畫資料檔案 '{_comicFileName}' 已損壞或無法讀取。詳細資訊: {ex.Message}", ex);
                 MessageBox.Show($"漫畫資料檔案已損壞或無法讀取，無法載入漫畫資料庫。應用程式相關功能可能無法正常運作。\n錯誤詳情: {ex.Message}\n檔案路徑: {_comicFileName}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                throw new ApplicationException($"Failed to load comic data from '{_comicFileName}'. Application may not function correctly.", ex);
+                throw new ApplicationException($"無法從 '{_comicFileName}' 載入漫畫資料。應用程式可能無法正常運作。", ex);
             }
             catch (Exception ex)
             {
-                _logger.LogError($"An unexpected error occurred while loading comics from {_comicFileName}. Details: {ex.Message}", ex);
+                _logger.LogError($"從 {_comicFileName} 載入漫畫時發生未預期的錯誤。詳細資訊: {ex.Message}", ex);
                 MessageBox.Show($"載入漫畫資料時發生未預期的錯誤。應用程式相關功能可能無法正常運作。\n錯誤詳情: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                throw new ApplicationException("Unexpected error during comic data loading.", ex);
+                throw new ApplicationException("載入漫畫資料期間發生未預期錯誤。", ex);
             }
         }
 
         private void SaveComics()
         {
-            _logger.Log($"Attempting to save {_comics.Count} comics to file: '{_comicFileName}'.");
+            _logger.Log($"正在嘗試將 {_comics.Count} 本漫畫儲存到檔案: '{_comicFileName}'。");
             try
             {
                 _fileHelper.WriteFile<Comic>(_comicFileName, _comics, comic => comic.ToCsvString());
-                _logger.Log($"Successfully saved {_comics.Count} comics to '{_comicFileName}'.");
+                _logger.Log($"已成功將 {_comics.Count} 本漫畫儲存到 '{_comicFileName}'。");
                 OnComicsChanged();
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error saving comics to '{_comicFileName}'.", ex);
+                _logger.LogError($"將漫畫儲存到 '{_comicFileName}' 時發生錯誤。", ex);
                 throw;
             }
         }
@@ -77,25 +77,25 @@ namespace ComicRentalSystem_14Days.Services
         protected virtual void OnComicsChanged()
         {
             ComicsChanged?.Invoke(this, EventArgs.Empty);
-            _logger.Log("ComicsChanged event invoked.");
+            _logger.Log("已觸發 ComicsChanged 事件。");
         }
         public List<Comic> GetAllComics()
         {
-            _logger.Log("GetAllComics called.");
+            _logger.Log("已呼叫 GetAllComics。");
             return _comics;
         }
 
         public Comic? GetComicById(int id)
         {
-            _logger.Log($"GetComicById called for ID: {id}.");
+            _logger.Log($"已為ID: {id} 呼叫 GetComicById。");
             Comic? comic = _comics.FirstOrDefault(c => c.Id == id);
             if (comic == null)
             {
-                _logger.Log($"Comic with ID: {id} not found.");
+                _logger.Log($"找不到ID為: {id} 的漫畫。");
             }
             else
             {
-                _logger.Log($"Comic with ID: {id} found: Title='{comic.Title}'.");
+                _logger.Log($"找到ID為: {id} 的漫畫: 書名='{comic.Title}'。");
             }
             return comic;
         }
@@ -105,32 +105,32 @@ namespace ComicRentalSystem_14Days.Services
             if (comic == null)
             {
                 var ex = new ArgumentNullException(nameof(comic));
-                _logger.LogError("Attempted to add a null comic object.", ex);
+                _logger.LogError("嘗試新增空的漫畫物件。", ex);
                 throw ex;
             }
 
-            _logger.Log($"Attempting to add new comic: Title='{comic.Title}', Author='{comic.Author}'.");
+            _logger.Log($"正在嘗試新增漫畫: 書名='{comic.Title}', 作者='{comic.Author}'。");
 
             if (comic.Id != 0 && _comics.Any(c => c.Id == comic.Id))
             {
-                var ex = new InvalidOperationException($"Comic with ID {comic.Id} already exists.");
-                _logger.LogError($"Failed to add comic: ID {comic.Id} (Title='{comic.Title}') already exists.", ex);
+                var ex = new InvalidOperationException($"ID為 {comic.Id} 的漫畫已存在。");
+                _logger.LogError($"新增漫畫失敗: ID {comic.Id} (書名='{comic.Title}') 已存在。", ex);
                 throw ex;
             }
             if (_comics.Any(c => c.Title.Equals(comic.Title, StringComparison.OrdinalIgnoreCase) &&
                                  c.Author.Equals(comic.Author, StringComparison.OrdinalIgnoreCase)))
             {
-                _logger.LogWarning($"A comic with the same title='{comic.Title}' and author='{comic.Author}' already exists. Proceeding with addition.");
+                _logger.LogWarning($"書名='{comic.Title}' 且作者='{comic.Author}' 相同的漫畫已存在。繼續新增。");
             }
 
             if (comic.Id == 0)
             {
                 comic.Id = GetNextId();
-                _logger.Log($"Generated new ID {comic.Id} for comic '{comic.Title}'.");
+                _logger.Log($"已為漫畫 '{comic.Title}' 產生新的ID {comic.Id}。");
             }
 
             _comics.Add(comic);
-            _logger.Log($"Comic '{comic.Title}' (ID: {comic.Id}) added to in-memory list. Total comics: {_comics.Count}.");
+            _logger.Log($"漫畫 '{comic.Title}' (ID: {comic.Id}) 已新增至記憶體列表。漫畫總數: {_comics.Count}。");
             SaveComics();
         }
 
@@ -139,17 +139,17 @@ namespace ComicRentalSystem_14Days.Services
             if (comic == null)
             {
                 var ex = new ArgumentNullException(nameof(comic));
-                _logger.LogError("Attempted to update with a null comic object.", ex);
+                _logger.LogError("嘗試使用空的漫畫物件進行更新。", ex);
                 throw ex;
             }
 
-            _logger.Log($"Attempting to update comic with ID: {comic.Id} (Title='{comic.Title}').");
+            _logger.Log($"正在嘗試更新ID為: {comic.Id} (書名='{comic.Title}') 的漫畫。");
 
             Comic? existingComic = _comics.FirstOrDefault(c => c.Id == comic.Id);
             if (existingComic == null)
             {
-                var ex = new InvalidOperationException($"Comic with ID {comic.Id} not found for update.");
-                _logger.LogError($"Failed to update comic: ID {comic.Id} (Title='{comic.Title}') not found.", ex);
+                var ex = new InvalidOperationException($"找不到ID為 {comic.Id} 的漫畫進行更新。");
+                _logger.LogError($"更新漫畫失敗: 找不到ID {comic.Id} (書名='{comic.Title}')。", ex);
                 throw ex;
             }
 
@@ -159,39 +159,39 @@ namespace ComicRentalSystem_14Days.Services
             existingComic.Genre = comic.Genre;
             existingComic.IsRented = comic.IsRented;
             existingComic.RentedToMemberId = comic.RentedToMemberId;
-            _logger.Log($"Comic properties for ID {comic.Id} (Title='{existingComic.Title}') updated in-memory.");
+            _logger.Log($"ID {comic.Id} (書名='{existingComic.Title}') 的漫畫屬性已在記憶體中更新。");
 
             SaveComics();
-            _logger.Log($"Comic with ID: {comic.Id} (Title='{existingComic.Title}') update persisted to file.");
+            _logger.Log($"ID為: {comic.Id} (書名='{existingComic.Title}') 的漫畫更新已保存到檔案。");
         }
 
         public void DeleteComic(int id)
         {
-            _logger.Log($"Attempting to delete comic with ID: {id}.");
+            _logger.Log($"正在嘗試刪除ID為: {id} 的漫畫。");
             Comic? comicToRemove = _comics.FirstOrDefault(c => c.Id == id);
 
             if (comicToRemove == null)
             {
-                var ex = new InvalidOperationException($"Comic with ID {id} not found for deletion.");
-                _logger.LogError($"Failed to delete comic: ID {id} not found.", ex);
+                var ex = new InvalidOperationException($"找不到ID為 {id} 的漫畫進行刪除。");
+                _logger.LogError($"刪除漫畫失敗: 找不到ID {id}。", ex);
                 throw ex;
             }
 
             if (comicToRemove.IsRented)
             {
-                _logger.LogWarning($"Attempt to delete rented comic ID {id} ('{comicToRemove.Title}') prevented. Rented by Member ID: {comicToRemove.RentedToMemberId}.");
-                throw new InvalidOperationException("Cannot delete comic: Comic is currently rented.");
+                _logger.LogWarning($"已阻止刪除已租借的漫畫ID {id} ('{comicToRemove.Title}')。由會員ID: {comicToRemove.RentedToMemberId} 租借。");
+                throw new InvalidOperationException("無法刪除漫畫: 漫畫目前已租借。");
             }
 
             _comics.Remove(comicToRemove);
-            _logger.Log($"Comic '{comicToRemove.Title}' (ID: {id}) removed from in-memory list. Total comics: {_comics.Count}.");
+            _logger.Log($"漫畫 '{comicToRemove.Title}' (ID: {id}) 已從記憶體列表移除。漫畫總數: {_comics.Count}。");
             SaveComics();
         }
 
         public int GetNextId()
         {
             int nextId = !_comics.Any() ? 1 : _comics.Max(c => c.Id) + 1;
-            _logger.Log($"Next available comic ID determined as: {nextId}.");
+            _logger.Log($"下一個可用的漫畫ID已確定為: {nextId}。");
             return nextId;
         }
 
@@ -199,41 +199,41 @@ namespace ComicRentalSystem_14Days.Services
         {
             if (string.IsNullOrWhiteSpace(genreFilter))
             {
-                _logger.Log("GetComicsByGenre called with empty genre filter, returning all comics.");
+                _logger.Log("已呼叫 GetComicsByGenre，類型過濾器為空，返回所有漫畫。");
                 return new List<Comic>(_comics);
             }
             else
             {
-                _logger.Log($"GetComicsByGenre called, filtering by genre: '{genreFilter}'.");
+                _logger.Log($"已呼叫 GetComicsByGenre，依類型篩選: '{genreFilter}'。");
                 List<Comic> filteredComics = _comics.Where(c => c.Genre.Equals(genreFilter, StringComparison.OrdinalIgnoreCase)).ToList();
-                _logger.Log($"Found {filteredComics.Count} comics with genre '{genreFilter}'.");
+                _logger.Log($"找到 {filteredComics.Count} 本類型為 '{genreFilter}' 的漫畫。");
                 return filteredComics;
             }
         }
 
         public List<Comic> SearchComics(string? titleFilter = null, string? authorFilter = null)
         {
-            _logger.Log($"SearchComics called with TitleFilter: '{titleFilter ?? "N/A"}', AuthorFilter: '{authorFilter ?? "N/A"}'.");
+            _logger.Log($"已呼叫 SearchComics，書名過濾器: '{titleFilter ?? "N/A"}', 作者過濾器: '{authorFilter ?? "N/A"}'。");
             var query = _comics.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(titleFilter))
             {
                 query = query.Where(c => c.Title.IndexOf(titleFilter, StringComparison.OrdinalIgnoreCase) >= 0);
-                _logger.Log($"Applied title filter: '{titleFilter}'.");
+                _logger.Log($"已套用書名過濾器: '{titleFilter}'。");
             }
             if (!string.IsNullOrWhiteSpace(authorFilter))
             {
                 query = query.Where(c => c.Author.IndexOf(authorFilter, StringComparison.OrdinalIgnoreCase) >= 0);
-                _logger.Log($"Applied author filter: '{authorFilter}'.");
+                _logger.Log($"已套用作者過濾器: '{authorFilter}'。");
             }
 
             if (string.IsNullOrWhiteSpace(titleFilter) && string.IsNullOrWhiteSpace(authorFilter))
             {
-                _logger.Log("No search filters applied, returning all comics.");
+                _logger.Log("未套用任何搜尋過濾器，返回所有漫畫。");
             }
 
             List<Comic> results = query.ToList();
-            _logger.Log($"SearchComics found {results.Count} matching comics.");
+            _logger.Log($"SearchComics 找到 {results.Count} 本相符的漫畫。");
             return results;
         }
     }

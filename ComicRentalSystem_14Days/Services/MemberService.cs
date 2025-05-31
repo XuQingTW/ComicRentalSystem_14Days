@@ -24,56 +24,56 @@ namespace ComicRentalSystem_14Days.Services
         public MemberService(IFileHelper fileHelper, ILogger? logger, ComicService comicService) // Changed parameter to IFileHelper
         {
             _fileHelper = fileHelper ?? throw new ArgumentNullException(nameof(fileHelper));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger), "Logger cannot be null for MemberService.");
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger), "MemberService 的記錄器不可為空。");
             _comicService = comicService ?? throw new ArgumentNullException(nameof(comicService)); // Initialize ComicService
 
-            _logger.Log("MemberService initializing.");
+            _logger.Log("MemberService 初始化中。");
 
             LoadMembers();
-            _logger.Log($"MemberService initialized. Loaded {_members.Count} members.");
+            _logger.Log($"MemberService 初始化完成。已載入 {_members.Count} 位會員。");
         }
 
         public void Reload()
         {
-            _logger.Log("Reload called on MemberService.");
+            _logger.Log("已在 MemberService 上呼叫 Reload。");
             LoadMembers();
             OnMembersChanged();
         }
 
         private void LoadMembers()
         {
-            _logger.Log($"Attempting to load members from file: '{_memberFileName}'.");
+            _logger.Log($"正在嘗試從檔案載入會員: '{_memberFileName}'。");
             try
             {
                 _members = _fileHelper.ReadFile<Member>(_memberFileName, Member.FromCsvString);
-                _logger.Log($"Successfully loaded {_members.Count} members from '{_memberFileName}'.");
+                _logger.Log($"成功從 '{_memberFileName}' 載入 {_members.Count} 位會員。");
             }
             catch (Exception ex) when (ex is FormatException || ex is IOException)
             {
-                _logger.LogError($"Critical error: Member data file '{_memberFileName}' is corrupted or unreadable. Details: {ex.Message}", ex);
+                _logger.LogError($"嚴重錯誤: 會員資料檔案 '{_memberFileName}' 已損壞或無法讀取。詳細資訊: {ex.Message}", ex);
                 MessageBox.Show($"會員資料檔案已損壞或無法讀取，無法載入會員資料庫。應用程式相關功能可能無法正常運作。\n錯誤詳情: {ex.Message}\n檔案路徑: {_memberFileName}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                throw new ApplicationException($"Failed to load member data from '{_memberFileName}'. Application may not function correctly.", ex);
+                throw new ApplicationException($"無法從 '{_memberFileName}' 載入會員資料。應用程式可能無法正常運作。", ex);
             }
             catch (Exception ex)
             {
-                _logger.LogError($"An unexpected error occurred while loading members from {_memberFileName}. Details: {ex.Message}", ex);
+                _logger.LogError($"從 {_memberFileName} 載入會員時發生未預期的錯誤。詳細資訊: {ex.Message}", ex);
                 MessageBox.Show($"載入會員資料時發生未預期的錯誤。應用程式相關功能可能無法正常運作。\n錯誤詳情: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                throw new ApplicationException("Unexpected error during member data loading.", ex);
+                throw new ApplicationException("載入會員資料期間發生未預期錯誤。", ex);
             }
         }
 
         private void SaveMembers()
         {
-            _logger.Log($"Attempting to save {_members.Count} members to file: '{_memberFileName}'.");
+            _logger.Log($"正在嘗試將 {_members.Count} 位會員儲存到檔案: '{_memberFileName}'。");
             try
             {
                 _fileHelper.WriteFile<Member>(_memberFileName, _members, member => member.ToCsvString());
-                _logger.Log($"Successfully saved {_members.Count} members to '{_memberFileName}'.");
+                _logger.Log($"已成功將 {_members.Count} 位會員儲存到 '{_memberFileName}'。");
                 OnMembersChanged();
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error saving members to '{_memberFileName}'.", ex);
+                _logger.LogError($"將會員儲存到 '{_memberFileName}' 時發生錯誤。", ex);
                 throw;
             }
         }
@@ -81,26 +81,26 @@ namespace ComicRentalSystem_14Days.Services
         protected virtual void OnMembersChanged()
         {
             MembersChanged?.Invoke(this, EventArgs.Empty);
-            _logger.Log("MembersChanged event invoked.");
+            _logger.Log("已觸發 MembersChanged 事件。");
         }
 
         public List<Member> GetAllMembers()
         {
-            _logger.Log("GetAllMembers called.");
+            _logger.Log("已呼叫 GetAllMembers。");
             return new List<Member>(_members);
         }
 
         public Member? GetMemberById(int id)
         {
-            _logger.Log($"GetMemberById called for ID: {id}.");
+            _logger.Log($"已為ID: {id} 呼叫 GetMemberById。");
             Member? member = _members.FirstOrDefault(m => m.Id == id);
             if (member == null)
             {
-                _logger.Log($"Member with ID: {id} not found.");
+                _logger.Log($"找不到ID為: {id} 的會員。");
             }
             else
             {
-                _logger.Log($"Member with ID: {id} found: Name='{member.Name}'.");
+                _logger.Log($"找到ID為: {id} 的會員: 姓名='{member.Name}'。");
             }
             return member;
         }
@@ -110,31 +110,31 @@ namespace ComicRentalSystem_14Days.Services
             if (member == null)
             {
                 var ex = new ArgumentNullException(nameof(member));
-                _logger.LogError("Attempted to add a null member object.", ex);
+                _logger.LogError("嘗試新增空的會員物件。", ex);
                 throw ex;
             }
 
-            _logger.Log($"Attempting to add new member: Name='{member.Name}', PhoneNumber='{member.PhoneNumber}'.");
+            _logger.Log($"正在嘗試新增會員: 姓名='{member.Name}', 電話號碼='{member.PhoneNumber}'。");
 
             if (member.Id != 0 && _members.Any(m => m.Id == member.Id))
             {
-                var ex = new InvalidOperationException($"Member with ID {member.Id} already exists.");
-                _logger.LogError($"Failed to add member: ID {member.Id} (Name='{member.Name}') already exists.", ex);
+                var ex = new InvalidOperationException($"ID為 {member.Id} 的會員已存在。");
+                _logger.LogError($"新增會員失敗: ID {member.Id} (姓名='{member.Name}') 已存在。", ex);
                 throw ex;
             }
             if (_members.Any(m => m.PhoneNumber == member.PhoneNumber))
             {
-                _logger.LogWarning($"A member with the same phone number '{member.PhoneNumber}' already exists (Name='{_members.First(m => m.PhoneNumber == member.PhoneNumber).Name}'). Proceeding with addition.");
+                _logger.LogWarning($"電話號碼為 '{member.PhoneNumber}' 的會員已存在 (姓名='{_members.First(m => m.PhoneNumber == member.PhoneNumber).Name}')。繼續新增。");
             }
 
             if (member.Id == 0)
             {
                 member.Id = GetNextId();
-                _logger.Log($"Generated new ID {member.Id} for member '{member.Name}'.");
+                _logger.Log($"已為會員 '{member.Name}' 產生新的ID {member.Id}。");
             }
 
             _members.Add(member);
-            _logger.Log($"Member '{member.Name}' (ID: {member.Id}) added to in-memory list. Total members: {_members.Count}.");
+            _logger.Log($"會員 '{member.Name}' (ID: {member.Id}) 已新增至記憶體列表。會員總數: {_members.Count}。");
             SaveMembers();
         }
 
@@ -143,37 +143,37 @@ namespace ComicRentalSystem_14Days.Services
             if (member == null)
             {
                 var ex = new ArgumentNullException(nameof(member));
-                _logger.LogError("Attempted to update with a null member object.", ex);
+                _logger.LogError("嘗試使用空的會員物件進行更新。", ex);
                 throw ex;
             }
 
-            _logger.Log($"Attempting to update member with ID: {member.Id} (Name='{member.Name}').");
+            _logger.Log($"正在嘗試更新ID為: {member.Id} (姓名='{member.Name}') 的會員。");
 
             Member? existingMember = _members.FirstOrDefault(m => m.Id == member.Id);
             if (existingMember == null)
             {
-                var ex = new InvalidOperationException($"Member with ID {member.Id} not found for update.");
-                _logger.LogError($"Failed to update member: ID {member.Id} (Name='{member.Name}') not found.", ex);
+                var ex = new InvalidOperationException($"找不到ID為 {member.Id} 的會員進行更新。");
+                _logger.LogError($"更新會員失敗: 找不到ID {member.Id} (姓名='{member.Name}')。", ex);
                 throw ex;
             }
 
             existingMember.Name = member.Name;
             existingMember.PhoneNumber = member.PhoneNumber;
-            _logger.Log($"Member properties for ID {member.Id} (Name='{existingMember.Name}') updated in-memory.");
+            _logger.Log($"ID {member.Id} (姓名='{existingMember.Name}') 的會員屬性已在記憶體中更新。");
 
             SaveMembers();
-            _logger.Log($"Member with ID: {member.Id} (Name='{existingMember.Name}') update persisted to file.");
+            _logger.Log($"ID為: {member.Id} (姓名='{existingMember.Name}') 的會員更新已保存到檔案。");
         }
 
         public void DeleteMember(int id)
         {
-            _logger.Log($"Attempting to delete member with ID: {id}.");
+            _logger.Log($"正在嘗試刪除ID為: {id} 的會員。");
             Member? memberToRemove = _members.FirstOrDefault(m => m.Id == id);
 
             if (memberToRemove == null)
             {
-                var ex = new InvalidOperationException($"Member with ID {id} not found for deletion.");
-                _logger.LogError($"Failed to delete member: ID {id} not found.", ex);
+                var ex = new InvalidOperationException($"找不到ID為 {id} 的會員進行刪除。");
+                _logger.LogError($"刪除會員失敗: 找不到ID {id}。", ex);
                 throw ex;
             }
 
@@ -181,19 +181,19 @@ namespace ComicRentalSystem_14Days.Services
             var allComics = _comicService.GetAllComics();
             if (allComics.Any(c => c.IsRented && c.RentedToMemberId == id))
             {
-                _logger.LogWarning($"Attempt to delete member ID {id} ('{memberToRemove.Name}') with active rentals prevented.");
-                throw new InvalidOperationException("Cannot delete member: Member has active comic rentals.");
+                _logger.LogWarning($"已阻止刪除擁有有效租借紀錄的會員ID {id} ('{memberToRemove.Name}')。");
+                throw new InvalidOperationException("無法刪除會員: 會員擁有有效的漫畫租借紀錄。");
             }
 
             _members.Remove(memberToRemove);
-            _logger.Log($"Member '{memberToRemove.Name}' (ID: {id}) removed from in-memory list. Total members: {_members.Count}.");
+            _logger.Log($"會員 '{memberToRemove.Name}' (ID: {id}) 已從記憶體列表移除。會員總數: {_members.Count}。");
             SaveMembers();
         }
 
         public int GetNextId()
         {
             int nextId = !_members.Any() ? 1 : _members.Max(m => m.Id) + 1;
-            _logger.Log($"Next available member ID determined as: {nextId}.");
+            _logger.Log($"下一個可用的會員ID已確定為: {nextId}。");
             return nextId;
         }
 
@@ -201,18 +201,18 @@ namespace ComicRentalSystem_14Days.Services
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                _logger.Log("GetMemberByName called with empty name.");
+                _logger.Log("已呼叫 GetMemberByName，姓名為空。");
                 return null;
             }
-            _logger.Log($"GetMemberByName called for name: '{name}'.");
+            _logger.Log($"已為姓名: '{name}' 呼叫 GetMemberByName。");
             Member? member = _members.FirstOrDefault(m => m.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
             if (member == null)
             {
-                _logger.Log($"Member with name: '{name}' not found.");
+                _logger.Log($"找不到姓名為: '{name}' 的會員。");
             }
             else
             {
-                _logger.Log($"Member with name: '{name}' found: ID='{member.Id}'.");
+                _logger.Log($"找到姓名為: '{name}' 的會員: ID='{member.Id}'。");
             }
             return member;
         }
@@ -221,18 +221,18 @@ namespace ComicRentalSystem_14Days.Services
         {
             if (string.IsNullOrWhiteSpace(phoneNumber))
             {
-                _logger.Log("GetMemberByPhoneNumber called with empty phone number.");
+                _logger.Log("已呼叫 GetMemberByPhoneNumber，電話號碼為空。");
                 return null;
             }
-            _logger.Log($"GetMemberByPhoneNumber called for phone number: '{phoneNumber}'.");
+            _logger.Log($"已為電話號碼: '{phoneNumber}' 呼叫 GetMemberByPhoneNumber。");
             Member? member = _members.FirstOrDefault(m => m.PhoneNumber.Equals(phoneNumber));
             if (member == null)
             {
-                _logger.Log($"Member with phone number: '{phoneNumber}' not found.");
+                _logger.Log($"找不到電話號碼為: '{phoneNumber}' 的會員。");
             }
             else
             {
-                _logger.Log($"Member with phone number: '{phoneNumber}' found: ID='{member.Id}', Name='{member.Name}'.");
+                _logger.Log($"找到電話號碼為: '{phoneNumber}' 的會員: ID='{member.Id}', 姓名='{member.Name}'。");
             }
             return member;
         }
@@ -241,7 +241,7 @@ namespace ComicRentalSystem_14Days.Services
         {
             if (string.IsNullOrWhiteSpace(username))
             {
-                _logger.LogWarning("GetMemberByUsername called with null or empty username.");
+                _logger.LogWarning("已呼叫 GetMemberByUsername，使用者名稱為空或空白。");
                 return null;
             }
 
@@ -250,7 +250,7 @@ namespace ComicRentalSystem_14Days.Services
 
             if (allMembers == null || !allMembers.Any())
             {
-                _logger.LogWarning("GetMemberByUsername: No members available to search.");
+                _logger.LogWarning("GetMemberByUsername: 無可用會員進行搜尋。");
                 return null;
             }
 
@@ -262,11 +262,11 @@ namespace ComicRentalSystem_14Days.Services
 
             if (foundMember != null)
             {
-                _logger.Log($"GetMemberByUsername: Found member with ID {foundMember.Id} for username '{username}'.");
+                _logger.Log($"GetMemberByUsername: 找到ID為 {foundMember.Id} 且使用者名稱為 '{username}' 的會員。");
             }
             else
             {
-                _logger.Log($"GetMemberByUsername: No member found for username '{username}'.");
+                _logger.Log($"GetMemberByUsername: 找不到使用者名稱為 '{username}' 的會員。");
             }
 
             return foundMember;

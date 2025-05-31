@@ -31,8 +31,8 @@ namespace ComicRentalSystem_14Days.Forms
             _editableComic = comicToEdit;
             _isEditMode = (_editableComic != null);
 
-            LogActivity($"ComicEditForm initializing. Mode: {(_isEditMode ? "Edit" : "Add")}" +
-                        (_isEditMode && _editableComic != null ? $", ComicID: {_editableComic.Id}" : ""));
+            LogActivity($"漫畫編輯表單初始化中。模式: {(_isEditMode ? "編輯" : "新增")}" +
+                        (_isEditMode && _editableComic != null ? $", 漫畫ID: {_editableComic.Id}" : ""));
 
             if (_isEditMode && _editableComic != null)
             {
@@ -45,18 +45,18 @@ namespace ComicRentalSystem_14Days.Forms
                 chkIsRented.Checked = false;
                 chkIsRented.Enabled = false;
             }
-            LogActivity("ComicEditForm initialized with services.");
+            LogActivity("漫畫編輯表單已使用服務初始化。");
         }
 
         private void LoadComicData()
         {
             if (_editableComic == null)
             {
-                LogActivity("LoadComicData called but _editableComic is null (should not happen in edit mode).");
+                LogActivity("LoadComicData 已呼叫，但 _editableComic 為空 (在編輯模式下不應發生)。");
                 return;
             }
 
-            LogActivity($"Loading data for comic ID: {_editableComic.Id}, Title: '{_editableComic.Title}'.");
+            LogActivity($"正在載入漫畫ID: {_editableComic.Id}, 書名: '{_editableComic.Title}' 的資料。");
             txtTitle.Text = _editableComic.Title;
             txtAuthor.Text = _editableComic.Author;
             txtIsbn.Text = _editableComic.Isbn;
@@ -64,7 +64,7 @@ namespace ComicRentalSystem_14Days.Forms
             chkIsRented.Checked = _editableComic.IsRented;
             chkIsRented.Enabled = false;
 
-            LogActivity("Comic data loaded into form controls.");
+            LogActivity("漫畫資料已載入表單控制項。");
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -72,36 +72,36 @@ namespace ComicRentalSystem_14Days.Forms
             if (_comicService == null)
             {
                 MessageBox.Show("服務未初始化，無法儲存。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                LogErrorActivity("Save button clicked, but _comicService is null.");
+                LogErrorActivity("儲存按鈕已點擊，但 _comicService 為空。");
                 return;
             }
 
-            LogActivity("Save button clicked.");
+            LogActivity("儲存按鈕已點擊。");
 
             if (string.IsNullOrWhiteSpace(txtTitle.Text))
             {
-                LogActivity("Validation failed: Title is empty.");
+                LogActivity("驗證失敗: 書名為空。");
                 MessageBox.Show("書名不得為空。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtTitle.Focus();
                 return;
             }
             if (string.IsNullOrWhiteSpace(txtAuthor.Text))
             {
-                LogActivity("Validation failed: Author is empty.");
+                LogActivity("驗證失敗: 作者為空。");
                 MessageBox.Show("作者不得為空。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtAuthor.Focus();
                 return;
             }
             if (string.IsNullOrWhiteSpace(txtGenre.Text))
             {
-                LogActivity("Validation failed: Genre is empty.");
+                LogActivity("驗證失敗: 類型為空。");
                 MessageBox.Show("類型不得為空。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtGenre.Focus();
                 return;
             }
             if (string.IsNullOrWhiteSpace(txtIsbn.Text))
             {
-                LogActivity("Validation failed: ISBN is empty.");
+                LogActivity("驗證失敗: ISBN為空。");
                 MessageBox.Show("ISBN不得為空。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtIsbn.Focus();
                 return;
@@ -111,18 +111,18 @@ namespace ComicRentalSystem_14Days.Forms
             {
                 if (_isEditMode && _editableComic != null)
                 {
-                    LogActivity($"Attempting to save changes for existing comic ID: {_editableComic.Id}.");
+                    LogActivity($"正在嘗試儲存現有漫畫ID: {_editableComic.Id} 的變更。");
                     _editableComic.Title = txtTitle.Text.Trim();
                     _editableComic.Author = txtAuthor.Text.Trim();
                     _editableComic.Isbn = txtIsbn.Text.Trim();
                     _editableComic.Genre = txtGenre.Text.Trim();
                     _comicService.UpdateComic(_editableComic);
-                    LogActivity($"Comic ID: {_editableComic.Id} updated successfully.");
+                    LogActivity($"漫畫ID: {_editableComic.Id} 已成功更新。");
                     MessageBox.Show("漫畫資料已更新。", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {
-                    LogActivity("Attempting to add new comic.");
+                    LogActivity("正在嘗試新增漫畫。");
                     Comic newComic = new Comic
                     {
                         Title = txtTitle.Text.Trim(),
@@ -133,31 +133,31 @@ namespace ComicRentalSystem_14Days.Forms
                         RentedToMemberId = 0
                     };
                     _comicService.AddComic(newComic);
-                    LogActivity($"New comic '{newComic.Title}' (ID: {newComic.Id}) added successfully.");
+                    LogActivity($"新漫畫 '{newComic.Title}' (ID: {newComic.Id}) 已成功新增。");
                     MessageBox.Show("漫畫已成功新增。", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
 
                 this.DialogResult = DialogResult.OK;
-                LogActivity("ComicEditForm closing with DialogResult.OK.");
+                LogActivity("漫畫編輯表單正在以 DialogResult.OK 關閉。");
                 this.Close();
             }
             catch (Exception ex)
             {
-                LogErrorActivity($"Error while saving comic: {ex.Message}", ex);
+                LogErrorActivity($"儲存漫畫時發生錯誤: {ex.Message}", ex);
                 MessageBox.Show($"儲存漫畫時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            LogActivity("Cancel button clicked. ComicEditForm closing with DialogResult.Cancel.");
+            LogActivity("取消按鈕已點擊。漫畫編輯表單正在以 DialogResult.Cancel 關閉。");
             this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
 
         private void ComicEditForm_Load(object sender, EventArgs e)
         {
-            LogActivity("ComicEditForm finished loading.");
+            LogActivity("漫畫編輯表單已完成載入。");
         }
     }
 }
