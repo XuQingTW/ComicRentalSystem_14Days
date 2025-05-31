@@ -129,7 +129,8 @@
             this.Text = "Edit Member"; // Default text
             this.gbMemberDetails.ResumeLayout(false);
             this.gbMemberDetails.PerformLayout();
-            this.ResumeLayout(false));
+            this.ResumeLayout(false);
+            this.PerformLayout();
         }
 
         #endregion
