@@ -30,6 +30,14 @@ namespace ComicRentalSystem_14Days.Services
             LoadMembers();
             _logger.Log($"MemberService initialized. Loaded {_members.Count} members.");
         }
+
+        public void Reload()
+        {
+            _logger.Log("Reload called on MemberService.");
+            LoadMembers();
+            OnMembersChanged();
+        }
+
         private void LoadMembers()
         {
             _logger.Log($"Attempting to load members from file: '{_memberFileName}'.");

@@ -61,8 +61,8 @@ namespace ComicRentalSystem_14Days.Forms
                     async () =>
                     {
                         LogActivity("auto reloading data start");
-                        _comicService.Reload();
-                        RefreshUIDataSafely();
+                        _comicService?.Reload();
+                        _memberService?.Reload(); // Added call to MemberService.Reload
                         await Task.CompletedTask;
                     },
                     TimeSpan.FromSeconds(1)

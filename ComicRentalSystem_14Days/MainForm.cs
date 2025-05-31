@@ -14,7 +14,9 @@ namespace ComicRentalSystem_14Days
     public partial class MainForm : BaseForm
     {
         private readonly ILogger? _logger;
-        private readonly ComicService? _comicService; // 接收共享的實例，不再自己 new
+        private readonly ComicService? _comicService;
+        private readonly MemberService? _memberService;
+        private readonly IReloadService? _reloadService;
 
         public MainForm() : base()
         {
@@ -25,10 +27,12 @@ namespace ComicRentalSystem_14Days
             }
         }
 
-        public MainForm(ILogger logger, ComicService comicService) : this()
+        public MainForm(ILogger logger, ComicService comicService, MemberService memberService, IReloadService reloadService) : this()
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _comicService = comicService ?? throw new ArgumentNullException(nameof(comicService));
+            _memberService = memberService ?? throw new ArgumentNullException(nameof(memberService));
+            _reloadService = reloadService ?? throw new ArgumentNullException(nameof(reloadService));
             base.SetLogger(logger);
 
             _logger.Log("MainForm initialized with shared logger and services.");
@@ -109,9 +113,9 @@ namespace ComicRentalSystem_14Days
         private void 漫畫管理ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _logger?.Log("Opening ComicManagementForm.");
-            if (_logger != null && Program.AppComicService != null)
+            if (_logger != null && _comicService != null) // Use injected _comicService
             {
-                ComicManagementForm comicMgmtForm = new ComicManagementForm(_logger, Program.AppComicService);
+                ComicManagementForm comicMgmtForm = new ComicManagementForm(_logger, _comicService);
                 comicMgmtForm.ShowDialog(this);
             }
             else
@@ -123,9 +127,9 @@ namespace ComicRentalSystem_14Days
         private void 會員管理ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _logger?.Log("Opening MemberManagementForm.");
-            if (_logger != null && Program.AppMemberService != null)
+            if (_logger != null && _memberService != null) // Use injected _memberService
             {
-                MemberManagementForm memberMgmtForm = new MemberManagementForm(_logger, Program.AppMemberService);
+                MemberManagementForm memberMgmtForm = new MemberManagementForm(_logger, _memberService);
                 memberMgmtForm.ShowDialog(this);
             }
             else
@@ -137,7 +141,8 @@ namespace ComicRentalSystem_14Days
         private void rentalManagementToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _logger?.Log("Opening RentalForm.");
-            if (_logger == null || Program.AppComicService == null || Program.AppMemberService == null || Program.AppReloadService == null)
+            // Use injected services
+            if (_logger == null || _comicService == null || _memberService == null || _reloadService == null)
             {
                 MessageBox.Show("核心服務未初始化，無法開啟租借管理。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -145,7 +150,7 @@ namespace ComicRentalSystem_14Days
 
             try
             {
-                RentalForm rentalForm = new RentalForm(Program.AppComicService, Program.AppMemberService, _logger, Program.AppReloadService);
+                RentalForm rentalForm = new RentalForm(_comicService, _memberService, _logger, _reloadService);
                 rentalForm.ShowDialog(this);
             }
             catch (Exception ex)
