@@ -226,5 +226,40 @@ namespace ComicRentalSystem_14Days.Services
             }
             return member;
         }
+
+        public Member? GetMemberByUsername(string username)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                _logger.LogWarning("GetMemberByUsername called with null or empty username.");
+                return null;
+            }
+
+            // GetAllMembers() ensures the _members list is loaded and returns a copy.
+            var allMembers = GetAllMembers();
+
+            if (allMembers == null || !allMembers.Any())
+            {
+                _logger.LogWarning("GetMemberByUsername: No members available to search.");
+                return null;
+            }
+
+            // Assuming Member.Name is the field that corresponds to the username.
+            // Using OrdinalIgnoreCase for case-insensitive matching, which is common for usernames.
+            Member? foundMember = allMembers.FirstOrDefault(m =>
+                string.Equals(m.Name, username, StringComparison.OrdinalIgnoreCase)
+            );
+
+            if (foundMember != null)
+            {
+                _logger.Log($"GetMemberByUsername: Found member with ID {foundMember.Id} for username '{username}'.");
+            }
+            else
+            {
+                _logger.Log($"GetMemberByUsername: No member found for username '{username}'.");
+            }
+
+            return foundMember;
+        }
     }
 }

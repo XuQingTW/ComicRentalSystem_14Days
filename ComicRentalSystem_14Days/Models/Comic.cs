@@ -14,6 +14,8 @@ namespace ComicRentalSystem_14Days.Models
         public string Genre { get; set; }
         public bool IsRented { get; set; }
         public int RentedToMemberId { get; set; }
+        public DateTime? RentalDate { get; set; } // Added
+        public DateTime? ReturnDate { get; set; } // Added
 
         public Comic()
         {
@@ -21,13 +23,17 @@ namespace ComicRentalSystem_14Days.Models
             Author = string.Empty;
             Isbn = string.Empty;
             Genre = string.Empty;
+            RentalDate = null; // Initialize
+            ReturnDate = null; // Initialize
         }
 
         // 將 Comic 物件轉換為 CSV 格式的一行字串
         // 技術點 #1: 字串
         public string ToCsvString()
         {
-            return $"{Id},\"{Title?.Replace("\"", "\"\"")}\",\"{Author?.Replace("\"", "\"\"")}\",\"{Isbn?.Replace("\"", "\"\"")}\",\"{Genre?.Replace("\"", "\"\"")}\",{IsRented},{RentedToMemberId}";
+            var rentalDateString = RentalDate?.ToString("yyyy-MM-ddTHH:mm:ss") ?? string.Empty;
+            var returnDateString = ReturnDate?.ToString("yyyy-MM-ddTHH:mm:ss") ?? string.Empty;
+            return $"{Id},\"{Title?.Replace("\"", "\"\"")}\",\"{Author?.Replace("\"", "\"\"")}\",\"{Isbn?.Replace("\"", "\"\"")}\",\"{Genre?.Replace("\"", "\"\"")}\",{IsRented},{RentedToMemberId},{rentalDateString},{returnDateString}";
         }
 
         // 從 CSV 格式的一行字串解析回 Comic 物件
@@ -35,6 +41,7 @@ namespace ComicRentalSystem_14Days.Models
         public static Comic FromCsvString(string csvLine)
         {
             List<string> values = ParseCsvLine(csvLine); // Use the new parser
+            // Expect at least 7 fields (original) or up to 9 fields (with new dates)
             if (values.Count < 7)
             {
                 throw new FormatException("CSV line does not contain enough values for Comic. Line: " + csvLine);
@@ -50,6 +57,42 @@ namespace ComicRentalSystem_14Days.Models
                 comic.Genre = values[4];
                 comic.IsRented = bool.Parse(values[5]);
                 comic.RentedToMemberId = string.IsNullOrEmpty(values[6]) ? 0 : int.Parse(values[6]);
+
+                // Handle optional RentalDate (field 8, index 7)
+                if (values.Count > 7 && !string.IsNullOrEmpty(values[7]))
+                {
+                    if (DateTime.TryParse(values[7], out DateTime rentalDate))
+                    {
+                        comic.RentalDate = rentalDate;
+                    }
+                    else
+                    {
+                        // Optionally log or handle parsing error for RentalDate
+                        comic.RentalDate = null;
+                    }
+                }
+                else
+                {
+                    comic.RentalDate = null;
+                }
+
+                // Handle optional ReturnDate (field 9, index 8)
+                if (values.Count > 8 && !string.IsNullOrEmpty(values[8]))
+                {
+                    if (DateTime.TryParse(values[8], out DateTime returnDate))
+                    {
+                        comic.ReturnDate = returnDate;
+                    }
+                    else
+                    {
+                        // Optionally log or handle parsing error for ReturnDate
+                        comic.ReturnDate = null;
+                    }
+                }
+                else
+                {
+                    comic.ReturnDate = null;
+                }
             }
             catch (FormatException ex)
             {

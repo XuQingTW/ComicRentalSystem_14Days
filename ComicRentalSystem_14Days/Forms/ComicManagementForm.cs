@@ -65,6 +65,27 @@ namespace ComicRentalSystem_14Days.Forms
             dgvComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Genre", HeaderText = "類型", Width = 100 });
             dgvComics.Columns.Add(new DataGridViewCheckBoxColumn { DataPropertyName = "IsRented", HeaderText = "已租借", Width = 70 });
             dgvComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "RentedToMemberId", HeaderText = "租借會員ID", Width = 100 });
+
+            // Add RentalDate column
+            var rentalDateColumn = new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = nameof(Comic.RentalDate), // "RentalDate"
+                HeaderText = "租借日期",
+                Width = 110 // Or another appropriate width
+            };
+            rentalDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
+            dgvComics.Columns.Add(rentalDateColumn);
+
+            // Add ReturnDate column
+            var returnDateColumn = new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = nameof(Comic.ReturnDate), // "ReturnDate"
+                HeaderText = "歸還期限",
+                Width = 110 // Or another appropriate width
+            };
+            returnDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
+            dgvComics.Columns.Add(returnDateColumn);
+
             dgvComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Isbn", HeaderText = "ISBN", Width = 120 });
 
             dgvComics.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
