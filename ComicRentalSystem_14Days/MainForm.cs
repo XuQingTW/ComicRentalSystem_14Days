@@ -481,7 +481,7 @@ namespace ComicRentalSystem_14Days
             dgvMyRentedComics.Columns.Clear(); // Clear existing columns before adding new ones
             dgvMyRentedComics.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
-            dgvMyRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Title", HeaderText = "書名", FillWeight = 30 });
+            dgvMyRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "ComicTitle", HeaderText = "書名", FillWeight = 30 });
             dgvMyRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Author", HeaderText = "作者", FillWeight = 20 });
 
             var rentalDateColumn = new DataGridViewTextBoxColumn { DataPropertyName = "RentalDate", HeaderText = "租借日期", FillWeight = 18 };
@@ -492,7 +492,7 @@ namespace ComicRentalSystem_14Days
             rentalDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
             dgvMyRentedComics.Columns.Add(rentalDateColumn);
 
-            var returnDateColumn = new DataGridViewTextBoxColumn { DataPropertyName = "ReturnDate", HeaderText = "歸還日期", FillWeight = 18 };
+            var returnDateColumn = new DataGridViewTextBoxColumn { DataPropertyName = "ExpectedReturnDate", HeaderText = "歸還日期", FillWeight = 18 };
             if (returnDateColumn.DefaultCellStyle == null)
             {
                 returnDateColumn.DefaultCellStyle = new DataGridViewCellStyle();
@@ -534,26 +534,60 @@ namespace ComicRentalSystem_14Days
                 return;
             }
 
-            _logger?.Log($"LoadMyRentedComics: Loading comics for member '{_currentUser.Username}'.");
+            // _logger?.Log($"LoadMyRentedComics: Loading comics for member '{_currentUser.Username}'."); // Original log
+            _logger?.LogInformation($"LoadMyRentedComics: Attempting to load rentals for user: '{_currentUser?.Username ?? "Unknown user"}'.");
+
             try
             {
                 Member? currentMember = _memberService.GetMemberByUsername(_currentUser.Username);
                 if (currentMember == null)
                 {
-                    _logger?.LogWarning($"LoadMyRentedComics: Member profile not found for username '{_currentUser.Username}'.");
+                    _logger?.LogWarning($"LoadMyRentedComics: Member profile not found for username '{_currentUser?.Username ?? "Unknown user"}'. No rentals will be loaded.");
+                    ClearDgvMyRentedComics(); // Keep existing behavior
+                    return;
+                }
+                _logger?.LogInformation($"LoadMyRentedComics: Found member: ID={currentMember.Id}, Name='{currentMember.Name}'.");
+
+                var allComics = _comicService.GetAllComics();
+                _logger?.LogDebug($"LoadMyRentedComics: Total comics from service before filtering: {allComics?.Count ?? 0}.");
+
+                if (allComics == null)
+                {
+                    _logger?.LogWarning($"LoadMyRentedComics: _comicService.GetAllComics() returned null. No rentals can be processed.");
                     ClearDgvMyRentedComics();
                     return;
                 }
 
-                var myRentedComics = _comicService.GetAllComics()
+                // Log count before Where filter (already done by logging allComics.Count)
+
+                _logger?.LogDebug($"LoadMyRentedComics: Filtering for comics rented by Member ID: {currentMember.Id}.");
+
+                var myRentedComics = allComics
                     .Where(c => c.IsRented && c.RentedToMemberId == currentMember.Id)
-                    .Select(c => new {
-                        c.Title,
-                        c.Author,
+                    .Select(c => new RentalDetailViewModel {
+                        ComicId = c.Id,
+                        ComicTitle = c.Title,
+                        Author = c.Author,
                         RentalDate = c.RentalDate,
-                        ReturnDate = c.ReturnDate
+                        ExpectedReturnDate = c.ReturnDate
+                        // Other properties of RentalDetailViewModel like MemberId, MemberName, etc.,
+                        // can be left to their default values as they are not currently displayed in dgvMyRentedComics.
                     })
                     .ToList();
+
+                _logger?.LogInformation($"LoadMyRentedComics: Found {myRentedComics.Count} rented comics for Member ID {currentMember.Id} after filtering.");
+
+                if (myRentedComics.Any())
+                {
+                    // Log details of each rented comic (or a summary)
+                    // For brevity in logs, let's log the count and titles. For more detail, could serialize the whole list.
+                    var comicTitles = string.Join(", ", myRentedComics.Select(c => $"'{c.Title}'"));
+                    _logger?.LogDebug($"LoadMyRentedComics: Details of rented comics for Member ID {currentMember.Id}: [{comicTitles}]");
+                }
+                else
+                {
+                    _logger?.LogInformation($"LoadMyRentedComics: No rented comics found for Member ID {currentMember.Id} after filtering.");
+                }
 
                 Action updateGrid = () => {
                     dgvMyRentedComics.DataSource = null;
@@ -563,7 +597,7 @@ namespace ComicRentalSystem_14Days
                 if (dgvMyRentedComics.IsHandleCreated && this.InvokeRequired) { this.Invoke(updateGrid); }
                 else if (dgvMyRentedComics.IsHandleCreated) { updateGrid(); }
 
-                _logger?.Log($"LoadMyRentedComics: Successfully loaded {myRentedComics.Count} rented comics for member ID {currentMember.Id}.");
+                // _logger?.Log($"LoadMyRentedComics: Successfully loaded {myRentedComics.Count} rented comics for member ID {currentMember.Id}."); // Covered by more specific logs
             }
             catch (Exception ex)
             {
@@ -1029,8 +1063,8 @@ namespace ComicRentalSystem_14Days
             DateTime? returnDate = null;
             try
             {
-                // Using reflection to get ReturnDate from anonymous type
-                var returnDateObj = row.DataBoundItem.GetType().GetProperty("ReturnDate")?.GetValue(row.DataBoundItem, null);
+                // Using reflection to get ExpectedReturnDate from RentalDetailViewModel
+                var returnDateObj = row.DataBoundItem.GetType().GetProperty("ExpectedReturnDate")?.GetValue(row.DataBoundItem, null);
                 if (returnDateObj != null && returnDateObj != DBNull.Value) // Check for DBNull if data comes from DB directly
                 {
                     returnDate = Convert.ToDateTime(returnDateObj);
@@ -1038,7 +1072,7 @@ namespace ComicRentalSystem_14Days
             }
             catch(Exception ex)
             {
-                _logger?.LogError($"Error getting ReturnDate via reflection in CellFormatting: {ex.Message} for item type {row.DataBoundItem.GetType().Name}");
+                _logger?.LogError($"Error getting ExpectedReturnDate via reflection in CellFormatting: {ex.Message} for item type {row.DataBoundItem.GetType().Name}");
                 return;
             }
 

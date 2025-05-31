@@ -12,6 +12,7 @@ namespace ComicRentalSystem_14Days.Models
         // Comic Details
         public int ComicId { get; set; }
         public string ComicTitle { get; set; } = string.Empty;
+        public string Author { get; set; } = string.Empty;
 
         // Rental Details
         public DateTime? RentalDate { get; set; }
