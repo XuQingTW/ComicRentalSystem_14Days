@@ -159,7 +159,7 @@ namespace ComicRentalSystem_14Days.Forms
             else
             {
                 _logger.Log($"使用者 '{username}' 註冊失敗。使用者名稱可能已存在。");
-                MessageBox.Show($"註冊失敗。使用者名稱 '{username}' 可能已被使用。", "註冊失敗", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("無法完成註冊。請確認所有欄位均已正確填寫，或嘗試使用不同的使用者名稱。", "註冊失敗", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 // Clear username only if it's a duplicate issue, others can remain for correction
                 txtUsername.Clear();
             }

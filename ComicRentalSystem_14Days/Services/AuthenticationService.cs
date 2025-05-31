@@ -97,6 +97,7 @@ namespace ComicRentalSystem_14Days.Services
             }
 
             try
+              
             {
                 string json = _fileHelper.ReadFile(backupFilePath);
                 if (string.IsNullOrWhiteSpace(json))
@@ -122,6 +123,7 @@ namespace ComicRentalSystem_14Days.Services
             }
             catch (JsonException jsonEx)
             {
+
                 _logger.LogError($"Critical: Backup users file '{backupFilePath}' is also corrupted: {jsonEx.Message}. Initializing empty user list.", jsonEx);
                 return new List<User>(); // Both main and backup are bad.
             }
@@ -132,7 +134,23 @@ namespace ComicRentalSystem_14Days.Services
             }
         }
 
-        private void SaveUsers()
+        public User? GetUserByUsername(string username)
+        {
+            _logger.Log($"Attempting to retrieve user by username: {username}");
+            User? user = _users.FirstOrDefault(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
+            if (user == null)
+            {
+                _logger.LogWarning($"User with username '{username}' not found.");
+            }
+            return user;
+        }
+
+        public List<User> GetAllUsers()
+        {
+            return new List<User>(_users);
+        }
+
+        public void SaveUsers() // Changed from private to public
         {
             string backupFilePath = _usersFilePath + ".bak"; // e.g., "users.json.bak"
             string tempFilePath = _usersFilePath + ".tmp";   // e.g., "users.json.tmp"
