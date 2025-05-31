@@ -472,7 +472,7 @@ namespace ComicRentalSystem_14Days
             this.txtSearchAvailableComics.ForeColor = System.Drawing.Color.Gray;
 
             // Configure cmbGenreFilter
-            this.cmbGenreFilter.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right);
+            this.cmbGenreFilter.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right);
             this.cmbGenreFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbGenreFilter.FormattingEnabled = true;
             this.cmbGenreFilter.Location = new System.Drawing.Point(492, 7); // Relative to filter panel padding
