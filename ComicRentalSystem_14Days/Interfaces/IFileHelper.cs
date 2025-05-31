@@ -14,7 +14,6 @@ namespace ComicRentalSystem_14Days.Interfaces
 
         Task<string> ReadFileAsync(string filePath);
         Task WriteFileAsync(string filePath, string content);
-
         bool FileExists(string filePath);
         void DeleteFile(string filePath);
         void MoveFile(string sourcePath, string destinationPath);
