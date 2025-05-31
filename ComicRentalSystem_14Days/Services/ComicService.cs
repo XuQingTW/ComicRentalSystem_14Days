@@ -120,7 +120,7 @@ namespace ComicRentalSystem_14Days.Services
             if (_comics.Any(c => c.Title.Equals(comic.Title, StringComparison.OrdinalIgnoreCase) &&
                                  c.Author.Equals(comic.Author, StringComparison.OrdinalIgnoreCase)))
             {
-                _logger.Log($"Warning: A comic with the same title='{comic.Title}' and author='{comic.Author}' already exists.");
+                _logger.LogWarning($"A comic with the same title='{comic.Title}' and author='{comic.Author}' already exists. Proceeding with addition.");
             }
 
             if (comic.Id == 0)
@@ -179,7 +179,8 @@ namespace ComicRentalSystem_14Days.Services
 
             if (comicToRemove.IsRented)
             {
-                _logger.Log($"Warning: Comic '{comicToRemove.Title}' (ID: {id}) is currently rented but is being deleted. Rented by Member ID: {comicToRemove.RentedToMemberId}.");
+                _logger.LogWarning($"Attempt to delete rented comic ID {id} ('{comicToRemove.Title}') prevented. Rented by Member ID: {comicToRemove.RentedToMemberId}.");
+                throw new InvalidOperationException("Cannot delete comic: Comic is currently rented.");
             }
 
             _comics.Remove(comicToRemove);
