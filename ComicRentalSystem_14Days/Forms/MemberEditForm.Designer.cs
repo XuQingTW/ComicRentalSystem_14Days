@@ -129,7 +129,7 @@
             this.Text = "Edit Member"; // Default text
             this.gbMemberDetails.ResumeLayout(false);
             this.gbMemberDetails.PerformLayout();
-            this.ResumeLayout(false);
+            this.ResumeLayout(false));
         }
 
         #endregion
@@ -141,5 +141,5 @@
         private System.Windows.Forms.Button btnSaveMember;
         private System.Windows.Forms.Button btnCancelMember;
         private System.Windows.Forms.GroupBox gbMemberDetails;
-    }
+    });
 }
