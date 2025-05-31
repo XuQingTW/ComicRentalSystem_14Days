@@ -45,12 +45,12 @@ namespace ComicRentalSystem_14Days.Forms
                 _memberService.MembersChanged += Service_DataChanged;
             }
 
-            LogActivity("RentalForm initializing with services.");
+            LogActivity("租借表單初始化中 (使用服務)。");
         }
 
         private void RentalForm_Load(object sender, EventArgs e)
         {
-            LogActivity("RentalForm loading data.");
+            LogActivity("租借表單正在載入資料。");
             if (_comicService != null && _memberService != null)
             {
                 SetupRentedComicsDataGridView();
@@ -61,7 +61,7 @@ namespace ComicRentalSystem_14Days.Forms
                 _reloadService?.Start(
                     async () =>
                     {
-                        LogActivity("auto reloading data start");
+                        LogActivity("自動重新載入資料開始");
                         _comicService?.Reload();
                         _memberService?.Reload(); // Added call to MemberService.Reload
                         await Task.CompletedTask;
@@ -74,11 +74,11 @@ namespace ComicRentalSystem_14Days.Forms
                     LoadAvailableComics();
                     LoadRentalDetails(); // Updated call
                 }
-                LogActivity("RentalForm loaded successfully with data.");
+                LogActivity("租借表單已成功載入資料。");
             }
             else
             {
-                LogActivity("RentalForm loaded (design mode or services not provided). Skipping data load.");
+                LogActivity("租借表單已載入 (設計模式或未提供服務)。正在跳過資料載入。");
             }
         }
 
@@ -86,7 +86,7 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (_comicService == null || _memberService == null) return;
 
-            LogActivity($"DataChanged event received from {(sender is ComicService ? "ComicService" : "MemberService")}. Refreshing UI.");
+            LogActivity($"從 {(sender is ComicService ? "ComicService" : "MemberService")} 收到資料變更事件。正在更新UI。");
             if (this.IsHandleCreated && !this.IsDisposed)
             {
                 if (this.InvokeRequired)
@@ -126,7 +126,7 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (_memberService == null) return;
 
-            LogActivity("Loading members into cmbMembers.");
+            LogActivity("正在將會員載入到 cmbMembers。");
             try
             {
                 var members = _memberService.GetAllMembers();
@@ -143,11 +143,11 @@ namespace ComicRentalSystem_14Days.Forms
                 {
                     cmbMembers.SelectedIndex = -1;
                 }
-                LogActivity($"Loaded {members.Count} members into cmbMembers.");
+                LogActivity($"已將 {members.Count} 位會員載入到 cmbMembers。");
             }
             catch (Exception ex)
             {
-                LogErrorActivity("Error loading members into cmbMembers.", ex);
+                LogErrorActivity("將會員載入到 cmbMembers 時發生錯誤。", ex);
                 MessageBox.Show("載入會員列表時發生錯誤，請查看日誌。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -156,7 +156,7 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (_comicService == null) return;
 
-            LogActivity("Loading available (not rented) comics into cmbComics.");
+            LogActivity("正在將可借閱 (未租借) 的漫畫載入到 cmbComics。");
             try
             {
                 var availableComics = _comicService.GetAllComics().Where(c => !c.IsRented).ToList();
@@ -174,11 +174,11 @@ namespace ComicRentalSystem_14Days.Forms
                 {
                     if (cmbComics.SelectedIndex == -1) cmbComics.SelectedIndex = 0;
                 }
-                LogActivity($"Loaded {availableComics.Count} available comics into cmbComics.");
+                LogActivity($"已將 {availableComics.Count} 本可借閱漫畫載入到 cmbComics。");
             }
             catch (Exception ex)
             {
-                LogErrorActivity("Error loading available comics into cmbComics.", ex);
+                LogErrorActivity("將可借閱漫畫載入到 cmbComics 時發生錯誤。", ex);
                 MessageBox.Show("載入可用漫畫列表時發生錯誤，請查看日誌。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -191,7 +191,7 @@ namespace ComicRentalSystem_14Days.Forms
             return;
         }
 
-        LogActivity("Loading all rental details for Admin View.");
+        LogActivity("正在為管理員視圖載入所有租借詳細資料。");
         try
         {
             var allComics = _comicService.GetAllComics();
@@ -203,12 +203,12 @@ namespace ComicRentalSystem_14Days.Forms
             Member? selectedMember = cmbMembers.SelectedItem as Member;
             if (selectedMember != null)
             {
-                LogActivity($"Filtering rental details for selected member: {selectedMember.Name} (ID: {selectedMember.Id})");
+                LogActivity($"正在為選定會員篩選租借詳細資料: {selectedMember.Name} (ID: {selectedMember.Id})");
                 rentedComicsQuery = rentedComicsQuery.Where(c => c.RentedToMemberId == selectedMember.Id);
             }
             else
             {
-                LogActivity("No specific member selected. Loading all rented comics.");
+                LogActivity("未選定特定會員。正在載入所有已租借漫畫。");
             }
 
             var rentalDetails = rentedComicsQuery
@@ -219,7 +219,7 @@ namespace ComicRentalSystem_14Days.Forms
                     {
                         MemberId = member?.Id ?? 0,
                         MemberName = member?.Name ?? "未知會員",
-                        MemberPhoneNumber = member?.PhoneNumber ?? "N/A",
+                        MemberPhoneNumber = member?.PhoneNumber ?? "無",
                         ComicId = comic.Id,
                         ComicTitle = comic.Title,
                         RentalDate = comic.RentalDate,
@@ -234,18 +234,18 @@ namespace ComicRentalSystem_14Days.Forms
                 dgvRentedComics.DataSource = null;
                 dgvRentedComics.DataSource = rentalDetails;
             }
-            LogActivity($"Loaded {rentalDetails.Count} rental details.");
+            LogActivity($"已載入 {rentalDetails.Count} 筆租借詳細資料。");
         }
         catch (Exception ex)
         {
-            LogErrorActivity("Error loading rental details.", ex);
+            LogErrorActivity("載入租借詳細資料時發生錯誤。", ex);
             MessageBox.Show("載入租借詳細資料時發生錯誤，請查看日誌。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 
     private void SetupRentedComicsDataGridView()
     {
-        LogActivity("Setting up dgvRentedComics for Admin View.");
+        LogActivity("正在為管理員視圖設定 dgvRentedComics。");
         dgvRentedComics.AutoGenerateColumns = false;
         dgvRentedComics.Columns.Clear();
         dgvRentedComics.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
@@ -284,7 +284,7 @@ namespace ComicRentalSystem_14Days.Forms
         dgvRentedComics.MultiSelect = false;
         dgvRentedComics.ReadOnly = true;
         dgvRentedComics.AllowUserToAddRows = false;
-        LogActivity("dgvRentedComics setup complete for Admin View.");
+        LogActivity("dgvRentedComics 管理員視圖設定完成。");
     }
 
         private void cmbMembers_SelectedIndexChanged(object sender, EventArgs e)
@@ -293,11 +293,11 @@ namespace ComicRentalSystem_14Days.Forms
 
             if (cmbMembers.SelectedItem is Member selectedMember)
             {
-                LogActivity($"Member selection changed. Selected Member ID: {selectedMember.Id}, Name: {selectedMember.Name}. Refreshing related comic lists.");
+                LogActivity($"會員選擇已變更。選定會員ID: {selectedMember.Id}, 姓名: {selectedMember.Name}。正在更新相關漫畫列表。");
             }
             else
             {
-                LogActivity("Member selection cleared or invalid. Refreshing related comic lists.");
+                LogActivity("會員選擇已清除或無效。正在更新相關漫畫列表。");
             }
             LoadAvailableComics();
         LoadRentalDetails(); // Updated call
@@ -310,18 +310,18 @@ namespace ComicRentalSystem_14Days.Forms
                 MessageBox.Show("服務未初始化，無法執行操作。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            LogActivity("Rent button clicked.");
+            LogActivity("租借按鈕已點擊。");
 
             if (cmbMembers.SelectedValue == null)
             {
                 MessageBox.Show("請選擇一位會員。", "租借提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                LogActivity("Rent action aborted: No member selected.");
+                LogActivity("租借操作中止: 未選擇會員。");
                 return;
             }
             if (cmbComics.SelectedValue == null)
             {
                 MessageBox.Show("請選擇一本要租借的漫畫。", "租借提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                LogActivity("Rent action aborted: No comic selected.");
+                LogActivity("租借操作中止: 未選擇漫畫。");
                 return;
             }
 
@@ -334,14 +334,14 @@ namespace ComicRentalSystem_14Days.Forms
             if (selectedMember == null)
             {
                 MessageBox.Show("選擇的會員資料無效，可能已被刪除。", "租借錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                LogErrorActivity($"Rent action failed: Selected member with ID {memberId} not found.");
+                LogErrorActivity($"租借操作失敗: 找不到ID為 {memberId} 的選定會員。");
                 RefreshUIDataSafely();
                 return;
             }
             if (selectedComic == null)
             {
                 MessageBox.Show("選擇的漫畫資料無效，可能已被刪除或已被租借。", "租借錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                LogErrorActivity($"Rent action failed: Selected comic with ID {comicId} not found.");
+                LogErrorActivity($"租借操作失敗: 找不到ID為 {comicId} 的選定漫畫。");
                 RefreshUIDataSafely();
                 return;
             }
@@ -351,7 +351,7 @@ namespace ComicRentalSystem_14Days.Forms
                 Member? currentRenter = _memberService.GetMemberById(selectedComic.RentedToMemberId);
                 string renterName = currentRenter != null ? currentRenter.Name : "未知會員";
                 MessageBox.Show($"漫畫 '{selectedComic.Title}' 已被會員 '{renterName}' (ID: {selectedComic.RentedToMemberId}) 租借。", "租借失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                LogActivity($"Rent action failed: Comic '{selectedComic.Title}' (ID: {comicId}) is already rented by member ID {selectedComic.RentedToMemberId}.");
+                LogActivity($"租借操作失敗: 漫畫 '{selectedComic.Title}' (ID: {comicId}) 已被會員ID {selectedComic.RentedToMemberId} 租借。");
                 RefreshUIDataSafely();
                 return;
             }
@@ -365,11 +365,11 @@ namespace ComicRentalSystem_14Days.Forms
 
                 using (RentalPeriodForm rentalDialog = new RentalPeriodForm(minRentalReturnDate, maxRentalReturnDate))
                 {
-                    LogActivity($"Showing RentalPeriodForm for comic '{selectedComic.Title}' to member '{selectedMember.Name}'. MinDate: {minRentalReturnDate:yyyy-MM-dd}, MaxDate: {maxRentalReturnDate:yyyy-MM-dd}");
+                    LogActivity($"正在為會員 '{selectedMember.Name}' 的漫畫 '{selectedComic.Title}' 顯示租借期限表單。最小日期: {minRentalReturnDate:yyyy-MM-dd}, 最大日期: {maxRentalReturnDate:yyyy-MM-dd}");
                     if (rentalDialog.ShowDialog(this) == DialogResult.OK)
                     {
                         DateTime selectedReturnDate = rentalDialog.SelectedReturnDate;
-                        LogActivity($"RentalPeriodForm accepted. Selected return date: {selectedReturnDate:yyyy-MM-dd}");
+                        LogActivity($"租借期限表單已接受。選定歸還日期: {selectedReturnDate:yyyy-MM-dd}");
 
                         selectedComic.IsRented = true;
                         selectedComic.RentedToMemberId = selectedMember.Id;
@@ -379,14 +379,14 @@ namespace ComicRentalSystem_14Days.Forms
 
                         _comicService.UpdateComic(selectedComic);
 
-                        LogActivity($"Comic '{selectedComic.Title}' (ID: {comicId}) successfully rented to member '{selectedMember.Name}' (ID: {memberId}). RentalDate: {selectedComic.RentalDate:yyyy-MM-dd HH:mm}, ExpectedReturnDate: {selectedComic.ReturnDate:yyyy-MM-dd}.");
+                        LogActivity($"漫畫 '{selectedComic.Title}' (ID: {comicId}) 已成功租借給會員 '{selectedMember.Name}' (ID: {memberId})。租借日期: {selectedComic.RentalDate:yyyy-MM-dd HH:mm}, 預計歸還日期: {selectedComic.ReturnDate:yyyy-MM-dd}。");
                         MessageBox.Show($"漫畫 '{selectedComic.Title}' 已成功租借給會員 '{selectedMember.Name}'。\n租借日期: {selectedComic.RentalDate:yyyy-MM-dd}\n預計歸還日期: {selectedComic.ReturnDate:yyyy-MM-dd}", "租借成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         LoadRentalDetails(); // Refresh the list of rented comics
                         LoadAvailableComics(); // Refresh the list of available comics
                     }
                     else
                     {
-                        LogActivity($"RentalPeriodForm cancelled by user for comic '{selectedComic.Title}' to member '{selectedMember.Name}'. Rental process aborted.");
+                        LogActivity($"使用者已為會員 '{selectedMember.Name}' 的漫畫 '{selectedComic.Title}' 取消租借期限表單。租借流程中止。");
                         // Optionally, inform the user that the rental was cancelled if not obvious
                         // MessageBox.Show("租借操作已取消。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
@@ -394,7 +394,7 @@ namespace ComicRentalSystem_14Days.Forms
             }
             catch (Exception ex)
             {
-                LogErrorActivity($"Error during rent operation for comic ID: {comicId} to member ID: {memberId}.", ex);
+                LogErrorActivity($"為會員ID: {memberId} 租借漫畫ID: {comicId} 時發生錯誤。", ex);
                 MessageBox.Show($"租借漫畫時發生錯誤: {ex.Message}\n請查看日誌以獲取詳細資訊。", "租借錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -407,11 +407,11 @@ namespace ComicRentalSystem_14Days.Forms
             RentalDetailViewModel? selectedRentalDetailForDebug = dgvRentedComics.SelectedRows[0].DataBoundItem as RentalDetailViewModel;
             if (selectedRentalDetailForDebug != null)
             {
-                LogActivity($"DEBUG: SelectedRows[0] - ComicId: {selectedRentalDetailForDebug.ComicId}, Title: {selectedRentalDetailForDebug.ComicTitle}");
+                LogActivity($"偵錯: SelectedRows[0] - ComicId: {selectedRentalDetailForDebug.ComicId}, 書名: {selectedRentalDetailForDebug.ComicTitle}");
             }
             else
             {
-                LogActivity("DEBUG: SelectedRows[0].DataBoundItem is null or not a RentalDetailViewModel.");
+                LogActivity("偵錯: SelectedRows[0].DataBoundItem 為空或不是 RentalDetailViewModel。");
             }
 
             for (int i = 0; i < dgvRentedComics.SelectedRows.Count; i++)
@@ -419,7 +419,7 @@ namespace ComicRentalSystem_14Days.Forms
                 RentalDetailViewModel? rowDetail = dgvRentedComics.SelectedRows[i].DataBoundItem as RentalDetailViewModel;
                 if (rowDetail != null)
                 {
-                    LogActivity($"DEBUG: SelectedRows[{i}] - ComicId: {rowDetail.ComicId}, Title: {rowDetail.ComicTitle}");
+                    LogActivity($"偵錯: SelectedRows[{i}] - ComicId: {rowDetail.ComicId}, 書名: {rowDetail.ComicTitle}");
                 }
             }
         }
@@ -430,12 +430,12 @@ namespace ComicRentalSystem_14Days.Forms
             MessageBox.Show("服務未初始化，無法執行操作。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
-        LogActivity("Return button clicked."); // This log is now after the debug logs, which is fine.
+        LogActivity("歸還按鈕已點擊。"); // This log is now after the debug logs, which is fine.
 
         if (dgvRentedComics.SelectedRows.Count == 0)
         {
             MessageBox.Show("請從下方列表選擇一筆要歸還的租借記錄。", "歸還提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            LogActivity("Return action aborted: No record selected from dgvRentedComics.");
+            LogActivity("歸還操作中止: 未從 dgvRentedComics 選取記錄。");
             return;
         }
 
@@ -444,7 +444,7 @@ namespace ComicRentalSystem_14Days.Forms
         if (selectedRentalDetail == null)
         {
             MessageBox.Show("無法獲取選定的租借資料，請重試。", "歸還錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            LogErrorActivity("Return action failed: Selected item in dgvRentedComics is not a valid RentalDetailViewModel or is null.");
+            LogErrorActivity("歸還操作失敗: dgvRentedComics 中的選定項目無效、為空或不是 RentalDetailViewModel。");
             return;
         }
 
@@ -453,7 +453,7 @@ namespace ComicRentalSystem_14Days.Forms
         if (comicFromService == null)
         {
             MessageBox.Show($"漫畫 '{selectedRentalDetail.ComicTitle}' (ID: {selectedRentalDetail.ComicId}) 在系統中已不存在，可能已被刪除。", "歸還錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            LogErrorActivity($"Return action failed: Comic '{selectedRentalDetail.ComicTitle}' (ID: {selectedRentalDetail.ComicId}) not found in service layer.");
+            LogErrorActivity($"歸還操作失敗: 在服務層找不到漫畫 '{selectedRentalDetail.ComicTitle}' (ID: {selectedRentalDetail.ComicId})。");
             LoadRentalDetails(); // Or LoadRentalDetails()
             return;
         }
@@ -466,7 +466,7 @@ namespace ComicRentalSystem_14Days.Forms
         if (!comicFromService.IsRented)
         {
             MessageBox.Show($"漫畫 '{comicFromService.Title}' (ID: {comicFromService.Id}) 的狀態已為未租借。", "歸還提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            LogActivity($"Return action noted: Comic '{comicFromService.Title}' (ID: {comicFromService.Id}) is already marked as not rented.");
+            LogActivity($"歸還操作註記: 漫畫 '{comicFromService.Title}' (ID: {comicFromService.Id}) 已標記為未租借。");
             LoadRentalDetails(); // Refresh
             return;
         }
@@ -491,20 +491,20 @@ namespace ComicRentalSystem_14Days.Forms
             Member? returningMember = _memberService?.GetMemberById(previouslyRentedByMemberId);
             string returningMemberName = returningMember?.Name ?? $"ID: {previouslyRentedByMemberId}";
 
-            LogActivity($"Comic '{comicFromService.Title}' (ID: {comicFromService.Id}) successfully returned (was rented by member '{returningMemberName}').");
+            LogActivity($"漫畫 '{comicFromService.Title}' (ID: {comicFromService.Id}) 已成功歸還 (由會員 '{returningMemberName}' 租借)。");
             MessageBox.Show($"漫畫 '{comicFromService.Title}' 已成功歸還。", "歸還成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
             LoadRentalDetails(); // Refresh the list
         }
         catch (Exception ex)
         {
-            LogErrorActivity($"Error during return operation for comic ID: {comicFromService.Id}.", ex);
+            LogErrorActivity($"歸還漫畫ID: {comicFromService.Id} 時發生錯誤。", ex);
             MessageBox.Show($"歸還漫畫時發生錯誤: {ex.Message}\n請查看日誌以獲取詳細資訊。", "歸還錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            LogActivity("RentalForm closing. Unsubscribing from service events.");
+            LogActivity("租借表單正在關閉。正在取消訂閱服務事件。");
 
             _reloadService?.Stop();
 

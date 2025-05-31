@@ -27,7 +27,7 @@ namespace ComicRentalSystem_14Days.Forms
             _comicService = comicService ?? throw new ArgumentNullException(nameof(comicService));
             _memberService = memberService ?? throw new ArgumentNullException(nameof(memberService));
             _reloadService = reloadService ?? throw new ArgumentNullException(nameof(reloadService));
-            _logger.Log("LoginForm initialized.");
+            _logger.Log("登入表單已初始化。");
 
             // Set password char
             txtPassword.PasswordChar = '*';
@@ -39,7 +39,7 @@ namespace ComicRentalSystem_14Days.Forms
         private void btnRegister_Click(object? sender, EventArgs e)
 
         {
-            _logger.Log("Register button clicked.");
+            _logger.Log("註冊按鈕已點擊。");
             RegistrationForm regForm = new RegistrationForm(_logger, _authService, _memberService);
             regForm.ShowDialog(this);
         }
@@ -52,16 +52,16 @@ namespace ComicRentalSystem_14Days.Forms
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
                 MessageBox.Show("請輸入使用者名稱和密碼。", "登入失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                _logger.Log("Login attempt failed: Username or password empty.");
+                _logger.Log("登入嘗試失敗: 使用者名稱或密碼為空。");
                 return;
             }
 
-            _logger.Log($"Login attempt for user: {username}");
+            _logger.Log($"使用者登入嘗試: {username}");
             User? user = _authService.Login(username, password);
 
             if (user != null)
             {
-                _logger.Log($"User '{username}' logged in successfully. Role: {user.Role}.");
+                _logger.Log($"使用者 '{username}' 成功登入。角色: {user.Role}。");
                 this.Hide(); // Hide login form
                 MainForm mainForm = new MainForm(_logger, _comicService, _memberService, _reloadService, user);
                 mainForm.FormClosed += (s, args) => this.Close(); // Close login form when main form closes
@@ -69,7 +69,7 @@ namespace ComicRentalSystem_14Days.Forms
             }
             else
             {
-                _logger.Log($"Login failed for user: {username}. Invalid credentials.");
+                _logger.Log($"使用者 '{username}' 登入失敗。無效的憑證。");
                 MessageBox.Show("使用者名稱或密碼錯誤。", "登入失敗", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 txtUsername.Clear(); // Clear username field
                 txtPassword.Clear(); // Clear password field
@@ -78,7 +78,7 @@ namespace ComicRentalSystem_14Days.Forms
 
         private void LoginForm_Load(object sender, EventArgs e)
         {
-            _logger.Log("LoginForm loaded.");
+            _logger.Log("登入表單已載入。");
             // You can add any initialization logic here if needed when the form loads
         }
     }

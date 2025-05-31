@@ -23,40 +23,40 @@ namespace ComicRentalSystem_14Days.Services
             _fileHelper = fileHelper ?? throw new ArgumentNullException(nameof(fileHelper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _users = LoadUsers() ?? new List<User>();
-            _logger.Log("AuthenticationService initialized.");
+            _logger.Log("驗證服務已初始化。");
         }
 
         private List<User>? LoadUsers()
         {
             try
             {
-                _logger.Log($"Attempting to load users from {_usersFilePath}");
+                _logger.Log($"正在嘗試從 {_usersFilePath} 載入使用者");
                 string json = _fileHelper.ReadFile(_usersFilePath);
                 if (string.IsNullOrWhiteSpace(json))
                 {
-                    _logger.Log("Users file is empty or not found, returning new list.");
+                    _logger.Log("使用者檔案為空或找不到，返回新列表。");
                     return new List<User>();
                 }
                 var users = JsonSerializer.Deserialize<List<User>>(json);
-                _logger.Log($"Successfully loaded {users?.Count ?? 0} users.");
+                _logger.Log($"成功載入 {users?.Count ?? 0} 位使用者。");
                 return users;
             }
             catch (FileNotFoundException)
             {
-                _logger.Log($"Users file '{_usersFilePath}' not found. A new one will be created on registration.");
+                _logger.Log($"找不到使用者檔案 '{_usersFilePath}'。將在註冊時建立新檔案。");
                 return new List<User>();
             }
             catch (JsonException ex)
             {
-                _logger.LogError($"Critical error: User data file '{_usersFilePath}' is corrupted. Details: {ex.Message}", ex);
+                _logger.LogError($"嚴重錯誤: 使用者資料檔案 '{_usersFilePath}' 已損壞。詳細資訊: {ex.Message}", ex);
                 MessageBox.Show($"使用者資料檔案已損壞，無法載入使用者。應用程式將關閉。\n錯誤詳情: {ex.Message}\n檔案路徑: {_usersFilePath}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                throw new ApplicationException("Failed to load critical user data due to corrupted file.", ex);
+                throw new ApplicationException("由於檔案損壞，無法載入關鍵使用者資料。", ex);
             }
             catch (Exception ex)
             {
-                _logger.LogError($"An unexpected error occurred while loading users from {_usersFilePath}. Details: {ex.Message}", ex);
+                _logger.LogError($"從 {_usersFilePath} 載入使用者時發生未預期的錯誤。詳細資訊: {ex.Message}", ex);
                 MessageBox.Show($"載入使用者時發生未預期的錯誤。應用程式將關閉。\n錯誤詳情: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                throw new ApplicationException("Unexpected error during user data loading.", ex);
+                throw new ApplicationException("載入使用者資料期間發生未預期錯誤。", ex);
             }
         }
 
@@ -64,14 +64,14 @@ namespace ComicRentalSystem_14Days.Services
         {
             try
             {
-                _logger.Log($"Attempting to save {_users.Count} users to {_usersFilePath}");
+                _logger.Log($"正在嘗試將 {_users.Count} 位使用者儲存到 {_usersFilePath}");
                 string json = JsonSerializer.Serialize(_users, new JsonSerializerOptions { WriteIndented = true });
                 _fileHelper.WriteFile(_usersFilePath, json);
-                _logger.Log("Users saved successfully.");
+                _logger.Log("使用者儲存成功。");
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error saving users to {_usersFilePath}.", ex);
+                _logger.LogError($"將使用者儲存到 {_usersFilePath} 時發生錯誤。", ex);
                 // Handle exception (e.g., notify admin, retry logic)
             }
         }
@@ -92,10 +92,10 @@ namespace ComicRentalSystem_14Days.Services
 
         public bool Register(string username, string password, UserRole role)
         {
-            _logger.Log($"Attempting to register user: {username}, Role: {role}");
+            _logger.Log($"正在嘗試註冊使用者: {username}, 角色: {role}");
             if (_users.Any(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase)))
             {
-                _logger.Log($"Registration failed: Username '{username}' already exists.");
+                _logger.Log($"註冊失敗: 使用者名稱 '{username}' 已存在。");
                 return false; // Username already exists
             }
 
@@ -103,24 +103,24 @@ namespace ComicRentalSystem_14Days.Services
             User newUser = new User(username, passwordHash, role);
             _users.Add(newUser);
             SaveUsers();
-            _logger.Log($"User '{username}' registered successfully with ID {newUser.Id}.");
+            _logger.Log($"使用者 '{username}' (ID: {newUser.Id}) 註冊成功。");
             return true;
         }
 
         public User? Login(string username, string password)
         {
-            _logger.Log($"Attempting to login user: {username}");
+            _logger.Log($"正在嘗試登入使用者: {username}");
             string passwordHash = HashPassword(password);
             User? user = _users.FirstOrDefault(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase) && u.PasswordHash == passwordHash);
 
             if (user != null)
             {
-                _logger.Log($"User '{username}' logged in successfully. Role: {user.Role}");
+                _logger.Log($"使用者 '{username}' 成功登入。角色: {user.Role}");
                 return user;
             }
             else
             {
-                _logger.Log($"Login failed for user: {username}. Invalid username or password.");
+                _logger.Log($"使用者 '{username}' 登入失敗。使用者名稱或密碼無效。");
                 return null;
             }
         }
@@ -130,30 +130,30 @@ namespace ComicRentalSystem_14Days.Services
         {
             if (!_users.Any(u => u.Role == UserRole.Admin))
             {
-                _logger.Log($"No admin user found. Creating default admin: {adminUsername}");
+                _logger.Log($"找不到管理員使用者。正在建立預設管理員: {adminUsername}");
                 Register(adminUsername, adminPassword, UserRole.Admin);
             }
             else
             {
-                _logger.Log("Admin user already exists.");
+                _logger.Log("管理員使用者已存在。");
             }
         }
 
         public bool DeleteUser(string username)
         {
-            _logger.Log($"Attempting to delete user: {username}");
+            _logger.Log($"正在嘗試刪除使用者: {username}");
             User? userToDelete = _users.FirstOrDefault(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
 
             if (userToDelete != null)
             {
                 _users.Remove(userToDelete);
                 SaveUsers();
-                _logger.Log($"User '{username}' deleted successfully.");
+                _logger.Log($"使用者 '{username}' 刪除成功。");
                 return true;
             }
             else
             {
-                _logger.Log($"Delete failed: User '{username}' not found.");
+                _logger.Log($"刪除失敗: 找不到使用者 '{username}'。");
                 return false;
             }
         }
