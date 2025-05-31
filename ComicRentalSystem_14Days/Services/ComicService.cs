@@ -77,7 +77,7 @@ namespace ComicRentalSystem_14Days.Services
 
                 // Skip header line if present (assuming simple CSV structure)
                 // Adjust Skip count if your CSV has no header or multiple header lines.
-                foreach (var line in lines.Skip(1))
+                foreach (var line in lines)
                 {
                     if (string.IsNullOrWhiteSpace(line)) continue;
                     try
