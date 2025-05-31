@@ -48,7 +48,7 @@ namespace ComicRentalSystem_14Days.Forms
             this.btnConfirmRental.Name = "btnConfirmRental";
             this.btnConfirmRental.Size = new System.Drawing.Size(100, 35);
             this.btnConfirmRental.TabIndex = 1;
-            this.btnConfirmRental.Text = "Confirm";
+            this.btnConfirmRental.Text = "確認"; // Confirm
             this.btnConfirmRental.UseVisualStyleBackColor = true;
             this.btnConfirmRental.Click += new System.EventHandler(this.btnConfirmRental_Click);
             this.btnConfirmRental.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
@@ -59,7 +59,7 @@ namespace ComicRentalSystem_14Days.Forms
             this.btnCancelRental.Name = "btnCancelRental";
             this.btnCancelRental.Size = new System.Drawing.Size(100, 35);
             this.btnCancelRental.TabIndex = 2;
-            this.btnCancelRental.Text = "Cancel";
+            this.btnCancelRental.Text = "取消"; // Cancel
             this.btnCancelRental.UseVisualStyleBackColor = true;
             this.btnCancelRental.Click += new System.EventHandler(this.btnCancelRental_Click);
             this.btnCancelRental.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
@@ -70,7 +70,7 @@ namespace ComicRentalSystem_14Days.Forms
             this.lblInfo.Name = "lblInfo";
             this.lblInfo.Size = new System.Drawing.Size(250, 45);
             this.lblInfo.TabIndex = 3;
-            this.lblInfo.Text = "Select a return date (Min 3 days, Max 1 month)."; // Default text
+            this.lblInfo.Text = "請選擇歸還日期。"; // Default text: "Please select a return date."
             this.lblInfo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblInfo.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                 | System.Windows.Forms.AnchorStyles.Right);
@@ -92,7 +92,7 @@ namespace ComicRentalSystem_14Days.Forms
             this.Name = "RentalPeriodForm";
             this.Padding = new System.Windows.Forms.Padding(15);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Select Return Date";
+            this.Text = "選擇歸還日期"; // Select Return Date
             this.ResumeLayout(false);
         }
 

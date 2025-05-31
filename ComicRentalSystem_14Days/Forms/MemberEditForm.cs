@@ -92,7 +92,7 @@ namespace ComicRentalSystem_14Days.Forms
             LogActivity("儲存會員按鈕已點擊。");
 
             if (!this.ValidateChildren()) {
-                 MessageBox.Show("Please correct the highlighted errors.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                 MessageBox.Show("請修正標示的錯誤。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning); // "Please correct the highlighted errors." | "Validation Error"
                  LogActivity("Validation failed for member edit. Highlighted errors present.");
                  return;
             }
@@ -161,12 +161,12 @@ namespace ComicRentalSystem_14Days.Forms
             {
                 if (string.IsNullOrWhiteSpace(txt.Text))
                 {
-                    errorProvider1?.SetError(txt, "Name cannot be empty.");
+                    errorProvider1?.SetError(txt, "姓名不能為空。"); // Name cannot be empty.
                     e.Cancel = true;
                 }
                 else if (!txt.Text.Trim().All(c => char.IsLetter(c) || char.IsWhiteSpace(c)))
                 {
-                    errorProvider1?.SetError(txt, "Name can only contain letters and spaces.");
+                    errorProvider1?.SetError(txt, "姓名只能包含字母和空格。"); // Name can only contain letters and spaces.
                     e.Cancel = true;
                 }
                 else
@@ -183,17 +183,17 @@ namespace ComicRentalSystem_14Days.Forms
                 string phoneNumber = txt.Text.Trim();
                 if (string.IsNullOrWhiteSpace(phoneNumber))
                 {
-                    errorProvider1?.SetError(txt, "Phone number cannot be empty.");
+                    errorProvider1?.SetError(txt, "電話號碼不能為空。"); // Phone number cannot be empty.
                     e.Cancel = true;
                 }
                 else if (!phoneNumber.All(char.IsDigit))
                 {
-                    errorProvider1?.SetError(txt, "Phone number can only contain digits.");
+                    errorProvider1?.SetError(txt, "電話號碼只能包含數字。"); // Phone number can only contain digits.
                     e.Cancel = true;
                 }
                 else if (phoneNumber.Length < 7 || phoneNumber.Length > 15)
                 {
-                    errorProvider1?.SetError(txt, "Phone number must be between 7 and 15 digits.");
+                    errorProvider1?.SetError(txt, "電話號碼必須介於7到15位數字之間。"); // Phone number must be between 7 and 15 digits.
                     e.Cancel = true;
                 }
                 else
