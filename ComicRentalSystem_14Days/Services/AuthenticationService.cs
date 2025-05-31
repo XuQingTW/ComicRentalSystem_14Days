@@ -97,6 +97,7 @@ namespace ComicRentalSystem_14Days.Services
             }
 
             try
+              
             {
                 string json = _fileHelper.ReadFile(backupFilePath);
                 if (string.IsNullOrWhiteSpace(json))
@@ -122,6 +123,7 @@ namespace ComicRentalSystem_14Days.Services
             }
             catch (JsonException jsonEx)
             {
+
                 _logger.LogError($"Critical: Backup users file '{backupFilePath}' is also corrupted: {jsonEx.Message}. Initializing empty user list.", jsonEx);
                 return new List<User>(); // Both main and backup are bad.
             }
