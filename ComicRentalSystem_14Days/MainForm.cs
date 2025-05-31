@@ -37,18 +37,22 @@ namespace ComicRentalSystem_14Days
             }
         }
         // Primary constructor
-        public MainForm(ILogger logger, ComicService comicService, MemberService memberService, IReloadService reloadService, User currentUser) : this()
+        public MainForm(ILogger logger, ComicService comicService, MemberService memberService, IReloadService reloadService, User currentUser)
+            : base() // Explicitly call BaseForm's parameterless constructor
         {
+            // Initialize fields FIRST
             this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this._comicService = comicService ?? throw new ArgumentNullException(nameof(comicService));
             this._memberService = memberService ?? throw new ArgumentNullException(nameof(memberService));
             this._reloadService = reloadService ?? throw new ArgumentNullException(nameof(reloadService));
             this._currentUser = currentUser ?? throw new ArgumentNullException(nameof(currentUser));
 
-            base.SetLogger(logger); // Assumes BaseForm has public void SetLogger(ILogger logger)
-            
-            _logger.Log($"MainForm initialized for user: {_currentUser.Username}, Role: {_currentUser.Role}");
+            base.SetLogger(logger); // Initialize BaseForm's logger
 
+            InitializeComponent(); // NOW call InitializeComponent
+
+            // These are still needed to apply role-based UI logic
+            _logger.Log($"MainForm initialized for user: {_currentUser.Username}, Role: {_currentUser.Role}");
             SetupUIAccessControls();
             UpdateStatusBar();
         }
@@ -77,14 +81,14 @@ namespace ComicRentalSystem_14Days
             if (_currentUser == null) return; // Should not happen if form is loaded correctly
 
             bool isMember = _currentUser.Role == UserRole.Member;
-            if (isMember)
-            {
-                btnRentComic.Enabled = dgvAvailableComics.SelectedRows.Count > 0;
-            }
-            else
-            {
-                btnRentComic.Enabled = false;
-            }
+            // if (isMember)
+            // {
+            //     btnRentComic.Enabled = dgvAvailableComics.SelectedRows.Count > 0;
+            // }
+            // else
+            // {
+            //     btnRentComic.Enabled = false;
+            // }
         }
 
         private void ComicService_ComicsChanged(object? sender, EventArgs e)
@@ -212,28 +216,30 @@ namespace ComicRentalSystem_14Days
             }
 
             // Setup for btnRentComic and related member-specific UI
-            if (btnRentComic != null && lblMyRentedComicsHeader != null && dgvMyRentedComics != null)
+            // if (btnRentComic != null && lblMyRentedComicsHeader != null && dgvMyRentedComics != null)
+            if (lblMyRentedComicsHeader != null && dgvMyRentedComics != null)
             {
                 if (!isAdmin) // User is a Member
                 {
-                    btnRentComic.Visible = true;
-                    btnRentComic.Enabled = dgvAvailableComics.SelectedRows.Count > 0;
+                    // btnRentComic.Visible = true;
+                    // btnRentComic.Enabled = dgvAvailableComics.SelectedRows.Count > 0;
                     lblMyRentedComicsHeader.Visible = true;
                     dgvMyRentedComics.Visible = true;
                 }
                 else // User is an Admin
                 {
-                    btnRentComic.Visible = false;
-                    btnRentComic.Enabled = false;
+                    // btnRentComic.Visible = false;
+                    // btnRentComic.Enabled = false;
                     lblMyRentedComicsHeader.Visible = false;
                     dgvMyRentedComics.Visible = false;
                 }
-                _logger.Log($"btnRentComic visibility set to {!isAdmin}, enabled state based on selection/role.");
+                // _logger.Log($"btnRentComic visibility set to {!isAdmin}, enabled state based on selection/role.");
                 _logger.Log($"lblMyRentedComicsHeader and dgvMyRentedComics visibility set to {!isAdmin}.");
             }
             else
             {
-                _logger.LogWarning("One or more UI controls (btnRentComic, lblMyRentedComicsHeader, dgvMyRentedComics) not found during SetupUIAccessControls.");
+                // Updated log message to reflect that btnRentComic is not checked here anymore
+                _logger.LogWarning("One or more UI controls (lblMyRentedComicsHeader, dgvMyRentedComics) not found during SetupUIAccessControls.");
             }
         }
 
