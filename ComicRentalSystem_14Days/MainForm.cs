@@ -424,6 +424,13 @@ namespace ComicRentalSystem_14Days
                     // Update text for labels inside tabs for clarity
                     if(lblAvailableComics != null) lblAvailableComics.Text = "Select a comic below to rent:";
                     if(lblMyRentedComicsHeader != null) lblMyRentedComicsHeader.Text = "Your currently rented items:";
+
+                    // ***** START OF CHANGE *****
+                    if (btnRentComic != null)
+                    {
+                        btnRentComic.Visible = true;
+                    }
+                    // ***** END OF CHANGE *****
                 }
                 else
                 {
