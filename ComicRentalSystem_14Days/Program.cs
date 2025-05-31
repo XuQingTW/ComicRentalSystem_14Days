@@ -36,14 +36,26 @@ namespace ComicRentalSystem_14Days
 
             try
             {
-                if (AppLogger != null && AppComicService != null)
+                // Ensure all critical services for MainForm are initialized
+                if (AppLogger != null && AppComicService != null && AppMemberService != null && AppReloadService != null)
                 {
-                    Application.Run(new MainForm(AppLogger, AppComicService));
+                    Application.Run(new MainForm(AppLogger, AppComicService, AppMemberService, AppReloadService));
                 }
                 else
                 {
-                    MessageBox.Show("無法初始化核心服務，應用程式即將關閉。", "嚴重錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    AppLogger?.LogError("Application terminated because core services (Logger or ComicService) failed to initialize.");
+                    // Adjusted error message to reflect that any of these services could be the cause
+                    string missingServices = "";
+                    if (AppLogger == null) missingServices += "Logger, ";
+                    if (AppComicService == null) missingServices += "ComicService, ";
+                    if (AppMemberService == null) missingServices += "MemberService, ";
+                    if (AppReloadService == null) missingServices += "ReloadService, ";
+                    if (!string.IsNullOrEmpty(missingServices))
+                    {
+                        missingServices = missingServices.Substring(0, missingServices.Length - 2); // Remove trailing comma and space
+                    }
+
+                    MessageBox.Show($"無法初始化核心服務 ({missingServices})，應用程式即將關閉。", "嚴重錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    AppLogger?.LogError($"Application terminated because core services ({missingServices}) failed to initialize.");
                 }
             }
             catch (Exception ex)
