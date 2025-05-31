@@ -42,14 +42,19 @@ namespace ComicRentalSystem_14Days
             檢視日誌ToolStripMenuItem = new ToolStripMenuItem();
             dgvAvailableComics = new DataGridView();
             lblAvailableComics = new Label();
+            this.使用者註冊ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.logoutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabelUser = new System.Windows.Forms.ToolStripStatusLabel();
             menuStrip2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvAvailableComics).BeginInit();
+            this.statusStrip1.SuspendLayout(); // Added
             SuspendLayout();
             // 
             // menuStrip1
             // 
             menuStrip1.ImageScalingSize = new Size(20, 20);
-            menuStrip1.Location = new Point(0, 27);
+            menuStrip1.Location = new Point(0, 27); // This menuStrip appears unused for items
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Padding = new Padding(7, 2, 0, 2);
             menuStrip1.Size = new Size(900, 24);
@@ -59,7 +64,8 @@ namespace ComicRentalSystem_14Days
             // menuStrip2
             // 
             menuStrip2.ImageScalingSize = new Size(20, 20);
-            menuStrip2.Items.AddRange(new ToolStripItem[] { 檔案ToolStripMenuItem, 管理ToolStripMenuItem, 工具ToolStripMenuItem });
+            // Added 使用者註冊ToolStripMenuItem and logoutToolStripMenuItem here
+            menuStrip2.Items.AddRange(new ToolStripItem[] { 檔案ToolStripMenuItem, 管理ToolStripMenuItem, 工具ToolStripMenuItem, this.使用者註冊ToolStripMenuItem, this.logoutToolStripMenuItem });
             menuStrip2.Location = new Point(0, 0);
             menuStrip2.Name = "menuStrip2";
             menuStrip2.Padding = new Padding(7, 2, 0, 2);
@@ -123,18 +129,33 @@ namespace ComicRentalSystem_14Days
             檢視日誌ToolStripMenuItem.Text = "檢視日誌";
             檢視日誌ToolStripMenuItem.Click += 檢視日誌ToolStripMenuItem_Click;
             // 
+            // 使用者註冊ToolStripMenuItem
+            //
+            this.使用者註冊ToolStripMenuItem.Name = "使用者註冊ToolStripMenuItem";
+            this.使用者註冊ToolStripMenuItem.Size = new System.Drawing.Size(103, 23);
+            this.使用者註冊ToolStripMenuItem.Text = "使用者註冊 (&R)";
+            this.使用者註冊ToolStripMenuItem.Click += new System.EventHandler(this.使用者註冊ToolStripMenuItem_Click);
+            //
+            // logoutToolStripMenuItem
+            //
+            this.logoutToolStripMenuItem.Name = "logoutToolStripMenuItem";
+            this.logoutToolStripMenuItem.Size = new System.Drawing.Size(74, 23);
+            this.logoutToolStripMenuItem.Text = "登出 (&L)";
+            this.logoutToolStripMenuItem.Click += new System.EventHandler(this.logoutToolStripMenuItem_Click);
+            //
             // dgvAvailableComics
             // 
             dgvAvailableComics.AllowUserToAddRows = false;
             dgvAvailableComics.AllowUserToDeleteRows = false;
             dgvAvailableComics.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvAvailableComics.Dock = DockStyle.Fill;
+            // Adjusted Location and Size to accommodate statusStrip1
             dgvAvailableComics.Location = new Point(0, 86);
             dgvAvailableComics.Margin = new Padding(4);
             dgvAvailableComics.Name = "dgvAvailableComics";
             dgvAvailableComics.ReadOnly = true;
             dgvAvailableComics.RowHeadersWidth = 51;
-            dgvAvailableComics.Size = new Size(900, 417);
+            dgvAvailableComics.Size = new Size(900, 395); // Height reduced by 22 (statusStrip height)
             dgvAvailableComics.TabIndex = 2;
             // 
             // lblAvailableComics
@@ -147,19 +168,36 @@ namespace ComicRentalSystem_14Days
             lblAvailableComics.Name = "lblAvailableComics";
             lblAvailableComics.Padding = new Padding(5);
             lblAvailableComics.Size = new Size(182, 35);
-            lblAvailableComics.TabIndex = 3;
+            lblAvailableComics.TabIndex = 3; // Changed from 3 to 4, as statusStrip will be 3
             lblAvailableComics.Text = "目前可借閱的漫畫";
             // 
+            // statusStrip1
+            //
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabelUser});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 481); // Adjusted Y based on new ClientSize
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(900, 22);
+            this.statusStrip1.TabIndex = 4; // New TabIndex
+            this.statusStrip1.Text = "statusStrip1";
+            //
+            // toolStripStatusLabelUser
+            //
+            this.toolStripStatusLabelUser.Name = "toolStripStatusLabelUser";
+            this.toolStripStatusLabelUser.Size = new System.Drawing.Size(136, 17); // Example size, text might make it wider
+            this.toolStripStatusLabelUser.Text = "User: None | Role: None";
+            //
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(9F, 19F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(900, 503);
+            ClientSize = new Size(900, 503); // Original ClientSize
             Controls.Add(dgvAvailableComics);
             Controls.Add(lblAvailableComics);
-            Controls.Add(menuStrip1);
-            Controls.Add(menuStrip2);
-            MainMenuStrip = menuStrip1;
+            Controls.Add(menuStrip1); // This menuStrip1 seems to be secondary or unused for items
+            Controls.Add(menuStrip2); // This is the main menuStrip
+            Controls.Add(this.statusStrip1); // Added statusStrip1
+            MainMenuStrip = menuStrip2; // Changed to menuStrip2 as it contains the items
             Margin = new Padding(4);
             Name = "MainForm";
             Text = "漫畫租借系統";
@@ -167,6 +205,8 @@ namespace ComicRentalSystem_14Days
             menuStrip2.ResumeLayout(false);
             menuStrip2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dgvAvailableComics).EndInit();
+            this.statusStrip1.ResumeLayout(false); // Added
+            this.statusStrip1.PerformLayout(); // Added
             ResumeLayout(false);
             PerformLayout();
         }
@@ -185,5 +225,9 @@ namespace ComicRentalSystem_14Days
         private ToolStripMenuItem rentalManagementToolStripMenuItem;
         private DataGridView dgvAvailableComics;
         private Label lblAvailableComics;
+        private System.Windows.Forms.ToolStripMenuItem 使用者註冊ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem logoutToolStripMenuItem;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelUser;
     }
 }
