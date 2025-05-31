@@ -477,7 +477,7 @@ namespace ComicRentalSystem_14Days
             dgvMyRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Title", HeaderText = "書名", FillWeight = 30 });
             dgvMyRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Author", HeaderText = "作者", FillWeight = 20 });
 
-            var rentalDateColumn = new DataGridViewTextBoxColumn { DataPropertyName = "RentalDate", HeaderText = "租借日期", FillWeight = 18 });
+            var rentalDateColumn = new DataGridViewTextBoxColumn { DataPropertyName = "RentalDate", HeaderText = "租借日期", FillWeight = 18, DefaultCellStyle = new DataGridViewCellStyle { Format = "yyyy-MM-dd" } };
             if (rentalDateColumn.DefaultCellStyle == null)
             {
                 rentalDateColumn.DefaultCellStyle = new DataGridViewCellStyle();
