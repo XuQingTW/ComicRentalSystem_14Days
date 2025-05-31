@@ -121,60 +121,72 @@ namespace ComicRentalSystem_14Days
         private void SetupUIAccessControls()
         {
             bool isAdmin = _currentUser.Role == UserRole.Admin;
-            this._logger.Log($"Setting up UI controls. User is Admin: {isAdmin}");
+            _logger.Log($"Setting up UI controls. User is Admin: {isAdmin}");
 
-            // Corrected MenuStrip control name to 'menuStrip2' as per subtask instructions.
             var menuStrip = this.Controls.Find("menuStrip2", true).FirstOrDefault() as MenuStrip;
             if (menuStrip != null)
             {
-                var comicMgmtItem = menuStrip.Items.OfType<ToolStripMenuItem>()
-                                                 .FirstOrDefault(item => item.Name == "漫畫管理ToolStripMenuItem");
-                if (comicMgmtItem != null)
+                // Handle items under "管理ToolStripMenuItem"
+                var manageMenuItem = menuStrip.Items.OfType<ToolStripMenuItem>()
+                                                .FirstOrDefault(item => item.Name == "管理ToolStripMenuItem");
+                if (manageMenuItem != null)
                 {
-                    comicMgmtItem.Visible = isAdmin;
-                    comicMgmtItem.Enabled = isAdmin;
+                    var comicMgmtItem = manageMenuItem.DropDownItems.OfType<ToolStripMenuItem>()
+                                                     .FirstOrDefault(item => item.Name == "漫畫管理ToolStripMenuItem");
+                    if (comicMgmtItem != null)
+                    {
+                        comicMgmtItem.Visible = isAdmin;
+                        comicMgmtItem.Enabled = isAdmin;
+                        _logger.Log($"漫畫管理ToolStripMenuItem visibility/enabled set to {isAdmin}");
+                    }
+                    else
+                    {
+                        _logger.LogWarning("漫畫管理ToolStripMenuItem not found under 管理ToolStripMenuItem.");
+                    }
+
+                    var memberMgmtItem = manageMenuItem.DropDownItems.OfType<ToolStripMenuItem>()
+                                                      .FirstOrDefault(item => item.Name == "會員管理ToolStripMenuItem");
+                    if (memberMgmtItem != null)
+                    {
+                        memberMgmtItem.Visible = isAdmin;
+                        memberMgmtItem.Enabled = isAdmin;
+                        _logger.Log($"會員管理ToolStripMenuItem visibility/enabled set to {isAdmin}");
+                    }
+                    else
+                    {
+                        _logger.LogWarning("會員管理ToolStripMenuItem not found under 管理ToolStripMenuItem.");
+                    }
+
+                    var rentalMgmtItem = manageMenuItem.DropDownItems.OfType<ToolStripMenuItem>()
+                                                       .FirstOrDefault(item => item.Name == "rentalManagementToolStripMenuItem");
+                    if (rentalMgmtItem != null)
+                    {
+                        rentalMgmtItem.Visible = true; // Visible for all users
+                        rentalMgmtItem.Enabled = true; // Enabled for all users
+                        _logger.Log("rentalManagementToolStripMenuItem is visible and enabled.");
+                    }
+                    else
+                    {
+                        _logger.LogWarning("rentalManagementToolStripMenuItem not found under 管理ToolStripMenuItem.");
+                    }
                 }
                 else
                 {
-                    _logger.LogWarning("漫畫管理ToolStripMenuItem not found in menuStrip2.");
+                    _logger.LogWarning("管理ToolStripMenuItem (parent for several admin/general menu items) not found in menuStrip2.");
                 }
 
-                var memberMgmtItem = menuStrip.Items.OfType<ToolStripMenuItem>()
-                                                  .FirstOrDefault(item => item.Name == "會員管理ToolStripMenuItem");
-                if (memberMgmtItem != null)
-                {
-                    memberMgmtItem.Visible = isAdmin;
-                    memberMgmtItem.Enabled = isAdmin;
-                }
-                else
-                {
-                    _logger.LogWarning("會員管理ToolStripMenuItem not found in menuStrip2.");
-                }
-
+                // Handle top-level "使用者註冊ToolStripMenuItem"
                 var userRegItem = menuStrip.Items.OfType<ToolStripMenuItem>()
                                                  .FirstOrDefault(item => item.Name == "使用者註冊ToolStripMenuItem");
                 if (userRegItem != null)
                 {
-                    userRegItem.Visible = isAdmin;
-                    userRegItem.Enabled = isAdmin;
+                    userRegItem.Visible = isAdmin; // Admin-only
+                    userRegItem.Enabled = isAdmin; // Admin-only
+                    _logger.Log($"使用者註冊ToolStripMenuItem visibility/enabled set to {isAdmin}");
                 }
                 else
                 {
                     _logger.LogWarning("使用者註冊ToolStripMenuItem not found in menuStrip2.");
-                }
-
-                // Ensure Rental Management is accessible to all logged-in users
-                var rentalMgmtItem = menuStrip.Items.OfType<ToolStripMenuItem>()
-                                                   .FirstOrDefault(item => item.Name == "rentalManagementToolStripMenuItem");
-                if (rentalMgmtItem != null)
-                {
-                    rentalMgmtItem.Visible = true;
-                    rentalMgmtItem.Enabled = true;
-                    _logger.Log("Ensured rentalManagementToolStripMenuItem is visible and enabled for the current user.");
-                }
-                else
-                {
-                    _logger.LogWarning("rentalManagementToolStripMenuItem not found in menuStrip2.");
                 }
             }
             else
