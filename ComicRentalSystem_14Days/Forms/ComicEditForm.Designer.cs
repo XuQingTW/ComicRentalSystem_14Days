@@ -203,8 +203,8 @@
             this.gbComicDetails.PerformLayout();
             this.gbStatus.ResumeLayout(false);
             this.gbStatus.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            this.ResumeLayout(false);)
+            this.PerformLayout();)
         }
 
         #endregion
