@@ -34,6 +34,7 @@
             btnDeleteMember = new Button();
             btnEditMember = new Button();
             btnAddMember = new Button();
+            btnChangeUserRole = new Button(); // Added declaration for the new button
             ((System.ComponentModel.ISupportInitialize)dgvMembers).BeginInit();
             panel1.SuspendLayout();
             SuspendLayout();
@@ -50,29 +51,31 @@
             // panel1
             // 
             panel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            panel1.Controls.Add(btnChangeUserRole); // Added the new button to the panel
             panel1.Controls.Add(btnRefreshMembers);
             panel1.Controls.Add(btnDeleteMember);
             panel1.Controls.Add(btnEditMember);
             panel1.Controls.Add(btnAddMember);
-            panel1.Location = new Point(176, 332);
+            panel1.Location = new Point(12, 332); // Adjusted panel location for better layout
             panel1.Name = "panel1";
-            panel1.Size = new Size(354, 55);
+            panel1.Size = new Size(676, 55); // Adjusted panel size for better layout
             panel1.TabIndex = 1;
             // 
             // btnRefreshMembers
             // 
-            btnRefreshMembers.Location = new Point(255, 17);
+            btnRefreshMembers.Location = new Point(360, 17); // Adjusted location
             btnRefreshMembers.Name = "btnRefreshMembers";
-            btnRefreshMembers.Size = new Size(66, 20);
+            btnRefreshMembers.Size = new System.Drawing.Size(75, 23); // Adjusted size
             btnRefreshMembers.TabIndex = 3;
             btnRefreshMembers.Text = "重新整理";
             btnRefreshMembers.UseVisualStyleBackColor = true;
+            // btnRefreshMembers.Click += btnRefreshMembers_Click; // Event handler already wired up in .cs
             // 
             // btnDeleteMember
             // 
-            btnDeleteMember.Location = new Point(184, 17);
+            btnDeleteMember.Location = new Point(279, 17); // Adjusted location
             btnDeleteMember.Name = "btnDeleteMember";
-            btnDeleteMember.Size = new Size(66, 20);
+            btnDeleteMember.Size = new System.Drawing.Size(75, 23); // Adjusted size
             btnDeleteMember.TabIndex = 2;
             btnDeleteMember.Text = "刪除選定會員";
             btnDeleteMember.UseVisualStyleBackColor = true;
@@ -80,9 +83,9 @@
             // 
             // btnEditMember
             // 
-            btnEditMember.Location = new Point(113, 17);
+            btnEditMember.Location = new Point(198, 17); // Adjusted location
             btnEditMember.Name = "btnEditMember";
-            btnEditMember.Size = new Size(66, 20);
+            btnEditMember.Size = new System.Drawing.Size(75, 23); // Adjusted size
             btnEditMember.TabIndex = 1;
             btnEditMember.Text = "編輯選定會員";
             btnEditMember.UseVisualStyleBackColor = true;
@@ -90,13 +93,23 @@
             // 
             // btnAddMember
             // 
-            btnAddMember.Location = new Point(42, 17);
+            btnAddMember.Location = new Point(117, 17); // Adjusted location
             btnAddMember.Name = "btnAddMember";
-            btnAddMember.Size = new Size(66, 20);
+            btnAddMember.Size = new System.Drawing.Size(75, 23); // Adjusted size
             btnAddMember.TabIndex = 0;
             btnAddMember.Text = "新增會員";
             btnAddMember.UseVisualStyleBackColor = true;
             btnAddMember.Click += btnAddMember_Click;
+            //
+            // btnChangeUserRole
+            //
+            btnChangeUserRole.Location = new Point(36, 17); // Positioned as the first button
+            btnChangeUserRole.Name = "btnChangeUserRole";
+            btnChangeUserRole.Size = new System.Drawing.Size(75, 23); // Standardized size
+            btnChangeUserRole.TabIndex = 4; // New tab index
+            btnChangeUserRole.Text = "更改使用者角色";
+            btnChangeUserRole.UseVisualStyleBackColor = true;
+            // btnChangeUserRole.Click += btnChangeUserRole_Click; // This will be wired up by MemberManagementForm_Load
             // 
             // MemberManagementForm
             // 
@@ -121,5 +134,6 @@
         private Button btnDeleteMember;
         private Button btnEditMember;
         private Button btnAddMember;
+        private Button btnChangeUserRole; // Added field for the new button
     }
 }
