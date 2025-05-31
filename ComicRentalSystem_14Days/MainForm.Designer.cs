@@ -75,6 +75,7 @@ namespace ComicRentalSystem_14Days
             // 
             // this.btnRentComic = new System.Windows.Forms.Button();
             //
+
             // this.lblMyRentedComicsHeader = new System.Windows.Forms.Label();
             // this.dgvMyRentedComics = new System.Windows.Forms.DataGridView();
             // ((System.ComponentModel.ISupportInitialize)(this.dgvMyRentedComics)).BeginInit();
