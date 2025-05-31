@@ -59,15 +59,15 @@
             panel1.Controls.Add(btnDeleteComic);
             panel1.Controls.Add(btnEditComic);
             panel1.Controls.Add(btnAddComic);
-            panel1.Location = new Point(157, 352);
+            panel1.Location = new Point(0, 352);
             panel1.Name = "panel1";
-            panel1.Size = new Size(393, 34);
+            panel1.Size = new Size(700, 36);
             panel1.TabIndex = 1;
             // 
             // btnRefresh
             // 
             btnRefresh.AutoSize = true;
-            btnRefresh.Location = new Point(302, 4);
+            btnRefresh.Location = new Point(328, 7);
             btnRefresh.Name = "btnRefresh";
             btnRefresh.Size = new Size(73, 26);
             btnRefresh.TabIndex = 3;
@@ -78,9 +78,9 @@
             // btnDeleteComic
             // 
             btnDeleteComic.AutoSize = true;
-            btnDeleteComic.Location = new Point(209, 4);
+            btnDeleteComic.Location = new Point(221, 7);
             btnDeleteComic.Name = "btnDeleteComic";
-            btnDeleteComic.Size = new Size(101, 26);
+            btnDeleteComic.Size = new Size(89, 25);
             btnDeleteComic.TabIndex = 2;
             btnDeleteComic.Text = "刪除選定漫畫";
             btnDeleteComic.UseVisualStyleBackColor = true;
@@ -89,7 +89,7 @@
             // btnEditComic
             // 
             btnEditComic.AutoSize = true;
-            btnEditComic.Location = new Point(113, 4);
+            btnEditComic.Location = new Point(114, 4);
             btnEditComic.Name = "btnEditComic";
             btnEditComic.Size = new Size(101, 26);
             btnEditComic.TabIndex = 1;
