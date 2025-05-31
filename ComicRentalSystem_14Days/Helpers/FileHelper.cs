@@ -158,5 +158,48 @@ namespace ComicRentalSystem_14Days.Helpers
                 throw;
             }
         }
+
+        public async Task<string> ReadFileAsync(string filePath)
+        {
+            string fullPath = GetFullFilePath(filePath); // Use GetFullFilePath to ensure consistency
+            // Consider behavior if file doesn't exist, similar to synchronous ReadFile
+            if (!File.Exists(fullPath))
+            {
+                return string.Empty; // Consistent with synchronous version for non-generic ReadFile
+            }
+            try
+            {
+                return await File.ReadAllTextAsync(fullPath, Encoding.UTF8);
+            }
+            catch (IOException ioEx)
+            {
+                Console.WriteLine($"Error reading file asynchronously '{fullPath}': {ioEx.Message}");
+                throw; // Or handle more gracefully, e.g., log and return empty
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An unexpected error occurred while reading asynchronously '{fullPath}': {ex.Message}");
+                throw; // Or handle
+            }
+        }
+
+        public async Task WriteFileAsync(string filePath, string content)
+        {
+            string fullPath = GetFullFilePath(filePath); // Use GetFullFilePath
+            try
+            {
+                await File.WriteAllTextAsync(fullPath, content, Encoding.UTF8);
+            }
+            catch (IOException ioEx)
+            {
+                Console.WriteLine($"Error writing to file asynchronously '{fullPath}': {ioEx.Message}");
+                throw; // Or handle
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An unexpected error occurred while writing asynchronously '{fullPath}': {ex.Message}");
+                throw; // Or handle
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO; // Added for IOException
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms; // Added for MessageBox
 using ComicRentalSystem_14Days.Helpers;
 using ComicRentalSystem_14Days.Interfaces;
@@ -19,10 +20,12 @@ namespace ComicRentalSystem_14Days.Services
         public delegate void ComicDataChangedEventHandler(object? sender, EventArgs e);
         public event ComicDataChangedEventHandler? ComicsChanged;
 
-        public void Reload()
+        public async Task ReloadAsync()
         {
-            LoadComics();
-            OnComicsChanged();
+            _logger.Log("Async reload requested for ComicService.");
+            _comics = await LoadComicsAsync();
+            OnComicsChanged(); // Ensure OnComicsChanged is called after async loading
+            _logger.Log($"ComicService async reloaded. {_comics.Count} comics loaded.");
         }
 
         public ComicService(IFileHelper fileHelper, ILogger? logger) // Changed parameter to IFileHelper
@@ -32,29 +35,78 @@ namespace ComicRentalSystem_14Days.Services
 
             _logger.Log("ComicService 初始化中。");
 
-            LoadComics();
+            LoadComicsFromFile(); // Synchronous load for constructor
             _logger.Log($"ComicService 初始化完成。已載入 {_comics.Count} 本漫畫。");
         }
 
-        private void LoadComics()
+        private void LoadComicsFromFile() // Renamed from LoadComics
         {
-            _logger.Log($"正在嘗試從檔案載入漫畫: '{_comicFileName}'。");
+            _logger.Log($"正在嘗試從檔案載入漫畫 (同步): '{_comicFileName}'。");
             try
             {
+                // This uses the synchronous FileHelper method
                 _comics = _fileHelper.ReadFile<Comic>(_comicFileName, Comic.FromCsvString);
-                _logger.Log($"成功從 '{_comicFileName}' 載入 {_comics.Count} 本漫畫。");
+                _logger.Log($"成功從 '{_comicFileName}' (同步) 載入 {_comics.Count} 本漫畫。");
             }
             catch (Exception ex) when (ex is FormatException || ex is IOException)
             {
-                _logger.LogError($"嚴重錯誤: 漫畫資料檔案 '{_comicFileName}' 已損壞或無法讀取。詳細資訊: {ex.Message}", ex);
-                // MessageBox.Show($"漫畫資料檔案已損壞或無法讀取，無法載入漫畫資料庫。應用程式相關功能可能無法正常運作。\n錯誤詳情: {ex.Message}\n檔案路徑: {_comicFileName}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                throw new ApplicationException($"無法從 '{_comicFileName}' 載入漫畫資料。應用程式可能無法正常運作。", ex);
+                _logger.LogError($"嚴重錯誤: 漫畫資料檔案 '{_comicFileName}' (同步) 已損壞或無法讀取。詳細資訊: {ex.Message}", ex);
+                throw new ApplicationException($"無法從 '{_comicFileName}' (同步) 載入漫畫資料。應用程式可能無法正常運作。", ex);
             }
             catch (Exception ex)
             {
-                _logger.LogError($"從 {_comicFileName} 載入漫畫時發生未預期的錯誤。詳細資訊: {ex.Message}", ex);
-                // MessageBox.Show($"載入漫畫資料時發生未預期的錯誤。應用程式相關功能可能無法正常運作。\n錯誤詳情: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                throw new ApplicationException("載入漫畫資料期間發生未預期錯誤。", ex);
+                _logger.LogError($"從 '{_comicFileName}' (同步) 載入漫畫時發生未預期的錯誤。詳細資訊: {ex.Message}", ex);
+                throw new ApplicationException("載入漫畫資料期間 (同步) 發生未預期錯誤。", ex);
+            }
+        }
+
+        private async Task<List<Comic>> LoadComicsAsync()
+        {
+            _logger.Log($"正在嘗試從檔案非同步載入漫畫: '{_comicFileName}'。");
+            try
+            {
+                string csvData = await _fileHelper.ReadFileAsync(_comicFileName);
+                if (string.IsNullOrWhiteSpace(csvData))
+                {
+                    _logger.Log($"漫畫檔案 '{_comicFileName}' (非同步) 為空或找不到。");
+                    return new List<Comic>();
+                }
+
+                var comicsList = new List<Comic>();
+                var lines = csvData.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+                // Skip header line if present (assuming simple CSV structure)
+                // Adjust Skip count if your CSV has no header or multiple header lines.
+                foreach (var line in lines.Skip(1))
+                {
+                    if (string.IsNullOrWhiteSpace(line)) continue;
+                    try
+                    {
+                        comicsList.Add(Comic.FromCsvString(line));
+                    }
+                    catch (FormatException formatEx)
+                    {
+                        _logger.LogError($"解析行失敗 (非同步): '{line}'. 錯誤: {formatEx.Message}", formatEx);
+                        // Decide whether to skip the line or stop processing
+                    }
+                }
+                _logger.Log($"成功從 '{_comicFileName}' (非同步) 載入並解析 {comicsList.Count} 本漫畫。");
+                return comicsList;
+            }
+            catch (FileNotFoundException)
+            {
+                _logger.LogWarning($"漫畫檔案 '{_comicFileName}' (非同步) 找不到。返回空列表。");
+                return new List<Comic>();
+            }
+            catch (IOException ioEx)
+            {
+                _logger.LogError($"讀取漫畫檔案 '{_comicFileName}' (非同步) 時發生IO錯誤: {ioEx.Message}", ioEx);
+                return new List<Comic>(); // Or rethrow as critical
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"從 '{_comicFileName}' (非同步) 載入漫畫時發生未預期的錯誤: {ex.Message}", ex);
+                return new List<Comic>(); // Or rethrow as critical
             }
         }
 
@@ -234,6 +286,52 @@ namespace ComicRentalSystem_14Days.Services
             List<Comic> results = query.ToList();
             _logger.Log($"SearchComics 找到 {results.Count} 本相符的漫畫。");
             return results;
+        }
+
+        public List<AdminComicStatusViewModel> GetAdminComicStatusViewModels(IEnumerable<Member> allMembers)
+        {
+            _logger.Log("Generating AdminComicStatusViewModels, using provided member list for lookups.");
+            var allComics = this.GetAllComics(); // Assuming this gets all comics
+            var memberLookup = allMembers.ToDictionary(m => m.Id);
+            var comicStatuses = new List<AdminComicStatusViewModel>();
+
+            foreach (var comic in allComics)
+            {
+                var viewModel = new AdminComicStatusViewModel
+                {
+                    Id = comic.Id,
+                    Title = comic.Title,
+                    Author = comic.Author,
+                    Genre = comic.Genre,
+                    Isbn = comic.Isbn,
+                    RentalDate = comic.RentalDate,
+                    ReturnDate = comic.ReturnDate,
+                    ActualReturnTime = comic.ActualReturnTime // Ensure this property exists on AdminComicStatusViewModel
+                };
+
+                if (comic.IsRented && comic.RentedToMemberId != 0)
+                {
+                    viewModel.Status = "被借閱";
+                    if (memberLookup.TryGetValue(comic.RentedToMemberId, out Member? borrower))
+                    {
+                        viewModel.BorrowerName = borrower.Name;
+                        viewModel.BorrowerPhoneNumber = borrower.PhoneNumber;
+                    }
+                    else
+                    {
+                        viewModel.BorrowerName = "不明";
+                        viewModel.BorrowerPhoneNumber = "不明";
+                        _logger.LogWarning($"Could not find member with ID {comic.RentedToMemberId} in provided list for rented comic ID {comic.Id}");
+                    }
+                }
+                else
+                {
+                    viewModel.Status = "在館中";
+                }
+                comicStatuses.Add(viewModel);
+            }
+            _logger.Log($"Generated {comicStatuses.Count} AdminComicStatusViewModels.");
+            return comicStatuses;
         }
     }
 }

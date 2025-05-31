@@ -7,6 +7,8 @@ using System.Collections.Generic; // Added for List
 using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace ComicRentalSystem_14Days
 {
@@ -17,6 +19,10 @@ namespace ComicRentalSystem_14Days
         private readonly MemberService _memberService;
         private readonly IReloadService _reloadService;
         private readonly ILogger _logger;
+
+        private List<AdminComicStatusViewModel>? _allAdminComicStatuses;
+        private string _currentSortColumnName = string.Empty;
+        private ListSortDirection _currentSortDirection = ListSortDirection.Ascending;
 
         public MainForm() : base()
         {
@@ -45,14 +51,16 @@ namespace ComicRentalSystem_14Days
             UpdateStatusBar();
         }
 
-        private void MainForm_Load(object sender, EventArgs e)
+        private async void MainForm_Load(object sender, EventArgs e)
         {
             this._logger?.Log("MainForm is loading.");
             SetupDataGridView();
 
             if (_currentUser.Role == UserRole.Admin)
             {
-                LoadAllComicsStatusForAdmin();
+                await LoadAllComicsStatusForAdminAsync();
+                // Subscribe to DGV column header click for sorting
+                this.dgvAvailableComics.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvAvailableComics_ColumnHeaderMouseClick);
             }
             else
             {
@@ -65,6 +73,18 @@ namespace ComicRentalSystem_14Days
             {
                 dgvAvailableComics.SelectionChanged += dgvAvailableComics_SelectionChanged;
                 dgvAvailableComics_SelectionChanged(this, EventArgs.Empty);
+            }
+
+            // Initialize ComboBox for Admin filter
+            Control? cmbCtrl = this.Controls.Find("cmbAdminComicFilterStatus", true).FirstOrDefault();
+            if (cmbCtrl is ComboBox cmbFilter)
+            {
+                cmbFilter.Items.Clear();
+                cmbFilter.Items.Add("All");
+                cmbFilter.Items.Add("Rented");
+                cmbFilter.Items.Add("Available");
+                cmbFilter.SelectedItem = "All";
+                cmbFilter.SelectedIndexChanged += new System.EventHandler(this.cmbAdminComicFilterStatus_SelectedIndexChanged);
             }
         }
 
@@ -83,13 +103,13 @@ namespace ComicRentalSystem_14Days
             }
         }
 
-        private void ComicService_ComicsChanged(object? sender, EventArgs e)
+        private async void ComicService_ComicsChanged(object? sender, EventArgs e)
         {
             this._logger?.Log("ComicsChanged event received.");
             if (_currentUser.Role == UserRole.Admin)
             {
                 this._logger?.Log("Reloading all comics status for admin.");
-                LoadAllComicsStatusForAdmin();
+                await LoadAllComicsStatusForAdminAsync();
             }
             else
             {
@@ -182,64 +202,29 @@ namespace ComicRentalSystem_14Days
             }
         }
 
-        private void LoadAllComicsStatusForAdmin()
+        private async Task LoadAllComicsStatusForAdminAsync()
         {
-            if (dgvAvailableComics == null) return;
-            _logger?.Log("Loading all comics status for Admin view.");
+            if (dgvAvailableComics == null || _memberService == null || _comicService == null) return;
+            _logger?.Log("Loading all comics status for Admin view asynchronously.");
+
             try
             {
-                var allComics = _comicService.GetAllComics();
-                var comicStatuses = new List<AdminComicStatusViewModel>();
+                List<Member> allMembers = await Task.Run(() => _memberService.GetAllMembers());
+                List<AdminComicStatusViewModel> comicStatuses = await Task.Run(() => _comicService.GetAdminComicStatusViewModels(allMembers));
 
-                foreach (var comic in allComics)
-                {
-                    var viewModel = new AdminComicStatusViewModel
-                    {
-                        Id = comic.Id,
-                        Title = comic.Title,
-                        Author = comic.Author,
-                        Genre = comic.Genre,
-                        Isbn = comic.Isbn,
-                        RentalDate = comic.RentalDate,
-                        ReturnDate = comic.ReturnDate
-                    };
+                _allAdminComicStatuses = new List<AdminComicStatusViewModel>(comicStatuses);
+                ApplyAdminComicsView(); // Apply current filter/sort to the newly loaded data
 
-                    if (comic.IsRented)
-                    {
-                        viewModel.Status = "被借閱";
-                        Member? member = _memberService.GetMemberById(comic.RentedToMemberId);
-                        if (member != null)
-                        {
-                            viewModel.BorrowerName = member.Name;
-                            viewModel.BorrowerPhoneNumber = member.PhoneNumber;
-                        }
-                        else
-                        {
-                            viewModel.BorrowerName = "不明";
-                            _logger?.LogWarning($"Could not find member with ID {comic.RentedToMemberId} for rented comic ID {comic.Id}");
-                        }
-                    }
-                    else
-                    {
-                        viewModel.Status = "在館中";
-                    }
-                    comicStatuses.Add(viewModel);
-                }
-
-                Action updateGrid = () => {
-                    dgvAvailableComics.DataSource = null;
-                    dgvAvailableComics.DataSource = comicStatuses;
-                };
-
-                if (dgvAvailableComics.IsHandleCreated && this.InvokeRequired) { this.Invoke(updateGrid); }
-                else if (dgvAvailableComics.IsHandleCreated) { updateGrid(); }
-
-                _logger?.Log($"Successfully loaded {comicStatuses.Count} comics for admin view.");
+                _logger?.Log($"Successfully loaded {comicStatuses.Count} comics for admin view asynchronously and stored in _allAdminComicStatuses.");
             }
             catch (Exception ex)
             {
-                LogErrorActivity("Error loading all comics status for admin.", ex);
-                MessageBox.Show($"載入所有漫畫狀態時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                LogErrorActivity("Error loading all comics status for admin asynchronously.", ex);
+                Action showError = () => MessageBox.Show($"載入所有漫畫狀態時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (this.IsHandleCreated && !this.IsDisposed) // Check before invoking MessageBox too
+                {
+                    if (this.InvokeRequired) { this.Invoke(showError); } else { showError(); }
+                }
             }
         }
 
@@ -261,6 +246,13 @@ namespace ComicRentalSystem_14Days
                 if (userRegItem != null) userRegItem.Visible = isAdmin;
             }
             else { _logger.LogWarning("MenuStrip control 'menuStrip2' not found."); }
+
+            Control? cmbAdminFilterCtrl = this.Controls.Find("cmbAdminComicFilterStatus", true).FirstOrDefault();
+            if (cmbAdminFilterCtrl is ComboBox cmbAdminFilter)
+            {
+                cmbAdminFilter.Visible = isAdmin;
+            }
+
 
             if (isAdmin)
             {
@@ -418,9 +410,9 @@ namespace ComicRentalSystem_14Days
         private void 會員管理ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this._logger?.Log("Opening MemberManagementForm.");
-            if (Program.AppAuthService != null)
+            if (Program.AppAuthService != null && this._comicService != null)
             {
-                MemberManagementForm memberMgmtForm = new MemberManagementForm(this._logger!, this._memberService, Program.AppAuthService, this._currentUser);
+                MemberManagementForm memberMgmtForm = new MemberManagementForm(this._logger!, this._memberService, Program.AppAuthService, this._comicService, this._currentUser);
                 memberMgmtForm.ShowDialog(this);
             }
             else
@@ -606,6 +598,95 @@ namespace ComicRentalSystem_14Days
                  dgvAvailableComics.SelectionChanged -= dgvAvailableComics_SelectionChanged;
             }
             base.OnFormClosing(e);
+        }
+
+        private void ApplyAdminComicsView()
+        {
+            if (_allAdminComicStatuses == null || dgvAvailableComics == null) return;
+            if (!dgvAvailableComics.IsHandleCreated || dgvAvailableComics.IsDisposed) return;
+
+            IEnumerable<AdminComicStatusViewModel> viewToShow = _allAdminComicStatuses;
+
+            // 1. Apply Filter (using control cmbAdminComicFilterStatus)
+            Control? cmbCtrl = this.Controls.Find("cmbAdminComicFilterStatus", true).FirstOrDefault();
+            if (cmbCtrl is ComboBox cmbFilter && cmbFilter.SelectedItem != null)
+            {
+                string? selectedStatus = cmbFilter.SelectedItem.ToString();
+                if (selectedStatus == "Rented") // Assuming "被借閱" is represented as "Rented" in ComboBox
+                {
+                    viewToShow = viewToShow.Where(vm => vm.Status == "被借閱");
+                }
+                else if (selectedStatus == "Available") // Assuming "在館中" is represented as "Available" in ComboBox
+                {
+                    viewToShow = viewToShow.Where(vm => vm.Status == "在館中");
+                }
+                // "All" implies no status filter, so viewToShow remains as is.
+            }
+
+            // 2. Apply Sort
+            if (!string.IsNullOrEmpty(_currentSortColumnName))
+            {
+                var prop = typeof(AdminComicStatusViewModel).GetProperty(_currentSortColumnName);
+                if (prop != null)
+                {
+                    if (_currentSortDirection == ListSortDirection.Ascending)
+                    {
+                        viewToShow = viewToShow.OrderBy(vm => prop.GetValue(vm, null));
+                    }
+                    else
+                    {
+                        viewToShow = viewToShow.OrderByDescending(vm => prop.GetValue(vm, null));
+                    }
+                }
+            }
+
+            var finalViewList = viewToShow.ToList();
+
+            Action updateGridAction = () => {
+                dgvAvailableComics.DataSource = null;
+                dgvAvailableComics.DataSource = finalViewList;
+                // Optional: Update sort glyphs on column headers
+                foreach (DataGridViewColumn column in dgvAvailableComics.Columns)
+                {
+                    column.HeaderCell.SortGlyphDirection = SortOrder.None;
+                }
+                if (!string.IsNullOrEmpty(_currentSortColumnName) && dgvAvailableComics.Columns.Contains(_currentSortColumnName))
+                {
+                     dgvAvailableComics.Columns[_currentSortColumnName]!.HeaderCell.SortGlyphDirection =
+                        _currentSortDirection == ListSortDirection.Ascending ? SortOrder.Ascending : SortOrder.Descending;
+                }
+            };
+
+            if (dgvAvailableComics.InvokeRequired) { dgvAvailableComics.Invoke(updateGridAction); }
+            else { updateGridAction(); }
+        }
+
+        private void dgvAvailableComics_ColumnHeaderMouseClick(object? sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (_currentUser == null || _currentUser.Role != UserRole.Admin) return;
+            if (e.ColumnIndex < 0 || e.ColumnIndex >= dgvAvailableComics.Columns.Count) return;
+            if (dgvAvailableComics.Columns[e.ColumnIndex].DataPropertyName == null) return;
+
+            string newSortColumnName = dgvAvailableComics.Columns[e.ColumnIndex].DataPropertyName;
+
+            if (string.IsNullOrEmpty(newSortColumnName)) return; // Should not happen if DataPropertyName is set
+
+            if (_currentSortColumnName == newSortColumnName)
+            {
+                _currentSortDirection = (_currentSortDirection == ListSortDirection.Ascending) ? ListSortDirection.Descending : ListSortDirection.Ascending;
+            }
+            else
+            {
+                _currentSortColumnName = newSortColumnName;
+                _currentSortDirection = ListSortDirection.Ascending;
+            }
+            ApplyAdminComicsView();
+        }
+
+        private void cmbAdminComicFilterStatus_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            if (_currentUser == null || _currentUser.Role != UserRole.Admin) return;
+            ApplyAdminComicsView();
         }
     }
 }
