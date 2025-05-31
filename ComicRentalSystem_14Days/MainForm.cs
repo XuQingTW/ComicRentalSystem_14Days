@@ -545,7 +545,7 @@ namespace ComicRentalSystem_14Days
                     ClearDgvMyRentedComics(); // Keep existing behavior
                     return;
                 }
-                _logger?.LogInformation($"LoadMyRentedComics: Found member: ID={currentMember.Id}, Name='{currentMember.Name}'.");
+                _logger?.LogInformation($"LoadMyRentedComics: Found member: ID={currentMember.Id}, Name='{currentMember.Name}', Username='{currentMember.Username}'.");
 
                 var allComics = _comicService.GetAllComics();
                 _logger?.LogDebug($"LoadMyRentedComics: Total comics from service before filtering: {allComics?.Count ?? 0}.");
@@ -558,6 +558,16 @@ namespace ComicRentalSystem_14Days
                 }
 
                 _logger?.LogDebug($"LoadMyRentedComics: Filtering for comics rented by Member ID: {currentMember.Id}.");
+
+                // Log details for up to 5 comics from allComics before filtering
+                if (allComics != null) // Technically covered by the null check above, but good for clarity
+                {
+                    _logger?.LogDebug($"LoadMyRentedComics: First few comics from service (before filter):");
+                    foreach (var comic in allComics.Take(5))
+                    {
+                        _logger?.LogDebug($"  - ID: {comic.Id}, Title: '{comic.Title}', IsRented: {comic.IsRented}, RentedToMemberId: {comic.RentedToMemberId}");
+                    }
+                }
 
                 var myRentedComics = allComics
                     .Where(c => c.IsRented && c.RentedToMemberId == currentMember.Id)
