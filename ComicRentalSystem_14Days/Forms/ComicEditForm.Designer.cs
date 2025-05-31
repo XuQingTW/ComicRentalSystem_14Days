@@ -62,7 +62,7 @@
             this.gbComicDetails.Size = new System.Drawing.Size(450, 155); // Adjusted height
             this.gbComicDetails.TabIndex = 0;
             this.gbComicDetails.TabStop = false;
-            this.gbComicDetails.Text = "Comic Information";
+            this.gbComicDetails.Text = "漫畫資訊"; // Comic Information
             // 
             // lblTitle
             // 
@@ -70,7 +70,7 @@
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(95, 23);
             this.lblTitle.TabIndex = 0;
-            this.lblTitle.Text = "Title:";
+            this.lblTitle.Text = "書名:"; // Title:
             this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // txtTitle
@@ -89,7 +89,7 @@
             this.lblAuthor.Name = "lblAuthor";
             this.lblAuthor.Size = new System.Drawing.Size(95, 23);
             this.lblAuthor.TabIndex = 2;
-            this.lblAuthor.Text = "Author:";
+            this.lblAuthor.Text = "作者:"; // Author:
             this.lblAuthor.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // txtAuthor
@@ -108,7 +108,7 @@
             this.lblIsbn.Name = "lblIsbn";
             this.lblIsbn.Size = new System.Drawing.Size(95, 23);
             this.lblIsbn.TabIndex = 4;
-            this.lblIsbn.Text = "ISBN:";
+            this.lblIsbn.Text = "ISBN:"; // ISBN: (keeping as is, common term)
             this.lblIsbn.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // txtIsbn
@@ -127,7 +127,7 @@
             this.lblGenre.Name = "lblGenre";
             this.lblGenre.Size = new System.Drawing.Size(95, 23);
             this.lblGenre.TabIndex = 6;
-            this.lblGenre.Text = "Genre:";
+            this.lblGenre.Text = "類型:"; // Genre:
             this.lblGenre.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // txtGenre
@@ -149,7 +149,7 @@
             this.gbStatus.Size = new System.Drawing.Size(450, 60);
             this.gbStatus.TabIndex = 1;
             this.gbStatus.TabStop = false;
-            this.gbStatus.Text = "Rental Status";
+            this.gbStatus.Text = "租借狀態"; // Rental Status
             // 
             // chkIsRented
             // 
@@ -159,7 +159,7 @@
             this.chkIsRented.Name = "chkIsRented";
             this.chkIsRented.Size = new System.Drawing.Size(100, 19); // Adjusted size
             this.chkIsRented.TabIndex = 0; // TabIndex within this groupbox
-            this.chkIsRented.Text = "Is Rented";
+            this.chkIsRented.Text = "已租借"; // Is Rented
             this.chkIsRented.UseVisualStyleBackColor = true;
             // 
             // btnSave
@@ -169,7 +169,7 @@
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(90, 30);
             this.btnSave.TabIndex = 2;
-            this.btnSave.Text = "Save";
+            this.btnSave.Text = "儲存"; // Save
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
@@ -180,7 +180,7 @@
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(90, 30);
             this.btnCancel.TabIndex = 3;
-            this.btnCancel.Text = "Cancel";
+            this.btnCancel.Text = "取消"; // Cancel
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 

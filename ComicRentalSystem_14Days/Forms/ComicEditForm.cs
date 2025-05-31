@@ -111,7 +111,7 @@ namespace ComicRentalSystem_14Days.Forms
             LogActivity("儲存按鈕已點擊。");
 
         if (!this.ValidateChildren()) {
-            MessageBox.Show("Please correct the highlighted errors.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show("請修正標示的錯誤。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning); // Please correct the highlighted errors. | Validation Error
             LogActivity("Validation failed. Highlighted errors present.");
             return;
             }
@@ -201,7 +201,7 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (sender is TextBox txt && string.IsNullOrWhiteSpace(txt.Text))
             {
-                errorProvider1?.SetError(txt, "Title cannot be empty.");
+                errorProvider1?.SetError(txt, "書名不能為空。"); // Title cannot be empty.
                 e.Cancel = true;
             }
             else if (sender is TextBox txtBox)
@@ -214,7 +214,7 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (sender is TextBox txt && string.IsNullOrWhiteSpace(txt.Text))
             {
-                errorProvider1?.SetError(txt, "Author cannot be empty.");
+                errorProvider1?.SetError(txt, "作者不能為空。"); // Author cannot be empty.
                 e.Cancel = true;
             }
             else if (sender is TextBox txtBox)
@@ -227,7 +227,7 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (sender is TextBox txt && string.IsNullOrWhiteSpace(txt.Text))
             {
-                errorProvider1?.SetError(txt, "ISBN cannot be empty.");
+                errorProvider1?.SetError(txt, "ISBN 不能為空。"); // ISBN cannot be empty.
                 e.Cancel = true;
             }
             else if (sender is TextBox txtBox)
@@ -240,7 +240,7 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (sender is TextBox txt && string.IsNullOrWhiteSpace(txt.Text))
             {
-                errorProvider1?.SetError(txt, "Genre cannot be empty.");
+                errorProvider1?.SetError(txt, "類型不能為空。"); // Genre cannot be empty.
                 e.Cancel = true;
             }
             else if (sender is TextBox txtBox)

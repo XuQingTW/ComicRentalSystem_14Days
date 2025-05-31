@@ -51,7 +51,7 @@
             this.gbMemberDetails.Size = new System.Drawing.Size(390, 120);
             this.gbMemberDetails.TabIndex = 0;
             this.gbMemberDetails.TabStop = false;
-            this.gbMemberDetails.Text = "Member Details";
+            this.gbMemberDetails.Text = "會員詳細資料"; // Member Details
             // 
             // lblName
             // 
@@ -59,7 +59,7 @@
             this.lblName.Name = "lblName";
             this.lblName.Size = new System.Drawing.Size(95, 23);
             this.lblName.TabIndex = 0;
-            this.lblName.Text = "Name:";
+            this.lblName.Text = "姓名:"; // Name:
             this.lblName.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // lblPhoneNumber
@@ -68,7 +68,7 @@
             this.lblPhoneNumber.Name = "lblPhoneNumber";
             this.lblPhoneNumber.Size = new System.Drawing.Size(95, 23);
             this.lblPhoneNumber.TabIndex = 2;
-            this.lblPhoneNumber.Text = "Phone:";
+            this.lblPhoneNumber.Text = "電話號碼:"; // Phone:
             this.lblPhoneNumber.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // txtName
@@ -98,7 +98,7 @@
             this.btnSaveMember.Name = "btnSaveMember";
             this.btnSaveMember.Size = new System.Drawing.Size(90, 30);
             this.btnSaveMember.TabIndex = 1; // Form-level tab index
-            this.btnSaveMember.Text = "Save";
+            this.btnSaveMember.Text = "儲存"; // Save
             this.btnSaveMember.UseVisualStyleBackColor = true;
             this.btnSaveMember.Click += new System.EventHandler(this.btnSaveMember_Click);
             // 
@@ -109,7 +109,7 @@
             this.btnCancelMember.Name = "btnCancelMember";
             this.btnCancelMember.Size = new System.Drawing.Size(90, 30);
             this.btnCancelMember.TabIndex = 2; // Form-level tab index
-            this.btnCancelMember.Text = "Cancel";
+            this.btnCancelMember.Text = "取消"; // Cancel
             this.btnCancelMember.UseVisualStyleBackColor = true;
             this.btnCancelMember.Click += new System.EventHandler(this.btnCancelMember_Click);
             // 

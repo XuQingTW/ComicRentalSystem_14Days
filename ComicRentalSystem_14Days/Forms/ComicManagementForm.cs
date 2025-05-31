@@ -13,11 +13,6 @@ namespace ComicRentalSystem_14Days.Forms
         private ComicService? _comicService;
         private readonly User? _currentUser;
 
-        // Conceptual private fields for new controls (designer would add these)
-        // private System.Windows.Forms.TextBox txtSearchComics;
-        // private System.Windows.Forms.Button btnSearchComics;
-        // private System.Windows.Forms.Button btnClearSearchComics;
-
         public ComicManagementForm(ILogger logger, ComicService comicService, User? currentUser) : base(logger)
         {
             InitializeComponent();
@@ -39,22 +34,9 @@ namespace ComicRentalSystem_14Days.Forms
 
             _comicService.ComicsChanged += ComicService_ComicsChanged;
 
-            // Wire up event handlers for new search buttons
-            // Assuming btnSearchComics and btnClearSearchComics are added in the designer
-            // and accessible here. If not, these lines would cause issues or need to be conditional.
-            // For the purpose of this exercise, we'll assume they would exist.
-            // This would ideally be in InitializeComponent or a separate UI setup method.
-            Control? btnSearchComicsCtrl = this.Controls.Find("btnSearchComics", true).FirstOrDefault();
-            if (btnSearchComicsCtrl is Button btnSearch)
-            {
-                btnSearch.Click += new System.EventHandler(this.btnSearchComics_Click);
-            }
-
-            Control? btnClearSearchComicsCtrl = this.Controls.Find("btnClearSearchComics", true).FirstOrDefault();
-            if (btnClearSearchComicsCtrl is Button btnClear)
-            {
-                btnClear.Click += new System.EventHandler(this.btnClearSearchComics_Click);
-            }
+            // Event handlers for btnSearchComics and btnClearSearchComics
+            // are now wired up by the designer in InitializeComponent.
+            // The following Control.Find logic is no longer needed.
 
             SetupDataGridView(); // Already called in constructor, consider if needed here too.
                                  // If LoadComicsData in constructor is sufficient, this might be redundant.
@@ -138,12 +120,8 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (_comicService == null) return;
 
-            string searchTerm = string.Empty;
-            Control? txtSearchComicsCtrl = this.Controls.Find("txtSearchComics", true).FirstOrDefault();
-            if (txtSearchComicsCtrl is TextBox txtSearch)
-            {
-                searchTerm = txtSearch.Text.Trim();
-            }
+            // txtSearchComics is now a member of the form, directly accessible.
+            string searchTerm = this.txtSearchComics.Text.Trim();
 
             LogActivity($"Attempting to load comics data. Search term: '{searchTerm}'.");
 
@@ -244,11 +222,8 @@ namespace ComicRentalSystem_14Days.Forms
         private void btnClearSearchComics_Click(object? sender, EventArgs e)
         {
             LogActivity("Clear Search Comics button clicked.");
-            Control? txtSearchComicsCtrl = this.Controls.Find("txtSearchComics", true).FirstOrDefault();
-            if (txtSearchComicsCtrl is TextBox txtSearch)
-            {
-                txtSearch.Text = string.Empty;
-            }
+            // txtSearchComics is now a member of the form, directly accessible.
+            this.txtSearchComics.Text = string.Empty;
             LoadComicsData(); // Reload all comics
         }
 

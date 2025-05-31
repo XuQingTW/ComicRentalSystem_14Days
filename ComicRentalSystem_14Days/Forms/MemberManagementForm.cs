@@ -15,14 +15,10 @@ namespace ComicRentalSystem_14Days.Forms
         private readonly ComicService? _comicService;
         private readonly User? _currentUser;
 
-        // Conceptual private fields for new controls (designer would add these)
-        // private System.Windows.Forms.TextBox txtSearchMembers;
-        // private System.Windows.Forms.Button btnSearchMembers;
-        // private System.Windows.Forms.Button btnClearSearchMembers;
-
         public MemberManagementForm()
         {
             InitializeComponent();
+            // Conceptual private fields comments removed as controls are now in Designer.cs
         }
 
         // Updated constructor to include AuthenticationService and ComicService
@@ -47,28 +43,16 @@ namespace ComicRentalSystem_14Days.Forms
 
             _memberService.MembersChanged += MemberService_MembersChanged; // _memberService is confirmed not null here
 
-            // Wire up event handlers for new search buttons
-            Control? btnSearchMembersCtrl = this.Controls.Find("btnSearchMembers", true).FirstOrDefault();
-            if (btnSearchMembersCtrl is Button btnSearch)
-            {
-                btnSearch.Click += new System.EventHandler(this.btnSearchMembers_Click);
-            }
+            // Event handlers for txtSearchMembers, btnSearchMembers, btnClearSearchMembers,
+            // and btnChangeUserRole are expected to be connected via the designer
+            // in InitializeComponent, so Controls.Find is no longer necessary.
+            // Ensure Click events for these buttons are set in the designer or InitializeComponent.
+            // For example, if you added btnSearchMembers via the designer and double-clicked it,
+            // the designer would add: this.btnSearchMembers.Click += new System.EventHandler(this.btnSearchMembers_Click);
 
-            Control? btnClearSearchMembersCtrl = this.Controls.Find("btnClearSearchMembers", true).FirstOrDefault();
-            if (btnClearSearchMembersCtrl is Button btnClear)
-            {
-                btnClear.Click += new System.EventHandler(this.btnClearSearchMembers_Click);
-            }
+            SetupDataGridView(); // Called in constructor in some versions, ensure it's appropriately called.
+            LoadMembersData(); // Called in constructor in some versions, ensure it's appropriately called.
 
-            SetupDataGridView(); // Already called in constructor
-            LoadMembersData(); // Already called in constructor
-
-            // Conceptual: Wire up btnChangeUserRole_Click. Assuming a button named btnChangeUserRole exists.
-            Control? btnChangeRoleCtrl = this.Controls.Find("btnChangeUserRole", true).FirstOrDefault();
-            if (btnChangeRoleCtrl is Button btnChangeRole)
-            {
-                btnChangeRole.Click += new System.EventHandler(this.btnChangeUserRole_Click);
-            }
             LogActivity("MemberManagementForm initialized successfully.");
         }
 
@@ -111,12 +95,8 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (_memberService == null) return;
 
-            string searchTerm = string.Empty;
-            Control? txtSearchMembersCtrl = this.Controls.Find("txtSearchMembers", true).FirstOrDefault();
-            if (txtSearchMembersCtrl is TextBox txtSearch)
-            {
-                searchTerm = txtSearch.Text.Trim();
-            }
+            // txtSearchMembers is now a direct member of the form class.
+            string searchTerm = this.txtSearchMembers.Text.Trim();
 
             LogActivity($"Attempting to load members data. Search term: '{searchTerm}'.");
 
@@ -170,11 +150,8 @@ namespace ComicRentalSystem_14Days.Forms
         private void btnClearSearchMembers_Click(object? sender, EventArgs e)
         {
             LogActivity("Clear Search Members button clicked.");
-            Control? txtSearchMembersCtrl = this.Controls.Find("txtSearchMembers", true).FirstOrDefault();
-            if (txtSearchMembersCtrl is TextBox txtSearch)
-            {
-                 txtSearch.Text = string.Empty;
-            }
+            // txtSearchMembers is now a direct member of the form class.
+            this.txtSearchMembers.Text = string.Empty;
             LoadMembersData();
         }
 
@@ -359,12 +336,12 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (dgvMembers.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Please select a member.", "No Member Selected", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("請選擇一位會員。", "未選擇會員", MessageBoxButtons.OK, MessageBoxIcon.Information); // "Please select a member." | "No Member Selected"
                 return;
             }
             if (_authenticationService == null || Logger == null) // Logger comes from BaseForm
             {
-                 MessageBox.Show("Required services not available.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                 MessageBox.Show("必要的服務不可用。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error); // "Required services not available." | "Error"
                  LogErrorActivity("ChangeUserRole button clicked but AuthenticationService or Logger is null.");
                  return;
             }
@@ -372,7 +349,7 @@ namespace ComicRentalSystem_14Days.Forms
             Member? selectedMember = dgvMembers.SelectedRows[0].DataBoundItem as Member;
             if (selectedMember == null || string.IsNullOrEmpty(selectedMember.Username))
             {
-                MessageBox.Show("Selected member has no associated username or data is invalid.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("選定的會員沒有關聯的使用者名稱或資料無效。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error); // "Selected member has no associated username or data is invalid." | "Error"
                 LogErrorActivity("Selected member for role change has no username or is invalid.");
                 return;
             }
@@ -380,7 +357,7 @@ namespace ComicRentalSystem_14Days.Forms
             User? userToEdit = _authenticationService.GetUserByUsername(selectedMember.Username);
             if (userToEdit == null)
             {
-                MessageBox.Show($"User account for '{selectedMember.Username}' not found.", "User Not Found", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"找不到使用者帳戶 '{selectedMember.Username}'。", "找不到使用者", MessageBoxButtons.OK, MessageBoxIcon.Error); // $"User account for '{selectedMember.Username}' not found." | "User Not Found"
                 LogErrorActivity($"User account for member '{selectedMember.Name}' (username: {selectedMember.Username}) not found for role change.");
                 return;
             }
