@@ -28,7 +28,6 @@ namespace ComicRentalSystem_14Days
                 // this.Text = "MainForm (設計模式)";
             }
         }
-
         // Primary constructor
         public MainForm(ILogger logger, ComicService comicService, MemberService memberService, IReloadService reloadService, User currentUser) : this()
         {
@@ -39,7 +38,7 @@ namespace ComicRentalSystem_14Days
             this._currentUser = currentUser ?? throw new ArgumentNullException(nameof(currentUser));
 
             base.SetLogger(logger); // Assumes BaseForm has public void SetLogger(ILogger logger)
-
+            
             _logger.Log($"MainForm initialized for user: {_currentUser.Username}, Role: {_currentUser.Role}");
 
             SetupUIAccessControls();
