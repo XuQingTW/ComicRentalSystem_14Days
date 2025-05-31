@@ -149,11 +149,6 @@ namespace ComicRentalSystem_14Days.Services
             return user;
         }
 
-        public List<User> GetAllUsers()
-        {
-            return new List<User>(_users);
-        }
-
         public void SaveUsers() // Changed from private to public
         {
             string backupFilePath = _usersFilePath + ".bak"; // e.g., "users.json.bak"
