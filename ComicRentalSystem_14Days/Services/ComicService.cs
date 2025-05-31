@@ -39,7 +39,7 @@ namespace ComicRentalSystem_14Days.Services
             _logger.Log($"Attempting to load comics from file: '{_comicFileName}'.");
             try
             {
-                _comics = _fileHelper.ReadCsvFile<Comic>(_comicFileName, Comic.FromCsvString);
+                _comics = _fileHelper.ReadFile<Comic>(_comicFileName, Comic.FromCsvString);
                 _logger.Log($"Successfully loaded {_comics.Count} comics from '{_comicFileName}'.");
             }
             catch (Exception ex)
@@ -54,7 +54,7 @@ namespace ComicRentalSystem_14Days.Services
             _logger.Log($"Attempting to save {_comics.Count} comics to file: '{_comicFileName}'.");
             try
             {
-                _fileHelper.WriteCsvFile<Comic>(_comicFileName, _comics, comic => comic.ToCsvString());
+                _fileHelper.WriteFile<Comic>(_comicFileName, _comics, comic => comic.ToCsvString());
                 _logger.Log($"Successfully saved {_comics.Count} comics to '{_comicFileName}'.");
                 OnComicsChanged();
             }

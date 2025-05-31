@@ -37,7 +37,7 @@ namespace ComicRentalSystem_14Days.Helpers
             return Path.Combine(_baseDataPath, fileName);
         }
 
-        public List<T> ReadCsvFile<T>(string fileName, Func<string, T> parseFunc)
+        public List<T> ReadFile<T>(string fileName, Func<string, T> parseFunc)
         {
             string filePath = GetFullFilePath(fileName);
             List<T> records = new List<T>();
@@ -76,7 +76,7 @@ namespace ComicRentalSystem_14Days.Helpers
 
         // T 是要儲存的物件類型
         // toCsvFunc 是將 T 物件轉換為 CSV 字串行的函式
-        public void WriteCsvFile<T>(string fileName, IEnumerable<T> records, Func<T, string> toCsvFunc)
+        public void WriteFile<T>(string fileName, IEnumerable<T> records, Func<T, string> toCsvFunc)
         {
             string filePath = GetFullFilePath(fileName);
             try
