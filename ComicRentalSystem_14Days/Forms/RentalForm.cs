@@ -239,6 +239,28 @@ namespace ComicRentalSystem_14Days.Forms
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
             });
 
+            // Add RentalDate column
+            var rentalDateColumn = new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = nameof(Comic.RentalDate),
+                HeaderText = "租借日期",
+                Name = "colRentalDate",
+                Width = 120 // Or another appropriate width
+            };
+            rentalDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
+            dgvRentedComics.Columns.Add(rentalDateColumn);
+
+            // Add ReturnDate column
+            var returnDateColumn = new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = nameof(Comic.ReturnDate),
+                HeaderText = "歸還期限",
+                Name = "colReturnDate",
+                Width = 120 // Or another appropriate width
+            };
+            returnDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
+            dgvRentedComics.Columns.Add(returnDateColumn);
+
             dgvRentedComics.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvRentedComics.MultiSelect = false;
             dgvRentedComics.ReadOnly = true;
