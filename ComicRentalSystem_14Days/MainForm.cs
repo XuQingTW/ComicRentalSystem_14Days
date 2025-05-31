@@ -81,14 +81,14 @@ namespace ComicRentalSystem_14Days
             if (_currentUser == null) return; // Should not happen if form is loaded correctly
 
             bool isMember = _currentUser.Role == UserRole.Member;
-            // if (isMember)
-            // {
-            //     btnRentComic.Enabled = dgvAvailableComics.SelectedRows.Count > 0;
-            // }
-            // else
-            // {
-            //     btnRentComic.Enabled = false;
-            // }
+            if (isMember)
+            {
+                btnRentComic.Enabled = dgvAvailableComics.SelectedRows.Count > 0;
+            }
+            else
+            {
+                btnRentComic.Enabled = false;
+            }
         }
 
         private void ComicService_ComicsChanged(object? sender, EventArgs e)
@@ -222,17 +222,17 @@ namespace ComicRentalSystem_14Days
                 {
                     lblMyRentedComicsHeader.Visible = true;
                     dgvMyRentedComics.Visible = true;
-                    // btnRentComic.Visible = true; (remains commented)
-                    // btnRentComic.Enabled = dgvAvailableComics.SelectedRows.Count > 0; (remains commented)
+                    btnRentComic.Visible = true;
+                    btnRentComic.Enabled = dgvAvailableComics.SelectedRows.Count > 0;
                 }
                 else // User is an Admin
                 {
                     lblMyRentedComicsHeader.Visible = false;
                     dgvMyRentedComics.Visible = false;
-                    // btnRentComic.Visible = false; (remains commented)
-                    // btnRentComic.Enabled = false; (remains commented)
+                    btnRentComic.Visible = false;
+                    btnRentComic.Enabled = false;
                 }
-                _logger.Log($"lblMyRentedComicsHeader and dgvMyRentedComics visibility set based on admin status.");
+                _logger.Log($"lblMyRentedComicsHeader, dgvMyRentedComics, and btnRentComic visibility/enabled state set based on admin status.");
             }
             else
             {
