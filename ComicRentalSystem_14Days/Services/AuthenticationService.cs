@@ -130,7 +130,6 @@ namespace ComicRentalSystem_14Days.Services
                 _logger.LogError($"Critical: Unexpected error loading backup users file '{backupFilePath}': {ex.Message}. Initializing empty user list.", ex);
                 return new List<User>(); // Both main and backup are bad.
             }
-            return user;
         }
 
         public List<User> GetAllUsers()
@@ -147,11 +146,6 @@ namespace ComicRentalSystem_14Days.Services
                 _logger.LogWarning($"User with username '{username}' not found.");
             }
             return user;
-        }
-
-        public List<User> GetAllUsers()
-        {
-            return new List<User>(_users);
         }
 
         public void SaveUsers() // Changed from private to public

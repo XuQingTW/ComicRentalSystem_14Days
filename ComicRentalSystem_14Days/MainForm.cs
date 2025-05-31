@@ -146,7 +146,11 @@ namespace ComicRentalSystem_14Days
                     HeaderText = "借閱日期",
                     FillWeight = 15
                 };
-                rentalDateColumn.DefaultCellStyle!.Format = "yyyy-MM-dd"; // Using null-forgiving as DefaultCellStyle is not expected to be null
+                if (rentalDateColumn.DefaultCellStyle == null)
+                {
+                    rentalDateColumn.DefaultCellStyle = new DataGridViewCellStyle();
+                }
+                rentalDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
                 dgvAvailableComics.Columns.Add(rentalDateColumn);
 
                 var returnDateColumn = new DataGridViewTextBoxColumn {
@@ -154,7 +158,11 @@ namespace ComicRentalSystem_14Days
                     HeaderText = "歸還日期",
                     FillWeight = 15
                 };
-                returnDateColumn.DefaultCellStyle!.Format = "yyyy-MM-dd"; // Using null-forgiving
+                if (returnDateColumn.DefaultCellStyle == null)
+                {
+                    returnDateColumn.DefaultCellStyle = new DataGridViewCellStyle();
+                }
+                returnDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
                 dgvAvailableComics.Columns.Add(returnDateColumn);
             }
             else // Member view
@@ -187,7 +195,7 @@ namespace ComicRentalSystem_14Days
                 if (dgvAvailableComics.IsHandleCreated && this.InvokeRequired) { this.Invoke(updateGrid); }
                 else if (dgvAvailableComics.IsHandleCreated) { updateGrid(); }
 
-                this._logger?.Log($"Successfully loaded {availableComics.Count} available comics.");
+                this._logger?.Log($"Successfully loaded {(availableComics?.Count ?? 0)} available comics.");
             }
             catch (Exception ex)
             {
@@ -312,11 +320,19 @@ namespace ComicRentalSystem_14Days
             dgvMyRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Author", HeaderText = "作者", FillWeight = 25 });
 
             var rentalDateColumn = new DataGridViewTextBoxColumn { DataPropertyName = "RentalDate", HeaderText = "租借日期", FillWeight = 20 };
-            rentalDateColumn.DefaultCellStyle!.Format = "yyyy-MM-dd"; // Using null-forgiving
+            if (rentalDateColumn.DefaultCellStyle == null)
+            {
+                rentalDateColumn.DefaultCellStyle = new DataGridViewCellStyle();
+            }
+            rentalDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
             dgvMyRentedComics.Columns.Add(rentalDateColumn);
 
             var returnDateColumn = new DataGridViewTextBoxColumn { DataPropertyName = "ReturnDate", HeaderText = "歸還日期", FillWeight = 20 };
-            returnDateColumn.DefaultCellStyle!.Format = "yyyy-MM-dd"; // Using null-forgiving
+            if (returnDateColumn.DefaultCellStyle == null)
+            {
+                returnDateColumn.DefaultCellStyle = new DataGridViewCellStyle();
+            }
+            returnDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
             dgvMyRentedComics.Columns.Add(returnDateColumn);
 
             dgvMyRentedComics.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
@@ -638,7 +654,7 @@ namespace ComicRentalSystem_14Days
 
             Action updateGridAction = () => {
                 dgvAvailableComics.DataSource = null;
-                dgvAvailableComics.DataSource = finalViewList;
+                dgvAvailableComics.DataSource = finalViewList ?? new List<AdminComicStatusViewModel>();
                 // Optional: Update sort glyphs on column headers
                 foreach (DataGridViewColumn column in dgvAvailableComics.Columns)
                 {
