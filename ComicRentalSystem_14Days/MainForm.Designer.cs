@@ -208,28 +208,28 @@ namespace ComicRentalSystem_14Days
             //
             // lblMyRentedComicsHeader
             //
-            this.lblMyRentedComicsHeader.AutoSize = true;
-            this.lblMyRentedComicsHeader.Font = new System.Drawing.Font("Microsoft JhengHei UI", 10F, System.Drawing.FontStyle.Bold);
-            this.lblMyRentedComicsHeader.Location = new System.Drawing.Point(12, 485); // Positioned below btnRentComic
-            this.lblMyRentedComicsHeader.Name = "lblMyRentedComicsHeader";
-            this.lblMyRentedComicsHeader.Size = new System.Drawing.Size(123, 22);
-            this.lblMyRentedComicsHeader.TabIndex = 6;
-            this.lblMyRentedComicsHeader.Text = "我租借的漫畫";
-            this.lblMyRentedComicsHeader.Visible = false;
+            // this.lblMyRentedComicsHeader.AutoSize = true;
+            // this.lblMyRentedComicsHeader.Font = new System.Drawing.Font("Microsoft JhengHei UI", 10F, System.Drawing.FontStyle.Bold);
+            // this.lblMyRentedComicsHeader.Location = new System.Drawing.Point(12, 485); // Positioned below btnRentComic
+            // this.lblMyRentedComicsHeader.Name = "lblMyRentedComicsHeader";
+            // this.lblMyRentedComicsHeader.Size = new System.Drawing.Size(123, 22);
+            // this.lblMyRentedComicsHeader.TabIndex = 6;
+            // this.lblMyRentedComicsHeader.Text = "我租借的漫畫";
+            // this.lblMyRentedComicsHeader.Visible = false;
             //
             // dgvMyRentedComics
             //
-            this.dgvMyRentedComics.AllowUserToAddRows = false;
-            this.dgvMyRentedComics.AllowUserToDeleteRows = false;
-            this.dgvMyRentedComics.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvMyRentedComics.Location = new System.Drawing.Point(12, 510); // Positioned below lblMyRentedComicsHeader
-            this.dgvMyRentedComics.Name = "dgvMyRentedComics";
-            this.dgvMyRentedComics.ReadOnly = true;
-            this.dgvMyRentedComics.RowHeadersWidth = 51;
-            this.dgvMyRentedComics.RowTemplate.Height = 27; // Standard height
-            this.dgvMyRentedComics.Size = new System.Drawing.Size(876, 150); // Takes most of the width, 150px height
-            this.dgvMyRentedComics.TabIndex = 7;
-            this.dgvMyRentedComics.Visible = false;
+            // this.dgvMyRentedComics.AllowUserToAddRows = false;
+            // this.dgvMyRentedComics.AllowUserToDeleteRows = false;
+            // this.dgvMyRentedComics.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            // this.dgvMyRentedComics.Location = new System.Drawing.Point(12, 510); // Positioned below lblMyRentedComicsHeader
+            // this.dgvMyRentedComics.Name = "dgvMyRentedComics";
+            // this.dgvMyRentedComics.ReadOnly = true;
+            // this.dgvMyRentedComics.RowHeadersWidth = 51;
+            // this.dgvMyRentedComics.RowTemplate.Height = 27; // Standard height
+            // this.dgvMyRentedComics.Size = new System.Drawing.Size(876, 150); // Takes most of the width, 150px height
+            // this.dgvMyRentedComics.TabIndex = 7;
+            // this.dgvMyRentedComics.Visible = false;
             //
             // MainForm
             // 
@@ -254,7 +254,7 @@ namespace ComicRentalSystem_14Days
             ((System.ComponentModel.ISupportInitialize)dgvAvailableComics).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvMyRentedComics)).EndInit(); // Added
+            // ((System.ComponentModel.ISupportInitialize)(this.dgvMyRentedComics)).EndInit(); // Added
             ResumeLayout(false);
             PerformLayout();
         }
@@ -279,6 +279,6 @@ namespace ComicRentalSystem_14Days
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelUser;
         // private System.Windows.Forms.Button btnRentComic;
         private System.Windows.Forms.Label lblMyRentedComicsHeader; // Added
-        private System.Windows.Forms.DataGridView dgvMyRentedComics; // Added
+        // private System.Windows.Forms.DataGridView dgvMyRentedComics; // Added
     }
 }
