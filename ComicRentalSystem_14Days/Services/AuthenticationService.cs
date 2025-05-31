@@ -7,17 +7,18 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json; // Make sure to use System.Text.Json
+using System.Windows.Forms; // Added for MessageBox
 
 namespace ComicRentalSystem_14Days.Services
 {
     public class AuthenticationService
     {
-        private readonly FileHelper _fileHelper;
+        private readonly IFileHelper _fileHelper; // Changed to IFileHelper
         private readonly ILogger _logger;
         private readonly string _usersFilePath = "users.json"; // Path relative to FileHelper's base directory
         private List<User> _users;
 
-        public AuthenticationService(FileHelper fileHelper, ILogger logger)
+        public AuthenticationService(IFileHelper fileHelper, ILogger logger) // Changed parameter to IFileHelper
         {
             _fileHelper = fileHelper ?? throw new ArgumentNullException(nameof(fileHelper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -45,11 +46,17 @@ namespace ComicRentalSystem_14Days.Services
                 _logger.Log($"Users file '{_usersFilePath}' not found. A new one will be created on registration.");
                 return new List<User>();
             }
+            catch (JsonException ex)
+            {
+                _logger.LogError($"Critical error: User data file '{_usersFilePath}' is corrupted. Details: {ex.Message}", ex);
+                MessageBox.Show($"使用者資料檔案已損壞，無法載入使用者。應用程式將關閉。\n錯誤詳情: {ex.Message}\n檔案路徑: {_usersFilePath}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw new ApplicationException("Failed to load critical user data due to corrupted file.", ex);
+            }
             catch (Exception ex)
             {
-                _logger.LogError($"Error loading users from {_usersFilePath}.", ex);
-                // Depending on the severity, you might want to throw or handle differently
-                return new List<User>(); // Return empty list on error to allow app to continue
+                _logger.LogError($"An unexpected error occurred while loading users from {_usersFilePath}. Details: {ex.Message}", ex);
+                MessageBox.Show($"載入使用者時發生未預期的錯誤。應用程式將關閉。\n錯誤詳情: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw new ApplicationException("Unexpected error during user data loading.", ex);
             }
         }
 

@@ -60,6 +60,7 @@ namespace ComicRentalSystem_14Days.Forms
             {
                 _logger.Log($"Login failed for user: {username}. Invalid credentials.");
                 MessageBox.Show("使用者名稱或密碼錯誤。", "登入失敗", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtUsername.Clear(); // Clear username field
                 txtPassword.Clear(); // Clear password field
             }
         }

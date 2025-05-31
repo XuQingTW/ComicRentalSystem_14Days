@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using ComicRentalSystem_14Days.Interfaces; // Added for IFileHelper
 
 namespace ComicRentalSystem_14Days.Helpers
 {
-    public class FileHelper
+    public class FileHelper : IFileHelper // Implement IFileHelper
     {
         private readonly string _baseDataPath; // 資料檔案存放的基礎路徑
 
@@ -32,11 +33,68 @@ namespace ComicRentalSystem_14Days.Helpers
             }
         }
 
+        // Utility method to get the full path, can be part of the interface or used internally
         public string GetFullFilePath(string fileName)
         {
             return Path.Combine(_baseDataPath, fileName);
         }
 
+        // Implementation for AuthenticationService (non-generic)
+        public string ReadFile(string fileName)
+        {
+            string filePath = GetFullFilePath(fileName);
+            if (!File.Exists(filePath))
+            {
+                // For AuthenticationService, LoadUsers expects FileNotFoundException to be potentially thrown
+                // or it handles empty string for a new user list.
+                // Throwing FileNotFoundException if not found is one way, or returning empty string.
+                // The current AuthenticationService catches FileNotFoundException specifically.
+                // However, services also expect an empty list if file is just empty.
+                // Let's align with FileHelper<T> behavior: return empty if not found, let service decide.
+                // For users.json, if it's not found, AuthenticationService returns new List<User>().
+                // If ReadFile directly throws FileNotFoundException, then the service's catch block for it is fine.
+                // Let's make it throw for consistency with how services might expect specific exceptions.
+                // Correction: AuthN service expects empty list for FileNotFound, not the exception itself from ReadFile.
+                // It catches it if thrown by File.ReadAllText directly.
+                // So if file not found, return empty string.
+                return string.Empty;
+            }
+            try
+            {
+                return File.ReadAllText(filePath, Encoding.UTF8);
+            }
+            catch (IOException ioEx)
+            {
+                Console.WriteLine($"Error reading file '{filePath}': {ioEx.Message}");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An unexpected error occurred while reading '{filePath}': {ex.Message}");
+                throw;
+            }
+        }
+
+        public void WriteFile(string fileName, string content)
+        {
+            string filePath = GetFullFilePath(fileName);
+            try
+            {
+                File.WriteAllText(filePath, content, Encoding.UTF8);
+            }
+            catch (IOException ioEx)
+            {
+                Console.WriteLine($"Error writing to file '{filePath}': {ioEx.Message}");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An unexpected error occurred while writing to '{filePath}': {ex.Message}");
+                throw;
+            }
+        }
+
+        // Implementation for ComicService, MemberService (generic)
         public List<T> ReadFile<T>(string fileName, Func<string, T> parseFunc)
         {
             string filePath = GetFullFilePath(fileName);
