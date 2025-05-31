@@ -59,6 +59,11 @@ namespace ComicRentalSystem_14Days.Logging
             }
         }
 
+        public void LogWarning(string message)
+        {
+            WriteLogEntry("WARNING", message);
+        }
+
         private void WriteLogEntry(string level, string message)
         {
             // 技術點8: 檔案與資料夾處理
