@@ -162,6 +162,20 @@ namespace ComicRentalSystem_14Days
                 {
                     _logger.LogWarning("使用者註冊ToolStripMenuItem not found in menuStrip2.");
                 }
+
+                // Ensure Rental Management is accessible to all logged-in users
+                var rentalMgmtItem = menuStrip.Items.OfType<ToolStripMenuItem>()
+                                                   .FirstOrDefault(item => item.Name == "rentalManagementToolStripMenuItem");
+                if (rentalMgmtItem != null)
+                {
+                    rentalMgmtItem.Visible = true;
+                    rentalMgmtItem.Enabled = true;
+                    _logger.Log("Ensured rentalManagementToolStripMenuItem is visible and enabled for the current user.");
+                }
+                else
+                {
+                    _logger.LogWarning("rentalManagementToolStripMenuItem not found in menuStrip2.");
+                }
             }
             else
             {

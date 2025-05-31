@@ -11,6 +11,10 @@ namespace ComicRentalSystem_14Days.Forms
         private System.Windows.Forms.TextBox txtConfirmPassword;
         private System.Windows.Forms.Label lblRole;
         private System.Windows.Forms.ComboBox cmbRole;
+        private System.Windows.Forms.Label lblName;
+        private System.Windows.Forms.TextBox txtName;
+        private System.Windows.Forms.Label lblPhoneNumber;
+        private System.Windows.Forms.TextBox txtPhoneNumber;
         private System.Windows.Forms.Button btnRegister;
 
         protected override void Dispose(bool disposing)
@@ -32,6 +36,10 @@ namespace ComicRentalSystem_14Days.Forms
             this.txtConfirmPassword = new System.Windows.Forms.TextBox();
             this.lblRole = new System.Windows.Forms.Label();
             this.cmbRole = new System.Windows.Forms.ComboBox();
+            this.lblName = new System.Windows.Forms.Label();
+            this.txtName = new System.Windows.Forms.TextBox();
+            this.lblPhoneNumber = new System.Windows.Forms.Label();
+            this.txtPhoneNumber = new System.Windows.Forms.TextBox();
             this.btnRegister = new System.Windows.Forms.Button();
             this.SuspendLayout();
             //
@@ -91,6 +99,7 @@ namespace ComicRentalSystem_14Days.Forms
             this.lblRole.Size = new System.Drawing.Size(31, 15);
             this.lblRole.TabIndex = 6;
             this.lblRole.Text = "角色:";
+            this.lblRole.Visible = false; // Hide Role Label
             //
             // cmbRole
             //
@@ -100,13 +109,46 @@ namespace ComicRentalSystem_14Days.Forms
             this.cmbRole.Name = "cmbRole";
             this.cmbRole.Size = new System.Drawing.Size(200, 23);
             this.cmbRole.TabIndex = 7;
+            this.cmbRole.Visible = false; // Hide Role ComboBox
+            //
+            // lblName
+            //
+            this.lblName.AutoSize = true;
+            this.lblName.Location = new System.Drawing.Point(30, 150); // Position where lblRole was
+            this.lblName.Name = "lblName";
+            this.lblName.Size = new System.Drawing.Size(39, 15);
+            this.lblName.TabIndex = 6; // Original TabIndex of lblRole
+            this.lblName.Text = "姓名:";
+            //
+            // txtName
+            //
+            this.txtName.Location = new System.Drawing.Point(130, 147); // Position where cmbRole was
+            this.txtName.Name = "txtName";
+            this.txtName.Size = new System.Drawing.Size(200, 23);
+            this.txtName.TabIndex = 7; // Original TabIndex of cmbRole
+            //
+            // lblPhoneNumber
+            //
+            this.lblPhoneNumber.AutoSize = true;
+            this.lblPhoneNumber.Location = new System.Drawing.Point(30, 190); // Below Name
+            this.lblPhoneNumber.Name = "lblPhoneNumber";
+            this.lblPhoneNumber.Size = new System.Drawing.Size(63, 15);
+            this.lblPhoneNumber.TabIndex = 8; // Next TabIndex
+            this.lblPhoneNumber.Text = "電話號碼:";
+            //
+            // txtPhoneNumber
+            //
+            this.txtPhoneNumber.Location = new System.Drawing.Point(130, 187); // Below Name
+            this.txtPhoneNumber.Name = "txtPhoneNumber";
+            this.txtPhoneNumber.Size = new System.Drawing.Size(200, 23);
+            this.txtPhoneNumber.TabIndex = 9; // Next TabIndex
             //
             // btnRegister
             //
-            this.btnRegister.Location = new System.Drawing.Point(130, 190);
+            this.btnRegister.Location = new System.Drawing.Point(130, 230); // Moved down
             this.btnRegister.Name = "btnRegister";
             this.btnRegister.Size = new System.Drawing.Size(100, 30);
-            this.btnRegister.TabIndex = 8;
+            this.btnRegister.TabIndex = 10; // Next TabIndex
             this.btnRegister.Text = "註冊";
             this.btnRegister.UseVisualStyleBackColor = true;
             this.btnRegister.Click += new System.EventHandler(this.btnRegister_Click);
@@ -115,8 +157,12 @@ namespace ComicRentalSystem_14Days.Forms
             //
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(384, 251);
+            this.ClientSize = new System.Drawing.Size(384, 290); // Adjusted ClientSize
             this.Controls.Add(this.btnRegister);
+            this.Controls.Add(this.txtPhoneNumber);
+            this.Controls.Add(this.lblPhoneNumber);
+            this.Controls.Add(this.txtName);
+            this.Controls.Add(this.lblName);
             this.Controls.Add(this.cmbRole);
             this.Controls.Add(this.lblRole);
             this.Controls.Add(this.txtConfirmPassword);
