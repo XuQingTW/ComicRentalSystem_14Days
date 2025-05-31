@@ -10,12 +10,14 @@ namespace ComicRentalSystem_14Days.Models
     {
         public string Name { get; set; }
         public string PhoneNumber { get; set; } // 技術點 #1: 字串
+        public string Username { get; set; } // Added Username property
 
         // 建構函式
         public Member()
         {
             Name = string.Empty;
             PhoneNumber = string.Empty;
+            Username = string.Empty; // Initialize Username
         }
 
         // 將 Member 物件轉換為 CSV 格式的一行字串
@@ -23,16 +25,18 @@ namespace ComicRentalSystem_14Days.Models
         {
             // 簡單起見，假設姓名和電話號碼不包含逗號或雙引號
             // 實際應用中，對包含特殊字元的欄位應使用雙引號包裹，並對欄位內的雙引號轉義
-            return $"{Id},\"{Name?.Replace("\"", "\"\"")}\",\"{PhoneNumber?.Replace("\"", "\"\"")}\"";
+            // Added Username to CSV output
+            return $"{Id},\"{Name?.Replace("\"", "\"\"")}\",\"{PhoneNumber?.Replace("\"", "\"\"")}\",\"{Username?.Replace("\"", "\"\"")}\"";
         }
 
         // 從 CSV 格式的一行字串解析回 Member 物件
         public static Member FromCsvString(string csvLine)
         {
             List<string> values = ParseCsvLine(csvLine); // Use the new parser
+            // Minimum 3 fields (Id, Name, PhoneNumber), Username is optional for backward compatibility
             if (values.Count < 3)
             {
-                throw new FormatException("CSV line does not contain enough values for Member. Line: " + csvLine);
+                throw new FormatException("CSV line does not contain enough values for Member (Id, Name, PhoneNumber at least). Line: " + csvLine);
             }
 
             Member member = new Member();
@@ -41,6 +45,18 @@ namespace ComicRentalSystem_14Days.Models
                 member.Id = int.Parse(values[0]);
                 member.Name = values[1];
                 member.PhoneNumber = values[2];
+
+                // Handle Username (new field) - backward compatibility
+                if (values.Count > 3)
+                {
+                    member.Username = values[3];
+                }
+                else
+                {
+                    // Fallback for older CSV entries: use Name as Username
+                    // This maintains consistency with previous behavior where Name was implicitly the username link
+                    member.Username = member.Name;
+                }
             }
             catch (FormatException ex)
             {

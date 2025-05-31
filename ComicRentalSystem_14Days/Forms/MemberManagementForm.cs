@@ -10,30 +10,33 @@ namespace ComicRentalSystem_14Days.Forms
 {
     public partial class MemberManagementForm : ComicRentalSystem_14Days.BaseForm
     {
-        private MemberService? _memberService; 
+        private MemberService? _memberService;
+        private AuthenticationService? _authenticationService; // Added AuthenticationService
 
         public MemberManagementForm()
         {
             InitializeComponent();
         }
 
-        public MemberManagementForm(ILogger logger, MemberService memberService) : base(logger)
+        // Updated constructor to include AuthenticationService
+        public MemberManagementForm(ILogger logger, MemberService memberService, AuthenticationService authenticationService) : base(logger)
         {
             InitializeComponent();
-            _memberService = memberService; 
-            LogActivity("MemberManagementForm initializing with shared services.");
+            _memberService = memberService ?? throw new ArgumentNullException(nameof(memberService));
+            _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
+            LogActivity("MemberManagementForm initializing with MemberService and AuthenticationService.");
         }
 
         private void MemberManagementForm_Load(object sender, EventArgs e)
         {
-            if (this.DesignMode || Logger == null || _memberService == null)
+            if (this.DesignMode || Logger == null || _memberService == null || _authenticationService == null) // Added null check for _authenticationService
             {
                 return;
             }
 
             LogActivity("MemberManagementForm is loading runtime components.");
 
-            _memberService.MembersChanged += MemberService_MembersChanged;
+            _memberService.MembersChanged += MemberService_MembersChanged; // _memberService is confirmed not null here
 
             SetupDataGridView();
             LoadMembersData();
@@ -163,13 +166,37 @@ namespace ComicRentalSystem_14Days.Forms
                         LogActivity($"User confirmed deletion for member ID: {selectedMember.Id}.");
                         try
                         {
-                            _memberService.DeleteMember(selectedMember.Id);
-                            LogActivity($"Member ID: {selectedMember.Id} successfully marked for deletion by service. UI will refresh via event.");
-                            MessageBox.Show("會員已刪除。", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            _memberService.DeleteMember(selectedMember.Id); // Assuming this is successful before deleting the user account
+                            LogActivity($"Member ID: {selectedMember.Id}, Name: '{selectedMember.Name}' deleted from MemberService.");
+
+                            // Now, delete the associated user account
+                            // Use selectedMember.Username as the key for deletion
+                            string usernameToDelete = selectedMember.Username; // Changed from selectedMember.Name
+                            LogActivity($"Attempting to delete user account for Username: '{usernameToDelete}' (Member Name: '{selectedMember.Name}').");
+                            if (_authenticationService != null) // Null check for safety, though it should be initialized
+                            {
+                                bool userDeleted = _authenticationService.DeleteUser(usernameToDelete);
+                                if (userDeleted)
+                                {
+                                    LogActivity($"User account for Username: '{usernameToDelete}' (Member Name: '{selectedMember.Name}') successfully deleted by AuthenticationService.");
+                                    MessageBox.Show($"會員 '{selectedMember.Name}' (使用者名稱: '{usernameToDelete}') 及其使用者帳戶已刪除。", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                }
+                                else
+                                {
+                                    // This case might indicate an inconsistency if Username was expected to exist.
+                                    LogWarning($"User account for Username: '{usernameToDelete}' (Member Name: '{selectedMember.Name}') not found by AuthenticationService, though member record was deleted. Possible data inconsistency if a user account was expected.");
+                                    MessageBox.Show($"會員 '{selectedMember.Name}' 已從會員列表中刪除，但對應的使用者帳戶 '{usernameToDelete}' 未找到或無法刪除。", "部分成功", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                }
+                            }
+                            else
+                            {
+                                LogErrorActivity("AuthenticationService is null. Cannot delete user account.", new InvalidOperationException("_authenticationService is null"));
+                                MessageBox.Show($"會員 '{selectedMember.Name}' 已從會員列表中刪除，但由於內部錯誤無法刪除其使用者帳戶。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
                         }
                         catch (InvalidOperationException opEx)
                         {
-                            LogErrorActivity($"Operation error deleting member ID: {selectedMember.Id}.", opEx);
+                            LogErrorActivity($"Operation error deleting member ID: {selectedMember.Id} or associated user.", opEx);
                             MessageBox.Show(opEx.Message, "操作錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                         catch (Exception ex)

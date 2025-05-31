@@ -225,8 +225,17 @@ namespace ComicRentalSystem_14Days
         {
             this._logger?.Log("Opening MemberManagementForm.");
             // Services are guaranteed non-null by constructor
-            MemberManagementForm memberMgmtForm = new MemberManagementForm(this._logger, this._memberService);
-            memberMgmtForm.ShowDialog(this);
+            // Also ensure Program.AppAuthService is available and not null
+            if (Program.AppAuthService != null)
+            {
+                MemberManagementForm memberMgmtForm = new MemberManagementForm(this._logger, this._memberService, Program.AppAuthService);
+                memberMgmtForm.ShowDialog(this);
+            }
+            else
+            {
+                this._logger?.LogError("AuthenticationService (Program.AppAuthService) is null. Cannot open MemberManagementForm.");
+                MessageBox.Show("無法開啟會員管理功能，因為驗證服務未正確初始化。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void rentalManagementToolStripMenuItem_Click(object sender, EventArgs e)
@@ -278,26 +287,36 @@ namespace ComicRentalSystem_14Days
 
         private void 檢視日誌ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this._logger?.Log("View Log menu item clicked.");
-            try
-            {
-                // Assuming Path.Combine and File.Exists are from System.IO
-                string logDirectory = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ComicRentalApp", "Logs");
-                string logFilePath = System.IO.Path.Combine(logDirectory, "ComicRentalSystemLog.txt");
+            this._logger?.Log($"View Log menu item clicked by user '{_currentUser.Username}'.");
 
-                if (System.IO.File.Exists(logFilePath))
+            if (_currentUser.Role == UserRole.Admin)
+            {
+                this._logger?.Log($"Admin user '{_currentUser.Username}' viewing logs.");
+                try
                 {
-                    Process.Start(new ProcessStartInfo(logFilePath) { UseShellExecute = true });
+                    // Assuming Path.Combine and File.Exists are from System.IO
+                    string logDirectory = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ComicRentalApp", "Logs");
+                    string logFilePath = System.IO.Path.Combine(logDirectory, "ComicRentalSystemLog.txt");
+
+                    if (System.IO.File.Exists(logFilePath))
+                    {
+                        Process.Start(new ProcessStartInfo(logFilePath) { UseShellExecute = true });
+                    }
+                    else
+                    {
+                        MessageBox.Show("日誌檔案尚未建立或找不到。", "資訊", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    MessageBox.Show("日誌檔案尚未建立或找不到。", "資訊", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this._logger?.LogError("Failed to open the log file.", ex);
+                    MessageBox.Show($"無法開啟日誌檔案: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            catch (Exception ex)
+            else
             {
-                this._logger?.LogError("Failed to open the log file.", ex);
-                MessageBox.Show($"無法開啟日誌檔案: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this._logger?.Log($"User '{_currentUser.Username}' (Role: {_currentUser.Role}) attempted to view logs. Permission denied.");
+                MessageBox.Show("權限不足", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
