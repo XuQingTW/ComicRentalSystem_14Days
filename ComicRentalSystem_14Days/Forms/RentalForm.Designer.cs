@@ -33,6 +33,7 @@
             btnReturn = new Button();
             btnRent = new Button();
             dgvRentedComics = new DataGridView();
+            dtpActualReturnTime = new DateTimePicker(); // Added
             ((System.ComponentModel.ISupportInitialize)dgvRentedComics).BeginInit();
             SuspendLayout();
             // 
@@ -63,18 +64,28 @@
             btnReturn.Margin = new Padding(2, 3, 2, 3);
             btnReturn.Name = "btnReturn";
             btnReturn.Size = new Size(60, 26);
-            btnReturn.TabIndex = 2;
+            btnReturn.TabIndex = 2; // Original TabIndex for btnReturn
             btnReturn.Text = "歸還";
             btnReturn.UseVisualStyleBackColor = true;
             btnReturn.Click += btnReturn_Click;
             // 
+            // dtpActualReturnTime
+            //
+            dtpActualReturnTime.CustomFormat = "yyyy-MM-dd HH:mm:ss";
+            dtpActualReturnTime.Format = DateTimePickerFormat.Custom;
+            dtpActualReturnTime.Location = new Point(350, 155); // Positioned near btnReturn
+            dtpActualReturnTime.Margin = new Padding(2, 3, 2, 3);
+            dtpActualReturnTime.Name = "dtpActualReturnTime";
+            dtpActualReturnTime.Size = new Size(150, 25);
+            dtpActualReturnTime.TabIndex = 3; // Next TabIndex
+            //
             // btnRent
             // 
             btnRent.Location = new Point(146, 153);
             btnRent.Margin = new Padding(2, 3, 2, 3);
             btnRent.Name = "btnRent";
             btnRent.Size = new Size(60, 27);
-            btnRent.TabIndex = 3;
+            btnRent.TabIndex = 4; // Shifted TabIndex
             btnRent.Text = "租借";
             btnRent.UseVisualStyleBackColor = true;
             btnRent.Click += btnRent_Click;
@@ -82,18 +93,19 @@
             // dgvRentedComics
             // 
             dgvRentedComics.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvRentedComics.Location = new Point(148, 185);
+            dgvRentedComics.Location = new Point(12, 220); // Adjusted Location
             dgvRentedComics.Margin = new Padding(2, 3, 2, 3);
             dgvRentedComics.Name = "dgvRentedComics";
             dgvRentedComics.RowHeadersWidth = 51;
-            dgvRentedComics.Size = new Size(192, 128);
-            dgvRentedComics.TabIndex = 4;
+            dgvRentedComics.Size = new Size(540, 177); // Adjusted Size for more columns
+            dgvRentedComics.TabIndex = 5; // Shifted TabIndex
             // 
             // RentalForm
             // 
             AutoScaleDimensions = new SizeF(8F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(564, 409);
+            Controls.Add(dtpActualReturnTime); // Added to controls
             Controls.Add(dgvRentedComics);
             Controls.Add(btnRent);
             Controls.Add(btnReturn);
@@ -115,6 +127,7 @@
         private System.Windows.Forms.Button btnReturn;
         private System.Windows.Forms.Button btnRent;
         private System.Windows.Forms.DataGridView dgvRentedComics; // CORRECTED
+        private System.Windows.Forms.DateTimePicker dtpActualReturnTime; // Added
     }
 
 
