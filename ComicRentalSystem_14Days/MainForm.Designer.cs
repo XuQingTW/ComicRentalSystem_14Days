@@ -1,4 +1,4 @@
-﻿// In ComicRentalSystem_14Days/MainForm.Designer.cs
+// In ComicRentalSystem_14Days/MainForm.Designer.cs
 
 namespace ComicRentalSystem_14Days
 {
