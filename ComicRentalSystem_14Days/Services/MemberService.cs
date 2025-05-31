@@ -43,7 +43,7 @@ namespace ComicRentalSystem_14Days.Services
             _logger.Log($"Attempting to load members from file: '{_memberFileName}'.");
             try
             {
-                _members = _fileHelper.ReadCsvFile<Member>(_memberFileName, Member.FromCsvString);
+                _members = _fileHelper.ReadFile<Member>(_memberFileName, Member.FromCsvString);
                 _logger.Log($"Successfully loaded {_members.Count} members from '{_memberFileName}'.");
             }
             catch (Exception ex)
@@ -58,7 +58,7 @@ namespace ComicRentalSystem_14Days.Services
             _logger.Log($"Attempting to save {_members.Count} members to file: '{_memberFileName}'.");
             try
             {
-                _fileHelper.WriteCsvFile<Member>(_memberFileName, _members, member => member.ToCsvString());
+                _fileHelper.WriteFile<Member>(_memberFileName, _members, member => member.ToCsvString());
                 _logger.Log($"Successfully saved {_members.Count} members to '{_memberFileName}'.");
                 OnMembersChanged();
             }
