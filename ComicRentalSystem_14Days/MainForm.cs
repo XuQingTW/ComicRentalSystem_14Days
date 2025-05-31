@@ -418,9 +418,9 @@ namespace ComicRentalSystem_14Days
         private void 會員管理ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this._logger?.Log("Opening MemberManagementForm.");
-            if (Program.AppAuthService != null)
+            if (Program.AppAuthService != null && this._comicService != null)
             {
-                MemberManagementForm memberMgmtForm = new MemberManagementForm(this._logger!, this._memberService, Program.AppAuthService, this._currentUser);
+                MemberManagementForm memberMgmtForm = new MemberManagementForm(this._logger!, this._memberService, Program.AppAuthService, this._comicService, this._currentUser);
                 memberMgmtForm.ShowDialog(this);
             }
             else
