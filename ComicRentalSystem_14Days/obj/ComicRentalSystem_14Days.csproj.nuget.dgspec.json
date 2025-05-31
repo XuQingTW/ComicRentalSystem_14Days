@@ -1,25 +1,31 @@
 {
   "format": 1,
   "restore": {
-    "/app/ComicRentalSystem_14Days/ComicRentalSystem_14Days.csproj": {}
+    "C:\\Users\\Hyman\\Desktop\\ComicRentalSystem\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj": {}
   },
   "projects": {
-    "/app/ComicRentalSystem_14Days/ComicRentalSystem_14Days.csproj": {
+    "C:\\Users\\Hyman\\Desktop\\ComicRentalSystem\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/app/ComicRentalSystem_14Days/ComicRentalSystem_14Days.csproj",
+        "projectUniqueName": "C:\\Users\\Hyman\\Desktop\\ComicRentalSystem\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj",
         "projectName": "ComicRentalSystem_14Days",
-        "projectPath": "/app/ComicRentalSystem_14Days/ComicRentalSystem_14Days.csproj",
-        "packagesPath": "/home/swebot/.nuget/packages/",
-        "outputPath": "/app/ComicRentalSystem_14Days/obj/",
+        "projectPath": "C:\\Users\\Hyman\\Desktop\\ComicRentalSystem\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj",
+        "packagesPath": "C:\\Users\\Hyman\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Hyman\\Desktop\\ComicRentalSystem\\ComicRentalSystem_14Days\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/home/swebot/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\Hyman\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0-windows"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -32,7 +38,13 @@
           "warnAsError": [
             "NU1605"
           ]
-        }
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net8.0-windows7.0": {
@@ -65,9 +77,12 @@
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
+            },
+            "Microsoft.WindowsDesktop.App.WindowsForms": {
+              "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.116/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

@@ -3,16 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\Hyman\\Desktop\\ComicRentalSystem\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\hyman\\desktop\\comicrentalsystem\\comicrentalsystem_14days\\forms\\changeuserroleform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\forms\\changeuserroleform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\hyman\\desktop\\comicrentalsystem\\comicrentalsystem_14days\\forms\\membereditform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\forms\\membereditform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\hyman\\desktop\\comicrentalsystem\\comicrentalsystem_14days\\forms\\comicmanagementform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\forms\\comicmanagementform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\hyman\\desktop\\comicrentalsystem\\comicrentalsystem_14days\\forms\\comiceditform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\forms\\comiceditform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\hyman\\desktop\\comicrentalsystem\\comicrentalsystem_14days\\forms\\comiceditform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\forms\\comiceditform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -27,38 +23,28 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "ChangeUserRoleForm.cs [\u8A2D\u8A08]",
-              "DocumentMoniker": "C:\\Users\\Hyman\\Desktop\\ComicRentalSystem\\ComicRentalSystem_14Days\\Forms\\ChangeUserRoleForm.cs",
-              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Forms\\ChangeUserRoleForm.cs",
-              "ToolTip": "C:\\Users\\Hyman\\Desktop\\ComicRentalSystem\\ComicRentalSystem_14Days\\Forms\\ChangeUserRoleForm.cs [\u8A2D\u8A08]",
-              "RelativeToolTip": "ComicRentalSystem_14Days\\Forms\\ChangeUserRoleForm.cs [\u8A2D\u8A08]",
+              "Title": "MemberEditForm.Designer.cs",
+              "DocumentMoniker": "C:\\Users\\Hyman\\Desktop\\ComicRentalSystem\\ComicRentalSystem_14Days\\Forms\\MemberEditForm.Designer.cs",
+              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Forms\\MemberEditForm.Designer.cs",
+              "ToolTip": "C:\\Users\\Hyman\\Desktop\\ComicRentalSystem\\ComicRentalSystem_14Days\\Forms\\MemberEditForm.Designer.cs",
+              "RelativeToolTip": "ComicRentalSystem_14Days\\Forms\\MemberEditForm.Designer.cs",
+              "ViewState": "AgIAAHkAAAAAAAAAAAAswH8AAABAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T20:36:40.379Z",
-              "EditorCaption": " [\u8A2D\u8A08]"
+              "WhenOpened": "2025-05-31T22:09:20.325Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "ComicManagementForm.cs [\u8A2D\u8A08]",
-              "DocumentMoniker": "C:\\Users\\Hyman\\Desktop\\ComicRentalSystem\\ComicRentalSystem_14Days\\Forms\\ComicManagementForm.cs",
-              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Forms\\ComicManagementForm.cs",
-              "ToolTip": "C:\\Users\\Hyman\\Desktop\\ComicRentalSystem\\ComicRentalSystem_14Days\\Forms\\ComicManagementForm.cs [\u8A2D\u8A08]",
-              "RelativeToolTip": "ComicRentalSystem_14Days\\Forms\\ComicManagementForm.cs [\u8A2D\u8A08]",
+              "Title": "ComicEditForm.Designer.cs",
+              "DocumentMoniker": "C:\\Users\\Hyman\\Desktop\\ComicRentalSystem\\ComicRentalSystem_14Days\\Forms\\ComicEditForm.Designer.cs",
+              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Forms\\ComicEditForm.Designer.cs",
+              "ToolTip": "C:\\Users\\Hyman\\Desktop\\ComicRentalSystem\\ComicRentalSystem_14Days\\Forms\\ComicEditForm.Designer.cs",
+              "RelativeToolTip": "ComicRentalSystem_14Days\\Forms\\ComicEditForm.Designer.cs",
+              "ViewState": "AgIAAMQAAAAAAAAAAAAvwM4AAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T20:35:53.89Z",
-              "EditorCaption": " [\u8A2D\u8A08]"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "ComicEditForm.cs [\u8A2D\u8A08]",
-              "DocumentMoniker": "C:\\Users\\Hyman\\Desktop\\ComicRentalSystem\\ComicRentalSystem_14Days\\Forms\\ComicEditForm.cs",
-              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Forms\\ComicEditForm.cs",
-              "ToolTip": "C:\\Users\\Hyman\\Desktop\\ComicRentalSystem\\ComicRentalSystem_14Days\\Forms\\ComicEditForm.cs [\u8A2D\u8A08]",
-              "RelativeToolTip": "ComicRentalSystem_14Days\\Forms\\ComicEditForm.cs [\u8A2D\u8A08]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T20:35:23.93Z",
-              "EditorCaption": " [\u8A2D\u8A08]"
+              "WhenOpened": "2025-05-31T22:09:02.328Z",
+              "EditorCaption": ""
             }
           ]
         }

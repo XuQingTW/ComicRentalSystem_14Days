@@ -4,6 +4,9 @@
     <Compile Update="BaseForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Controls\AdminDashboardUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Forms\ChangeUserRoleForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -32,6 +35,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="ModernBaseForm.cs">
       <SubType>Form</SubType>
     </Compile>
   </ItemGroup>

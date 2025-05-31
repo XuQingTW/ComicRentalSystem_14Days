@@ -93,7 +93,7 @@
             // 
             // btnSaveMember
             // 
-            this.btnSaveMember.Anchor = ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right);
+            this.btnSaveMember.Anchor = (System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right);
             this.btnSaveMember.Location = new System.Drawing.Point(225, 155);
             this.btnSaveMember.Name = "btnSaveMember";
             this.btnSaveMember.Size = new System.Drawing.Size(90, 30);
@@ -104,7 +104,7 @@
             // 
             // btnCancelMember
             // 
-            this.btnCancelMember.Anchor = ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right);
+            this.btnCancelMember.Anchor = (System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right);
             this.btnCancelMember.Location = new System.Drawing.Point(321, 155); // Adjusted X to be next to Save
             this.btnCancelMember.Name = "btnCancelMember";
             this.btnCancelMember.Size = new System.Drawing.Size(90, 30);
@@ -129,8 +129,8 @@
             this.Text = "Edit Member"; // Default text
             this.gbMemberDetails.ResumeLayout(false);
             this.gbMemberDetails.PerformLayout();
-            this.ResumeLayout(false);)
-            this.PerformLayout();)
+            this.ResumeLayout(false);
+            this.PerformLayout();
         }
 
         #endregion
