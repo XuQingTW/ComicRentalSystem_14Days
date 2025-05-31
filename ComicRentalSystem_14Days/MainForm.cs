@@ -37,18 +37,22 @@ namespace ComicRentalSystem_14Days
             }
         }
         // Primary constructor
-        public MainForm(ILogger logger, ComicService comicService, MemberService memberService, IReloadService reloadService, User currentUser) : this()
+        public MainForm(ILogger logger, ComicService comicService, MemberService memberService, IReloadService reloadService, User currentUser)
+            : base() // Explicitly call BaseForm's parameterless constructor
         {
+            // Initialize fields FIRST
             this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this._comicService = comicService ?? throw new ArgumentNullException(nameof(comicService));
             this._memberService = memberService ?? throw new ArgumentNullException(nameof(memberService));
             this._reloadService = reloadService ?? throw new ArgumentNullException(nameof(reloadService));
             this._currentUser = currentUser ?? throw new ArgumentNullException(nameof(currentUser));
 
-            base.SetLogger(logger); // Assumes BaseForm has public void SetLogger(ILogger logger)
-            
-            _logger.Log($"MainForm initialized for user: {_currentUser.Username}, Role: {_currentUser.Role}");
+            base.SetLogger(logger); // Initialize BaseForm's logger
 
+            InitializeComponent(); // NOW call InitializeComponent
+
+            // These are still needed to apply role-based UI logic
+            _logger.Log($"MainForm initialized for user: {_currentUser.Username}, Role: {_currentUser.Role}");
             SetupUIAccessControls();
             UpdateStatusBar();
         }
