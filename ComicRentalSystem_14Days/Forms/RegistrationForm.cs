@@ -32,7 +32,7 @@ namespace ComicRentalSystem_14Days.Forms
             string username = txtUsername.Text.Trim();
             string password = txtPassword.Text;
             string confirmPassword = txtConfirmPassword.Text;
-            UserRole selectedRole = (UserRole)cmbRole.SelectedItem;
+            UserRole selectedRole = (UserRole)(cmbRole.SelectedItem ?? UserRole.Member);
 
             if (string.IsNullOrWhiteSpace(username))
             {

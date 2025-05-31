@@ -15,7 +15,6 @@ namespace ComicRentalSystem_14Days.Models
         public User(string username, string passwordHash, UserRole role)
         {
             // Consider adding validation or default values if necessary
-            Id = Guid.NewGuid().ToString(); // Inherited from BaseEntity
             Username = username;
             PasswordHash = passwordHash;
             Role = role;
