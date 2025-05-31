@@ -189,7 +189,7 @@ namespace ComicRentalSystem_14Days
                 var availableComics = this._comicService.GetAllComics().Where(c => !c.IsRented).ToList();
                 Action updateGrid = () => {
                     dgvAvailableComics.DataSource = null;
-                    dgvAvailableComics.DataSource = availableComics;
+                    dgvAvailableComics.DataSource = availableComics ?? new List<Comic>();
                 };
 
                 if (dgvAvailableComics.IsHandleCreated && this.InvokeRequired) { this.Invoke(updateGrid); }
@@ -380,7 +380,7 @@ namespace ComicRentalSystem_14Days
 
                 Action updateGrid = () => {
                     dgvMyRentedComics.DataSource = null;
-                    dgvMyRentedComics.DataSource = myRentedComics;
+                    dgvMyRentedComics.DataSource = myRentedComics ?? new List<object>();
                 };
 
                 if (dgvMyRentedComics.IsHandleCreated && this.InvokeRequired) { this.Invoke(updateGrid); }
