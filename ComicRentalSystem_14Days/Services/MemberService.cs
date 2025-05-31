@@ -51,13 +51,13 @@ namespace ComicRentalSystem_14Days.Services
             catch (Exception ex) when (ex is FormatException || ex is IOException)
             {
                 _logger.LogError($"嚴重錯誤: 會員資料檔案 '{_memberFileName}' 已損壞或無法讀取。詳細資訊: {ex.Message}", ex);
-                MessageBox.Show($"會員資料檔案已損壞或無法讀取，無法載入會員資料庫。應用程式相關功能可能無法正常運作。\n錯誤詳情: {ex.Message}\n檔案路徑: {_memberFileName}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // MessageBox.Show($"會員資料檔案已損壞或無法讀取，無法載入會員資料庫。應用程式相關功能可能無法正常運作。\n錯誤詳情: {ex.Message}\n檔案路徑: {_memberFileName}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 throw new ApplicationException($"無法從 '{_memberFileName}' 載入會員資料。應用程式可能無法正常運作。", ex);
             }
             catch (Exception ex)
             {
                 _logger.LogError($"從 {_memberFileName} 載入會員時發生未預期的錯誤。詳細資訊: {ex.Message}", ex);
-                MessageBox.Show($"載入會員資料時發生未預期的錯誤。應用程式相關功能可能無法正常運作。\n錯誤詳情: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // MessageBox.Show($"載入會員資料時發生未預期的錯誤。應用程式相關功能可能無法正常運作。\n錯誤詳情: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 throw new ApplicationException("載入會員資料期間發生未預期錯誤。", ex);
             }
         }
@@ -254,10 +254,10 @@ namespace ComicRentalSystem_14Days.Services
                 return null;
             }
 
-            // Assuming Member.Name is the field that corresponds to the username.
+            // Using Member.Username for lookup.
             // Using OrdinalIgnoreCase for case-insensitive matching, which is common for usernames.
             Member? foundMember = allMembers.FirstOrDefault(m =>
-                string.Equals(m.Name, username, StringComparison.OrdinalIgnoreCase)
+                string.Equals(m.Username, username, StringComparison.OrdinalIgnoreCase)
             );
 
             if (foundMember != null)
@@ -270,6 +270,26 @@ namespace ComicRentalSystem_14Days.Services
             }
 
             return foundMember;
+        }
+
+        public List<Member> SearchMembers(string searchTerm)
+        {
+            _logger.Log($"已呼叫 SearchMembers，搜尋詞: '{searchTerm}'。");
+            if (string.IsNullOrWhiteSpace(searchTerm))
+            {
+                return new List<Member>(_members); // Return all if search term is empty
+            }
+
+            var lowerSearchTerm = searchTerm.ToLowerInvariant();
+            List<Member> results = _members.Where(m =>
+                (m.Name != null && m.Name.ToLowerInvariant().Contains(lowerSearchTerm)) ||
+                (m.PhoneNumber != null && m.PhoneNumber.Contains(searchTerm)) || // Phone numbers usually don't need case insensitivity
+                (m.Id.ToString().Equals(searchTerm)) ||
+                (m.Username != null && m.Username.ToLowerInvariant().Contains(lowerSearchTerm)) // Also search by Username
+            ).ToList();
+
+            _logger.Log($"SearchMembers 找到 {results.Count} 位符合條件的會員。");
+            return results;
         }
     }
 }

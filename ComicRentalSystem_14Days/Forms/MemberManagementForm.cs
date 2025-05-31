@@ -14,6 +14,11 @@ namespace ComicRentalSystem_14Days.Forms
         private AuthenticationService? _authenticationService; // Added AuthenticationService
         private readonly User? _currentUser;
 
+        // Conceptual private fields for new controls (designer would add these)
+        // private System.Windows.Forms.TextBox txtSearchMembers;
+        // private System.Windows.Forms.Button btnSearchMembers;
+        // private System.Windows.Forms.Button btnClearSearchMembers;
+
         public MemberManagementForm()
         {
             InitializeComponent();
@@ -40,8 +45,21 @@ namespace ComicRentalSystem_14Days.Forms
 
             _memberService.MembersChanged += MemberService_MembersChanged; // _memberService is confirmed not null here
 
-            SetupDataGridView();
-            LoadMembersData();
+            // Wire up event handlers for new search buttons
+            Control? btnSearchMembersCtrl = this.Controls.Find("btnSearchMembers", true).FirstOrDefault();
+            if (btnSearchMembersCtrl is Button btnSearch)
+            {
+                btnSearch.Click += new System.EventHandler(this.btnSearchMembers_Click);
+            }
+
+            Control? btnClearSearchMembersCtrl = this.Controls.Find("btnClearSearchMembers", true).FirstOrDefault();
+            if (btnClearSearchMembersCtrl is Button btnClear)
+            {
+                btnClear.Click += new System.EventHandler(this.btnClearSearchMembers_Click);
+            }
+
+            SetupDataGridView(); // Already called in constructor
+            LoadMembersData(); // Already called in constructor
             LogActivity("MemberManagementForm initialized successfully.");
         }
 
@@ -83,19 +101,53 @@ namespace ComicRentalSystem_14Days.Forms
         private void LoadMembersData()
         {
             if (_memberService == null) return;
-            LogActivity("Attempting to load members data into DataGridView.");
+
+            string searchTerm = string.Empty;
+            Control? txtSearchMembersCtrl = this.Controls.Find("txtSearchMembers", true).FirstOrDefault();
+            if (txtSearchMembersCtrl is TextBox txtSearch)
+            {
+                searchTerm = txtSearch.Text.Trim();
+            }
+
+            LogActivity($"Attempting to load members data. Search term: '{searchTerm}'.");
+
             try
             {
-                List<Member> members = _memberService.GetAllMembers();
+                List<Member> members;
+                if (string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    members = _memberService.GetAllMembers();
+                }
+                else
+                {
+                    members = _memberService.SearchMembers(searchTerm);
+                }
                 dgvMembers.DataSource = null;
                 dgvMembers.DataSource = members;
-                LogActivity($"Successfully loaded {members.Count} members into DataGridView.");
+                LogActivity($"Successfully loaded {members.Count} members into DataGridView with search term '{searchTerm}'.");
             }
             catch (Exception ex)
             {
-                LogErrorActivity("Error loading members data into DataGridView.", ex);
+                LogErrorActivity($"Error loading members data with search term '{searchTerm}'.", ex);
                 MessageBox.Show($"載入會員資料時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void btnSearchMembers_Click(object? sender, EventArgs e)
+        {
+            LogActivity("Search Members button clicked.");
+            LoadMembersData();
+        }
+
+        private void btnClearSearchMembers_Click(object? sender, EventArgs e)
+        {
+            LogActivity("Clear Search Members button clicked.");
+            Control? txtSearchMembersCtrl = this.Controls.Find("txtSearchMembers", true).FirstOrDefault();
+            if (txtSearchMembersCtrl is TextBox txtSearch)
+            {
+                 txtSearch.Text = string.Empty;
+            }
+            LoadMembersData();
         }
 
         private void btnRefreshMembers_Click(object sender, EventArgs e)
@@ -106,17 +158,27 @@ namespace ComicRentalSystem_14Days.Forms
 
         private void btnAddMember_Click(object sender, EventArgs e)
         {
-            if (_memberService == null || Logger == null) return;
-            LogActivity("Add Member button clicked. Opening MemberEditForm for new member.");
-            using (MemberEditForm editForm = new MemberEditForm(null, _memberService, Logger))
+            if (_memberService == null || Logger == null || _authenticationService == null)
             {
-                if (editForm.ShowDialog(this) == DialogResult.OK)
+                // Log an error or show a message if essential services are missing
+                LogErrorActivity("Essential services not available for adding a member.", new InvalidOperationException("Services not initialized."));
+                MessageBox.Show("無法開啟註冊表單，必要的服務未初始化。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            LogActivity("Add Member button clicked by admin. Opening RegistrationForm for new user/member.");
+            // Pass the current user (_currentUser, who is the admin) and other services to RegistrationForm
+            using (RegistrationForm regForm = new RegistrationForm(Logger, _authenticationService, _memberService, _currentUser))
+            {
+                if (regForm.ShowDialog(this) == DialogResult.OK)
                 {
-                    LogActivity("MemberEditForm (Add Mode) closed with OK. Data refresh handled by MembersChanged event.");
+                    LogActivity("RegistrationForm (Admin-initiated Add Mode) closed with OK.");
+                    // Data refresh should be handled by events from AuthenticationService or MemberService if they trigger them upon saving.
+                    // Explicitly calling LoadMembersData() might still be needed if events are not guaranteed or for immediate UI update.
+                    LoadMembersData(); // Consider if this is redundant given events. For safety, keep it for now.
                 }
                 else
                 {
-                    LogActivity("MemberEditForm (Add Mode) closed with Cancel or other.");
+                    LogActivity("RegistrationForm (Admin-initiated Add Mode) closed with Cancel or other.");
                 }
             }
         }

@@ -12,13 +12,15 @@ namespace ComicRentalSystem_14Days.Forms
         private readonly ILogger _logger;
         private readonly AuthenticationService _authService;
         private readonly MemberService _memberService;
+        private readonly User? _currentUser;
 
-        public RegistrationForm(ILogger logger, AuthenticationService authService, MemberService memberService)
+        public RegistrationForm(ILogger logger, AuthenticationService authService, MemberService memberService, User? currentUser = null)
         {
             InitializeComponent();
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _authService = authService ?? throw new ArgumentNullException(nameof(authService));
             _memberService = memberService ?? throw new ArgumentNullException(nameof(memberService));
+            _currentUser = currentUser;
 
             txtPassword.PasswordChar = '*';
             txtConfirmPassword.PasswordChar = '*';
@@ -32,7 +34,17 @@ namespace ComicRentalSystem_14Days.Forms
             string confirmPassword = txtConfirmPassword.Text;
             string name = txtName.Text.Trim();
             string phoneNumber = txtPhoneNumber.Text.Trim();
-            UserRole selectedRole = UserRole.Member; // Default role
+            // UserRole selectedRole = UserRole.Member; // Default role - Will be determined below
+
+            UserRole selectedRole;
+            if (cmbRole.Visible && cmbRole.Enabled && cmbRole.SelectedItem != null)
+            {
+                selectedRole = (UserRole)cmbRole.SelectedItem;
+            }
+            else
+            {
+                selectedRole = UserRole.Member; // Default if ComboBox not used or no selection
+            }
 
             if (string.IsNullOrWhiteSpace(username))
             {
@@ -48,10 +60,33 @@ namespace ComicRentalSystem_14Days.Forms
                 return;
             }
 
+            if (!name.All(c => char.IsLetter(c) || char.IsWhiteSpace(c)))
+            {
+                MessageBox.Show("姓名只能包含字母和空格。", "註冊失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                _logger.Log("註冊嘗試失敗: 姓名包含無效字元。");
+                txtName.Focus();
+                return;
+            }
+
             if (string.IsNullOrWhiteSpace(phoneNumber))
             {
                 MessageBox.Show("電話號碼不能為空。", "註冊失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 _logger.Log("註冊嘗試失敗: 電話號碼為空。");
+                return;
+            }
+
+            if (!phoneNumber.All(char.IsDigit))
+            {
+                MessageBox.Show("電話號碼只能包含數字。", "註冊失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                _logger.Log("註冊嘗試失敗: 電話號碼包含非數字字元。");
+                txtPhoneNumber.Focus();
+                return;
+            }
+            if (phoneNumber.Length < 7 || phoneNumber.Length > 15)
+            {
+                MessageBox.Show("電話號碼長度應在 7 到 15 位數字之間。", "註冊失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                _logger.Log("註冊嘗試失敗: 電話號碼長度無效。");
+                txtPhoneNumber.Focus();
                 return;
             }
 
@@ -104,13 +139,19 @@ namespace ComicRentalSystem_14Days.Forms
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError($"成功註冊使用者 '{username}' 但建立會員記錄失敗。錯誤: {ex.Message}", ex);
-                    MessageBox.Show($"使用者 '{username}' 註冊成功，但建立會員資料時發生錯誤。請聯繫管理員。\n錯誤: {ex.Message}", "註冊部分成功", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    // User is registered, but member creation failed. Decide on cleanup or leave as is.
-                    // For now, clear fields as user registration part was successful.
-                    txtUsername.Clear();
-                    txtName.Clear();
-                    txtPhoneNumber.Clear();
+                    _logger.LogError($"成功註冊使用者 '{username}' 但建立會員記錄失敗。錯誤: {ex.Message}. 正在嘗試復原使用者註冊。", ex);
+                    // Attempt to delete the orphaned user
+                    bool rollbackSuccess = _authService.DeleteUser(username);
+                    if (rollbackSuccess)
+                    {
+                        _logger.Log($"已成功復原 (刪除) 使用者帳戶 '{username}'。");
+                    }
+                    else
+                    {
+                        _logger.LogError($"無法復原 (刪除) 使用者帳戶 '{username}'。系統可能處於不一致狀態。");
+                    }
+                    MessageBox.Show($"註冊過程中發生錯誤，無法建立完整的會員資料。請重試或聯繫管理員。\n錯誤: {ex.Message}", "註冊失敗", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    // Do not clear all fields, allow user to correct if possible, but clear sensitive ones
                     txtPassword.Clear();
                     txtConfirmPassword.Clear();
                 }
@@ -127,6 +168,27 @@ namespace ComicRentalSystem_14Days.Forms
         private void RegistrationForm_Load(object sender, EventArgs e)
         {
             _logger.Log("註冊表單已載入。");
+            // Populate cmbRole.DataSource = Enum.GetValues(typeof(UserRole));
+            // The following line assumes cmbRole is declared in the designer file.
+            cmbRole.DataSource = Enum.GetValues(typeof(UserRole));
+
+            if (_currentUser != null && _currentUser.Role == UserRole.Admin)
+            {
+                // Admin is using the form
+                lblRole.Visible = true;
+                cmbRole.Visible = true;
+                cmbRole.Enabled = true;
+                cmbRole.SelectedItem = UserRole.Member; // Default selection for Admin
+                _logger.Log("註冊表單由管理員載入。角色選擇已啟用。");
+            }
+            else
+            {
+                // Non-admin or null currentUser (e.g., from LoginForm)
+                lblRole.Visible = false;
+                cmbRole.Visible = false;
+                cmbRole.Enabled = false;
+                _logger.Log("註冊表單由非管理員或透過登入表單載入。角色選擇已停用。");
+            }
         }
     }
 }

@@ -13,6 +13,11 @@ namespace ComicRentalSystem_14Days.Forms
         private ComicService? _comicService;
         private readonly User? _currentUser;
 
+        // Conceptual private fields for new controls (designer would add these)
+        // private System.Windows.Forms.TextBox txtSearchComics;
+        // private System.Windows.Forms.Button btnSearchComics;
+        // private System.Windows.Forms.Button btnClearSearchComics;
+
         public ComicManagementForm(ILogger logger, ComicService comicService, User? currentUser) : base(logger)
         {
             InitializeComponent();
@@ -34,8 +39,27 @@ namespace ComicRentalSystem_14Days.Forms
 
             _comicService.ComicsChanged += ComicService_ComicsChanged;
 
-            SetupDataGridView();
-            LoadComicsData();
+            // Wire up event handlers for new search buttons
+            // Assuming btnSearchComics and btnClearSearchComics are added in the designer
+            // and accessible here. If not, these lines would cause issues or need to be conditional.
+            // For the purpose of this exercise, we'll assume they would exist.
+            // This would ideally be in InitializeComponent or a separate UI setup method.
+            Control? btnSearchComicsCtrl = this.Controls.Find("btnSearchComics", true).FirstOrDefault();
+            if (btnSearchComicsCtrl is Button btnSearch)
+            {
+                btnSearch.Click += new System.EventHandler(this.btnSearchComics_Click);
+            }
+
+            Control? btnClearSearchComicsCtrl = this.Controls.Find("btnClearSearchComics", true).FirstOrDefault();
+            if (btnClearSearchComicsCtrl is Button btnClear)
+            {
+                btnClear.Click += new System.EventHandler(this.btnClearSearchComics_Click);
+            }
+
+            SetupDataGridView(); // Already called in constructor, consider if needed here too.
+                                 // If LoadComicsData in constructor is sufficient, this might be redundant.
+                                 // For now, keeping it as per original structure.
+            LoadComicsData(); // Already called in constructor
             LogActivity("ComicManagementForm initialized successfully.");
         }
 
@@ -113,19 +137,53 @@ namespace ComicRentalSystem_14Days.Forms
         private void LoadComicsData()
         {
             if (_comicService == null) return;
-            LogActivity("Attempting to load comics data into DataGridView.");
+
+            string searchTerm = string.Empty;
+            Control? txtSearchComicsCtrl = this.Controls.Find("txtSearchComics", true).FirstOrDefault();
+            if (txtSearchComicsCtrl is TextBox txtSearch)
+            {
+                searchTerm = txtSearch.Text.Trim();
+            }
+
+            LogActivity($"Attempting to load comics data. Search term: '{searchTerm}'.");
+
             try
             {
-                List<Comic> comics = _comicService.GetAllComics();
+                List<Comic> comics;
+                if (string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    comics = _comicService.GetAllComics();
+                }
+                else
+                {
+                    comics = _comicService.SearchComics(searchTerm);
+                }
                 dgvComics.DataSource = null;
                 dgvComics.DataSource = comics;
-                LogActivity($"Successfully loaded {comics.Count} comics into DataGridView.");
+                LogActivity($"Successfully loaded {comics.Count} comics into DataGridView with search term '{searchTerm}'.");
             }
             catch (Exception ex)
             {
-                LogErrorActivity("Error loading comics data into DataGridView.", ex);
+                LogErrorActivity($"Error loading comics data with search term '{searchTerm}'.", ex);
                 MessageBox.Show($"載入漫畫資料時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void btnSearchComics_Click(object? sender, EventArgs e)
+        {
+            LogActivity("Search Comics button clicked.");
+            LoadComicsData(); // LoadComicsData will now use the search term
+        }
+
+        private void btnClearSearchComics_Click(object? sender, EventArgs e)
+        {
+            LogActivity("Clear Search Comics button clicked.");
+            Control? txtSearchComicsCtrl = this.Controls.Find("txtSearchComics", true).FirstOrDefault();
+            if (txtSearchComicsCtrl is TextBox txtSearch)
+            {
+                txtSearch.Text = string.Empty;
+            }
+            LoadComicsData(); // Reload all comics
         }
 
         private void btnRefresh_Click(object sender, EventArgs e)
@@ -147,7 +205,7 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (_comicService == null || Logger == null) return;
             LogActivity("Add Comic button clicked. Opening ComicEditForm for new comic.");
-            using (ComicEditForm editForm = new ComicEditForm(null, _comicService, Logger))
+            using (ComicEditForm editForm = new ComicEditForm(null, _comicService, Logger, _currentUser))
             {
                 if (editForm.ShowDialog(this) == DialogResult.OK)
                 {
@@ -169,7 +227,7 @@ namespace ComicRentalSystem_14Days.Forms
                 if (selectedComic != null)
                 {
                     LogActivity($"Opening ComicEditForm for editing comic ID: {selectedComic.Id}, Title: '{selectedComic.Title}'.");
-                    using (ComicEditForm editForm = new ComicEditForm(selectedComic, _comicService, Logger))
+                    using (ComicEditForm editForm = new ComicEditForm(selectedComic, _comicService, Logger, _currentUser))
                     {
                         if (editForm.ShowDialog(this) == DialogResult.OK)
                         {

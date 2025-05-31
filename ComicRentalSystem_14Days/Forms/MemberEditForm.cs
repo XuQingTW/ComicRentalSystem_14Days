@@ -71,7 +71,10 @@ namespace ComicRentalSystem_14Days.Forms
 
             LogActivity("儲存會員按鈕已點擊。");
 
-            if (string.IsNullOrWhiteSpace(txtName.Text))
+            string name = txtName.Text.Trim();
+            string phoneNumber = txtPhoneNumber.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(name))
             {
                 LogActivity("驗證失敗: 姓名不得為空。");
                 MessageBox.Show("姓名不得為空。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -79,7 +82,15 @@ namespace ComicRentalSystem_14Days.Forms
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(txtPhoneNumber.Text))
+            if (!name.All(c => char.IsLetter(c) || char.IsWhiteSpace(c)))
+            {
+                LogActivity("驗證失敗: 姓名包含無效字元。");
+                MessageBox.Show("姓名只能包含字母和空格。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtName.Focus();
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(phoneNumber))
             {
                 LogActivity("驗證失敗: 電話號碼不得為空。");
                 MessageBox.Show("電話號碼不得為空。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -87,10 +98,18 @@ namespace ComicRentalSystem_14Days.Forms
                 return;
             }
 
-            if (!txtPhoneNumber.Text.All(char.IsDigit))
+            if (!phoneNumber.All(char.IsDigit))
             {
                 LogActivity("驗證失敗: 電話號碼包含非數字字元。");
                 MessageBox.Show("電話號碼只能包含數字。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtPhoneNumber.Focus();
+                return;
+            }
+
+            if (phoneNumber.Length < 7 || phoneNumber.Length > 15)
+            {
+                LogActivity("驗證失敗: 電話號碼長度無效。");
+                MessageBox.Show("電話號碼長度應在 7 到 15 位數字之間。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtPhoneNumber.Focus();
                 return;
             }
@@ -100,19 +119,23 @@ namespace ComicRentalSystem_14Days.Forms
                 if (_isEditMode && _editableMember != null)
                 {
                     LogActivity($"正在嘗試儲存現有會員ID: {_editableMember.Id} 的變更。");
-                    _editableMember.Name = txtName.Text.Trim();
-                    _editableMember.PhoneNumber = txtPhoneNumber.Text.Trim();
+                    _editableMember.Name = name;
+                    _editableMember.PhoneNumber = phoneNumber;
                     _memberService.UpdateMember(_editableMember);
                     LogActivity($"會員ID: {_editableMember.Id} 已成功更新。");
                     MessageBox.Show("會員資料已更新。", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {
+                    // This block is less likely to be hit if RegistrationForm is used for all new member additions.
+                    // However, keeping the logic sound in case MemberEditForm is used for adding non-user members directly.
                     LogActivity("正在嘗試新增會員。");
                     Member newMember = new Member
                     {
-                        Name = txtName.Text.Trim(),
-                        PhoneNumber = txtPhoneNumber.Text.Trim()
+                        Name = name,
+                        PhoneNumber = phoneNumber
+                        // Username would typically be set if this member was also a User,
+                        // which is handled by RegistrationForm.
                     };
                     _memberService.AddMember(newMember);
                     LogActivity($"新會員 '{newMember.Name}' (ID: {newMember.Id}) 已成功新增。");
