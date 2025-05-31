@@ -210,9 +210,9 @@ namespace ComicRentalSystem_14Days.Forms
                                     }
                                 }
                             }
-                            if (firstVisibleColumnIndex != -1)
+    if (firstVisibleColumnIndex != -1 && dgvComics.Rows.Count > 0 && dgvComics.Rows[0].Cells.Count > firstVisibleColumnIndex)
                             {
-                                dgvComics.CurrentCell = dgvComics.Rows[0].Cells[firstVisibleColumnIndex];
+        dgvComics.CurrentCell = dgvComics.Rows[0].Cells[firstVisibleColumnIndex];
                             }
                             else // Fallback if no visible columns, though unlikely for a populated grid
                             {
