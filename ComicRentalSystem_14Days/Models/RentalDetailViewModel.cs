@@ -16,5 +16,6 @@ namespace ComicRentalSystem_14Days.Models
         // Rental Details
         public DateTime? RentalDate { get; set; }
         public DateTime? ExpectedReturnDate { get; set; }
+        public DateTime? ActualReturnTime { get; set; }
     }
 }

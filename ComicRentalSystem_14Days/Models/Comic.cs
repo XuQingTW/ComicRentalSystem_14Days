@@ -16,6 +16,7 @@ namespace ComicRentalSystem_14Days.Models
         public int RentedToMemberId { get; set; }
         public DateTime? RentalDate { get; set; } // Added
         public DateTime? ReturnDate { get; set; } // Added
+        public DateTime? ActualReturnTime { get; set; } // Added
 
         public Comic()
         {
@@ -25,6 +26,7 @@ namespace ComicRentalSystem_14Days.Models
             Genre = string.Empty;
             RentalDate = null; // Initialize
             ReturnDate = null; // Initialize
+            ActualReturnTime = null; // Initialize
         }
 
         // 將 Comic 物件轉換為 CSV 格式的一行字串
@@ -33,7 +35,8 @@ namespace ComicRentalSystem_14Days.Models
         {
             var rentalDateString = RentalDate?.ToString("yyyy-MM-ddTHH:mm:ss") ?? string.Empty;
             var returnDateString = ReturnDate?.ToString("yyyy-MM-ddTHH:mm:ss") ?? string.Empty;
-            return $"{Id},\"{Title?.Replace("\"", "\"\"")}\",\"{Author?.Replace("\"", "\"\"")}\",\"{Isbn?.Replace("\"", "\"\"")}\",\"{Genre?.Replace("\"", "\"\"")}\",{IsRented},{RentedToMemberId},{rentalDateString},{returnDateString}";
+            var actualReturnTimeString = ActualReturnTime?.ToString("yyyy-MM-ddTHH:mm:ss") ?? string.Empty;
+            return $"{Id},\"{Title?.Replace("\"", "\"\"")}\",\"{Author?.Replace("\"", "\"\"")}\",\"{Isbn?.Replace("\"", "\"\"")}\",\"{Genre?.Replace("\"", "\"\"")}\",{IsRented},{RentedToMemberId},{rentalDateString},{returnDateString},{actualReturnTimeString}";
         }
 
         // 從 CSV 格式的一行字串解析回 Comic 物件
@@ -41,10 +44,10 @@ namespace ComicRentalSystem_14Days.Models
         public static Comic FromCsvString(string csvLine)
         {
             List<string> values = ParseCsvLine(csvLine); // Use the new parser
-            // Expect at least 7 fields (original) or up to 9 fields (with new dates)
-            if (values.Count < 7)
+            // Expect at least 7 fields (original) or up to 10 fields (with new dates)
+            if (values.Count < 7) // Allows for 7 to 10 fields. Old data might have 7, newer up to 10.
             {
-                throw new FormatException("CSV line does not contain enough values for Comic. Line: " + csvLine);
+                throw new FormatException("CSV line does not contain enough values for Comic (minimum 7 expected). Line: " + csvLine);
             }
 
             Comic comic = new Comic();
@@ -92,6 +95,24 @@ namespace ComicRentalSystem_14Days.Models
                 else
                 {
                     comic.ReturnDate = null;
+                }
+
+                // Handle optional ActualReturnTime (field 10, index 9)
+                if (values.Count > 9 && !string.IsNullOrEmpty(values[9]))
+                {
+                    if (DateTime.TryParse(values[9], out DateTime actualReturnTime))
+                    {
+                        comic.ActualReturnTime = actualReturnTime;
+                    }
+                    else
+                    {
+                        // Optionally log or handle parsing error for ActualReturnTime
+                        comic.ActualReturnTime = null;
+                    }
+                }
+                else
+                {
+                    comic.ActualReturnTime = null;
                 }
             }
             catch (FormatException ex)

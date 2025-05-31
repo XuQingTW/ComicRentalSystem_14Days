@@ -66,7 +66,7 @@ namespace ComicRentalSystem_14Days.Forms
                         _memberService?.Reload(); // Added call to MemberService.Reload
                         await Task.CompletedTask;
                     },
-                    TimeSpan.FromSeconds(1)
+                    TimeSpan.FromSeconds(30)
                 );
 
                 if (cmbMembers.Items.Count == 0)
@@ -223,7 +223,8 @@ namespace ComicRentalSystem_14Days.Forms
                         ComicId = comic.Id,
                         ComicTitle = comic.Title,
                         RentalDate = comic.RentalDate,
-                        ExpectedReturnDate = comic.ReturnDate // Assuming Comic.ReturnDate stores the expected return date
+                        ExpectedReturnDate = comic.ReturnDate, // Assuming Comic.ReturnDate stores the expected return date
+                        ActualReturnTime = comic.ActualReturnTime
                     };
                 })
                 .ToList();
@@ -249,15 +250,15 @@ namespace ComicRentalSystem_14Days.Forms
         dgvRentedComics.Columns.Clear();
         dgvRentedComics.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
-        dgvRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = nameof(RentalDetailViewModel.MemberName), HeaderText = "會員姓名", FillWeight = 20 });
-        dgvRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = nameof(RentalDetailViewModel.MemberId), HeaderText = "會員ID", FillWeight = 10 });
-        dgvRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = nameof(RentalDetailViewModel.MemberPhoneNumber), HeaderText = "會員電話", FillWeight = 20 });
-        dgvRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = nameof(RentalDetailViewModel.ComicTitle), HeaderText = "租借書名", FillWeight = 25 });
+        dgvRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = nameof(RentalDetailViewModel.MemberName), HeaderText = "會員姓名", FillWeight = 18 }); // Adjusted
+        dgvRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = nameof(RentalDetailViewModel.MemberId), HeaderText = "會員ID", FillWeight = 9 }); // Adjusted
+        dgvRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = nameof(RentalDetailViewModel.MemberPhoneNumber), HeaderText = "會員電話", FillWeight = 18 }); // Adjusted
+        dgvRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = nameof(RentalDetailViewModel.ComicTitle), HeaderText = "租借書名", FillWeight = 20 }); // Adjusted
 
         var rentalDateColumn = new DataGridViewTextBoxColumn {
             DataPropertyName = nameof(RentalDetailViewModel.RentalDate),
             HeaderText = "租借日期",
-            FillWeight = 15
+            FillWeight = 12 // Adjusted
         };
         rentalDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
         dgvRentedComics.Columns.Add(rentalDateColumn);
@@ -265,10 +266,18 @@ namespace ComicRentalSystem_14Days.Forms
         var returnDateColumn = new DataGridViewTextBoxColumn {
             DataPropertyName = nameof(RentalDetailViewModel.ExpectedReturnDate),
             HeaderText = "預定歸還日",
-            FillWeight = 15
+            FillWeight = 12 // Adjusted
         };
         returnDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
         dgvRentedComics.Columns.Add(returnDateColumn);
+
+        var actualReturnTimeColumn = new DataGridViewTextBoxColumn { // New Column
+            DataPropertyName = nameof(RentalDetailViewModel.ActualReturnTime),
+            HeaderText = "實際歸還時間",
+            FillWeight = 11 // Adjusted
+        };
+        actualReturnTimeColumn.DefaultCellStyle.Format = "yyyy-MM-dd HH:mm:ss";
+        dgvRentedComics.Columns.Add(actualReturnTimeColumn);
 
         // Keep existing properties
         dgvRentedComics.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
@@ -366,13 +375,36 @@ namespace ComicRentalSystem_14Days.Forms
 
     private void btnReturn_Click(object sender, EventArgs e)
     {
+        LogActivity($"dgvRentedComics.SelectedRows.Count: {dgvRentedComics.SelectedRows.Count}");
+        if (dgvRentedComics.SelectedRows.Count > 0)
+        {
+            RentalDetailViewModel? selectedRentalDetailForDebug = dgvRentedComics.SelectedRows[0].DataBoundItem as RentalDetailViewModel;
+            if (selectedRentalDetailForDebug != null)
+            {
+                LogActivity($"DEBUG: SelectedRows[0] - ComicId: {selectedRentalDetailForDebug.ComicId}, Title: {selectedRentalDetailForDebug.ComicTitle}");
+            }
+            else
+            {
+                LogActivity("DEBUG: SelectedRows[0].DataBoundItem is null or not a RentalDetailViewModel.");
+            }
+
+            for (int i = 0; i < dgvRentedComics.SelectedRows.Count; i++)
+            {
+                RentalDetailViewModel? rowDetail = dgvRentedComics.SelectedRows[i].DataBoundItem as RentalDetailViewModel;
+                if (rowDetail != null)
+                {
+                    LogActivity($"DEBUG: SelectedRows[{i}] - ComicId: {rowDetail.ComicId}, Title: {rowDetail.ComicTitle}");
+                }
+            }
+        }
+
         // ... (initial checks for services)
         if (_comicService == null || _memberService == null)
         {
             MessageBox.Show("服務未初始化，無法執行操作。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
-        LogActivity("Return button clicked.");
+        LogActivity("Return button clicked."); // This log is now after the debug logs, which is fine.
 
         if (dgvRentedComics.SelectedRows.Count == 0)
         {
@@ -425,8 +457,9 @@ namespace ComicRentalSystem_14Days.Forms
             int previouslyRentedByMemberId = comicFromService.RentedToMemberId; // This is the actual renter.
             comicFromService.IsRented = false;
             comicFromService.RentedToMemberId = 0;
-            comicFromService.RentalDate = null; // Clear rental dates on return
-            comicFromService.ReturnDate = null;
+            // comicFromService.RentalDate = null; // Retain original rental date
+            // comicFromService.ReturnDate = null; // Retain expected return date (if it represents that)
+            comicFromService.ActualReturnTime = dtpActualReturnTime.Value; // Set the actual return time from DateTimePicker
             _comicService?.UpdateComic(comicFromService);
 
             Member? returningMember = _memberService?.GetMemberById(previouslyRentedByMemberId);
