@@ -162,6 +162,20 @@ namespace ComicRentalSystem_14Days
                 {
                     _logger.LogWarning("使用者註冊ToolStripMenuItem not found in menuStrip2.");
                 }
+
+                // Ensure Rental Management is accessible to all logged-in users
+                var rentalMgmtItem = menuStrip.Items.OfType<ToolStripMenuItem>()
+                                                   .FirstOrDefault(item => item.Name == "rentalManagementToolStripMenuItem");
+                if (rentalMgmtItem != null)
+                {
+                    rentalMgmtItem.Visible = true;
+                    rentalMgmtItem.Enabled = true;
+                    _logger.Log("Ensured rentalManagementToolStripMenuItem is visible and enabled for the current user.");
+                }
+                else
+                {
+                    _logger.LogWarning("rentalManagementToolStripMenuItem not found in menuStrip2.");
+                }
             }
             else
             {
@@ -238,15 +252,15 @@ namespace ComicRentalSystem_14Days
             this._logger?.Log("使用者註冊ToolStripMenuItem clicked.");
             if (_currentUser.Role == UserRole.Admin)
             {
-                if (this._logger != null && Program.AppAuthService != null)
+                if (this._logger != null && Program.AppAuthService != null && this._memberService != null)
                 {
-                    var regForm = new ComicRentalSystem_14Days.Forms.RegistrationForm(this._logger, Program.AppAuthService);
+                    var regForm = new ComicRentalSystem_14Days.Forms.RegistrationForm(this._logger, Program.AppAuthService, this._memberService);
                     regForm.ShowDialog(this);
                 }
                 else
                 {
-                    MessageBox.Show("Logger 或 AuthenticationService 未初始化，無法開啟使用者註冊。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    this._logger?.LogError("RegistrationForm could not be opened due to null logger or AppAuthService.");
+                    MessageBox.Show("Logger, AuthenticationService, 或 MemberService 未初始化，無法開啟使用者註冊。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    this._logger?.LogError("RegistrationForm could not be opened due to null logger, AppAuthService, or _memberService.");
                 }
             }
             else

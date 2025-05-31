@@ -31,6 +31,16 @@ namespace ComicRentalSystem_14Days.Forms
 
             // Set password char
             txtPassword.PasswordChar = '*';
+
+            // Attach event handler for btnRegister
+            this.btnRegister.Click += new System.EventHandler(this.btnRegister_Click);
+        }
+
+        private void btnRegister_Click(object? sender, EventArgs e)
+        {
+            _logger.Log("Register button clicked.");
+            RegistrationForm regForm = new RegistrationForm(_logger, _authService, _memberService);
+            regForm.ShowDialog(this);
         }
 
         private void btnLogin_Click(object sender, EventArgs e)
