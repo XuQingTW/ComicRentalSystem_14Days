@@ -203,7 +203,7 @@
             this.gbComicDetails.PerformLayout();
             this.gbStatus.ResumeLayout(false);
             this.gbStatus.PerformLayout();
-            this.ResumeLayout(false);
+            this.ResumeLayout(false));
         }
 
         #endregion
@@ -221,5 +221,5 @@
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.GroupBox gbComicDetails;
         private System.Windows.Forms.GroupBox gbStatus;
-    }
+    });
 }
