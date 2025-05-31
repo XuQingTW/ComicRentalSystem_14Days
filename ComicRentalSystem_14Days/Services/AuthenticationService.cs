@@ -130,7 +130,6 @@ namespace ComicRentalSystem_14Days.Services
                 _logger.LogError($"Critical: Unexpected error loading backup users file '{backupFilePath}': {ex.Message}. Initializing empty user list.", ex);
                 return new List<User>(); // Both main and backup are bad.
             }
-            return user;
         }
 
         public List<User> GetAllUsers()
