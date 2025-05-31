@@ -12,6 +12,7 @@ namespace ComicRentalSystem_14Days.Forms
     {
         private MemberService? _memberService;
         private AuthenticationService? _authenticationService; // Added AuthenticationService
+        private readonly ComicService? _comicService;
         private readonly User? _currentUser;
 
         // Conceptual private fields for new controls (designer would add these)
@@ -24,19 +25,20 @@ namespace ComicRentalSystem_14Days.Forms
             InitializeComponent();
         }
 
-        // Updated constructor to include AuthenticationService
-        public MemberManagementForm(ILogger logger, MemberService memberService, AuthenticationService authenticationService, User? currentUser) : base(logger)
+        // Updated constructor to include AuthenticationService and ComicService
+        public MemberManagementForm(ILogger logger, MemberService memberService, AuthenticationService authenticationService, ComicService comicService, User? currentUser) : base(logger)
         {
             InitializeComponent();
             _memberService = memberService ?? throw new ArgumentNullException(nameof(memberService));
             _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
+            _comicService = comicService ?? throw new ArgumentNullException(nameof(comicService));
             _currentUser = currentUser;
-            LogActivity("MemberManagementForm initializing with MemberService and AuthenticationService.");
+            LogActivity("MemberManagementForm initializing with MemberService, AuthenticationService, and ComicService.");
         }
 
         private void MemberManagementForm_Load(object sender, EventArgs e)
         {
-            if (this.DesignMode || Logger == null || _memberService == null || _authenticationService == null) // Added null check for _authenticationService
+            if (this.DesignMode || Logger == null || _memberService == null || _authenticationService == null || _comicService == null) // Added null check for _authenticationService and _comicService
             {
                 return;
             }
@@ -60,6 +62,13 @@ namespace ComicRentalSystem_14Days.Forms
 
             SetupDataGridView(); // Already called in constructor
             LoadMembersData(); // Already called in constructor
+
+            // Conceptual: Wire up btnChangeUserRole_Click. Assuming a button named btnChangeUserRole exists.
+            Control? btnChangeRoleCtrl = this.Controls.Find("btnChangeUserRole", true).FirstOrDefault();
+            if (btnChangeRoleCtrl is Button btnChangeRole)
+            {
+                btnChangeRole.Click += new System.EventHandler(this.btnChangeUserRole_Click);
+            }
             LogActivity("MemberManagementForm initialized successfully.");
         }
 
@@ -122,14 +131,33 @@ namespace ComicRentalSystem_14Days.Forms
                 {
                     members = _memberService.SearchMembers(searchTerm);
                 }
-                dgvMembers.DataSource = null;
-                dgvMembers.DataSource = members;
+
+                Action updateGrid = () => {
+                    dgvMembers.DataSource = null;
+                    dgvMembers.DataSource = members;
+                };
+
+                if (dgvMembers.IsHandleCreated && !dgvMembers.IsDisposed)
+                {
+                    if (dgvMembers.InvokeRequired)
+                    {
+                        dgvMembers.Invoke(updateGrid);
+                    }
+                    else
+                    {
+                        updateGrid();
+                    }
+                }
                 LogActivity($"Successfully loaded {members.Count} members into DataGridView with search term '{searchTerm}'.");
             }
             catch (Exception ex)
             {
                 LogErrorActivity($"Error loading members data with search term '{searchTerm}'.", ex);
-                MessageBox.Show($"載入會員資料時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Action showError = () => MessageBox.Show($"載入會員資料時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (this.IsHandleCreated && !this.IsDisposed)
+                {
+                    if (this.InvokeRequired) { this.Invoke(showError); } else { showError(); }
+                }
             }
         }
 
@@ -150,10 +178,21 @@ namespace ComicRentalSystem_14Days.Forms
             LoadMembersData();
         }
 
-        private void btnRefreshMembers_Click(object sender, EventArgs e)
+        private async void btnRefreshMembers_Click(object sender, EventArgs e) // Made async void
         {
-            LogActivity("Refresh Members button clicked.");
-            LoadMembersData();
+            if (_memberService == null) return;
+            LogActivity("Refresh Members button clicked. Will reload members from file asynchronously.");
+            try
+            {
+                await _memberService.ReloadAsync(); // Call async version
+                // The MembersChanged event handler (MemberService_MembersChanged)
+                // already calls LoadMembersData(), so no explicit call needed here.
+            }
+            catch (Exception ex)
+            {
+                LogErrorActivity("Error refreshing members data from file.", ex);
+                MessageBox.Show($"重新載入會員資料時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void btnAddMember_Click(object sender, EventArgs e)
@@ -224,7 +263,29 @@ namespace ComicRentalSystem_14Days.Forms
                 Member? selectedMember = dgvMembers.SelectedRows[0].DataBoundItem as Member;
                 if (selectedMember != null)
                 {
-                    LogActivity($"Attempting to delete member ID: {selectedMember.Id}, Name: '{selectedMember.Name}'. Showing confirmation dialog.");
+                    LogActivity($"Attempting to delete member ID: {selectedMember.Id}, Name: '{selectedMember.Name}'.");
+
+                    // Check for active rentals
+                    if (_comicService != null)
+                    {
+                        bool hasActiveRentals = _comicService.GetAllComics().Any(c => c.IsRented && c.RentedToMemberId == selectedMember.Id);
+                        if (hasActiveRentals)
+                        {
+                            MessageBox.Show($"會員 '{selectedMember.Name}' (ID: {selectedMember.Id}) 尚有未歸還的漫畫，無法刪除。", "刪除錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            LogActivity($"Attempt to delete member ID: {selectedMember.Id} failed: Member has active rentals.");
+                            return; // Abort deletion
+                        }
+                    }
+                    else
+                    {
+                        // This case should ideally not happen if constructor enforces non-null _comicService
+                        MessageBox.Show("無法檢查會員租借狀態，漫畫服務未初始化。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        LogErrorActivity("Could not check member rental status: _comicService is null.");
+                        return; // Abort deletion
+                    }
+
+                    // If no active rentals, proceed with the existing confirmation dialog
+                    LogActivity($"No active rentals for member ID: {selectedMember.Id}. Showing confirmation dialog for deletion.");
                     var confirmResult = MessageBox.Show($"您確定要刪除會員 '{selectedMember.Name}' (ID: {selectedMember.Id}) 嗎？\n此操作無法復原。",
                                                  "確認刪除", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                     if (confirmResult == DialogResult.Yes)
@@ -292,6 +353,46 @@ namespace ComicRentalSystem_14Days.Forms
             {
                 LogActivity($"DataGridView (Members) cell double-clicked at row {e.RowIndex}. Triggering edit action.");
                 btnEditMember_Click(sender, e);
+            }
+        }
+
+        private void btnChangeUserRole_Click(object? sender, EventArgs e)
+        {
+            if (dgvMembers.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select a member.", "No Member Selected", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            if (_authenticationService == null || Logger == null) // Logger comes from BaseForm
+            {
+                 MessageBox.Show("Required services not available.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                 LogErrorActivity("ChangeUserRole button clicked but AuthenticationService or Logger is null.");
+                 return;
+            }
+
+            Member? selectedMember = dgvMembers.SelectedRows[0].DataBoundItem as Member;
+            if (selectedMember == null || string.IsNullOrEmpty(selectedMember.Username))
+            {
+                MessageBox.Show("Selected member has no associated username or data is invalid.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                LogErrorActivity("Selected member for role change has no username or is invalid.");
+                return;
+            }
+
+            User? userToEdit = _authenticationService.GetUserByUsername(selectedMember.Username);
+            if (userToEdit == null)
+            {
+                MessageBox.Show($"User account for '{selectedMember.Username}' not found.", "User Not Found", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                LogErrorActivity($"User account for member '{selectedMember.Name}' (username: {selectedMember.Username}) not found for role change.");
+                return;
+            }
+
+            LogActivity($"Opening ChangeUserRoleForm for member '{selectedMember.Name}', user '{userToEdit.Username}'.");
+            using (ChangeUserRoleForm changeRoleForm = new ChangeUserRoleForm(userToEdit, _authenticationService, Logger))
+            {
+                changeRoleForm.ShowDialog(this);
+                // No specific refresh needed here for dgvMembers as role is not displayed.
+                // The user object in _authenticationService._users list is modified by reference,
+                // and SaveUsers() in ChangeUserRoleForm persists this.
             }
         }
     }

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO; // Added for IOException
 using System.Linq;
+using System.Threading.Tasks; // Added for Task
 using System.Windows.Forms; // Added for MessageBox
 
 namespace ComicRentalSystem_14Days.Services
@@ -29,36 +30,84 @@ namespace ComicRentalSystem_14Days.Services
 
             _logger.Log("MemberService 初始化中。");
 
-            LoadMembers();
+            LoadMembersFromFile(); // Renamed from LoadMembers
             _logger.Log($"MemberService 初始化完成。已載入 {_members.Count} 位會員。");
         }
 
-        public void Reload()
+        public async Task ReloadAsync() // Changed from Reload to ReloadAsync
         {
-            _logger.Log("已在 MemberService 上呼叫 Reload。");
-            LoadMembers();
+            _logger.Log("已在 MemberService 上呼叫 ReloadAsync。");
+            _members = await LoadMembersAsync();
             OnMembersChanged();
+            _logger.Log($"MemberService async reloaded. {_members.Count} members loaded.");
         }
 
-        private void LoadMembers()
+        private void LoadMembersFromFile() // Renamed from LoadMembers
         {
-            _logger.Log($"正在嘗試從檔案載入會員: '{_memberFileName}'。");
+            _logger.Log($"正在嘗試從檔案載入會員 (同步): '{_memberFileName}'。");
             try
             {
                 _members = _fileHelper.ReadFile<Member>(_memberFileName, Member.FromCsvString);
-                _logger.Log($"成功從 '{_memberFileName}' 載入 {_members.Count} 位會員。");
+                _logger.Log($"成功從 '{_memberFileName}' (同步) 載入 {_members.Count} 位會員。");
             }
             catch (Exception ex) when (ex is FormatException || ex is IOException)
             {
-                _logger.LogError($"嚴重錯誤: 會員資料檔案 '{_memberFileName}' 已損壞或無法讀取。詳細資訊: {ex.Message}", ex);
-                // MessageBox.Show($"會員資料檔案已損壞或無法讀取，無法載入會員資料庫。應用程式相關功能可能無法正常運作。\n錯誤詳情: {ex.Message}\n檔案路徑: {_memberFileName}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                throw new ApplicationException($"無法從 '{_memberFileName}' 載入會員資料。應用程式可能無法正常運作。", ex);
+                _logger.LogError($"嚴重錯誤: 會員資料檔案 '{_memberFileName}' (同步) 已損壞或無法讀取。詳細資訊: {ex.Message}", ex);
+                throw new ApplicationException($"無法從 '{_memberFileName}' (同步) 載入會員資料。應用程式可能無法正常運作。", ex);
             }
             catch (Exception ex)
             {
-                _logger.LogError($"從 {_memberFileName} 載入會員時發生未預期的錯誤。詳細資訊: {ex.Message}", ex);
-                // MessageBox.Show($"載入會員資料時發生未預期的錯誤。應用程式相關功能可能無法正常運作。\n錯誤詳情: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                throw new ApplicationException("載入會員資料期間發生未預期錯誤。", ex);
+                _logger.LogError($"從 '{_memberFileName}' (同步) 載入會員時發生未預期的錯誤。詳細資訊: {ex.Message}", ex);
+                throw new ApplicationException("載入會員資料期間 (同步) 發生未預期錯誤。", ex);
+            }
+        }
+
+        private async Task<List<Member>> LoadMembersAsync()
+        {
+            _logger.Log($"正在嘗試從檔案非同步載入會員: '{_memberFileName}'。");
+            try
+            {
+                string csvData = await _fileHelper.ReadFileAsync(_memberFileName);
+                if (string.IsNullOrWhiteSpace(csvData))
+                {
+                    _logger.LogWarning($"會員檔案 '{_memberFileName}' (非同步) 為空或找不到。");
+                    return new List<Member>();
+                }
+
+                var membersList = new List<Member>();
+                var lines = csvData.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+                // Skip header line if present
+                foreach (var line in lines.Skip(1))
+                {
+                    if (string.IsNullOrWhiteSpace(line)) continue;
+                    try
+                    {
+                        membersList.Add(Member.FromCsvString(line));
+                    }
+                    catch (FormatException formatEx)
+                    {
+                        _logger.LogError($"解析會員 CSV 行失敗 (非同步): '{line}'. 錯誤: {formatEx.Message}", formatEx);
+                        // Decide whether to skip or stop
+                    }
+                }
+                _logger.Log($"成功從 '{_memberFileName}' (非同步) 載入並解析 {membersList.Count} 位會員。");
+                return membersList;
+            }
+            catch (FileNotFoundException)
+            {
+                _logger.LogWarning($"會員檔案 '{_memberFileName}' (非同步) 找不到。返回空列表。");
+                return new List<Member>();
+            }
+            catch (IOException ioEx)
+            {
+                _logger.LogError($"讀取會員檔案 '{_memberFileName}' (非同步) 時發生IO錯誤: {ioEx.Message}", ioEx);
+                return new List<Member>(); // Or rethrow
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"從 '{_memberFileName}' (非同步) 載入會員時發生未預期的錯誤: {ex.Message}", ex);
+                return new List<Member>(); // Or rethrow
             }
         }
 

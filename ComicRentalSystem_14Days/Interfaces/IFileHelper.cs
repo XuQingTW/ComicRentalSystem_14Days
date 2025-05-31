@@ -11,5 +11,13 @@ namespace ComicRentalSystem_14Days.Interfaces
         void WriteFile<T>(string fileName, IEnumerable<T> items, Func<T, string> formatter); // For ComicService, MemberService
         string GetFullFilePath(string fileName); // Utility, might be useful for mock setup or internal use
         // bool Exists(string fileName); // Potentially useful, but not strictly needed by current services directly
+
+        Task<string> ReadFileAsync(string filePath);
+        Task WriteFileAsync(string filePath, string content);
+
+        bool FileExists(string filePath);
+        void DeleteFile(string filePath);
+        void MoveFile(string sourcePath, string destinationPath);
+        void CopyFile(string sourcePath, string destinationPath, bool overwrite);
     }
 }

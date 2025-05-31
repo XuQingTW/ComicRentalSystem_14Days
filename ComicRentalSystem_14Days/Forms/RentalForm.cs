@@ -59,12 +59,12 @@ namespace ComicRentalSystem_14Days.Forms
                 LoadRentalDetails(); // Updated call
 
                 _reloadService?.Start(
-                    async () =>
+                    async () => // Lambda is now async Task
                     {
-                        LogActivity("自動重新載入資料開始");
-                        _comicService?.Reload();
-                        _memberService?.Reload(); // Added call to MemberService.Reload
-                        await Task.CompletedTask;
+                        LogActivity("自動重新載入資料開始 (非同步)");
+                        if (_comicService != null) await _comicService.ReloadAsync(); // Await the async reload
+                        if (_memberService != null) await _memberService.ReloadAsync(); // Await the async reload
+                        LogActivity("自動重新載入資料完成 (非同步)");
                     },
                     TimeSpan.FromSeconds(30)
                 );
