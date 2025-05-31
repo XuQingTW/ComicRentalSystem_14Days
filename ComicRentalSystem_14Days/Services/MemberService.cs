@@ -4,13 +4,15 @@ using ComicRentalSystem_14Days.Interfaces;
 using ComicRentalSystem_14Days.Models;
 using System;
 using System.Collections.Generic;
+using System.IO; // Added for IOException
 using System.Linq;
+using System.Windows.Forms; // Added for MessageBox
 
 namespace ComicRentalSystem_14Days.Services
 {
     public class MemberService
     {
-        private readonly FileHelper _fileHelper;
+        private readonly IFileHelper _fileHelper; // Changed to IFileHelper
         private readonly string _memberFileName = "members.csv";
         private List<Member> _members = new List<Member> { };
         private readonly ILogger _logger;
@@ -18,14 +20,12 @@ namespace ComicRentalSystem_14Days.Services
         public delegate void MemberDataChangedEventHandler(object? sender, EventArgs e);
         public event MemberDataChangedEventHandler? MembersChanged;
 
-        public MemberService(FileHelper fileHelper, ILogger? logger)
+        public MemberService(IFileHelper fileHelper, ILogger? logger) // Changed parameter to IFileHelper
         {
             _fileHelper = fileHelper ?? throw new ArgumentNullException(nameof(fileHelper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger), "Logger cannot be null for MemberService.");
 
-            #pragma warning disable CS8602 
             _logger.Log("MemberService initializing."); 
-            #pragma warning restore CS8602 
 
             LoadMembers();
             _logger.Log($"MemberService initialized. Loaded {_members.Count} members.");
@@ -46,10 +46,17 @@ namespace ComicRentalSystem_14Days.Services
                 _members = _fileHelper.ReadFile<Member>(_memberFileName, Member.FromCsvString);
                 _logger.Log($"Successfully loaded {_members.Count} members from '{_memberFileName}'.");
             }
+            catch (Exception ex) when (ex is FormatException || ex is IOException)
+            {
+                _logger.LogError($"Critical error: Member data file '{_memberFileName}' is corrupted or unreadable. Details: {ex.Message}", ex);
+                MessageBox.Show($"會員資料檔案已損壞或無法讀取，無法載入會員資料庫。應用程式相關功能可能無法正常運作。\n錯誤詳情: {ex.Message}\n檔案路徑: {_memberFileName}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw new ApplicationException($"Failed to load member data from '{_memberFileName}'. Application may not function correctly.", ex);
+            }
             catch (Exception ex)
             {
-                _logger.LogError($"Error loading members from '{_memberFileName}'. Initializing with an empty list.", ex);
-                _members = new List<Member>();
+                _logger.LogError($"An unexpected error occurred while loading members from {_memberFileName}. Details: {ex.Message}", ex);
+                MessageBox.Show($"載入會員資料時發生未預期的錯誤。應用程式相關功能可能無法正常運作。\n錯誤詳情: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw new ApplicationException("Unexpected error during member data loading.", ex);
             }
         }
 

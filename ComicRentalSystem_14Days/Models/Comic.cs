@@ -64,11 +64,12 @@ namespace ComicRentalSystem_14Days.Models
             return comic;
         }
 
-        private static List<string> ParseCsvLine(string csvLine)
+        internal static List<string> ParseCsvLine(string csvLine) // Changed private to internal for testing
         {
             List<string> fields = new List<string>();
             StringBuilder fieldBuilder = new StringBuilder();
             bool inQuotes = false;
+            bool currentFieldWasQuoted = false; // Added flag
             for (int i = 0; i < csvLine.Length; i++)
             {
                 char c = csvLine[i];
@@ -104,9 +105,10 @@ namespace ComicRentalSystem_14Days.Models
                         // This could be a quote within an unquoted field or malformed.
                         // For this parser, we'll treat a quote not at the start of a field (after a comma or line start)
                         // as a literal character if not in `inQuotes` mode.
-                        if (fieldBuilder.Length == 0)
+                        if (fieldBuilder.Length == 0) // Quote is at the start of a new field
                         {
                             inQuotes = true;
+                            currentFieldWasQuoted = true; // Mark field as quoted
                         }
                         else
                         {
@@ -117,8 +119,16 @@ namespace ComicRentalSystem_14Days.Models
                     }
                     else if (c == ',')
                     {
-                        fields.Add(fieldBuilder.ToString().Trim()); // Trim whitespace for unquoted fields or already processed quoted fields
+                        if (currentFieldWasQuoted)
+                        {
+                            fields.Add(fieldBuilder.ToString()); // Add as is if quoted
+                        }
+                        else
+                        {
+                            fields.Add(fieldBuilder.ToString().Trim()); // Trim if not quoted
+                        }
                         fieldBuilder.Clear();
+                        currentFieldWasQuoted = false; // Reset for next field
                     }
                     else
                     {
@@ -131,7 +141,14 @@ namespace ComicRentalSystem_14Days.Models
             // Any internal quotes (escaped) are preserved correctly.
             // External whitespace around a quoted field (e.g., " value " ,) should also be trimmed before adding.
             // The .Trim() here handles whitespace for the last field, whether it was quoted or not.
-            fields.Add(fieldBuilder.ToString().Trim());
+            if (currentFieldWasQuoted)
+            {
+                fields.Add(fieldBuilder.ToString()); // Add as is if quoted
+            }
+            else
+            {
+                fields.Add(fieldBuilder.ToString().Trim()); // Trim if not quoted
+            }
 
             // Post-processing: The current parser aims to remove structural quotes.
             // No explicit Trim('"') should be necessary if the logic is correct.

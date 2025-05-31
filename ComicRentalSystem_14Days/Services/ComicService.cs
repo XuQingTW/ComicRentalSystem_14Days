@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO; // Added for IOException
 using System.Linq;
+using System.Windows.Forms; // Added for MessageBox
 using ComicRentalSystem_14Days.Helpers;
 using ComicRentalSystem_14Days.Interfaces;
 using ComicRentalSystem_14Days.Models;
@@ -9,7 +11,7 @@ namespace ComicRentalSystem_14Days.Services
 {
     public class ComicService
     {
-        private readonly FileHelper _fileHelper;
+        private readonly IFileHelper _fileHelper; // Changed to IFileHelper
         private readonly string _comicFileName = "comics.csv";
         private List<Comic> _comics = new List<Comic>();
         private readonly ILogger _logger;
@@ -23,7 +25,7 @@ namespace ComicRentalSystem_14Days.Services
             OnComicsChanged();
         }
 
-        public ComicService(FileHelper fileHelper, ILogger? logger)
+        public ComicService(IFileHelper fileHelper, ILogger? logger) // Changed parameter to IFileHelper
         {
             _fileHelper = fileHelper ?? throw new ArgumentNullException(nameof(fileHelper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger), "Logger cannot be null for ComicService.");
@@ -42,10 +44,17 @@ namespace ComicRentalSystem_14Days.Services
                 _comics = _fileHelper.ReadFile<Comic>(_comicFileName, Comic.FromCsvString);
                 _logger.Log($"Successfully loaded {_comics.Count} comics from '{_comicFileName}'.");
             }
+            catch (Exception ex) when (ex is FormatException || ex is IOException)
+            {
+                _logger.LogError($"Critical error: Comic data file '{_comicFileName}' is corrupted or unreadable. Details: {ex.Message}", ex);
+                MessageBox.Show($"漫畫資料檔案已損壞或無法讀取，無法載入漫畫資料庫。應用程式相關功能可能無法正常運作。\n錯誤詳情: {ex.Message}\n檔案路徑: {_comicFileName}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw new ApplicationException($"Failed to load comic data from '{_comicFileName}'. Application may not function correctly.", ex);
+            }
             catch (Exception ex)
             {
-                _logger.LogError($"Error loading comics from '{_comicFileName}'. Initializing with an empty list.", ex);
-                _comics = new List<Comic>();
+                _logger.LogError($"An unexpected error occurred while loading comics from {_comicFileName}. Details: {ex.Message}", ex);
+                MessageBox.Show($"載入漫畫資料時發生未預期的錯誤。應用程式相關功能可能無法正常運作。\n錯誤詳情: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw new ApplicationException("Unexpected error during comic data loading.", ex);
             }
         }
 

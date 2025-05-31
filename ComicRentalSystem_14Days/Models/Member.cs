@@ -57,11 +57,12 @@ namespace ComicRentalSystem_14Days.Models
         // Helper method to parse a CSV line, handling quoted fields and escaped quotes.
         // This method is identical to the one in Comic.cs.
         // Consider refactoring to a shared utility class if more models need this.
-        private static List<string> ParseCsvLine(string csvLine)
+        internal static List<string> ParseCsvLine(string csvLine) // Changed private to internal for testing
         {
             List<string> fields = new List<string>();
             StringBuilder fieldBuilder = new StringBuilder();
             bool inQuotes = false;
+            bool currentFieldWasQuoted = false; // Added flag
             for (int i = 0; i < csvLine.Length; i++)
             {
                 char c = csvLine[i];
@@ -94,9 +95,10 @@ namespace ComicRentalSystem_14Days.Models
                         // This could be a quote within an unquoted field or malformed.
                         // For this parser, we'll treat a quote not at the start of a field (after a comma or line start)
                         // as a literal character if not in `inQuotes` mode.
-                        if (fieldBuilder.Length == 0)
+                        if (fieldBuilder.Length == 0) // Quote is at the start of a new field
                         {
                             inQuotes = true;
+                            currentFieldWasQuoted = true; // Mark field as quoted
                         }
                         else
                         {
@@ -106,8 +108,16 @@ namespace ComicRentalSystem_14Days.Models
                     }
                     else if (c == ',')
                     {
-                        fields.Add(fieldBuilder.ToString().Trim());
+                        if (currentFieldWasQuoted)
+                        {
+                            fields.Add(fieldBuilder.ToString()); // Add as is if quoted
+                        }
+                        else
+                        {
+                            fields.Add(fieldBuilder.ToString().Trim()); // Trim if not quoted
+                        }
                         fieldBuilder.Clear();
+                        currentFieldWasQuoted = false; // Reset for next field
                     }
                     else
                     {
@@ -115,7 +125,15 @@ namespace ComicRentalSystem_14Days.Models
                     }
                 }
             }
-            fields.Add(fieldBuilder.ToString().Trim()); // Add the last field
+            // Add the last field
+            if (currentFieldWasQuoted)
+            {
+                fields.Add(fieldBuilder.ToString()); // Add as is if quoted
+            }
+            else
+            {
+                fields.Add(fieldBuilder.ToString().Trim()); // Trim if not quoted
+            }
             return fields;
         }
     }
