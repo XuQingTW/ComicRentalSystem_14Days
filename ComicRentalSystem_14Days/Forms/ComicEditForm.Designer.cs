@@ -222,5 +222,5 @@
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.GroupBox gbComicDetails;
         private System.Windows.Forms.GroupBox gbStatus;
-    }
+    });
 }
