@@ -23,6 +23,14 @@ namespace ComicRentalSystem_14Days
         public MainForm() : base() // Parameterless constructor for Windows Forms designer
         {
             InitializeComponent();
+            // Initialize fields to null! for the designer context or if not properly initialized.
+            // This addresses CS8618 for these fields in the parameterless constructor.
+            _currentUser = null!;
+            _comicService = null!;
+            _memberService = null!;
+            _reloadService = null!;
+            _logger = null!; // BaseForm's logger might be initialized if BaseForm() handles it.
+
             if (this.DesignMode)
             {
                 // this.Text = "MainForm (設計模式)";
@@ -115,39 +123,73 @@ namespace ComicRentalSystem_14Days
             bool isAdmin = _currentUser.Role == UserRole.Admin;
             this._logger.Log($"Setting up UI controls. User is Admin: {isAdmin}");
 
-            var comicMgmtItem = this.Controls.Find("漫畫管理ToolStripMenuItem", true).FirstOrDefault() as ToolStripMenuItem;
-            if (comicMgmtItem != null)
+            // Corrected MenuStrip control name to 'menuStrip2' as per subtask instructions.
+            var menuStrip = this.Controls.Find("menuStrip2", true).FirstOrDefault() as MenuStrip;
+            if (menuStrip != null)
             {
-                comicMgmtItem.Visible = isAdmin;
-                comicMgmtItem.Enabled = isAdmin;
-            }
+                var comicMgmtItem = menuStrip.Items.OfType<ToolStripMenuItem>()
+                                                 .FirstOrDefault(item => item.Name == "漫畫管理ToolStripMenuItem");
+                if (comicMgmtItem != null)
+                {
+                    comicMgmtItem.Visible = isAdmin;
+                    comicMgmtItem.Enabled = isAdmin;
+                }
+                else
+                {
+                    _logger.LogWarning("漫畫管理ToolStripMenuItem not found in menuStrip2.");
+                }
 
-            var memberMgmtItem = this.Controls.Find("會員管理ToolStripMenuItem", true).FirstOrDefault() as ToolStripMenuItem;
-            if (memberMgmtItem != null)
-            {
-                memberMgmtItem.Visible = isAdmin;
-                memberMgmtItem.Enabled = isAdmin;
-            }
+                var memberMgmtItem = menuStrip.Items.OfType<ToolStripMenuItem>()
+                                                  .FirstOrDefault(item => item.Name == "會員管理ToolStripMenuItem");
+                if (memberMgmtItem != null)
+                {
+                    memberMgmtItem.Visible = isAdmin;
+                    memberMgmtItem.Enabled = isAdmin;
+                }
+                else
+                {
+                    _logger.LogWarning("會員管理ToolStripMenuItem not found in menuStrip2.");
+                }
 
-            var userRegItem = this.Controls.Find("使用者註冊ToolStripMenuItem", true).FirstOrDefault() as ToolStripMenuItem;
-            if (userRegItem != null)
+                var userRegItem = menuStrip.Items.OfType<ToolStripMenuItem>()
+                                                 .FirstOrDefault(item => item.Name == "使用者註冊ToolStripMenuItem");
+                if (userRegItem != null)
+                {
+                    userRegItem.Visible = isAdmin;
+                    userRegItem.Enabled = isAdmin;
+                }
+                else
+                {
+                    _logger.LogWarning("使用者註冊ToolStripMenuItem not found in menuStrip2.");
+                }
+            }
+            else
             {
-                userRegItem.Visible = isAdmin;
-                userRegItem.Enabled = isAdmin;
+                _logger.LogWarning("MenuStrip control 'menuStrip2' not found on the form.");
             }
         }
 
         private void UpdateStatusBar()
         {
-            var statusLabel = this.Controls.Find("toolStripStatusLabelUser", true).FirstOrDefault() as ToolStripStatusLabel;
-            if (statusLabel != null)
+            // Assuming the StatusStrip control is named 'statusStrip1'. This should be verified from MainForm.Designer.cs.
+            var statusStrip = this.Controls.Find("statusStrip1", true).FirstOrDefault() as StatusStrip;
+            if (statusStrip != null)
             {
-                statusLabel.Text = $"使用者: {_currentUser.Username} | 角色: {_currentUser.Role}";
-                this._logger.Log($"Status bar updated: User: {_currentUser.Username}, Role: {_currentUser.Role}");
+                var statusLabel = statusStrip.Items.OfType<ToolStripStatusLabel>()
+                                           .FirstOrDefault(item => item.Name == "toolStripStatusLabelUser");
+                if (statusLabel != null)
+                {
+                    statusLabel.Text = $"使用者: {_currentUser.Username} | 角色: {_currentUser.Role}";
+                    this._logger.Log($"Status bar updated: User: {_currentUser.Username}, Role: {_currentUser.Role}");
+                }
+                else
+                {
+                    this._logger.LogWarning("ToolStripStatusLabel 'toolStripStatusLabelUser' not found in statusStrip1.");
+                }
             }
             else
             {
-                this._logger.Log("toolStripStatusLabelUser not found. Cannot update status bar.");
+                this._logger.LogWarning("StatusStrip control 'statusStrip1' not found on the form.");
             }
         }
 

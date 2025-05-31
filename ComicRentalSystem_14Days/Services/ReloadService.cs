@@ -36,7 +36,7 @@ namespace ComicRentalSystem_14Days.Services
                         catch (OperationCanceledException)
                         {
                         }
-                        catch (Exception ex)
+                        catch (Exception) // ex was not used, removed to prevent CS0168
                         {
                         }
                     }

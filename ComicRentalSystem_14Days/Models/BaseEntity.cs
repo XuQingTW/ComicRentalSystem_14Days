@@ -8,6 +8,6 @@ namespace ComicRentalSystem_14Days.Models
 {
     public class BaseEntity
     {
-        public string Id { get; set; }
+        public int Id { get; set; } = 0;
     }
 }
