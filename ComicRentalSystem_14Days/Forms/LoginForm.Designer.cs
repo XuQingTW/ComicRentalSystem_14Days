@@ -21,85 +21,85 @@ namespace ComicRentalSystem_14Days.Forms
 
         private void InitializeComponent()
         {
-            this.lblUsername = new System.Windows.Forms.Label();
-            this.lblPassword = new System.Windows.Forms.Label();
-            this.txtUsername = new System.Windows.Forms.TextBox();
-            this.txtPassword = new System.Windows.Forms.TextBox();
-            this.btnLogin = new System.Windows.Forms.Button();
-            this.SuspendLayout();
-            //
+            lblUsername = new Label();
+            lblPassword = new Label();
+            txtUsername = new TextBox();
+            txtPassword = new TextBox();
+            btnLogin = new Button();
+            btnRegister = new Button();
+            SuspendLayout();
+            // 
             // lblUsername
-            //
-            this.lblUsername.AutoSize = true;
-            this.lblUsername.Location = new System.Drawing.Point(40, 40);
-            this.lblUsername.Name = "lblUsername";
-            this.lblUsername.Size = new System.Drawing.Size(73, 15);
-            this.lblUsername.TabIndex = 0;
-            this.lblUsername.Text = "使用者名稱:";
-            //
+            // 
+            lblUsername.AutoSize = true;
+            lblUsername.Location = new Point(40, 40);
+            lblUsername.Name = "lblUsername";
+            lblUsername.Size = new Size(70, 15);
+            lblUsername.TabIndex = 0;
+            lblUsername.Text = "使用者名稱:";
+            // 
             // lblPassword
-            //
-            this.lblPassword.AutoSize = true;
-            this.lblPassword.Location = new System.Drawing.Point(40, 80);
-            this.lblPassword.Name = "lblPassword";
-            this.lblPassword.Size = new System.Drawing.Size(31, 15);
-            this.lblPassword.TabIndex = 1;
-            this.lblPassword.Text = "密碼:";
-            //
+            // 
+            lblPassword.AutoSize = true;
+            lblPassword.Location = new Point(40, 80);
+            lblPassword.Name = "lblPassword";
+            lblPassword.Size = new Size(34, 15);
+            lblPassword.TabIndex = 1;
+            lblPassword.Text = "密碼:";
+            // 
             // txtUsername
-            //
-            this.txtUsername.Location = new System.Drawing.Point(120, 37);
-            this.txtUsername.Name = "txtUsername";
-            this.txtUsername.Size = new System.Drawing.Size(180, 23);
-            this.txtUsername.TabIndex = 2;
-            //
+            // 
+            txtUsername.Location = new Point(120, 37);
+            txtUsername.Name = "txtUsername";
+            txtUsername.Size = new Size(180, 23);
+            txtUsername.TabIndex = 2;
+            // 
             // txtPassword
-            //
-            this.txtPassword.Location = new System.Drawing.Point(120, 77);
-            this.txtPassword.Name = "txtPassword";
-            this.txtPassword.Size = new System.Drawing.Size(180, 23);
-            this.txtPassword.TabIndex = 3;
-            //
+            // 
+            txtPassword.Location = new Point(120, 77);
+            txtPassword.Name = "txtPassword";
+            txtPassword.Size = new Size(180, 23);
+            txtPassword.TabIndex = 3;
+            // 
             // btnLogin
-            //
-            this.btnLogin.Location = new System.Drawing.Point(120, 120);
-            this.btnLogin.Name = "btnLogin";
-            this.btnLogin.Size = new System.Drawing.Size(100, 30);
-            this.btnLogin.TabIndex = 4;
-            this.btnLogin.Text = "登入";
-            this.btnLogin.UseVisualStyleBackColor = true;
-            this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click);
-            //
+            // 
+            btnLogin.Location = new Point(200, 129);
+            btnLogin.Name = "btnLogin";
+            btnLogin.Size = new Size(100, 30);
+            btnLogin.TabIndex = 4;
+            btnLogin.Text = "登入";
+            btnLogin.UseVisualStyleBackColor = true;
+            btnLogin.Click += btnLogin_Click;
+            // 
             // btnRegister
-            //
-            this.btnRegister = new System.Windows.Forms.Button();
-            this.btnRegister.Location = new System.Drawing.Point(120, 160);
-            this.btnRegister.Name = "btnRegister";
-            this.btnRegister.Size = new System.Drawing.Size(100, 30);
-            this.btnRegister.TabIndex = 5;
-            this.btnRegister.Text = "註冊";
-            this.btnRegister.UseVisualStyleBackColor = true;
-            //
+            // 
+            btnRegister.Location = new Point(40, 129);
+            btnRegister.Name = "btnRegister";
+            btnRegister.Size = new Size(100, 30);
+            btnRegister.TabIndex = 5;
+            btnRegister.Text = "註冊";
+            btnRegister.UseVisualStyleBackColor = true;
+            // 
             // LoginForm
-            //
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(354, 221); // Adjusted height for the new button
-            this.Controls.Add(this.btnRegister);
-            this.Controls.Add(this.btnLogin);
-            this.Controls.Add(this.txtPassword);
-            this.Controls.Add(this.txtUsername);
-            this.Controls.Add(this.lblPassword);
-            this.Controls.Add(this.lblUsername);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "LoginForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "系統登入";
-            this.Load += new System.EventHandler(this.LoginForm_Load);
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(354, 221);
+            Controls.Add(btnRegister);
+            Controls.Add(btnLogin);
+            Controls.Add(txtPassword);
+            Controls.Add(txtUsername);
+            Controls.Add(lblPassword);
+            Controls.Add(lblUsername);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "LoginForm";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "系統登入";
+            Load += LoginForm_Load;
+            ResumeLayout(false);
+            PerformLayout();
         }
     }
 }

@@ -4,10 +4,16 @@
     <Compile Update="BaseForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Forms\ChangeUserRoleForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Forms\ComicEditForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Forms\ComicManagementForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\LoginForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Forms\MemberEditForm.cs">
@@ -16,7 +22,13 @@
     <Compile Update="Forms\MemberManagementForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Forms\RegistrationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Forms\RentalForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\RentalPeriodForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="MainForm.cs">

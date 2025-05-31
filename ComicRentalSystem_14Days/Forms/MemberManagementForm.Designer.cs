@@ -44,7 +44,7 @@
             dgvMembers.Dock = DockStyle.Fill;
             dgvMembers.Location = new Point(0, 0);
             dgvMembers.Name = "dgvMembers";
-            dgvMembers.Size = new Size(800, 450);
+            dgvMembers.Size = new Size(700, 397);
             dgvMembers.TabIndex = 0;
             // 
             // panel1
@@ -54,44 +54,45 @@
             panel1.Controls.Add(btnDeleteMember);
             panel1.Controls.Add(btnEditMember);
             panel1.Controls.Add(btnAddMember);
-            panel1.Location = new Point(201, 376);
+            panel1.Location = new Point(176, 332);
             panel1.Name = "panel1";
-            panel1.Size = new Size(405, 62);
+            panel1.Size = new Size(354, 55);
             panel1.TabIndex = 1;
             // 
             // btnRefreshMembers
             // 
-            btnRefreshMembers.Location = new Point(291, 19);
+            btnRefreshMembers.Location = new Point(255, 17);
             btnRefreshMembers.Name = "btnRefreshMembers";
-            btnRefreshMembers.Size = new Size(75, 23);
+            btnRefreshMembers.Size = new Size(66, 20);
             btnRefreshMembers.TabIndex = 3;
             btnRefreshMembers.Text = "重新整理";
             btnRefreshMembers.UseVisualStyleBackColor = true;
             // 
             // btnDeleteMember
             // 
-            btnDeleteMember.Location = new Point(210, 19);
+            btnDeleteMember.Location = new Point(184, 17);
             btnDeleteMember.Name = "btnDeleteMember";
-            btnDeleteMember.Size = new Size(75, 23);
+            btnDeleteMember.Size = new Size(66, 20);
             btnDeleteMember.TabIndex = 2;
             btnDeleteMember.Text = "刪除選定會員";
             btnDeleteMember.UseVisualStyleBackColor = true;
-            this.btnDeleteMember.Click += new System.EventHandler(this.btnDeleteMember_Click);
+            btnDeleteMember.Click += btnDeleteMember_Click;
             // 
             // btnEditMember
             // 
-            btnEditMember.Location = new Point(129, 19);
+            btnEditMember.Location = new Point(113, 17);
             btnEditMember.Name = "btnEditMember";
-            btnEditMember.Size = new Size(75, 23);
+            btnEditMember.Size = new Size(66, 20);
             btnEditMember.TabIndex = 1;
             btnEditMember.Text = "編輯選定會員";
             btnEditMember.UseVisualStyleBackColor = true;
+            btnEditMember.Click += btnEditMember_Click;
             // 
             // btnAddMember
             // 
-            btnAddMember.Location = new Point(48, 19);
+            btnAddMember.Location = new Point(42, 17);
             btnAddMember.Name = "btnAddMember";
-            btnAddMember.Size = new Size(75, 23);
+            btnAddMember.Size = new Size(66, 20);
             btnAddMember.TabIndex = 0;
             btnAddMember.Text = "新增會員";
             btnAddMember.UseVisualStyleBackColor = true;
@@ -99,17 +100,17 @@
             // 
             // MemberManagementForm
             // 
-            AutoScaleDimensions = new SizeF(8F, 17F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(700, 397);
             Controls.Add(panel1);
             Controls.Add(dgvMembers);
             Name = "MemberManagementForm";
             Text = "MemberManagementForm";
+            Load += MemberManagementForm_Load;
             ((System.ComponentModel.ISupportInitialize)dgvMembers).EndInit();
             panel1.ResumeLayout(false);
             ResumeLayout(false);
-            this.Load += new System.EventHandler(this.MemberManagementForm_Load);
         }
 
         #endregion

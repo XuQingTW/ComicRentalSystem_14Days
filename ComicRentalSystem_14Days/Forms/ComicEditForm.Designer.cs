@@ -48,75 +48,67 @@
             // lblTitle
             // 
             lblTitle.AutoSize = true;
-            lblTitle.Location = new Point(4, 0);
-            lblTitle.Margin = new Padding(4, 0, 4, 0);
+            lblTitle.Location = new Point(3, 0);
             lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(41, 20);
+            lblTitle.Size = new Size(31, 15);
             lblTitle.TabIndex = 0;
             lblTitle.Text = "書名";
             // 
             // lblAuthor
             // 
             lblAuthor.AutoSize = true;
-            lblAuthor.Location = new Point(4, 34);
-            lblAuthor.Margin = new Padding(4, 0, 4, 0);
+            lblAuthor.Location = new Point(3, 25);
             lblAuthor.Name = "lblAuthor";
-            lblAuthor.Size = new Size(41, 20);
+            lblAuthor.Size = new Size(31, 15);
             lblAuthor.TabIndex = 1;
             lblAuthor.Text = "作者";
             // 
             // lblIsbn
             // 
             lblIsbn.AutoSize = true;
-            lblIsbn.Location = new Point(4, 0);
-            lblIsbn.Margin = new Padding(4, 0, 4, 0);
+            lblIsbn.Location = new Point(3, 0);
             lblIsbn.Name = "lblIsbn";
-            lblIsbn.Size = new Size(46, 20);
+            lblIsbn.Size = new Size(34, 15);
             lblIsbn.TabIndex = 2;
             lblIsbn.Text = "ISBN";
             // 
             // lblGenre
             // 
             lblGenre.AutoSize = true;
-            lblGenre.Location = new Point(4, 33);
-            lblGenre.Margin = new Padding(4, 0, 4, 0);
+            lblGenre.Location = new Point(3, 25);
             lblGenre.Name = "lblGenre";
-            lblGenre.Size = new Size(41, 20);
+            lblGenre.Size = new Size(31, 15);
             lblGenre.TabIndex = 3;
             lblGenre.Text = "類型";
             // 
             // txtAuthor
             // 
-            txtAuthor.Location = new Point(63, 38);
-            txtAuthor.Margin = new Padding(4);
+            txtAuthor.Location = new Point(44, 28);
             txtAuthor.Name = "txtAuthor";
-            txtAuthor.Size = new Size(124, 28);
+            txtAuthor.Size = new Size(88, 23);
             txtAuthor.TabIndex = 5;
             // 
             // txtIsbn
             // 
-            txtIsbn.Location = new Point(65, 4);
-            txtIsbn.Margin = new Padding(4);
+            txtIsbn.Location = new Point(45, 3);
             txtIsbn.Name = "txtIsbn";
-            txtIsbn.Size = new Size(124, 28);
+            txtIsbn.Size = new Size(88, 23);
             txtIsbn.TabIndex = 6;
             // 
             // txtGenre
             // 
-            txtGenre.Location = new Point(65, 37);
-            txtGenre.Margin = new Padding(4);
+            txtGenre.Location = new Point(45, 28);
             txtGenre.Name = "txtGenre";
-            txtGenre.Size = new Size(124, 28);
+            txtGenre.Size = new Size(88, 23);
             txtGenre.TabIndex = 7;
             // 
             // chkIsRented
             // 
             chkIsRented.AutoSize = true;
             chkIsRented.Enabled = false;
-            chkIsRented.Location = new Point(350, 228);
-            chkIsRented.Margin = new Padding(4);
+            chkIsRented.Location = new Point(245, 171);
             chkIsRented.Name = "chkIsRented";
-            chkIsRented.Size = new Size(108, 24);
+            chkIsRented.Size = new Size(86, 19);
             chkIsRented.TabIndex = 8;
             chkIsRented.Text = "是否已租借";
             chkIsRented.UseVisualStyleBackColor = true;
@@ -130,21 +122,19 @@
             tableLayoutPanel1.Controls.Add(lblTitle, 0, 0);
             tableLayoutPanel1.Controls.Add(txtTitle, 1, 0);
             tableLayoutPanel1.Controls.Add(txtAuthor, 1, 1);
-            tableLayoutPanel1.Location = new Point(346, 79);
-            tableLayoutPanel1.Margin = new Padding(4);
+            tableLayoutPanel1.Location = new Point(242, 59);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 2;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel1.Size = new Size(312, 68);
+            tableLayoutPanel1.Size = new Size(218, 51);
             tableLayoutPanel1.TabIndex = 9;
             // 
             // txtTitle
             // 
-            txtTitle.Location = new Point(63, 4);
-            txtTitle.Margin = new Padding(4);
+            txtTitle.Location = new Point(44, 3);
             txtTitle.Name = "txtTitle";
-            txtTitle.Size = new Size(124, 28);
+            txtTitle.Size = new Size(88, 23);
             txtTitle.TabIndex = 4;
             // 
             // tableLayoutPanel2
@@ -156,21 +146,19 @@
             tableLayoutPanel2.Controls.Add(lblIsbn, 0, 0);
             tableLayoutPanel2.Controls.Add(lblGenre, 0, 1);
             tableLayoutPanel2.Controls.Add(txtGenre, 1, 1);
-            tableLayoutPanel2.Location = new Point(346, 154);
-            tableLayoutPanel2.Margin = new Padding(4);
+            tableLayoutPanel2.Location = new Point(242, 116);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 2;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel2.Size = new Size(312, 67);
+            tableLayoutPanel2.Size = new Size(218, 50);
             tableLayoutPanel2.TabIndex = 10;
             // 
             // btnSave
             // 
-            btnSave.Location = new Point(466, 226);
-            btnSave.Margin = new Padding(4);
+            btnSave.Location = new Point(326, 170);
             btnSave.Name = "btnSave";
-            btnSave.Size = new Size(94, 27);
+            btnSave.Size = new Size(66, 20);
             btnSave.TabIndex = 11;
             btnSave.Text = "儲存";
             btnSave.UseVisualStyleBackColor = true;
@@ -178,10 +166,9 @@
             // 
             // btnCancel
             // 
-            btnCancel.Location = new Point(565, 226);
-            btnCancel.Margin = new Padding(4);
+            btnCancel.Location = new Point(396, 170);
             btnCancel.Name = "btnCancel";
-            btnCancel.Size = new Size(94, 27);
+            btnCancel.Size = new Size(66, 20);
             btnCancel.TabIndex = 12;
             btnCancel.Text = "取消";
             btnCancel.UseVisualStyleBackColor = true;
@@ -189,15 +176,14 @@
             // 
             // ComicEditForm
             // 
-            AutoScaleDimensions = new SizeF(10F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1000, 529);
+            ClientSize = new Size(700, 397);
             Controls.Add(btnCancel);
             Controls.Add(btnSave);
             Controls.Add(tableLayoutPanel2);
             Controls.Add(tableLayoutPanel1);
             Controls.Add(chkIsRented);
-            Margin = new Padding(4);
             Name = "ComicEditForm";
             Text = "ComicEditForm";
             tableLayoutPanel1.ResumeLayout(false);
