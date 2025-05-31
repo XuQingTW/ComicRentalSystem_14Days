@@ -208,14 +208,14 @@ namespace ComicRentalSystem_14Days
             //
             // lblMyRentedComicsHeader
             //
-            this.lblMyRentedComicsHeader.AutoSize = true;
-            this.lblMyRentedComicsHeader.Font = new System.Drawing.Font("Microsoft JhengHei UI", 10F, System.Drawing.FontStyle.Bold);
-            this.lblMyRentedComicsHeader.Location = new System.Drawing.Point(12, 485); // Positioned below btnRentComic
-            this.lblMyRentedComicsHeader.Name = "lblMyRentedComicsHeader";
-            this.lblMyRentedComicsHeader.Size = new System.Drawing.Size(123, 22);
-            this.lblMyRentedComicsHeader.TabIndex = 6;
-            this.lblMyRentedComicsHeader.Text = "我租借的漫畫";
-            this.lblMyRentedComicsHeader.Visible = false;
+            // this.lblMyRentedComicsHeader.AutoSize = true;
+            // this.lblMyRentedComicsHeader.Font = new System.Drawing.Font("Microsoft JhengHei UI", 10F, System.Drawing.FontStyle.Bold);
+            // this.lblMyRentedComicsHeader.Location = new System.Drawing.Point(12, 485); // Positioned below btnRentComic
+            // this.lblMyRentedComicsHeader.Name = "lblMyRentedComicsHeader";
+            // this.lblMyRentedComicsHeader.Size = new System.Drawing.Size(123, 22);
+            // this.lblMyRentedComicsHeader.TabIndex = 6;
+            // this.lblMyRentedComicsHeader.Text = "我租借的漫畫";
+            // this.lblMyRentedComicsHeader.Visible = false;
             //
             // dgvMyRentedComics
             //
