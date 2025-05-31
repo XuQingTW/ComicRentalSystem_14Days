@@ -39,9 +39,11 @@ namespace ComicRentalSystem_14Days.Forms
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
+            LogActivity($"ComicManagementForm closing. User: {CurrentUser?.Username ?? "N/A"}");
             if (_comicService != null)
             {
                 _comicService.ComicsChanged -= ComicService_ComicsChanged;
+                LogActivity("Unsubscribed from ComicService.ComicsChanged event.");
             }
             base.OnFormClosing(e);
         }

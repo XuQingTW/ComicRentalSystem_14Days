@@ -85,6 +85,27 @@ namespace ComicRentalSystem_14Days.Forms
                 txtTitle.Focus();
                 return;
             }
+            if (string.IsNullOrWhiteSpace(txtAuthor.Text))
+            {
+                LogActivity("Validation failed: Author is empty.");
+                MessageBox.Show("作者不得為空。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtAuthor.Focus();
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(txtGenre.Text))
+            {
+                LogActivity("Validation failed: Genre is empty.");
+                MessageBox.Show("類型不得為空。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtGenre.Focus();
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(txtIsbn.Text))
+            {
+                LogActivity("Validation failed: ISBN is empty.");
+                MessageBox.Show("ISBN不得為空。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtIsbn.Focus();
+                return;
+            }
 
             try
             {

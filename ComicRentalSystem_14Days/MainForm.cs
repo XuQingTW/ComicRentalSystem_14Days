@@ -479,6 +479,7 @@ namespace ComicRentalSystem_14Days
 
             if (dgvAvailableComics == null || dgvAvailableComics.SelectedRows.Count == 0)
             {
+                _logger?.Log("btnRentComic_Click: No comic selected by user.");
                 MessageBox.Show("請先選擇一本漫畫。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
@@ -499,6 +500,7 @@ namespace ComicRentalSystem_14Days
 
             if (selectedComic.IsRented)
             {
+                _logger?.Log($"btnRentComic_Click: User '{_currentUser.Username}' attempted to rent comic '{selectedComic.Title}' (ID: {selectedComic.Id}) which is already rented.");
                 MessageBox.Show($"漫畫 '{selectedComic.Title}' 已經被借出。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 LoadAvailableComics();
                 return;

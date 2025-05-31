@@ -358,13 +358,39 @@ namespace ComicRentalSystem_14Days.Forms
 
             try
             {
-                selectedComic.IsRented = true;
-                selectedComic.RentedToMemberId = selectedMember.Id;
-                _comicService.UpdateComic(selectedComic);
+                // Define rental period constraints
+                DateTime today = DateTime.Today;
+                DateTime minRentalReturnDate = today.AddDays(3); // Example: Minimum 3 days rental
+                DateTime maxRentalReturnDate = today.AddMonths(1); // Example: Maximum 1 month rental
 
-                LogActivity($"Comic '{selectedComic.Title}' (ID: {comicId}) successfully rented to member '{selectedMember.Name}' (ID: {memberId}).");
-                MessageBox.Show($"漫畫 '{selectedComic.Title}' 已成功租借給會員 '{selectedMember.Name}'。", "租借成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                LoadRentalDetails(); // Updated call
+                using (RentalPeriodForm rentalDialog = new RentalPeriodForm(minRentalReturnDate, maxRentalReturnDate))
+                {
+                    LogActivity($"Showing RentalPeriodForm for comic '{selectedComic.Title}' to member '{selectedMember.Name}'. MinDate: {minRentalReturnDate:yyyy-MM-dd}, MaxDate: {maxRentalReturnDate:yyyy-MM-dd}");
+                    if (rentalDialog.ShowDialog(this) == DialogResult.OK)
+                    {
+                        DateTime selectedReturnDate = rentalDialog.SelectedReturnDate;
+                        LogActivity($"RentalPeriodForm accepted. Selected return date: {selectedReturnDate:yyyy-MM-dd}");
+
+                        selectedComic.IsRented = true;
+                        selectedComic.RentedToMemberId = selectedMember.Id;
+                        selectedComic.RentalDate = DateTime.Now; // Set current date/time as rental date
+                        selectedComic.ReturnDate = selectedReturnDate; // Set expected return date from dialog
+                        // ActualReturnTime remains null until the comic is actually returned
+
+                        _comicService.UpdateComic(selectedComic);
+
+                        LogActivity($"Comic '{selectedComic.Title}' (ID: {comicId}) successfully rented to member '{selectedMember.Name}' (ID: {memberId}). RentalDate: {selectedComic.RentalDate:yyyy-MM-dd HH:mm}, ExpectedReturnDate: {selectedComic.ReturnDate:yyyy-MM-dd}.");
+                        MessageBox.Show($"漫畫 '{selectedComic.Title}' 已成功租借給會員 '{selectedMember.Name}'。\n租借日期: {selectedComic.RentalDate:yyyy-MM-dd}\n預計歸還日期: {selectedComic.ReturnDate:yyyy-MM-dd}", "租借成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LoadRentalDetails(); // Refresh the list of rented comics
+                        LoadAvailableComics(); // Refresh the list of available comics
+                    }
+                    else
+                    {
+                        LogActivity($"RentalPeriodForm cancelled by user for comic '{selectedComic.Title}' to member '{selectedMember.Name}'. Rental process aborted.");
+                        // Optionally, inform the user that the rental was cancelled if not obvious
+                        // MessageBox.Show("租借操作已取消。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
             }
             catch (Exception ex)
             {
