@@ -160,6 +160,7 @@ namespace ComicRentalSystem_14Days.Forms
                 }
 
                 Action updateGrid = () => {
+                    dgvComics.ClearSelection();
                     dgvComics.DataSource = null;
                     dgvComics.DataSource = comics;
                 };
@@ -169,10 +170,56 @@ namespace ComicRentalSystem_14Days.Forms
                     if (dgvComics.InvokeRequired)
                     {
                         dgvComics.Invoke(updateGrid);
+                        if (dgvComics.Rows.Count > 0)
+                        {
+                            int firstVisibleColumnIndex = -1;
+                            foreach (DataGridViewColumn col in dgvComics.Columns)
+                            {
+                                if (col.Visible && col.DisplayIndex >= 0) // Ensure column is visible and has a valid display index
+                                {
+                                    if (firstVisibleColumnIndex == -1 || col.DisplayIndex < dgvComics.Columns[firstVisibleColumnIndex].DisplayIndex)
+                                    {
+                                        firstVisibleColumnIndex = col.Index;
+                                    }
+                                }
+                            }
+                            if (firstVisibleColumnIndex != -1)
+                            {
+                                dgvComics.CurrentCell = dgvComics.Rows[0].Cells[firstVisibleColumnIndex];
+                            }
+                            else // Fallback if no visible columns, though unlikely for a populated grid
+                            {
+                                 // Optional: Log a warning if no visible column is found, though CurrentCell can't be set.
+                                 // Logger?.LogWarning("LoadComicsData: No visible columns found in dgvComics to set CurrentCell.");
+                            }
+                        }
                     }
                     else
                     {
                         updateGrid();
+                        if (dgvComics.Rows.Count > 0)
+                        {
+                            int firstVisibleColumnIndex = -1;
+                            foreach (DataGridViewColumn col in dgvComics.Columns)
+                            {
+                                if (col.Visible && col.DisplayIndex >= 0) // Ensure column is visible and has a valid display index
+                                {
+                                    if (firstVisibleColumnIndex == -1 || col.DisplayIndex < dgvComics.Columns[firstVisibleColumnIndex].DisplayIndex)
+                                    {
+                                        firstVisibleColumnIndex = col.Index;
+                                    }
+                                }
+                            }
+                            if (firstVisibleColumnIndex != -1)
+                            {
+                                dgvComics.CurrentCell = dgvComics.Rows[0].Cells[firstVisibleColumnIndex];
+                            }
+                            else // Fallback if no visible columns, though unlikely for a populated grid
+                            {
+                                 // Optional: Log a warning if no visible column is found, though CurrentCell can't be set.
+                                 // Logger?.LogWarning("LoadComicsData: No visible columns found in dgvComics to set CurrentCell.");
+                            }
+                        }
                     }
                 }
                 LogActivity($"Successfully loaded {comics.Count} comics into DataGridView with search term '{searchTerm}'.");
