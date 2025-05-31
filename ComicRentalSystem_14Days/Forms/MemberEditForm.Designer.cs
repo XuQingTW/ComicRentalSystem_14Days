@@ -142,4 +142,5 @@
         private System.Windows.Forms.Button btnSaveMember;
         private System.Windows.Forms.Button btnCancelMember;
         private System.Windows.Forms.GroupBox gbMemberDetails;
+    }
 }
