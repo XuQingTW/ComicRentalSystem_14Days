@@ -286,8 +286,7 @@ namespace ComicRentalSystem_14Days.Forms
 
                     // If no active rentals, proceed with the existing confirmation dialog
                     LogActivity($"No active rentals for member ID: {selectedMember.Id}. Showing confirmation dialog for deletion.");
-                    var confirmResult = MessageBox.Show($"您確定要刪除會員 '{selectedMember.Name}' (ID: {selectedMember.Id}) 嗎？\n此操作無法復原。",
-                                                 "確認刪除", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    var confirmResult = MessageBox.Show($"您確定要刪除會員 '{selectedMember.Name}' (ID: {selectedMember.Id}) 嗎？\n此操作無法復原。", "確認刪除", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                     if (confirmResult == DialogResult.Yes)
                     {
                         LogActivity($"User confirmed deletion for member ID: {selectedMember.Id}.");
