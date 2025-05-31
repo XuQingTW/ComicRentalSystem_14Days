@@ -97,7 +97,6 @@ namespace ComicRentalSystem_14Days.Services
             }
 
             try
-              
             {
                 string json = _fileHelper.ReadFile(backupFilePath);
                 if (string.IsNullOrWhiteSpace(json))
@@ -123,7 +122,6 @@ namespace ComicRentalSystem_14Days.Services
             }
             catch (JsonException jsonEx)
             {
-
                 _logger.LogError($"Critical: Backup users file '{backupFilePath}' is also corrupted: {jsonEx.Message}. Initializing empty user list.", jsonEx);
                 return new List<User>(); // Both main and backup are bad.
             }
@@ -132,6 +130,12 @@ namespace ComicRentalSystem_14Days.Services
                 _logger.LogError($"Critical: Unexpected error loading backup users file '{backupFilePath}': {ex.Message}. Initializing empty user list.", ex);
                 return new List<User>(); // Both main and backup are bad.
             }
+            return user;
+        }
+
+        public List<User> GetAllUsers()
+        {
+            return new List<User>(_users);
         }
 
         public User? GetUserByUsername(string username)
@@ -245,23 +249,22 @@ namespace ComicRentalSystem_14Days.Services
                 return null;
             }
 
-            // Ensure PasswordSalt is not null before attempting to use it
-            if (user.PasswordSalt == null)
+            // NEW/MODIFIED CHECK for PasswordSalt:
+            if (string.IsNullOrEmpty(user.PasswordSalt))
             {
-                _logger.LogError($"使用者 '{username}' 的 PasswordSalt 為空值。無法驗證密碼。");
-                // This case might indicate a data corruption or an old user record prior to salt implementation.
-                // Treat as a failed login attempt for security.
+                _logger.LogError($"User '{username}' login attempt failed: Password salt is missing or empty. Account may be from an older version or corrupted.");
+                // Treat as a failed login attempt for lockout purposes
                 user.FailedLoginAttempts++;
                 if (user.FailedLoginAttempts >= MaxFailedLoginAttempts)
                 {
                     user.LockoutEndDate = DateTime.UtcNow.AddMinutes(LockoutDurationMinutes);
-                    _logger.Log($"使用者 '{username}' 帳戶已鎖定直到 {user.LockoutEndDate.Value}，因為 PasswordSalt 為空且達到最大失敗嘗試次數。");
+                    _logger.Log($"User '{username}' account locked out until {user.LockoutEndDate.Value} due to missing salt leading to failed attempt.");
                 }
                 SaveUsers();
                 return null;
             }
 
-            byte[] saltBytes = Convert.FromBase64String(user.PasswordSalt);
+            byte[] saltBytes = Convert.FromBase64String(user.PasswordSalt); // Now PasswordSalt is confirmed not null or empty
             string passwordHashToCompare = HashPassword(password, saltBytes);
 
             if (user.PasswordHash == passwordHashToCompare)

@@ -146,10 +146,7 @@ namespace ComicRentalSystem_14Days
                     HeaderText = "借閱日期",
                     FillWeight = 15
                 };
-                if (rentalDateColumn.DefaultCellStyle != null)
-                {
-                    rentalDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
-                }
+                rentalDateColumn.DefaultCellStyle!.Format = "yyyy-MM-dd"; // Using null-forgiving as DefaultCellStyle is not expected to be null
                 dgvAvailableComics.Columns.Add(rentalDateColumn);
 
                 var returnDateColumn = new DataGridViewTextBoxColumn {
@@ -157,10 +154,7 @@ namespace ComicRentalSystem_14Days
                     HeaderText = "歸還日期",
                     FillWeight = 15
                 };
-                if (returnDateColumn.DefaultCellStyle != null)
-                {
-                    returnDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
-                }
+                returnDateColumn.DefaultCellStyle!.Format = "yyyy-MM-dd"; // Using null-forgiving
                 dgvAvailableComics.Columns.Add(returnDateColumn);
             }
             else // Member view
@@ -318,11 +312,11 @@ namespace ComicRentalSystem_14Days
             dgvMyRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Author", HeaderText = "作者", FillWeight = 25 });
 
             var rentalDateColumn = new DataGridViewTextBoxColumn { DataPropertyName = "RentalDate", HeaderText = "租借日期", FillWeight = 20 };
-            rentalDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
+            rentalDateColumn.DefaultCellStyle!.Format = "yyyy-MM-dd"; // Using null-forgiving
             dgvMyRentedComics.Columns.Add(rentalDateColumn);
 
             var returnDateColumn = new DataGridViewTextBoxColumn { DataPropertyName = "ReturnDate", HeaderText = "歸還日期", FillWeight = 20 };
-            returnDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
+            returnDateColumn.DefaultCellStyle!.Format = "yyyy-MM-dd"; // Using null-forgiving
             dgvMyRentedComics.Columns.Add(returnDateColumn);
 
             dgvMyRentedComics.SelectionMode = DataGridViewSelectionMode.FullRowSelect;

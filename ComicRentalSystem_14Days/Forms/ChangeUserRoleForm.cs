@@ -13,12 +13,12 @@ namespace ComicRentalSystem_14Days.Forms
         private readonly AuthenticationService _authService;
 
         // Controls that would be in Designer.cs - declare them here for the code to compile
-        private System.Windows.Forms.Label lblUsernameLabel;
-        private System.Windows.Forms.Label lblUsernameValue;
-        private System.Windows.Forms.Label lblRoleLabel;
-        private System.Windows.Forms.ComboBox cmbRole;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.Label lblUsernameLabel = null!;
+        private System.Windows.Forms.Label lblUsernameValue = null!;
+        private System.Windows.Forms.Label lblRoleLabel = null!;
+        private System.Windows.Forms.ComboBox cmbRole = null!;
+        private System.Windows.Forms.Button btnSave = null!;
+        private System.Windows.Forms.Button btnCancel = null!;
 
         public ChangeUserRoleForm(User userToEdit, AuthenticationService authService, ILogger logger) : base(logger)
         {
@@ -127,7 +127,7 @@ namespace ComicRentalSystem_14Days.Forms
         }
 
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void btnSave_Click(object? sender, EventArgs e) // sender changed to object?
         {
             if (cmbRole.SelectedItem == null)
             {
@@ -178,7 +178,7 @@ namespace ComicRentalSystem_14Days.Forms
             }
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void btnCancel_Click(object? sender, EventArgs e) // sender changed to object?
         {
             LogActivity("ChangeUserRoleForm cancelled by user.");
             this.DialogResult = DialogResult.Cancel;

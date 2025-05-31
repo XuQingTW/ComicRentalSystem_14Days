@@ -201,5 +201,33 @@ namespace ComicRentalSystem_14Days.Helpers
                 throw; // Or handle
             }
         }
+
+        public bool FileExists(string filePath)
+        {
+            string fullPath = GetFullFilePath(filePath);
+            return File.Exists(fullPath);
+        }
+
+        public void DeleteFile(string filePath)
+        {
+            string fullPath = GetFullFilePath(filePath);
+            // Consider File.Exists check if you want to avoid exception for non-existent file
+            // However, File.Delete does not throw if the file doesn't exist.
+            File.Delete(fullPath);
+        }
+
+        public void MoveFile(string sourcePath, string destinationPath)
+        {
+            string fullSourcePath = GetFullFilePath(sourcePath);
+            string fullDestinationPath = GetFullFilePath(destinationPath);
+            File.Move(fullSourcePath, fullDestinationPath);
+        }
+
+        public void CopyFile(string sourcePath, string destinationPath, bool overwrite)
+        {
+            string fullSourcePath = GetFullFilePath(sourcePath);
+            string fullDestinationPath = GetFullFilePath(destinationPath);
+            File.Copy(fullSourcePath, fullDestinationPath, overwrite);
+        }
     }
 }

@@ -10,7 +10,7 @@ namespace ComicRentalSystem_14Days.Models
     {
         public string Username { get; set; }
         public string PasswordHash { get; set; }
-        public string PasswordSalt { get; set; }
+        public string PasswordSalt { get; set; } = string.Empty;
         public UserRole Role { get; set; }
         public int FailedLoginAttempts { get; set; }
         public DateTime? LockoutEndDate { get; set; }
