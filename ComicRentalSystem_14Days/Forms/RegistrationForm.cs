@@ -7,17 +7,40 @@ using System.Windows.Forms;
 
 namespace ComicRentalSystem_14Days.Forms
 {
-    public partial class RegistrationForm : Form
+    public partial class RegistrationForm : BaseForm // Changed inheritance
     {
-        private readonly ILogger _logger;
+        private readonly ILogger _logger; // Will be set by base.SetLogger
         private readonly AuthenticationService _authService;
         private readonly MemberService _memberService;
         private readonly User? _currentUser;
+        private System.Windows.Forms.ErrorProvider errorProvider1;
 
         public RegistrationForm(ILogger logger, AuthenticationService authService, MemberService memberService, User? currentUser = null)
         {
-            InitializeComponent();
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            InitializeComponent(); // BaseForm constructor (if any) is called before this if : base() is used.
+                                   // If BaseForm has parameterless, it's implicitly called.
+                                   // ModernBaseForm has parameterless, BaseForm has parameterless.
+
+            this.errorProvider1 = new System.Windows.Forms.ErrorProvider();
+
+            // Set logger for BaseForm functionality
+            // _logger field in this class is shadowed if BaseForm also has _logger. Best to use BaseForm's logger.
+            // For now, we assume this class's _logger is the primary one for its direct logic,
+            // and BaseForm's logger is set for its own needs.
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            base.SetLogger(this._logger); // Make sure BaseForm has its logger instance
+
+            // Apply Modern Styling
+            if (btnRegister != null) StyleModernButton(btnRegister);
+            Control[] foundControls = this.Controls.Find("gbAccountCredentials", true);
+            if (foundControls.Length > 0 && foundControls[0] is GroupBox gbAcc) StyleModernGroupBox(gbAcc);
+
+            foundControls = this.Controls.Find("gbMemberInfo", true);
+            if (foundControls.Length > 0 && foundControls[0] is GroupBox gbInfo) StyleModernGroupBox(gbInfo);
+            // if (this.gbAccountCredentials != null) StyleModernGroupBox(this.gbAccountCredentials); // If direct field access
+            // if (this.gbMemberInfo != null) StyleModernGroupBox(this.gbMemberInfo);
+
+
             _authService = authService ?? throw new ArgumentNullException(nameof(authService));
             _memberService = memberService ?? throw new ArgumentNullException(nameof(memberService));
             _currentUser = currentUser;
@@ -29,6 +52,12 @@ namespace ComicRentalSystem_14Days.Forms
 
         private void btnRegister_Click(object sender, EventArgs e)
         {
+            if (!this.ValidateChildren()) {
+                MessageBox.Show("Please correct the highlighted errors.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                _logger.Log("Registration attempt failed due to validation errors.");
+                return;
+            }
+
             string username = txtUsername.Text.Trim();
             string password = txtPassword.Text;
             string confirmPassword = txtConfirmPassword.Text;
@@ -46,74 +75,7 @@ namespace ComicRentalSystem_14Days.Forms
                 selectedRole = UserRole.Member; // Default if ComboBox not used or no selection
             }
 
-            if (string.IsNullOrWhiteSpace(username))
-            {
-                MessageBox.Show("使用者名稱不能為空。", "註冊失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                _logger.Log("註冊嘗試失敗: 使用者名稱為空。");
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                MessageBox.Show("姓名不能為空。", "註冊失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                _logger.Log("註冊嘗試失敗: 姓名為空。");
-                return;
-            }
-
-            if (!name.All(c => char.IsLetter(c) || char.IsWhiteSpace(c)))
-            {
-                MessageBox.Show("姓名只能包含字母和空格。", "註冊失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                _logger.Log("註冊嘗試失敗: 姓名包含無效字元。");
-                txtName.Focus();
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(phoneNumber))
-            {
-                MessageBox.Show("電話號碼不能為空。", "註冊失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                _logger.Log("註冊嘗試失敗: 電話號碼為空。");
-                return;
-            }
-
-            if (!phoneNumber.All(char.IsDigit))
-            {
-                MessageBox.Show("電話號碼只能包含數字。", "註冊失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                _logger.Log("註冊嘗試失敗: 電話號碼包含非數字字元。");
-                txtPhoneNumber.Focus();
-                return;
-            }
-            if (phoneNumber.Length < 7 || phoneNumber.Length > 15)
-            {
-                MessageBox.Show("電話號碼長度應在 7 到 15 位數字之間。", "註冊失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                _logger.Log("註冊嘗試失敗: 電話號碼長度無效。");
-                txtPhoneNumber.Focus();
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                MessageBox.Show("密碼不能為空。", "註冊失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                _logger.Log("註冊嘗試失敗: 密碼為空。");
-                return;
-            }
-
-            if (password.Length < 6)
-            {
-                MessageBox.Show("密碼長度至少需6個字元。", "註冊失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                _logger.Log("註冊嘗試失敗: 密碼過短。");
-                txtPassword.Clear();
-                txtConfirmPassword.Clear();
-                return;
-            }
-
-            if (password != confirmPassword)
-            {
-                MessageBox.Show("密碼與確認密碼不相符。", "註冊失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                _logger.Log("註冊嘗試失敗: 密碼不相符。");
-                txtPassword.Clear();
-                txtConfirmPassword.Clear();
-                return;
-            }
+            // Removed manual validation checks, now handled by Validating events + ValidateChildren()
 
             _logger.Log($"使用者註冊嘗試: {username}, 姓名: {name}, 電話: {phoneNumber}, 角色: {selectedRole}");
             bool success = _authService.Register(username, password, selectedRole);
@@ -188,6 +150,57 @@ namespace ComicRentalSystem_14Days.Forms
                 cmbRole.Visible = false;
                 cmbRole.Enabled = false;
                 _logger.Log("註冊表單由非管理員或透過登入表單載入。角色選擇已停用。");
+            }
+        }
+
+        // Validating Event Handlers
+        private void txtUsername_Validating(object? sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (sender is TextBox txt && string.IsNullOrWhiteSpace(txt.Text))
+            { errorProvider1?.SetError(txt, "Username cannot be empty."); e.Cancel = true; }
+            else if (sender is TextBox txtBox) { errorProvider1?.SetError(txtBox, ""); }
+        }
+
+        private void txtPassword_Validating(object? sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (sender is TextBox txt && string.IsNullOrWhiteSpace(txt.Text))
+            { errorProvider1?.SetError(txt, "Password cannot be empty."); e.Cancel = true; }
+            else if (sender is TextBox txtP && txtP.Text.Length < 6)
+            { errorProvider1?.SetError(txtP, "Password must be at least 6 characters long."); e.Cancel = true; }
+            else if (sender is TextBox txtBox) { errorProvider1?.SetError(txtBox, ""); }
+        }
+
+        private void txtConfirmPassword_Validating(object? sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (sender is TextBox txt && txt.Text != txtPassword.Text) // Assumes txtPassword is accessible
+            { errorProvider1?.SetError(txt, "Passwords do not match."); e.Cancel = true; }
+            else if (sender is TextBox txtB) { errorProvider1?.SetError(txtB, ""); }
+        }
+
+        private void txtName_Validating(object? sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (sender is TextBox txt)
+            {
+                if (string.IsNullOrWhiteSpace(txt.Text))
+                { errorProvider1?.SetError(txt, "Name cannot be empty."); e.Cancel = true; }
+                else if (!txt.Text.Trim().All(c => char.IsLetter(c) || char.IsWhiteSpace(c)))
+                { errorProvider1?.SetError(txt, "Name can only contain letters and spaces."); e.Cancel = true; }
+                else { errorProvider1?.SetError(txt, ""); }
+            }
+        }
+
+        private void txtPhoneNumber_Validating(object? sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (sender is TextBox txt)
+            {
+                string phoneNumber = txt.Text.Trim();
+                if (string.IsNullOrWhiteSpace(phoneNumber))
+                { errorProvider1?.SetError(txt, "Phone number cannot be empty."); e.Cancel = true; }
+                else if (!phoneNumber.All(char.IsDigit))
+                { errorProvider1?.SetError(txt, "Phone number can only contain digits."); e.Cancel = true; }
+                else if (phoneNumber.Length < 7 || phoneNumber.Length > 15)
+                { errorProvider1?.SetError(txt, "Phone number must be between 7 and 15 digits."); e.Cancel = true; }
+                else { errorProvider1?.SetError(txt, ""); }
             }
         }
     }

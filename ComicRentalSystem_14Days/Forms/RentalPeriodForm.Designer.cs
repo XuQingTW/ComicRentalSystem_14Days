@@ -36,57 +36,64 @@ namespace ComicRentalSystem_14Days.Forms
             // 
             // monthCalendarRental
             // 
-            monthCalendarRental.Location = new Point(18, 50);
-            monthCalendarRental.MaxSelectionCount = 1;
-            monthCalendarRental.Name = "monthCalendarRental";
-            monthCalendarRental.TabIndex = 0;
+            this.monthCalendarRental.Location = new System.Drawing.Point((280 - 227) / 2 + 15 , 65); // Centered: (FormWidth - CalendarWidth)/2 + FormPadding
+            this.monthCalendarRental.MaxSelectionCount = 1;
+            this.monthCalendarRental.Name = "monthCalendarRental";
+            this.monthCalendarRental.TabIndex = 0;
+            this.monthCalendarRental.Anchor = System.Windows.Forms.AnchorStyles.Top;
             // 
             // btnConfirmRental
             // 
-            btnConfirmRental.Location = new Point(18, 225);
-            btnConfirmRental.Name = "btnConfirmRental";
-            btnConfirmRental.Size = new Size(100, 30);
-            btnConfirmRental.TabIndex = 1;
-            btnConfirmRental.Text = "Confirm";
-            btnConfirmRental.UseVisualStyleBackColor = true;
-            btnConfirmRental.Click += btnConfirmRental_Click;
+            this.btnConfirmRental.Location = new System.Drawing.Point( (280 / 2) - 100 - 5 + 15 , 240); // (ClientSize.Width / 2) - BtnWidth - 5 + FormPadding
+            this.btnConfirmRental.Name = "btnConfirmRental";
+            this.btnConfirmRental.Size = new System.Drawing.Size(100, 35);
+            this.btnConfirmRental.TabIndex = 1;
+            this.btnConfirmRental.Text = "Confirm";
+            this.btnConfirmRental.UseVisualStyleBackColor = true;
+            this.btnConfirmRental.Click += new System.EventHandler(this.btnConfirmRental_Click);
+            this.btnConfirmRental.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             // 
             // btnCancelRental
             // 
-            btnCancelRental.Location = new Point(145, 225);
-            btnCancelRental.Name = "btnCancelRental";
-            btnCancelRental.Size = new Size(100, 30);
-            btnCancelRental.TabIndex = 2;
-            btnCancelRental.Text = "Cancel";
-            btnCancelRental.UseVisualStyleBackColor = true;
-            btnCancelRental.Click += btnCancelRental_Click;
+            this.btnCancelRental.Location = new System.Drawing.Point( (280 / 2) + 5 + 15, 240); // (ClientSize.Width / 2) + 5 + FormPadding
+            this.btnCancelRental.Name = "btnCancelRental";
+            this.btnCancelRental.Size = new System.Drawing.Size(100, 35);
+            this.btnCancelRental.TabIndex = 2;
+            this.btnCancelRental.Text = "Cancel";
+            this.btnCancelRental.UseVisualStyleBackColor = true;
+            this.btnCancelRental.Click += new System.EventHandler(this.btnCancelRental_Click);
+            this.btnCancelRental.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             // 
             // lblInfo
             // 
-            lblInfo.AutoSize = true;
-            lblInfo.Location = new Point(12, 26);
-            lblInfo.Name = "lblInfo";
-            lblInfo.Size = new Size(272, 15);
-            lblInfo.TabIndex = 3;
-            lblInfo.Text = "Select a return date (Min 3 days, Max 1 month).";
+            this.lblInfo.Location = new System.Drawing.Point(15, 15);
+            this.lblInfo.Name = "lblInfo";
+            this.lblInfo.Size = new System.Drawing.Size(250, 45);
+            this.lblInfo.TabIndex = 3;
+            this.lblInfo.Text = "Select a return date (Min 3 days, Max 1 month)."; // Default text
+            this.lblInfo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblInfo.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                | System.Windows.Forms.AnchorStyles.Right);
             // 
             // RentalPeriodForm
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(309, 283);
-            Controls.Add(lblInfo);
-            Controls.Add(btnCancelRental);
-            Controls.Add(btnConfirmRental);
-            Controls.Add(monthCalendarRental);
-            FormBorderStyle = FormBorderStyle.FixedDialog;
-            MaximizeBox = false;
-            MinimizeBox = false;
-            Name = "RentalPeriodForm";
-            StartPosition = FormStartPosition.CenterParent;
-            Text = "Select Rental Period";
-            ResumeLayout(false);
-            PerformLayout();
+            this.AcceptButton = this.btnConfirmRental;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.btnCancelRental;
+            this.ClientSize = new System.Drawing.Size(280, 290);
+            this.Controls.Add(this.lblInfo);
+            this.Controls.Add(this.btnCancelRental);
+            this.Controls.Add(this.btnConfirmRental);
+            this.Controls.Add(this.monthCalendarRental);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "RentalPeriodForm";
+            this.Padding = new System.Windows.Forms.Padding(15);
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "Select Return Date";
+            this.ResumeLayout(false);
         }
 
         #endregion
