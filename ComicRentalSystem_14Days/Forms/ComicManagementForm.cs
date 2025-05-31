@@ -84,11 +84,22 @@ namespace ComicRentalSystem_14Days.Forms
             var returnDateColumn = new DataGridViewTextBoxColumn
             {
                 DataPropertyName = nameof(Comic.ReturnDate), // "ReturnDate"
-                HeaderText = "歸還期限",
+                HeaderText = "預計歸還時間",
                 Width = 110 // Or another appropriate width
             };
             returnDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
             dgvComics.Columns.Add(returnDateColumn);
+
+            // Add ActualReturnTime column
+            var actualReturnTimeColumn = new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = nameof(Comic.ActualReturnTime),
+                HeaderText = "實際歸還時間",
+                Width = 120 // Or an appropriate width
+            };
+            actualReturnTimeColumn.DefaultCellStyle.Format = "yyyy-MM-dd HH:mm:ss"; // Include time
+            actualReturnTimeColumn.DefaultCellStyle.NullValue = ""; // Display empty if null
+            dgvComics.Columns.Add(actualReturnTimeColumn);
 
             dgvComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Isbn", HeaderText = "ISBN", Width = 120 });
 

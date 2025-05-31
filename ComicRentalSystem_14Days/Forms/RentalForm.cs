@@ -375,7 +375,7 @@ namespace ComicRentalSystem_14Days.Forms
                         selectedComic.RentedToMemberId = selectedMember.Id;
                         selectedComic.RentalDate = DateTime.Now; // Set current date/time as rental date
                         selectedComic.ReturnDate = selectedReturnDate; // Set expected return date from dialog
-                        // ActualReturnTime remains null until the comic is actually returned
+                        selectedComic.ActualReturnTime = null; // Explicitly set to null
 
                         _comicService.UpdateComic(selectedComic);
 

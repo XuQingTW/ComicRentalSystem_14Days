@@ -14,5 +14,6 @@ namespace ComicRentalSystem_14Days.Models
         public string BorrowerPhoneNumber { get; set; } = string.Empty;
         public DateTime? RentalDate { get; set; }
         public DateTime? ReturnDate { get; set; }
+        public DateTime? ActualReturnTime { get; set; }
     }
 }
