@@ -8,6 +8,7 @@ namespace ComicRentalSystem_14Days.Forms
         private System.Windows.Forms.TextBox txtUsername;
         private System.Windows.Forms.TextBox txtPassword;
         private System.Windows.Forms.Button btnLogin;
+        private System.Windows.Forms.Button btnRegister;
 
         protected override void Dispose(bool disposing)
         {

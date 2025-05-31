@@ -36,7 +36,8 @@ namespace ComicRentalSystem_14Days.Forms
             this.btnRegister.Click += new System.EventHandler(this.btnRegister_Click);
         }
 
-        private void btnRegister_Click(object sender, EventArgs e)
+        private void btnRegister_Click(object? sender, EventArgs e)
+
         {
             _logger.Log("Register button clicked.");
             RegistrationForm regForm = new RegistrationForm(_logger, _authService, _memberService);

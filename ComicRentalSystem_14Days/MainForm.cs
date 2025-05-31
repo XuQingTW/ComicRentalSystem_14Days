@@ -252,15 +252,15 @@ namespace ComicRentalSystem_14Days
             this._logger?.Log("使用者註冊ToolStripMenuItem clicked.");
             if (_currentUser.Role == UserRole.Admin)
             {
-                if (this._logger != null && Program.AppAuthService != null)
+                if (this._logger != null && Program.AppAuthService != null && this._memberService != null)
                 {
-                    var regForm = new ComicRentalSystem_14Days.Forms.RegistrationForm(this._logger, Program.AppAuthService);
+                    var regForm = new ComicRentalSystem_14Days.Forms.RegistrationForm(this._logger, Program.AppAuthService, this._memberService);
                     regForm.ShowDialog(this);
                 }
                 else
                 {
-                    MessageBox.Show("Logger 或 AuthenticationService 未初始化，無法開啟使用者註冊。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    this._logger?.LogError("RegistrationForm could not be opened due to null logger or AppAuthService.");
+                    MessageBox.Show("Logger, AuthenticationService, 或 MemberService 未初始化，無法開啟使用者註冊。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    this._logger?.LogError("RegistrationForm could not be opened due to null logger, AppAuthService, or _memberService.");
                 }
             }
             else
