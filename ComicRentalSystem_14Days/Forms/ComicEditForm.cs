@@ -13,6 +13,7 @@ namespace ComicRentalSystem_14Days.Forms
         private readonly ComicService? _comicService;
         private Comic? _editableComic;
         private bool _isEditMode;
+        private readonly User? _currentUser;
 
         public ComicEditForm() : base()
         {
@@ -23,16 +24,18 @@ namespace ComicRentalSystem_14Days.Forms
             }
         }
 
-        public ComicEditForm(Comic? comicToEdit, ComicService comicService, ILogger logger) : this()
+        public ComicEditForm(Comic? comicToEdit, ComicService comicService, ILogger logger, User? currentUser = null) : this()
         {
             base.SetLogger(logger);
 
             _comicService = comicService ?? throw new ArgumentNullException(nameof(comicService));
             _editableComic = comicToEdit;
             _isEditMode = (_editableComic != null);
+            _currentUser = currentUser;
 
             LogActivity($"漫畫編輯表單初始化中。模式: {(_isEditMode ? "編輯" : "新增")}" +
-                        (_isEditMode && _editableComic != null ? $", 漫畫ID: {_editableComic.Id}" : ""));
+                        (_isEditMode && _editableComic != null ? $", 漫畫ID: {_editableComic.Id}" : "") +
+                        (_currentUser != null ? $", 使用者: {_currentUser.Username} ({_currentUser.Role})" : ", 無使用者資訊"));
 
             if (_isEditMode && _editableComic != null)
             {
@@ -62,7 +65,16 @@ namespace ComicRentalSystem_14Days.Forms
             txtIsbn.Text = _editableComic.Isbn;
             txtGenre.Text = _editableComic.Genre;
             chkIsRented.Checked = _editableComic.IsRented;
-            chkIsRented.Enabled = false;
+            // chkIsRented.Enabled = false; // Replaced by below logic
+
+            if (_currentUser != null && _currentUser.Role == UserRole.Admin)
+            {
+                chkIsRented.Enabled = true;
+            }
+            else
+            {
+                chkIsRented.Enabled = false;
+            }
 
             LogActivity("漫畫資料已載入表單控制項。");
         }
@@ -112,10 +124,37 @@ namespace ComicRentalSystem_14Days.Forms
                 if (_isEditMode && _editableComic != null)
                 {
                     LogActivity($"正在嘗試儲存現有漫畫ID: {_editableComic.Id} 的變更。");
+
+                    if (_currentUser != null && _currentUser.Role == UserRole.Admin && chkIsRented.Enabled)
+                    {
+                        bool originalIsRented = _editableComic.IsRented; // Store original state before changing _editableComic
+                        bool currentChkIsRented = chkIsRented.Checked;
+
+                        if (originalIsRented && !currentChkIsRented) // Was rented, now admin unchecks it (processes a return)
+                        {
+                            _editableComic.IsRented = false;
+                            _editableComic.RentedToMemberId = 0;
+                            _editableComic.RentalDate = null;
+                            _editableComic.ReturnDate = null;
+                            _editableComic.ActualReturnTime = DateTime.Now;
+                            LogActivity($"Admin manually marked comic ID: {_editableComic.Id} as returned via EditForm.");
+                        }
+                        else if (!originalIsRented && currentChkIsRented) // Was not rented, admin checks it
+                        {
+                            MessageBox.Show("若要將漫畫標記為已租借，請使用「租借管理」表單以確保輸入所有必要的租借詳細資料（如會員ID和歸還日期）。\n此變更不會將漫畫標記為已租借。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            // Revert the checkbox because we are not allowing admin to rent via this checkbox
+                            chkIsRented.Checked = false;
+                            // _editableComic.IsRented remains false (its original state)
+                            LogActivity($"Admin attempted to mark comic ID: {_editableComic.Id} as rented via EditForm. Guided to RentalForm. Change reverted.");
+                        }
+                    }
+
                     _editableComic.Title = txtTitle.Text.Trim();
                     _editableComic.Author = txtAuthor.Text.Trim();
                     _editableComic.Isbn = txtIsbn.Text.Trim();
                     _editableComic.Genre = txtGenre.Text.Trim();
+                    // Note: _editableComic.IsRented is now handled by the admin logic above if applicable,
+                    // or remains its original loaded value if admin didn't/couldn't change it.
                     _comicService.UpdateComic(_editableComic);
                     LogActivity($"漫畫ID: {_editableComic.Id} 已成功更新。");
                     MessageBox.Show("漫畫資料已更新。", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);

@@ -49,13 +49,13 @@ namespace ComicRentalSystem_14Days.Services
             catch (JsonException ex)
             {
                 _logger.LogError($"嚴重錯誤: 使用者資料檔案 '{_usersFilePath}' 已損壞。詳細資訊: {ex.Message}", ex);
-                MessageBox.Show($"使用者資料檔案已損壞，無法載入使用者。應用程式將關閉。\n錯誤詳情: {ex.Message}\n檔案路徑: {_usersFilePath}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // MessageBox.Show($"使用者資料檔案已損壞，無法載入使用者。應用程式將關閉。\n錯誤詳情: {ex.Message}\n檔案路徑: {_usersFilePath}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 throw new ApplicationException("由於檔案損壞，無法載入關鍵使用者資料。", ex);
             }
             catch (Exception ex)
             {
                 _logger.LogError($"從 {_usersFilePath} 載入使用者時發生未預期的錯誤。詳細資訊: {ex.Message}", ex);
-                MessageBox.Show($"載入使用者時發生未預期的錯誤。應用程式將關閉。\n錯誤詳情: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // MessageBox.Show($"載入使用者時發生未預期的錯誤。應用程式將關閉。\n錯誤詳情: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 throw new ApplicationException("載入使用者資料期間發生未預期錯誤。", ex);
             }
         }

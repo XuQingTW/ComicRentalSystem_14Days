@@ -47,13 +47,13 @@ namespace ComicRentalSystem_14Days.Services
             catch (Exception ex) when (ex is FormatException || ex is IOException)
             {
                 _logger.LogError($"嚴重錯誤: 漫畫資料檔案 '{_comicFileName}' 已損壞或無法讀取。詳細資訊: {ex.Message}", ex);
-                MessageBox.Show($"漫畫資料檔案已損壞或無法讀取，無法載入漫畫資料庫。應用程式相關功能可能無法正常運作。\n錯誤詳情: {ex.Message}\n檔案路徑: {_comicFileName}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // MessageBox.Show($"漫畫資料檔案已損壞或無法讀取，無法載入漫畫資料庫。應用程式相關功能可能無法正常運作。\n錯誤詳情: {ex.Message}\n檔案路徑: {_comicFileName}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 throw new ApplicationException($"無法從 '{_comicFileName}' 載入漫畫資料。應用程式可能無法正常運作。", ex);
             }
             catch (Exception ex)
             {
                 _logger.LogError($"從 {_comicFileName} 載入漫畫時發生未預期的錯誤。詳細資訊: {ex.Message}", ex);
-                MessageBox.Show($"載入漫畫資料時發生未預期的錯誤。應用程式相關功能可能無法正常運作。\n錯誤詳情: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // MessageBox.Show($"載入漫畫資料時發生未預期的錯誤。應用程式相關功能可能無法正常運作。\n錯誤詳情: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 throw new ApplicationException("載入漫畫資料期間發生未預期錯誤。", ex);
             }
         }
@@ -211,26 +211,25 @@ namespace ComicRentalSystem_14Days.Services
             }
         }
 
-        public List<Comic> SearchComics(string? titleFilter = null, string? authorFilter = null)
+        public List<Comic> SearchComics(string? searchTerm = null) // Allow a single search term
         {
-            _logger.Log($"已呼叫 SearchComics，書名過濾器: '{titleFilter ?? "N/A"}', 作者過濾器: '{authorFilter ?? "N/A"}'。");
+            _logger.Log($"已呼叫 SearchComics，搜尋詞: '{searchTerm ?? "N/A"}'。");
             var query = _comics.AsQueryable();
 
-            if (!string.IsNullOrWhiteSpace(titleFilter))
+            if (string.IsNullOrWhiteSpace(searchTerm))
             {
-                query = query.Where(c => c.Title.IndexOf(titleFilter, StringComparison.OrdinalIgnoreCase) >= 0);
-                _logger.Log($"已套用書名過濾器: '{titleFilter}'。");
-            }
-            if (!string.IsNullOrWhiteSpace(authorFilter))
-            {
-                query = query.Where(c => c.Author.IndexOf(authorFilter, StringComparison.OrdinalIgnoreCase) >= 0);
-                _logger.Log($"已套用作者過濾器: '{authorFilter}'。");
+                _logger.Log("搜尋詞為空，返回所有漫畫。");
+                return _comics.ToList(); // Return all comics if search term is empty
             }
 
-            if (string.IsNullOrWhiteSpace(titleFilter) && string.IsNullOrWhiteSpace(authorFilter))
-            {
-                _logger.Log("未套用任何搜尋過濾器，返回所有漫畫。");
-            }
+            query = query.Where(c =>
+                (c.Title != null && c.Title.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0) ||
+                (c.Author != null && c.Author.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0) ||
+                (c.Isbn != null && c.Isbn.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0) ||
+                (c.Genre != null && c.Genre.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0) ||
+                (c.Id.ToString().Equals(searchTerm))
+            );
+            _logger.Log($"已套用搜尋詞: '{searchTerm}'。");
 
             List<Comic> results = query.ToList();
             _logger.Log($"SearchComics 找到 {results.Count} 本相符的漫畫。");
