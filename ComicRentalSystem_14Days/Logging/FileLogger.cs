@@ -23,7 +23,7 @@ namespace ComicRentalSystem_14Days.Logging
             }
             catch (Exception ex) // 技術點5: 例外處理
             {
-                Console.WriteLine($"[CRITICAL] Failed to create log directory '{logDirectory}': {ex.Message}");
+                Console.WriteLine($"[嚴重] 無法建立日誌目錄 '{logDirectory}': {ex.Message}");
                 logDirectory = AppDomain.CurrentDomain.BaseDirectory;
             }
             _logFilePath = Path.Combine(logDirectory, logFileName);
@@ -33,7 +33,7 @@ namespace ComicRentalSystem_14Days.Logging
         // 技術點4: 多型 (當透過 ILogger 引用呼叫此方法時)
         public void Log(string message)
         {
-            WriteLogEntry("INFO", message);
+            WriteLogEntry("資訊", message);
         }
 
         // 技術點3: 介面 (實作 ILogger 的 Log 過載方法)
@@ -41,7 +41,7 @@ namespace ComicRentalSystem_14Days.Logging
         // 技術點4: 多型 (當透過 ILogger 引用呼叫此方法時)
         public void Log(string message, Exception ex)
         {
-            WriteLogEntry("ERROR", $"{message} - Exception: {ex.ToString()}");
+            WriteLogEntry("錯誤", $"{message} - 例外: {ex.ToString()}");
         }
 
         // 技術點3: 介面 (實作 ILogger 的 LogError 過載方法)
@@ -51,12 +51,27 @@ namespace ComicRentalSystem_14Days.Logging
         {
             if (ex != null)
             {
-                WriteLogEntry("ERROR", $"{message} - Exception: {ex.ToString()}");
+                WriteLogEntry("錯誤", $"{message} - 例外: {ex.ToString()}");
             }
             else
             {
-                WriteLogEntry("ERROR", message);
+                WriteLogEntry("錯誤", message);
             }
+        }
+
+        public void LogWarning(string message)
+        {
+            WriteLogEntry("警告", message);
+        }
+
+        public void LogInformation(string message)
+        {
+            WriteLogEntry("資訊", message);
+        }
+
+        public void LogDebug(string message)
+        {
+            WriteLogEntry("偵錯", message);
         }
 
         private void WriteLogEntry(string level, string message)
@@ -73,11 +88,11 @@ namespace ComicRentalSystem_14Days.Logging
             }
             catch (IOException ioEx)
             {
-                Console.WriteLine($"[FileLogger IO Error] Failed to write to log file '{_logFilePath}': {ioEx.Message}. Original message: {message}");
+                Console.WriteLine($"[檔案記錄器 IO 錯誤] 無法寫入日誌檔案 '{_logFilePath}': {ioEx.Message}。原始訊息: {message}");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[FileLogger Unexpected Error] Failed to write to log file '{_logFilePath}': {ex.Message}. Original message: {message}");
+                Console.WriteLine($"[檔案記錄器 未預期錯誤] 無法寫入日誌檔案 '{_logFilePath}': {ex.Message}。原始訊息: {message}");
             }
         }
     }

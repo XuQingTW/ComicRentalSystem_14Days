@@ -30,38 +30,55 @@
         {
             dgvMembers = new DataGridView();
             panel1 = new Panel();
+            btnChangeUserRole = new Button();
             btnRefreshMembers = new Button();
             btnDeleteMember = new Button();
             btnEditMember = new Button();
             btnAddMember = new Button();
+            txtSearchMembers = new TextBox();
+            btnSearchMembers = new Button();
+            btnClearSearchMembers = new Button();
+            panelSearch = new Panel();
             ((System.ComponentModel.ISupportInitialize)dgvMembers).BeginInit();
             panel1.SuspendLayout();
+            panelSearch.SuspendLayout();
             SuspendLayout();
             // 
             // dgvMembers
             // 
             dgvMembers.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvMembers.Dock = DockStyle.Fill;
-            dgvMembers.Location = new Point(0, 0);
+            dgvMembers.Location = new Point(10, 40);
             dgvMembers.Name = "dgvMembers";
-            dgvMembers.Size = new Size(800, 450);
+            dgvMembers.Size = new Size(680, 292);
             dgvMembers.TabIndex = 0;
             // 
             // panel1
             // 
-            panel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            panel1.Controls.Add(btnChangeUserRole);
             panel1.Controls.Add(btnRefreshMembers);
             panel1.Controls.Add(btnDeleteMember);
             panel1.Controls.Add(btnEditMember);
             panel1.Controls.Add(btnAddMember);
-            panel1.Location = new Point(201, 376);
+            panel1.Dock = DockStyle.Bottom;
+            panel1.Location = new Point(10, 332);
             panel1.Name = "panel1";
-            panel1.Size = new Size(405, 62);
+            panel1.Size = new Size(680, 55);
             panel1.TabIndex = 1;
+            // 
+            // btnChangeUserRole
+            // 
+            btnChangeUserRole.Location = new Point(3, 17);
+            btnChangeUserRole.Name = "btnChangeUserRole";
+            btnChangeUserRole.Size = new Size(108, 23);
+            btnChangeUserRole.TabIndex = 4;
+            btnChangeUserRole.Text = "更改使用者角色";
+            btnChangeUserRole.UseVisualStyleBackColor = true;
+            btnChangeUserRole.Click += btnChangeUserRole_Click;
             // 
             // btnRefreshMembers
             // 
-            btnRefreshMembers.Location = new Point(291, 19);
+            btnRefreshMembers.Location = new Point(380, 17);
             btnRefreshMembers.Name = "btnRefreshMembers";
             btnRefreshMembers.Size = new Size(75, 23);
             btnRefreshMembers.TabIndex = 3;
@@ -70,26 +87,27 @@
             // 
             // btnDeleteMember
             // 
-            btnDeleteMember.Location = new Point(210, 19);
+            btnDeleteMember.Location = new Point(299, 17);
             btnDeleteMember.Name = "btnDeleteMember";
             btnDeleteMember.Size = new Size(75, 23);
             btnDeleteMember.TabIndex = 2;
             btnDeleteMember.Text = "刪除選定會員";
             btnDeleteMember.UseVisualStyleBackColor = true;
-            this.btnDeleteMember.Click += new System.EventHandler(this.btnDeleteMember_Click);
+            btnDeleteMember.Click += btnDeleteMember_Click;
             // 
             // btnEditMember
             // 
-            btnEditMember.Location = new Point(129, 19);
+            btnEditMember.Location = new Point(198, 17);
             btnEditMember.Name = "btnEditMember";
-            btnEditMember.Size = new Size(75, 23);
+            btnEditMember.Size = new Size(95, 23);
             btnEditMember.TabIndex = 1;
             btnEditMember.Text = "編輯選定會員";
             btnEditMember.UseVisualStyleBackColor = true;
+            btnEditMember.Click += btnEditMember_Click;
             // 
             // btnAddMember
             // 
-            btnAddMember.Location = new Point(48, 19);
+            btnAddMember.Location = new Point(117, 17);
             btnAddMember.Name = "btnAddMember";
             btnAddMember.Size = new Size(75, 23);
             btnAddMember.TabIndex = 0;
@@ -97,19 +115,60 @@
             btnAddMember.UseVisualStyleBackColor = true;
             btnAddMember.Click += btnAddMember_Click;
             // 
+            // txtSearchMembers
+            // 
+            txtSearchMembers.Location = new Point(12, 3);
+            txtSearchMembers.Name = "txtSearchMembers";
+            txtSearchMembers.Size = new Size(200, 23);
+            txtSearchMembers.TabIndex = 0;
+            // 
+            // btnSearchMembers
+            // 
+            btnSearchMembers.Location = new Point(218, 2);
+            btnSearchMembers.Name = "btnSearchMembers";
+            btnSearchMembers.Size = new Size(75, 25);
+            btnSearchMembers.TabIndex = 1;
+            btnSearchMembers.Text = "搜尋";
+            btnSearchMembers.UseVisualStyleBackColor = true;
+            btnSearchMembers.Click += btnSearchMembers_Click;
+            // 
+            // btnClearSearchMembers
+            // 
+            btnClearSearchMembers.Location = new Point(299, 2);
+            btnClearSearchMembers.Name = "btnClearSearchMembers";
+            btnClearSearchMembers.Size = new Size(75, 25);
+            btnClearSearchMembers.TabIndex = 2;
+            btnClearSearchMembers.Text = "清除";
+            btnClearSearchMembers.UseVisualStyleBackColor = true;
+            btnClearSearchMembers.Click += btnClearSearchMembers_Click;
+            // 
+            // panelSearch
+            // 
+            panelSearch.Controls.Add(txtSearchMembers);
+            panelSearch.Controls.Add(btnSearchMembers);
+            panelSearch.Controls.Add(btnClearSearchMembers);
+            panelSearch.Dock = DockStyle.Top;
+            panelSearch.Location = new Point(10, 10);
+            panelSearch.Name = "panelSearch";
+            panelSearch.Size = new Size(680, 30);
+            panelSearch.TabIndex = 2;
+            // 
             // MemberManagementForm
             // 
-            AutoScaleDimensions = new SizeF(8F, 17F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
-            Controls.Add(panel1);
+            ClientSize = new Size(700, 397);
             Controls.Add(dgvMembers);
+            Controls.Add(panel1);
+            Controls.Add(panelSearch);
             Name = "MemberManagementForm";
-            Text = "MemberManagementForm";
+            Text = "會員管理";
+            Load += MemberManagementForm_Load;
             ((System.ComponentModel.ISupportInitialize)dgvMembers).EndInit();
             panel1.ResumeLayout(false);
+            panelSearch.ResumeLayout(false);
+            panelSearch.PerformLayout();
             ResumeLayout(false);
-            this.Load += new System.EventHandler(this.MemberManagementForm_Load);
         }
 
         #endregion
@@ -120,5 +179,10 @@
         private Button btnDeleteMember;
         private Button btnEditMember;
         private Button btnAddMember;
+        private Button btnChangeUserRole;
+        private Panel panelSearch;
+        private TextBox txtSearchMembers;
+        private Button btnSearchMembers;
+        private Button btnClearSearchMembers;
     }
 }

@@ -34,8 +34,13 @@
             btnDeleteComic = new Button();
             btnEditComic = new Button();
             btnAddComic = new Button();
+            txtSearchComics = new TextBox();
+            btnSearchComics = new Button();
+            btnClearSearchComics = new Button();
+            panelSearch = new Panel();
             ((System.ComponentModel.ISupportInitialize)dgvComics).BeginInit();
             panel1.SuspendLayout();
+            panelSearch.SuspendLayout();
             SuspendLayout();
             // 
             // dgvComics
@@ -44,13 +49,12 @@
             dgvComics.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvComics.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvComics.Dock = DockStyle.Fill;
-            dgvComics.Location = new Point(0, 0);
-            dgvComics.Margin = new Padding(4, 4, 4, 4);
+            dgvComics.Location = new Point(10, 40);
             dgvComics.MultiSelect = false;
             dgvComics.Name = "dgvComics";
             dgvComics.ReadOnly = true;
             dgvComics.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvComics.Size = new Size(1000, 529);
+            dgvComics.Size = new Size(680, 305);
             dgvComics.TabIndex = 0;
             // 
             // panel1
@@ -60,19 +64,18 @@
             panel1.Controls.Add(btnDeleteComic);
             panel1.Controls.Add(btnEditComic);
             panel1.Controls.Add(btnAddComic);
-            panel1.Location = new Point(224, 469);
-            panel1.Margin = new Padding(4, 4, 4, 4);
+            panel1.Dock = DockStyle.Bottom;
+            panel1.Location = new Point(10, 345);
             panel1.Name = "panel1";
-            panel1.Size = new Size(561, 46);
+            panel1.Size = new Size(680, 33);
             panel1.TabIndex = 1;
             // 
             // btnRefresh
             // 
             btnRefresh.AutoSize = true;
-            btnRefresh.Location = new Point(432, 5);
-            btnRefresh.Margin = new Padding(4, 4, 4, 4);
+            btnRefresh.Location = new Point(319, 4);
             btnRefresh.Name = "btnRefresh";
-            btnRefresh.Size = new Size(104, 35);
+            btnRefresh.Size = new Size(69, 25);
             btnRefresh.TabIndex = 3;
             btnRefresh.Text = "重新整理";
             btnRefresh.UseVisualStyleBackColor = true;
@@ -81,10 +84,9 @@
             // btnDeleteComic
             // 
             btnDeleteComic.AutoSize = true;
-            btnDeleteComic.Location = new Point(298, 5);
-            btnDeleteComic.Margin = new Padding(4, 4, 4, 4);
+            btnDeleteComic.Location = new Point(218, 4);
             btnDeleteComic.Name = "btnDeleteComic";
-            btnDeleteComic.Size = new Size(144, 35);
+            btnDeleteComic.Size = new Size(95, 25);
             btnDeleteComic.TabIndex = 2;
             btnDeleteComic.Text = "刪除選定漫畫";
             btnDeleteComic.UseVisualStyleBackColor = true;
@@ -93,42 +95,81 @@
             // btnEditComic
             // 
             btnEditComic.AutoSize = true;
-            btnEditComic.Location = new Point(161, 5);
-            btnEditComic.Margin = new Padding(4, 4, 4, 4);
+            btnEditComic.Location = new Point(111, 4);
             btnEditComic.Name = "btnEditComic";
-            btnEditComic.Size = new Size(144, 35);
+            btnEditComic.Size = new Size(101, 26);
             btnEditComic.TabIndex = 1;
             btnEditComic.Text = "編輯選定漫畫";
             btnEditComic.UseVisualStyleBackColor = true;
+            btnEditComic.Click += btnEditComic_Click;
             // 
             // btnAddComic
             // 
             btnAddComic.AutoSize = true;
-            btnAddComic.Location = new Point(4, 5);
-            btnAddComic.Margin = new Padding(4, 4, 4, 4);
+            btnAddComic.Location = new Point(3, 4);
             btnAddComic.Name = "btnAddComic";
-            btnAddComic.Size = new Size(150, 35);
+            btnAddComic.Size = new Size(105, 26);
             btnAddComic.TabIndex = 0;
             btnAddComic.Text = "新增漫畫";
             btnAddComic.UseVisualStyleBackColor = true;
             btnAddComic.Click += btnAddComic_Click;
             // 
+            // txtSearchComics
+            // 
+            txtSearchComics.Location = new Point(12, 3);
+            txtSearchComics.Name = "txtSearchComics";
+            txtSearchComics.Size = new Size(200, 23);
+            txtSearchComics.TabIndex = 0;
+            // 
+            // btnSearchComics
+            // 
+            btnSearchComics.Location = new Point(218, 2);
+            btnSearchComics.Name = "btnSearchComics";
+            btnSearchComics.Size = new Size(75, 25);
+            btnSearchComics.TabIndex = 1;
+            btnSearchComics.Text = "搜尋";
+            btnSearchComics.UseVisualStyleBackColor = true;
+            btnSearchComics.Click += btnSearchComics_Click;
+            // 
+            // btnClearSearchComics
+            // 
+            btnClearSearchComics.Location = new Point(299, 2);
+            btnClearSearchComics.Name = "btnClearSearchComics";
+            btnClearSearchComics.Size = new Size(75, 25);
+            btnClearSearchComics.TabIndex = 2;
+            btnClearSearchComics.Text = "清除";
+            btnClearSearchComics.UseVisualStyleBackColor = true;
+            btnClearSearchComics.Click += btnClearSearchComics_Click;
+            // 
+            // panelSearch
+            // 
+            panelSearch.Controls.Add(txtSearchComics);
+            panelSearch.Controls.Add(btnSearchComics);
+            panelSearch.Controls.Add(btnClearSearchComics);
+            panelSearch.Dock = DockStyle.Top;
+            panelSearch.Location = new Point(10, 10);
+            panelSearch.Name = "panelSearch";
+            panelSearch.Size = new Size(680, 30);
+            panelSearch.TabIndex = 2;
+            // 
             // ComicManagementForm
             // 
-            AutoScaleDimensions = new SizeF(10F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1000, 529);
-            Controls.Add(panel1);
+            ClientSize = new Size(700, 388);
             Controls.Add(dgvComics);
-            Margin = new Padding(4, 4, 4, 4);
+            Controls.Add(panel1);
+            Controls.Add(panelSearch);
             Name = "ComicManagementForm";
-            Text = "ComicManagementForm";
+            Text = "漫畫管理";
+            Load += ComicManagementForm_Load;
             ((System.ComponentModel.ISupportInitialize)dgvComics).EndInit();
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
+            panelSearch.ResumeLayout(false);
+            panelSearch.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
-            this.Load += new System.EventHandler(this.ComicManagementForm_Load);
         }
 
 
@@ -140,5 +181,9 @@
         private Button btnDeleteComic;
         private Button btnEditComic;
         private Button btnAddComic;
+        private Panel panelSearch;
+        private TextBox txtSearchComics;
+        private Button btnSearchComics;
+        private Button btnClearSearchComics;
     }
 }
