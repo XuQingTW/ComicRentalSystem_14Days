@@ -64,7 +64,7 @@ namespace ComicRentalSystem_14Days.Forms
             this.gbAccountCredentials.Size = new System.Drawing.Size(420, 130); // Adjusted size
             this.gbAccountCredentials.TabIndex = 0;
             this.gbAccountCredentials.TabStop = false;
-            this.gbAccountCredentials.Text = "Account Credentials";
+            this.gbAccountCredentials.Text = "帳戶憑證";
             //
             // lblUsername
             //
@@ -72,7 +72,7 @@ namespace ComicRentalSystem_14Days.Forms
             this.lblUsername.Name = "lblUsername";
             this.lblUsername.Size = new System.Drawing.Size(125, 23); // Adjusted width
             this.lblUsername.TabIndex = 0;
-            this.lblUsername.Text = "Username:";
+            this.lblUsername.Text = "使用者名稱:";
             this.lblUsername.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             //
             // txtUsername
@@ -91,7 +91,7 @@ namespace ComicRentalSystem_14Days.Forms
             this.lblPassword.Name = "lblPassword";
             this.lblPassword.Size = new System.Drawing.Size(125, 23);
             this.lblPassword.TabIndex = 2;
-            this.lblPassword.Text = "Password:";
+            this.lblPassword.Text = "密碼:";
             this.lblPassword.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             //
             // txtPassword
@@ -110,7 +110,7 @@ namespace ComicRentalSystem_14Days.Forms
             this.lblConfirmPassword.Name = "lblConfirmPassword";
             this.lblConfirmPassword.Size = new System.Drawing.Size(125, 23);
             this.lblConfirmPassword.TabIndex = 4;
-            this.lblConfirmPassword.Text = "Confirm Password:";
+            this.lblConfirmPassword.Text = "確認密碼:";
             this.lblConfirmPassword.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             //
             // txtConfirmPassword
@@ -137,7 +137,7 @@ namespace ComicRentalSystem_14Days.Forms
             this.gbMemberInfo.Size = new System.Drawing.Size(420, 160); // Adjusted size
             this.gbMemberInfo.TabIndex = 1;
             this.gbMemberInfo.TabStop = false;
-            this.gbMemberInfo.Text = "Member Information";
+            this.gbMemberInfo.Text = "會員資訊";
             //
             // lblName
             //
@@ -145,7 +145,7 @@ namespace ComicRentalSystem_14Days.Forms
             this.lblName.Name = "lblName";
             this.lblName.Size = new System.Drawing.Size(125, 23);
             this.lblName.TabIndex = 0;
-            this.lblName.Text = "Name:";
+            this.lblName.Text = "姓名:";
             this.lblName.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             //
             // txtName
@@ -164,7 +164,7 @@ namespace ComicRentalSystem_14Days.Forms
             this.lblPhoneNumber.Name = "lblPhoneNumber";
             this.lblPhoneNumber.Size = new System.Drawing.Size(125, 23);
             this.lblPhoneNumber.TabIndex = 2;
-            this.lblPhoneNumber.Text = "Phone Number:";
+            this.lblPhoneNumber.Text = "電話號碼:";
             this.lblPhoneNumber.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             //
             // txtPhoneNumber
@@ -183,7 +183,7 @@ namespace ComicRentalSystem_14Days.Forms
             this.lblRole.Name = "lblRole";
             this.lblRole.Size = new System.Drawing.Size(125, 23);
             this.lblRole.TabIndex = 4;
-            this.lblRole.Text = "Role:";
+            this.lblRole.Text = "角色:";
             this.lblRole.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.lblRole.Visible = false;
             //
@@ -206,7 +206,7 @@ namespace ComicRentalSystem_14Days.Forms
             this.btnRegister.Name = "btnRegister";
             this.btnRegister.Size = new System.Drawing.Size(100, 35);
             this.btnRegister.TabIndex = 2; // Form-level tab index
-            this.btnRegister.Text = "Register";
+            this.btnRegister.Text = "註冊";
             this.btnRegister.UseVisualStyleBackColor = true;
             this.btnRegister.Click += new System.EventHandler(this.btnRegister_Click);
             //
@@ -226,7 +226,7 @@ namespace ComicRentalSystem_14Days.Forms
             this.Name = "RegistrationForm";
             this.Padding = new System.Windows.Forms.Padding(15);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "User Registration";
+            this.Text = "使用者註冊";
             this.Load += new System.EventHandler(this.RegistrationForm_Load);
             this.gbAccountCredentials.ResumeLayout(false);
             this.gbAccountCredentials.PerformLayout();

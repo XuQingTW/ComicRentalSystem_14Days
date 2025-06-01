@@ -14,9 +14,9 @@ namespace ComicRentalSystem_14Days.Models
         public string Genre { get; set; }
         public bool IsRented { get; set; }
         public int RentedToMemberId { get; set; }
-        public DateTime? RentalDate { get; set; } // Added
-        public DateTime? ReturnDate { get; set; } // Added
-        public DateTime? ActualReturnTime { get; set; } // Added
+        public DateTime? RentalDate { get; set; } // 已新增
+        public DateTime? ReturnDate { get; set; } // 已新增
+        public DateTime? ActualReturnTime { get; set; } // 已新增
 
         public Comic()
         {
@@ -24,9 +24,9 @@ namespace ComicRentalSystem_14Days.Models
             Author = string.Empty;
             Isbn = string.Empty;
             Genre = string.Empty;
-            RentalDate = null; // Initialize
-            ReturnDate = null; // Initialize
-            ActualReturnTime = null; // Initialize
+            RentalDate = null; // 初始化
+            ReturnDate = null; // 初始化
+            ActualReturnTime = null; // 初始化
         }
 
         // 將 Comic 物件轉換為 CSV 格式的一行字串
@@ -43,11 +43,11 @@ namespace ComicRentalSystem_14Days.Models
         // 技術點 #1: 字串與陣列
         public static Comic FromCsvString(string csvLine)
         {
-            List<string> values = ParseCsvLine(csvLine); // Use the new parser
+            List<string> values = ParseCsvLine(csvLine); // 使用新的解析器
             // Expect at least 7 fields (original) or up to 10 fields (with new dates)
-            if (values.Count < 7) // Allows for 7 to 10 fields. Old data might have 7, newer up to 10.
+            if (values.Count < 7) // 允許 7 到 10 個欄位。舊資料可能有 7 個，較新的資料最多 10 個。
             {
-                throw new FormatException("CSV line does not contain enough values for Comic (minimum 7 expected). Line: " + csvLine);
+                throw new FormatException("CSV 行未包含足夠的漫畫欄位值 (至少需要 7 個)。行: " + csvLine);
             }
 
             Comic comic = new Comic();
@@ -61,7 +61,7 @@ namespace ComicRentalSystem_14Days.Models
                 comic.IsRented = bool.Parse(values[5]);
                 comic.RentedToMemberId = string.IsNullOrEmpty(values[6]) ? 0 : int.Parse(values[6]);
 
-                // Handle optional RentalDate (field 8, index 7)
+                // 處理可選的 RentalDate (欄位 8，索引 7)
                 if (values.Count > 7 && !string.IsNullOrEmpty(values[7]))
                 {
                     if (DateTime.TryParse(values[7], out DateTime rentalDate))
@@ -70,7 +70,7 @@ namespace ComicRentalSystem_14Days.Models
                     }
                     else
                     {
-                        // Optionally log or handle parsing error for RentalDate
+                        // 可選擇性地記錄或處理 RentalDate 的解析錯誤
                         comic.RentalDate = null;
                     }
                 }
@@ -79,7 +79,7 @@ namespace ComicRentalSystem_14Days.Models
                     comic.RentalDate = null;
                 }
 
-                // Handle optional ReturnDate (field 9, index 8)
+                // 處理可選的 ReturnDate (欄位 9，索引 8)
                 if (values.Count > 8 && !string.IsNullOrEmpty(values[8]))
                 {
                     if (DateTime.TryParse(values[8], out DateTime returnDate))
@@ -88,7 +88,7 @@ namespace ComicRentalSystem_14Days.Models
                     }
                     else
                     {
-                        // Optionally log or handle parsing error for ReturnDate
+                        // 可選擇性地記錄或處理 ReturnDate 的解析錯誤
                         comic.ReturnDate = null;
                     }
                 }
@@ -97,7 +97,7 @@ namespace ComicRentalSystem_14Days.Models
                     comic.ReturnDate = null;
                 }
 
-                // Handle optional ActualReturnTime (field 10, index 9)
+                // 處理可選的 ActualReturnTime (欄位 10，索引 9)
                 if (values.Count > 9 && !string.IsNullOrEmpty(values[9]))
                 {
                     if (DateTime.TryParse(values[9], out DateTime actualReturnTime))
@@ -106,7 +106,7 @@ namespace ComicRentalSystem_14Days.Models
                     }
                     else
                     {
-                        // Optionally log or handle parsing error for ActualReturnTime
+                        // 可選擇性地記錄或處理 ActualReturnTime 的解析錯誤
                         comic.ActualReturnTime = null;
                     }
                 }
@@ -117,23 +117,23 @@ namespace ComicRentalSystem_14Days.Models
             }
             catch (FormatException ex)
             {
-                throw new FormatException($"Error parsing CSV line for Comic: '{csvLine}'. Details: {ex.Message}", ex);
+                throw new FormatException($"解析漫畫 CSV 行時發生錯誤: '{csvLine}'。詳細資訊: {ex.Message}", ex);
             }
             catch (Exception ex)
             {
-                // It's better to throw a specific exception or log the error appropriately.
-                // For now, rethrow the original exception to maintain behavior while indicating where it was caught.
-                throw new Exception($"Generic error parsing comic CSV: {ex.Message} for line: {csvLine}", ex);
+                // 最好擲回特定的例外狀況或適當地記錄錯誤。
+                // 目前，重新擲回原始例外狀況以保持行為，同時指出攔截位置。
+                throw new Exception($"解析漫畫 CSV 時發生一般錯誤: {ex.Message}，行: {csvLine}", ex);
             }
             return comic;
         }
 
-        internal static List<string> ParseCsvLine(string csvLine) // Changed private to internal for testing
+        internal static List<string> ParseCsvLine(string csvLine) // 為方便測試，已從 private 改為 internal
         {
             List<string> fields = new List<string>();
             StringBuilder fieldBuilder = new StringBuilder();
             bool inQuotes = false;
-            bool currentFieldWasQuoted = false; // Added flag
+            bool currentFieldWasQuoted = false; // 已新增旗標
             for (int i = 0; i < csvLine.Length; i++)
             {
                 char c = csvLine[i];
@@ -144,12 +144,12 @@ namespace ComicRentalSystem_14Days.Models
                     {
                         if (i + 1 < csvLine.Length && csvLine[i + 1] == '"')
                         {
-                            fieldBuilder.Append('"'); // Escaped quote
-                            i++; // Skip next quote
+                            fieldBuilder.Append('"'); // 已轉義的引號
+                            i++; // 跳過下一個引號
                         }
                         else
                         {
-                            inQuotes = false; // End of quoted field
+                            inQuotes = false; // 引號欄位結束
                         }
                     }
                     else
@@ -161,23 +161,23 @@ namespace ComicRentalSystem_14Days.Models
                 {
                     if (c == '"')
                     {
-                        // Start of a quoted field. If fieldBuilder is not empty,
-                        // it means the quote is not at the start of the field,
-                        // which is unusual for standard CSV. However, we'll treat it as part of the field.
-                        // Standard CSV expects quotes at the beginning of a field.
-                        // If fieldBuilder has content, it means the quote is not at the start.
-                        // This could be a quote within an unquoted field or malformed.
-                        // For this parser, we'll treat a quote not at the start of a field (after a comma or line start)
-                        // as a literal character if not in `inQuotes` mode.
-                        if (fieldBuilder.Length == 0) // Quote is at the start of a new field
+                        // 引號欄位的開始。如果 fieldBuilder 不是空的，
+                        // 這表示引號不在欄位的開頭，
+                        // 這對於標準 CSV 來說不尋常。然而，我們將其視為欄位的一部分。
+                        // 標準 CSV 預期引號位於欄位的開頭。
+                        // 如果 fieldBuilder 有內容，表示引號不在開頭。
+                        // 這可能是未加引號欄位中的引號，或是格式錯誤。
+                        // 對於此解析器，我們將欄位開頭 (逗號或行首之後) 以外的引號
+                        // 在非 `inQuotes` 模式下視為文字字元。
+                        if (fieldBuilder.Length == 0) // 引號位於新欄位的開頭
                         {
                             inQuotes = true;
-                            currentFieldWasQuoted = true; // Mark field as quoted
+                            currentFieldWasQuoted = true; // 將欄位標記為已加引號
                         }
                         else
                         {
-                            // Quote is not at the start of the field value, so it's a literal quote.
-                            // This can happen if the CSV is not strictly formatting quoted fields, e.g. field"with"quote
+                            // 引號不在欄位值的開頭，因此它是文字引號。
+                            // 如果 CSV 未嚴格格式化引號欄位 (例如 field"with"quote)，則可能發生這種情況
                             fieldBuilder.Append(c);
                         }
                     }
@@ -185,14 +185,14 @@ namespace ComicRentalSystem_14Days.Models
                     {
                         if (currentFieldWasQuoted)
                         {
-                            fields.Add(fieldBuilder.ToString()); // Add as is if quoted
+                            fields.Add(fieldBuilder.ToString()); // 若有引號則照原樣新增
                         }
                         else
                         {
-                            fields.Add(fieldBuilder.ToString().Trim()); // Trim if not quoted
+                            fields.Add(fieldBuilder.ToString().Trim()); // 若無引號則修剪
                         }
                         fieldBuilder.Clear();
-                        currentFieldWasQuoted = false; // Reset for next field
+                        currentFieldWasQuoted = false; // 為下一個欄位重設
                     }
                     else
                     {
@@ -200,23 +200,23 @@ namespace ComicRentalSystem_14Days.Models
                     }
                 }
             }
-            // Add the last field, ensuring whitespace is trimmed.
-            // If the last field was quoted, the quotes defining it as such are handled by inQuotes logic.
-            // Any internal quotes (escaped) are preserved correctly.
-            // External whitespace around a quoted field (e.g., " value " ,) should also be trimmed before adding.
-            // The .Trim() here handles whitespace for the last field, whether it was quoted or not.
+            // 新增最後一個欄位，確保修剪空白。
+            // 如果最後一個欄位已加引號，則定義其的引號由 inQuotes 邏輯處理。
+            // 任何內部引號 (已轉義) 都會正確保留。
+            // 引號欄位周圍的外部空白 (例如 " value " ,) 在新增前也應修剪。
+            // 此處的 .Trim() 會處理最後一個欄位的空白，無論其是否已加引號。
             if (currentFieldWasQuoted)
             {
-                fields.Add(fieldBuilder.ToString()); // Add as is if quoted
+                fields.Add(fieldBuilder.ToString()); // 若有引號則照原樣新增
             }
             else
             {
-                fields.Add(fieldBuilder.ToString().Trim()); // Trim if not quoted
+                fields.Add(fieldBuilder.ToString().Trim()); // 若無引號則修剪
             }
 
-            // Post-processing: The current parser aims to remove structural quotes.
-            // No explicit Trim('"') should be necessary if the logic is correct.
-            // The fields should contain their actual values.
+            // 後期處理：目前的解析器旨在移除結構性引號。
+            // 如果邏輯正確，則無需明確的 Trim('"')。
+            // 欄位應包含其實際值。
             return fields;
         }
     }

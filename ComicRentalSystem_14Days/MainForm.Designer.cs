@@ -227,7 +227,7 @@ namespace ComicRentalSystem_14Days
             btnNavComicMgmt.Padding = new Padding(8, 0, 0, 0);
             btnNavComicMgmt.Size = new Size(140, 36);
             btnNavComicMgmt.TabIndex = 1;
-            btnNavComicMgmt.Text = "所有漫畫狀態";
+            btnNavComicMgmt.Text = "漫畫管理";
             btnNavComicMgmt.TextAlign = ContentAlignment.MiddleLeft;
             btnNavComicMgmt.UseVisualStyleBackColor = false;
             // 
@@ -330,7 +330,7 @@ namespace ComicRentalSystem_14Days
             availableComicsTabPage.Padding = new Padding(8);
             availableComicsTabPage.Size = new Size(536, 448);
             availableComicsTabPage.TabIndex = 0;
-            availableComicsTabPage.Text = "當下可租借漫畫";
+            availableComicsTabPage.Text = "可租借漫畫";
             // 
             // availableComicsFilterPanel
             // 
@@ -521,7 +521,7 @@ namespace ComicRentalSystem_14Days
             // 
             toolStripStatusLabelUser.Name = "toolStripStatusLabelUser";
             toolStripStatusLabelUser.Size = new Size(143, 17);
-            toolStripStatusLabelUser.Text = "User: None | Role: None";
+            toolStripStatusLabelUser.Text = "使用者: 無 | 角色: 無";
             // 
             // MainForm
             // 
