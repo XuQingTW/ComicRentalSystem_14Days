@@ -7,9 +7,9 @@ using System.Windows.Forms;
 
 namespace ComicRentalSystem_14Days.Forms
 {
-    public partial class RegistrationForm : BaseForm // 已變更繼承
+    public partial class RegistrationForm : BaseForm 
     {
-        private readonly ILogger _logger; // 將由 base.SetLogger 設定
+        private readonly ILogger _logger; 
         private readonly AuthenticationService _authService;
         private readonly MemberService _memberService;
         private readonly User? _currentUser;
@@ -17,28 +17,19 @@ namespace ComicRentalSystem_14Days.Forms
 
         public RegistrationForm(ILogger logger, AuthenticationService authService, MemberService memberService, User? currentUser = null)
         {
-            InitializeComponent(); // 如果使用 : base()，則 BaseForm 建構函式 (若有) 會在此之前呼叫。
-                                   // 如果 BaseForm 有無參數建構函式，則會隱含呼叫。
-                                   // ModernBaseForm 有無參數建構函式，BaseForm 也有無參數建構函式。
+            InitializeComponent(); 
 
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider();
 
-            // 為 BaseForm 功能設定記錄器
-            // 如果 BaseForm 也有 _logger，則此類別中的 _logger 欄位會被遮蔽。最好使用 BaseForm 的記錄器。
-            // 目前，我們假設此類別的 _logger 是其直接邏輯的主要記錄器，
-            // 且 BaseForm 的記錄器是為其自身需求而設定。
             this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            base.SetLogger(this._logger); // Make sure BaseForm has its logger instance
+            base.SetLogger(this._logger); 
 
-            // 套用現代樣式
             if (btnRegister != null) StyleModernButton(btnRegister);
             Control[] foundControls = this.Controls.Find("gbAccountCredentials", true);
             if (foundControls.Length > 0 && foundControls[0] is GroupBox gbAcc) StyleModernGroupBox(gbAcc);
 
             foundControls = this.Controls.Find("gbMemberInfo", true);
             if (foundControls.Length > 0 && foundControls[0] is GroupBox gbInfo) StyleModernGroupBox(gbInfo);
-            // if (this.gbAccountCredentials != null) StyleModernGroupBox(this.gbAccountCredentials); // 若為直接欄位存取
-            // if (this.gbMemberInfo != null) StyleModernGroupBox(this.gbMemberInfo);
 
 
             _authService = authService ?? throw new ArgumentNullException(nameof(authService));
@@ -63,7 +54,6 @@ namespace ComicRentalSystem_14Days.Forms
             string confirmPassword = txtConfirmPassword.Text;
             string name = txtName.Text.Trim();
             string phoneNumber = txtPhoneNumber.Text.Trim();
-            // UserRole selectedRole = UserRole.Member; // 預設角色 - 將在下方決定
 
             UserRole selectedRole;
             if (cmbRole.Visible && cmbRole.Enabled && cmbRole.SelectedItem != null)
@@ -72,10 +62,8 @@ namespace ComicRentalSystem_14Days.Forms
             }
             else
             {
-                selectedRole = UserRole.Member; // 若未使用 ComboBox 或未選取，則為預設值
+                selectedRole = UserRole.Member; 
             }
-
-            // 已移除手動驗證檢查，現在由 Validating 事件 + ValidateChildren() 處理
 
             _logger.Log($"使用者註冊嘗試: {username}, 姓名: {name}, 電話: {phoneNumber}, 角色: {selectedRole}");
             bool success = _authService.Register(username, password, selectedRole);
@@ -85,14 +73,11 @@ namespace ComicRentalSystem_14Days.Forms
                 _logger.Log($"使用者 '{username}' (來自txtUsername) 已成功註冊為 {selectedRole}。");
                 try
                 {
-                    // 建立 Member 物件，確保從 txtUsername.Text填入使用者名稱
-                    // 姓名 (用於顯示/其他目的) 來自 txtName.Text
                     Member newMember = new Member { Name = name, PhoneNumber = phoneNumber, Username = username };
                     _memberService.AddMember(newMember);
                     _logger.Log($"已為姓名: {name}, 使用者名稱: {username}, 電話: {phoneNumber} 建立會員記錄。");
 
                     MessageBox.Show($"使用者 '{username}' (姓名: {name}) 已成功註冊，會員資料也已建立。", "註冊成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    // 可選擇關閉表單或清除欄位
                     txtUsername.Clear();
                     txtName.Clear();
                     txtPhoneNumber.Clear();
@@ -102,7 +87,6 @@ namespace ComicRentalSystem_14Days.Forms
                 catch (Exception ex)
                 {
                     _logger.LogError($"成功註冊使用者 '{username}' 但建立會員記錄失敗。錯誤: {ex.Message}. 正在嘗試復原使用者註冊。", ex);
-                    // 嘗試刪除孤立的使用者
                     bool rollbackSuccess = _authService.DeleteUser(username);
                     if (rollbackSuccess)
                     {
@@ -113,7 +97,6 @@ namespace ComicRentalSystem_14Days.Forms
                         _logger.LogError($"無法復原 (刪除) 使用者帳戶 '{username}'。系統可能處於不一致狀態。");
                     }
                     MessageBox.Show($"註冊過程中發生錯誤，無法建立完整的會員資料。請重試或聯繫管理員。\n錯誤: {ex.Message}", "註冊失敗", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    // 不要清除所有欄位，允許使用者更正 (如果可能)，但清除敏感欄位
                     txtPassword.Clear();
                     txtConfirmPassword.Clear();
                 }
@@ -122,7 +105,6 @@ namespace ComicRentalSystem_14Days.Forms
             {
                 _logger.Log($"使用者 '{username}' 註冊失敗。使用者名稱可能已存在。");
                 MessageBox.Show("無法完成註冊。請確認所有欄位均已正確填寫，或嘗試使用不同的使用者名稱。", "註冊失敗", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                // 僅在使用者名稱重複時清除使用者名稱，其他欄位可保留以便更正
                 txtUsername.Clear();
             }
         }
@@ -130,22 +112,18 @@ namespace ComicRentalSystem_14Days.Forms
         private void RegistrationForm_Load(object sender, EventArgs e)
         {
             _logger.Log("註冊表單已載入。");
-            // Populate cmbRole.DataSource = Enum.GetValues(typeof(UserRole));
-            // 以下程式碼行假設 cmbRole 已在設計工具檔案中宣告。
             cmbRole.DataSource = Enum.GetValues(typeof(UserRole));
 
             if (_currentUser != null && _currentUser.Role == UserRole.Admin)
             {
-                // 管理員正在使用此表單
                 lblRole.Visible = true;
                 cmbRole.Visible = true;
                 cmbRole.Enabled = true;
-                cmbRole.SelectedItem = UserRole.Member; // 管理員的預設選項
+                cmbRole.SelectedItem = UserRole.Member; 
                 _logger.Log("註冊表單由管理員載入。角色選擇已啟用。");
             }
             else
             {
-                // 非管理員或 null currentUser (例如，來自 LoginForm)
                 lblRole.Visible = false;
                 cmbRole.Visible = false;
                 cmbRole.Enabled = false;
@@ -153,7 +131,6 @@ namespace ComicRentalSystem_14Days.Forms
             }
         }
 
-        // 驗證事件處理常式
         private void txtUsername_Validating(object? sender, System.ComponentModel.CancelEventArgs e)
         {
             if (sender is TextBox txt && string.IsNullOrWhiteSpace(txt.Text))
@@ -172,7 +149,7 @@ namespace ComicRentalSystem_14Days.Forms
 
         private void txtConfirmPassword_Validating(object? sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (sender is TextBox txt && txt.Text != txtPassword.Text) // 假設 txtPassword 可存取
+            if (sender is TextBox txt && txt.Text != txtPassword.Text)
             { errorProvider1?.SetError(txt, "密碼不相符。"); e.Cancel = true; }
             else if (sender is TextBox txtB) { errorProvider1?.SetError(txtB, ""); }
         }

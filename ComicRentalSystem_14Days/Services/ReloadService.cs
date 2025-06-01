@@ -36,7 +36,7 @@ namespace ComicRentalSystem_14Days.Services
                         catch (OperationCanceledException)
                         {
                         }
-                        catch (Exception) // ex 未被使用，已移除以避免 CS0168 警告
+                        catch (Exception) 
                         {
                         }
                     }

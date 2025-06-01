@@ -11,17 +11,15 @@ namespace ComicRentalSystem_14Days.Forms
     public partial class MemberManagementForm : ComicRentalSystem_14Days.BaseForm
     {
         private MemberService? _memberService;
-        private AuthenticationService? _authenticationService; // Added AuthenticationService
+        private AuthenticationService? _authenticationService;
         private readonly ComicService? _comicService;
         private readonly User? _currentUser;
 
         public MemberManagementForm()
         {
             InitializeComponent();
-            // 概念性私有欄位註解已移除，因為控制項現在位於 Designer.cs 中
         }
 
-        // 更新的建構函式以包含 AuthenticationService 和 ComicService
         public MemberManagementForm(ILogger logger, MemberService memberService, AuthenticationService authenticationService, ComicService comicService, User? currentUser) : base(logger)
         {
             InitializeComponent();
@@ -41,17 +39,10 @@ namespace ComicRentalSystem_14Days.Forms
 
             LogActivity("MemberManagementForm is loading runtime components.");
 
-            _memberService.MembersChanged += MemberService_MembersChanged; // 此處確認 _memberService 不為 null
+            _memberService.MembersChanged += MemberService_MembersChanged; 
 
-            // txtSearchMembers、btnSearchMembers、btnClearSearchMembers 的事件處理常式，
-            // 和 btnChangeUserRole 預期會透過設計工具連接
-            // 在 InitializeComponent 中，因此不再需要 Controls.Find。
-            // 確保在設計工具或 InitializeComponent 中設定這些按鈕的點擊事件。
-            // 例如，如果您透過設計工具新增 btnSearchMembers 並雙擊它，
-            // 設計工具會新增：this.btnSearchMembers.Click += new System.EventHandler(this.btnSearchMembers_Click);
-
-            SetupDataGridView(); // 在某些版本中已於建構函式內呼叫，請確保其被適當呼叫。
-            LoadMembersData(); // 在某些版本中已於建構函式內呼叫，請確保其被適當呼叫。
+            SetupDataGridView(); 
+            LoadMembersData(); 
 
             LogActivity("會員管理表單已成功初始化。");
         }
@@ -95,7 +86,6 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (_memberService == null) return;
 
-            // txtSearchMembers 現在是表單類別的直接成員。
             string searchTerm = this.txtSearchMembers.Text.Trim();
 
             LogActivity($"嘗試載入會員資料。搜尋關鍵字: '{searchTerm}'。");
@@ -150,7 +140,6 @@ namespace ComicRentalSystem_14Days.Forms
         private void btnClearSearchMembers_Click(object? sender, EventArgs e)
         {
             LogActivity("清除搜尋會員按鈕已點擊。");
-            // txtSearchMembers 現在是表單類別的直接成員。
             this.txtSearchMembers.Text = string.Empty;
             LoadMembersData();
         }
@@ -161,9 +150,7 @@ namespace ComicRentalSystem_14Days.Forms
             LogActivity("Refresh Members button clicked. Will reload members from file asynchronously.");
             try
             {
-                await _memberService.ReloadAsync(); // 呼叫非同步版本
-                // MembersChanged 事件處理常式 (MemberService_MembersChanged)
-                // 已經呼叫 LoadMembersData()，因此此處無需明確呼叫。
+                await _memberService.ReloadAsync(); 
             }
             catch (Exception ex)
             {
@@ -176,21 +163,17 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (_memberService == null || Logger == null || _authenticationService == null)
             {
-                // 如果缺少基本服務，則記錄錯誤或顯示訊息
                 LogErrorActivity("新增會員所需的基本服務不可用。", new InvalidOperationException("服務未初始化。"));
                 MessageBox.Show("無法開啟註冊表單，必要的服務未初始化。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             LogActivity("新增會員按鈕已點擊。正在為新會員開啟 RegistrationForm。");
-            // 將目前使用者 (_currentUser，即管理員) 和其他服務傳遞給 RegistrationForm
             using (RegistrationForm regForm = new RegistrationForm(Logger, _authenticationService, _memberService, _currentUser))
             {
                 if (regForm.ShowDialog(this) == DialogResult.OK)
                 {
                     LogActivity("RegistrationForm (新增會員) 已關閉並回傳 OK。資料重新整理將由 MembersChanged 事件處理。");
-                    // 如果 AuthenticationService 或 MemberService 在儲存時觸發事件，則應由這些事件處理資料重新整理。
-                    // 如果事件無法保證或需要立即更新 UI，則可能仍需要明確呼叫 LoadMembersData()。
-                    LoadMembersData(); // 考量到事件，這可能多餘。為安全起見，暫時保留。
+                    LoadMembersData();
                 }
                 else
                 {
@@ -255,13 +238,11 @@ namespace ComicRentalSystem_14Days.Forms
                     }
                     else
                     {
-                        // 如果建構函式強制 _comicService 不為 null，則理想情況下不應發生此情況
                         MessageBox.Show("無法檢查會員租借狀態，漫畫服務未初始化。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         LogErrorActivity("Could not check member rental status: _comicService is null.");
                         return; // 中止刪除
                     }
 
-                    // 若無進行中的租借，則繼續進行現有的確認對話方塊
                     LogActivity($"嘗試刪除會員 ID: {selectedMember.Id}，姓名: '{selectedMember.Name}'。正在顯示確認對話方塊。");
                     var confirmResult = MessageBox.Show($"您確定要刪除會員 '{selectedMember.Name}' (ID: {selectedMember.Id}) 嗎？\n此操作無法復原。", "確認刪除", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                     if (confirmResult == DialogResult.Yes)
@@ -269,14 +250,10 @@ namespace ComicRentalSystem_14Days.Forms
                         LogActivity($"使用者已確認刪除會員 ID: {selectedMember.Id}。");
                         try
                         {
-                            _memberService.DeleteMember(selectedMember.Id); // 假設在刪除使用者帳戶之前此操作已成功
-                            // LogActivity($"Member ID: {selectedMember.Id}, Name: '{selectedMember.Name}' deleted from MemberService."); // Combined below
-
-                            // 現在，刪除關聯的使用者帳戶
-                            // 使用 selectedMember.Username 作為刪除的索引鍵
-                            string usernameToDelete = selectedMember.Username; // 從 selectedMember.Name 變更
-                            // LogActivity($"Attempting to delete user account for Username: '{usernameToDelete}' (Member Name: '{selectedMember.Name}')."); // Combined below
-                            if (_authenticationService != null) // 為安全起見進行 null 檢查，儘管它應該已被初始化
+                            _memberService.DeleteMember(selectedMember.Id); 
+                            string usernameToDelete = selectedMember.Username; 
+                            
+                            if (_authenticationService != null)
                             {
                                 bool userDeleted = _authenticationService.DeleteUser(usernameToDelete);
                                 if (userDeleted)
@@ -286,7 +263,6 @@ namespace ComicRentalSystem_14Days.Forms
                                 }
                                 else
                                 {
-                                    // 如果預期 Username 存在，則此情況可能表示不一致。
                                     Logger?.LogWarning($"User account for Username: '{usernameToDelete}' (Member Name: '{selectedMember.Name}') not found by AuthenticationService, though member record was deleted. Possible data inconsistency if a user account was expected.");
                                     LogActivity($"會員 ID: {selectedMember.Id} (無使用者帳戶) 已由服務成功標記為待刪除。UI 將透過事件重新整理。"); // Log for member deletion without user
                                     MessageBox.Show($"會員 '{selectedMember.Name}' 已從會員列表中刪除，但對應的使用者帳戶 '{usernameToDelete}' 未找到或無法刪除。", "部分成功", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -335,12 +311,12 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (dgvMembers.SelectedRows.Count == 0)
             {
-                MessageBox.Show("請選擇一位會員。", "未選擇會員", MessageBoxButtons.OK, MessageBoxIcon.Information); // "請選擇一位會員。" | "未選擇會員"
+                MessageBox.Show("請選擇一位會員。", "未選擇會員", MessageBoxButtons.OK, MessageBoxIcon.Information); 
                 return;
             }
-            if (_authenticationService == null || Logger == null) // Logger來自BaseForm
+            if (_authenticationService == null || Logger == null) 
             {
-                 MessageBox.Show("必要的服務不可用。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error); // "必要的服務不可用。" | "錯誤"
+                 MessageBox.Show("必要的服務不可用。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error); 
                  LogErrorActivity("變更使用者角色所需服務不可用。", new InvalidOperationException("服務未初始化。"));
                  return;
             }
@@ -348,7 +324,7 @@ namespace ComicRentalSystem_14Days.Forms
             Member? selectedMember = dgvMembers.SelectedRows[0].DataBoundItem as Member;
             if (selectedMember == null || string.IsNullOrEmpty(selectedMember.Username))
             {
-                MessageBox.Show("選定的會員沒有關聯的使用者名稱或資料無效。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error); // "選定的會員沒有關聯的使用者名稱或資料無效。" | "錯誤"
+                MessageBox.Show("選定的會員沒有關聯的使用者名稱或資料無效。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 LogErrorActivity("Selected member for role change has no username or is invalid.");
                 return;
             }
@@ -356,7 +332,7 @@ namespace ComicRentalSystem_14Days.Forms
             User? userToEdit = _authenticationService.GetUserByUsername(selectedMember.Username);
             if (userToEdit == null)
             {
-                MessageBox.Show($"找不到使用者帳戶 '{selectedMember.Username}'。", "找不到使用者", MessageBoxButtons.OK, MessageBoxIcon.Error); // $"找不到使用者帳戶 '{selectedMember.Username}'。" | "找不到使用者"
+                MessageBox.Show($"找不到使用者帳戶 '{selectedMember.Username}'。", "找不到使用者", MessageBoxButtons.OK, MessageBoxIcon.Error); 
                 LogErrorActivity($"User account for member '{selectedMember.Name}' (username: {selectedMember.Username}) not found for role change.");
                 return;
             }
@@ -365,9 +341,6 @@ namespace ComicRentalSystem_14Days.Forms
             using (ChangeUserRoleForm changeRoleForm = new ChangeUserRoleForm(userToEdit, _authenticationService, Logger))
             {
                 changeRoleForm.ShowDialog(this);
-                // 此處 dgvMembers 無需特定重新整理，因為角色未顯示。
-                // _authenticationService._users 清單中的使用者物件是透過參考修改的，
-                // 且 ChangeUserRoleForm 中的 SaveUsers() 會永久保存此變更。
             }
         }
     }

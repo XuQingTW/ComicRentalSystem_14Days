@@ -30,9 +30,9 @@ namespace ComicRentalSystem_14Days
             if (AppFileHelper != null && AppLogger != null)
             {
                 AppComicService = new ComicService(AppFileHelper, AppLogger);
-                AppMemberService = new MemberService(AppFileHelper, AppLogger, AppComicService); // 傳遞 AppComicService
+                AppMemberService = new MemberService(AppFileHelper, AppLogger, AppComicService); 
                 AppAuthService = new AuthenticationService(AppFileHelper, AppLogger);
-                // 確保初始設定時存在預設管理員使用者
+                // 確保初始設定時存在預設管理員
                 AppAuthService.EnsureAdminUserExists("admin", "admin123");
             }
 
@@ -62,14 +62,14 @@ namespace ComicRentalSystem_14Days
             }
         }
 
-        // 技術點5: 例外處理 (全域例外處理)
+        // 例外處理 (全域例外處理)
         private static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
         {
             AppLogger?.LogError("未處理的UI執行緒例外狀況", e.Exception);
             MessageBox.Show($"發生未預期的UI執行緒錯誤: {e.Exception.Message}\n詳情請查看日誌。", "UI 錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        // 技術點5: 例外處理 (全域例外處理)
+        // 例外處理 (全域例外處理)
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             AppLogger?.LogError("未處理的非UI執行緒例外狀況", e.ExceptionObject as Exception);

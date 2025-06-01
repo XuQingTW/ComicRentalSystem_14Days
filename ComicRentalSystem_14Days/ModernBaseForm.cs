@@ -3,13 +3,12 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using ComicRentalSystem_14Days.Interfaces;  // ·s¼W¡G¤Ş¤J ILogger ©w¸q©Ò¦bªº©R¦WªÅ¶¡
+using ComicRentalSystem_14Days.Interfaces; 
 
 namespace ComicRentalSystem_14Days
 {
     public class ModernBaseForm : Form
     {
-        // å®šç¾©ç¾ä»£è‰²å½©èª¿è‰²ç›¤
         public static Color PrimaryColor { get; } = Color.FromArgb(0, 123, 255);
         public static Color SecondaryColor { get; } = Color.FromArgb(248, 249, 250);
         public static Color TextColor { get; } = Color.FromArgb(33, 37, 41);
@@ -18,7 +17,6 @@ namespace ComicRentalSystem_14Days
         public static Color DangerColor { get; } = Color.FromArgb(220, 53, 69);
         public static Color LightBorderColor { get; } = Color.FromArgb(222, 226, 230);
 
-        // å®šç¾©ç¾ä»£å­—å‹
         public static Font PrimaryFont { get; } = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
         public static Font PrimaryFontBold { get; } = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, ((byte)(0)));
         public static Font ButtonFont { get; } = new Font("Segoe UI Semibold", 9.75F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));

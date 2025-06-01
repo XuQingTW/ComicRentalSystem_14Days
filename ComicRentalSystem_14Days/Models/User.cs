@@ -17,7 +17,6 @@ namespace ComicRentalSystem_14Days.Models
 
         public User(string username, string passwordHash, UserRole role)
         {
-            // 如有需要，請考慮新增驗證或預設值
             Username = username;
             PasswordHash = passwordHash;
             Role = role;
