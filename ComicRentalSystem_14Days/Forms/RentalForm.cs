@@ -1,8 +1,8 @@
 ﻿using ComicRentalSystem_14Days.Interfaces;
-using ComicRentalSystem_14Days.Models; // 用於 RentalDetailViewModel
+using ComicRentalSystem_14Days.Models; 
 using ComicRentalSystem_14Days.Services;
 using System;
-using System.Collections.Generic; // 用於 List
+using System.Collections.Generic; 
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,11 +12,9 @@ namespace ComicRentalSystem_14Days.Forms
 {
     public partial class RentalForm : BaseForm
     {
-        // 將欄位宣告為可為 Null
         private readonly ComicService? _comicService;
         private readonly MemberService? _memberService;
         private readonly IReloadService? _reloadService;
-        // Logger 繼承自 BaseForm (protected ILogger? Logger)
 
         public RentalForm() : base()
         {
@@ -28,7 +26,7 @@ namespace ComicRentalSystem_14Days.Forms
             MemberService memberService,
             ILogger logger,
             IReloadService reloadService
-        ) : base(logger) // 初始化服務與記錄器
+        ) : base(logger)
         {
             InitializeComponent();
 
@@ -38,7 +36,7 @@ namespace ComicRentalSystem_14Days.Forms
 
             if (_comicService != null)
             {
-                _comicService.ComicsChanged += Service_DataChanged; // 訂閱 ComicsChanged 事件
+                _comicService.ComicsChanged += Service_DataChanged; 
             }
             if (_memberService != null)
             {
@@ -53,18 +51,17 @@ namespace ComicRentalSystem_14Days.Forms
             LogActivity("租借表單正在載入資料。");
             if (_comicService != null && _memberService != null)
             {
-                // 設定 DataGridViews 並載入初始資料
-                SetupRentedComicsDataGridView(); // 設定已租借漫畫的 DataGridView
+                SetupRentedComicsDataGridView(); 
                 LoadMembers();
-                LoadAvailableComics(); // 初始載入可租借漫畫
-                LoadRentalDetails(); // 已更新呼叫 // 初始載入已租借漫畫
+                LoadAvailableComics();
+                LoadRentalDetails(); 
 
                 _reloadService?.Start(
-                    async () => // Lambda 現在是 async Task
+                    async () => 
                     {
                         LogActivity("自動重新載入資料開始 (非同步)");
-                        if (_comicService != null) await _comicService.ReloadAsync(); // 等候非同步重新載入
-                        if (_memberService != null) await _memberService.ReloadAsync(); // 等候非同步重新載入
+                        if (_comicService != null) await _comicService.ReloadAsync(); 
+                        if (_memberService != null) await _memberService.ReloadAsync(); 
                         LogActivity("自動重新載入資料完成 (非同步)");
                     },
                     TimeSpan.FromSeconds(30)
@@ -73,7 +70,7 @@ namespace ComicRentalSystem_14Days.Forms
                 if (cmbMembers.Items.Count == 0)
                 {
                     LoadAvailableComics();
-                    LoadRentalDetails(); // 已更新呼叫
+                    LoadRentalDetails(); 
                 }
                 LogActivity("租借表單已成功載入資料。");
             }
@@ -83,7 +80,7 @@ namespace ComicRentalSystem_14Days.Forms
             }
         }
 
-        private void Service_DataChanged(object? sender, EventArgs e) // 當漫畫資料變更時 (例如租借或歸還後) 會引發此事件
+        private void Service_DataChanged(object? sender, EventArgs e) 
         {
             if (_comicService == null || _memberService == null) return;
 
@@ -101,7 +98,7 @@ namespace ComicRentalSystem_14Days.Forms
             }
         }
 
-        private void RefreshUIDataSafely() // 重新整理兩個列表
+        private void RefreshUIDataSafely() 
         {
             if (_comicService == null || _memberService == null) return;
 
@@ -120,7 +117,7 @@ namespace ComicRentalSystem_14Days.Forms
                 cmbComics.SelectedValue = selectedComicVal;
             }
 
-            LoadRentalDetails(); // 已更新呼叫
+            LoadRentalDetails();
         }
 
         private void LoadMembers()
@@ -184,7 +181,7 @@ namespace ComicRentalSystem_14Days.Forms
             }
         }
 
-    private void LoadRentalDetails() // Renamed and logic adjusted
+    private void LoadRentalDetails() 
     {
         if (_comicService == null || _memberService == null)
         {
@@ -200,7 +197,6 @@ namespace ComicRentalSystem_14Days.Forms
 
             var rentedComicsQuery = allComics.Where(c => c.IsRented && c.RentedToMemberId != 0);
 
-            // 如果在 cmbMembers 中選擇了會員，則依選定會員篩選
             Member? selectedMember = cmbMembers.SelectedItem as Member;
             if (selectedMember != null)
             {
@@ -213,7 +209,7 @@ namespace ComicRentalSystem_14Days.Forms
             }
 
             var rentalDetails = rentedComicsQuery
-                .Select(comic => // 對應至 ViewModel
+                .Select(comic => 
                 {
                     var member = allMembers.FirstOrDefault(m => m.Id == comic.RentedToMemberId);
                     return new RentalDetailViewModel
@@ -224,7 +220,7 @@ namespace ComicRentalSystem_14Days.Forms
                         ComicId = comic.Id,
                         ComicTitle = comic.Title,
                         RentalDate = comic.RentalDate,
-                        ExpectedReturnDate = comic.ReturnDate, // 假設 Comic.ReturnDate 儲存預計歸還日期
+                        ExpectedReturnDate = comic.ReturnDate, 
                         ActualReturnTime = comic.ActualReturnTime
                     };
                 })
@@ -259,7 +255,7 @@ namespace ComicRentalSystem_14Days.Forms
         var rentalDateColumn = new DataGridViewTextBoxColumn {
             DataPropertyName = nameof(RentalDetailViewModel.RentalDate),
             HeaderText = "租借日期",
-            FillWeight = 12 // 已調整
+            FillWeight = 12 
         };
         rentalDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
         dgvRentedComics.Columns.Add(rentalDateColumn);
@@ -267,20 +263,19 @@ namespace ComicRentalSystem_14Days.Forms
         var returnDateColumn = new DataGridViewTextBoxColumn {
             DataPropertyName = nameof(RentalDetailViewModel.ExpectedReturnDate),
             HeaderText = "預定歸還日",
-            FillWeight = 12 // 已調整
+            FillWeight = 12 
         };
         returnDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
         dgvRentedComics.Columns.Add(returnDateColumn);
 
-        var actualReturnTimeColumn = new DataGridViewTextBoxColumn { // 新增資料行
+        var actualReturnTimeColumn = new DataGridViewTextBoxColumn { 
             DataPropertyName = nameof(RentalDetailViewModel.ActualReturnTime),
             HeaderText = "實際歸還時間",
-            FillWeight = 11 // 已調整
+            FillWeight = 11 
         };
         actualReturnTimeColumn.DefaultCellStyle.Format = "yyyy-MM-dd HH:mm:ss";
         dgvRentedComics.Columns.Add(actualReturnTimeColumn);
 
-        // 保留現有屬性
         dgvRentedComics.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
         dgvRentedComics.MultiSelect = false;
         dgvRentedComics.ReadOnly = true;
@@ -301,7 +296,7 @@ namespace ComicRentalSystem_14Days.Forms
                 LogActivity("會員選擇已清除或無效。正在更新相關漫畫列表。");
             }
             LoadAvailableComics();
-        LoadRentalDetails(); // Updated call
+        LoadRentalDetails(); 
         }
 
         private void btnRent_Click(object sender, EventArgs e)
@@ -359,12 +354,11 @@ namespace ComicRentalSystem_14Days.Forms
 
             try
             {
-                // 定義租借期限約束
                 DateTime today = DateTime.Today;
-                DateTime minRentalReturnDate = today.AddDays(3); // 範例：最短租期3天
-                DateTime maxRentalReturnDate = today.AddMonths(1); // 範例：最長租期1個月
+                DateTime minRentalReturnDate = today.AddDays(3); 
+                DateTime maxRentalReturnDate = today.AddMonths(1);
 
-                using (RentalPeriodForm rentalDialog = new RentalPeriodForm(minRentalReturnDate, maxRentalReturnDate)) // 顯示租借期限選取對話方塊
+                using (RentalPeriodForm rentalDialog = new RentalPeriodForm(minRentalReturnDate, maxRentalReturnDate))
                 {
                     LogActivity($"正在為會員 '{selectedMember.Name}' 的漫畫 '{selectedComic.Title}' 顯示租借期限表單。最小日期: {minRentalReturnDate:yyyy-MM-dd}, 最大日期: {maxRentalReturnDate:yyyy-MM-dd}");
                     if (rentalDialog.ShowDialog(this) == DialogResult.OK)
@@ -374,22 +368,20 @@ namespace ComicRentalSystem_14Days.Forms
 
                         selectedComic.IsRented = true;
                         selectedComic.RentedToMemberId = selectedMember.Id;
-                        selectedComic.RentalDate = DateTime.Now; // 設定目前日期/時間為租借日期
-                        selectedComic.ReturnDate = selectedReturnDate; // 從對話方塊設定預計歸還日期
-                        selectedComic.ActualReturnTime = null; // 明確設為 null
+                        selectedComic.RentalDate = DateTime.Now;
+                        selectedComic.ReturnDate = selectedReturnDate; 
+                        selectedComic.ActualReturnTime = null; 
 
-                        _comicService.UpdateComic(selectedComic); // 更新漫畫狀態 // 儲存變更
+                        _comicService.UpdateComic(selectedComic);
 
                         LogActivity($"漫畫 '{selectedComic.Title}' (ID: {comicId}) 已成功租借給會員 '{selectedMember.Name}' (ID: {memberId})。租借日期: {selectedComic.RentalDate:yyyy-MM-dd HH:mm}, 預計歸還日期: {selectedComic.ReturnDate:yyyy-MM-dd}。");
                         MessageBox.Show($"漫畫 '{selectedComic.Title}' 已成功租借給會員 '{selectedMember.Name}'。\n租借日期: {selectedComic.RentalDate:yyyy-MM-dd}\n預計歸還日期: {selectedComic.ReturnDate:yyyy-MM-dd}", "租借成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        LoadRentalDetails(); // 重新整理列表
-                        LoadAvailableComics(); // 重新整理列表
+                        LoadRentalDetails(); 
+                        LoadAvailableComics(); 
                     }
                     else
                     {
                         LogActivity($"使用者已為會員 '{selectedMember.Name}' 的漫畫 '{selectedComic.Title}' 取消租借期限表單。租借流程中止。");
-                        // 如果不明顯，可選擇性地通知使用者租借已取消
-                        // MessageBox.Show("租借操作已取消。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
             }
@@ -425,13 +417,12 @@ namespace ComicRentalSystem_14Days.Forms
             }
         }
 
-        // ... (initial checks for services)
         if (_comicService == null || _memberService == null)
         {
             MessageBox.Show("服務未初始化，無法執行操作。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
-        LogActivity("歸還按鈕已點擊。"); // This log is now after the debug logs, which is fine.
+        LogActivity("歸還按鈕已點擊。"); 
 
         if (dgvRentedComics.SelectedRows.Count == 0)
         {
@@ -459,10 +450,6 @@ namespace ComicRentalSystem_14Days.Forms
             return;
         }
 
-        // ... (rest of the logic for checking if comic is rented, who rented it, etc.)
-            // 比較 RentedToMemberId 的邏輯可能需要使用 selectedRentalDetail.MemberId
-            // 如果您想確保歸還是針對該列中顯示的會員，
-            // 儘管通常管理員可以歸還任何書籍。
 
         if (!comicFromService.IsRented)
         {
@@ -472,29 +459,20 @@ namespace ComicRentalSystem_14Days.Forms
             return;
         }
 
-            // 如果您想確保正在為格線中顯示的正確會員內容處理歸還：
-            // (如果會員是透過這個完全相同的介面歸還項目，則此檢查可能更相關，
-            // 但對於管理員，他們可能會覆寫或代表任何人歸還)
-            // 對於管理員來說，通常只需找到漫畫並將其標記為已歸還即可。
-            // cmbMembers 中選定的會員可能與格線中所選漫畫的 RentedToMemberId 不符
-            // 如果「顯示全部」已啟用。
-
         try
         {
-                int previouslyRentedByMemberId = comicFromService.RentedToMemberId; // 這是實際的租借者。
+                int previouslyRentedByMemberId = comicFromService.RentedToMemberId; 
             comicFromService.IsRented = false;
             comicFromService.RentedToMemberId = 0;
-                // comicFromService.RentalDate = null; // 保留原始租借日期
-                // comicFromService.ReturnDate = null; // 保留預計歸還日期 (如果它代表該日期)
-                comicFromService.ActualReturnTime = dtpActualReturnTime.Value; // 從 DateTimePicker 設定實際歸還時間
-                _comicService?.UpdateComic(comicFromService); // 儲存變更
+                comicFromService.ActualReturnTime = dtpActualReturnTime.Value; 
+                _comicService?.UpdateComic(comicFromService);
 
             Member? returningMember = _memberService?.GetMemberById(previouslyRentedByMemberId);
             string returningMemberName = returningMember?.Name ?? $"ID: {previouslyRentedByMemberId}";
 
             LogActivity($"漫畫 '{comicFromService.Title}' (ID: {comicFromService.Id}) 已成功歸還 (由會員 '{returningMemberName}' 租借)。");
             MessageBox.Show($"漫畫 '{comicFromService.Title}' 已成功歸還。", "歸還成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                LoadRentalDetails(); // 重新整理列表
+                LoadRentalDetails();
         }
         catch (Exception ex)
         {

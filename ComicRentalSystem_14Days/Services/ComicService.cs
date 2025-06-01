@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO; // 為 IOException 加入
+using System.IO; 
 using System.Linq;
-using System.Threading.Tasks; // 為 Task 加入
-using System.Windows.Forms; // 為 MessageBox 加入
+using System.Threading.Tasks; 
+using System.Windows.Forms; 
 using ComicRentalSystem_14Days.Helpers;
 using ComicRentalSystem_14Days.Interfaces;
 using ComicRentalSystem_14Days.Models;
@@ -12,7 +12,7 @@ namespace ComicRentalSystem_14Days.Services
 {
     public class ComicService
     {
-        private readonly IFileHelper _fileHelper; // 已變更為 IFileHelper
+        private readonly IFileHelper _fileHelper;
         private readonly string _comicFileName = "comics.csv";
         private List<Comic> _comics = new List<Comic>();
         private readonly ILogger _logger;
@@ -33,25 +33,24 @@ namespace ComicRentalSystem_14Days.Services
             _logger.Log($"ComicService 已非同步重新載入。已載入 {_comics.Count} 本漫畫。");
         }
 
-        public ComicService(IFileHelper fileHelper, ILogger? logger) // 已變更為 IFileHelper
+        public ComicService(IFileHelper fileHelper, ILogger? logger) 
         {
             _fileHelper = fileHelper ?? throw new ArgumentNullException(nameof(fileHelper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger), "ComicService 的記錄器不可為空。");
 
             _logger.Log("ComicService 初始化中。");
 
-            LoadComicsFromFile(); // 建構函式中的同步載入
+            LoadComicsFromFile(); 
             _logger.Log($"ComicService 初始化完成。已載入 {_comics.Count} 本漫畫。");
         }
 
-        private void LoadComicsFromFile() // 從 LoadComics 重新命名
+        private void LoadComicsFromFile()
         {
             _logger.Log($"正在嘗試從檔案載入漫畫 (同步): '{_comicFileName}'。");
             lock (_comicsLock)
             {
                 try
                 {
-                    // 此處使用同步的 FileHelper 方法
                     _comics = _fileHelper.ReadFile<Comic>(_comicFileName, Comic.FromCsvString);
                     _logger.Log($"成功從 '{_comicFileName}' (同步) 載入 {_comics.Count} 本漫畫。");
                 }
@@ -68,7 +67,7 @@ namespace ComicRentalSystem_14Days.Services
             }
         }
 
-        private async Task<List<Comic>> InternalLoadComicsAsync() // 從 LoadComicsAsync 重新命名
+        private async Task<List<Comic>> InternalLoadComicsAsync()
         {
             _logger.Log($"正在嘗試從檔案非同步載入漫畫: '{_comicFileName}'。");
             try
@@ -82,9 +81,6 @@ namespace ComicRentalSystem_14Days.Services
 
                 var comicsList = new List<Comic>();
                 var lines = csvData.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-
-                // 若有標頭行則跳過 (假設為簡單 CSV 結構)
-                // 如果您的 CSV 沒有標頭或有多個標頭行，請調整 Skip 計數。
                 foreach (var line in lines)
                 {
                     if (string.IsNullOrWhiteSpace(line)) continue;
@@ -95,7 +91,6 @@ namespace ComicRentalSystem_14Days.Services
                     catch (FormatException formatEx)
                     {
                         _logger.LogError($"解析行失敗 (非同步): '{line}'. 錯誤: {formatEx.Message}", formatEx);
-                        // 決定是跳過該行還是停止處理
                     }
                 }
                 _logger.Log($"成功從 '{_comicFileName}' (非同步) 載入並解析 {comicsList.Count} 本漫畫。");
@@ -109,12 +104,12 @@ namespace ComicRentalSystem_14Days.Services
             catch (IOException ioEx)
             {
                 _logger.LogError($"讀取漫畫檔案 '{_comicFileName}' (非同步) 時發生IO錯誤: {ioEx.Message}", ioEx);
-                return new List<Comic>(); // 或重新擲回為嚴重錯誤
+                return new List<Comic>(); 
             }
             catch (Exception ex)
             {
                 _logger.LogError($"從 '{_comicFileName}' (非同步) 載入漫畫時發生未預期的錯誤: {ex.Message}", ex);
-                return new List<Comic>(); // 或重新擲回為嚴重錯誤
+                return new List<Comic>();
             }
         }
 
@@ -194,13 +189,13 @@ namespace ComicRentalSystem_14Days.Services
 
                 if (comic.Id == 0)
                 {
-                    comic.Id = GetNextIdInternal(); // 假設 GetNextId 也被鎖定或是內部方法
+                    comic.Id = GetNextIdInternal();
                     _logger.Log($"已為漫畫 '{comic.Title}' 產生新的ID {comic.Id}。");
                 }
 
                 _comics.Add(comic);
                 _logger.Log($"漫畫 '{comic.Title}' (ID: {comic.Id}) 已新增至記憶體列表。漫畫總數: {_comics.Count}。");
-                SaveComics(); // SaveComics 本身處理檔案寫入鎖定和 OnComicsChanged
+                SaveComics(); 
             }
         }
 
@@ -233,7 +228,7 @@ namespace ComicRentalSystem_14Days.Services
                 existingComic.RentedToMemberId = comic.RentedToMemberId;
                 _logger.Log($"ID {comic.Id} (書名='{existingComic.Title}') 的漫畫屬性已在記憶體中更新。");
 
-                SaveComics(); // SaveComics 本身處理檔案寫入鎖定和 OnComicsChanged
+                SaveComics(); 
                 _logger.Log($"ID為: {comic.Id} (書名='{existingComic.Title}') 的漫畫更新已保存到檔案。");
             }
         }
@@ -260,14 +255,12 @@ namespace ComicRentalSystem_14Days.Services
 
                 _comics.Remove(comicToRemove);
                 _logger.Log($"漫畫 '{comicToRemove.Title}' (ID: {id}) 已從記憶體列表移除。漫畫總數: {_comics.Count}。");
-                SaveComics(); // SaveComics 本身處理檔案寫入鎖定和 OnComicsChanged
+                SaveComics(); 
             }
         }
 
-        // 重新命名為 GetNextIdInternal，因為它僅供內部使用並直接存取 _comics 清單
         private int GetNextIdInternal()
         {
-            // 此方法應在 _comicsLock 內呼叫
             int nextId = !_comics.Any() ? 1 : _comics.Max(c => c.Id) + 1;
             _logger.Log($"下一個可用的漫畫ID已確定為: {nextId}。");
             return nextId;
@@ -289,7 +282,7 @@ namespace ComicRentalSystem_14Days.Services
             }
         }
 
-        public List<Comic> SearchComics(string? searchTerm = null) // 允許單一搜尋詞彙
+        public List<Comic> SearchComics(string? searchTerm = null) 
         {
             _logger.Log($"已呼叫 SearchComics，搜尋詞: '{searchTerm ?? "N/A"}'。");
             var query = _comics.AsQueryable();
@@ -297,7 +290,7 @@ namespace ComicRentalSystem_14Days.Services
             if (string.IsNullOrWhiteSpace(searchTerm))
             {
                 _logger.Log("搜尋詞為空，返回所有漫畫。");
-                return _comics.ToList(); // 如果搜尋詞彙為空，則傳回所有漫畫
+                return _comics.ToList();
             }
 
             query = query.Where(c =>
@@ -317,7 +310,7 @@ namespace ComicRentalSystem_14Days.Services
         public List<AdminComicStatusViewModel> GetAdminComicStatusViewModels(IEnumerable<Member> allMembers)
         {
             _logger.Log("正在產生 AdminComicStatusViewModels，使用提供的會員列表進行查詢。");
-            var allComics = this.GetAllComics(); // 假設這會取得所有漫畫
+            var allComics = this.GetAllComics(); 
             var memberLookup = allMembers.ToDictionary(m => m.Id);
             var comicStatuses = new List<AdminComicStatusViewModel>();
 
@@ -332,7 +325,7 @@ namespace ComicRentalSystem_14Days.Services
                     Isbn = comic.Isbn,
                     RentalDate = comic.RentalDate,
                     ReturnDate = comic.ReturnDate,
-                    ActualReturnTime = comic.ActualReturnTime // 確保 AdminComicStatusViewModel 上存在此屬性
+                    ActualReturnTime = comic.ActualReturnTime 
                 };
 
                 if (comic.IsRented && comic.RentedToMemberId != 0)

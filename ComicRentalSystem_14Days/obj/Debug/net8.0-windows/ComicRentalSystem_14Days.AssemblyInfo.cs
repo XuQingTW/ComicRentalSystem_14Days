@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ComicRentalSystem_14Days")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+15099655ec6d8c64e7ca82a7e125646f1d44fb34")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c1d0d534f3fc8474fb36f7042beb8a01d6b82810")]
 [assembly: System.Reflection.AssemblyProductAttribute("ComicRentalSystem_14Days")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ComicRentalSystem_14Days")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

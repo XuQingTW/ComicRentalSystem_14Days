@@ -5,7 +5,6 @@ using System.Text;
 
 namespace ComicRentalSystem_14Days.Logging 
 {
-    // 技術點3: 介面
     public class FileLogger : ILogger
     {
         private readonly string _logFilePath;
@@ -21,7 +20,7 @@ namespace ComicRentalSystem_14Days.Logging
                     Directory.CreateDirectory(logDirectory);
                 }
             }
-            catch (Exception ex) // 技術點5: 例外處理
+            catch (Exception ex) 
             {
                 Console.WriteLine($"[嚴重] 無法建立日誌目錄 '{logDirectory}': {ex.Message}");
                 logDirectory = AppDomain.CurrentDomain.BaseDirectory;
@@ -29,24 +28,16 @@ namespace ComicRentalSystem_14Days.Logging
             _logFilePath = Path.Combine(logDirectory, logFileName);
         }
 
-        // 技術點3: 介面 (實作 ILogger 的 Log 方法)
-        // 技術點4: 多型 (當透過 ILogger 引用呼叫此方法時)
         public void Log(string message)
         {
             WriteLogEntry("資訊", message);
         }
 
-        // 技術點3: 介面 (實作 ILogger 的 Log 過載方法)
-        // 技術點4: 過載 (FileLogger 中的 Log 方法過載)
-        // 技術點4: 多型 (當透過 ILogger 引用呼叫此方法時)
         public void Log(string message, Exception ex)
         {
             WriteLogEntry("錯誤", $"{message} - 例外: {ex.ToString()}");
         }
 
-        // 技術點3: 介面 (實作 ILogger 的 LogError 過載方法)
-        // 技術點4: 過載 (FileLogger 中的 LogError 方法)
-        // 技術點4: 多型 (當透過 ILogger 引用呼叫此方法時)
         public void LogError(string message, Exception? ex = null)
         {
             if (ex != null)
@@ -76,13 +67,10 @@ namespace ComicRentalSystem_14Days.Logging
 
         private void WriteLogEntry(string level, string message)
         {
-            // 技術點8: 檔案與資料夾處理
-            // 技術點5: 例外處理 (try-catch)
             try
             {
                 lock (_lock)
                 {
-                    // 使用 UTF-8 編碼
                     File.AppendAllText(_logFilePath, $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff} [{level}] - {message}{Environment.NewLine}", Encoding.UTF8);
                 }
             }

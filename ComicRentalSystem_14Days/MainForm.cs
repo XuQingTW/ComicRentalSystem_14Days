@@ -1,17 +1,17 @@
 // MainForm.cs
 
-using ComicRentalSystem_14Days.Models;    // 為 AdminComicStatusViewModel 加入
+using ComicRentalSystem_14Days.Models;    
 using ComicRentalSystem_14Days.Services;
 using ComicRentalSystem_14Days.Forms;
 using ComicRentalSystem_14Days.Interfaces;
 using System;
-using System.Collections.Generic;         // 為 List<> 加入
+using System.Collections.Generic;         
 using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.ComponentModel;
-using ComicRentalSystem_14Days.Controls;  // 為 AdminDashboardUserControl 加入
+using ComicRentalSystem_14Days.Controls; 
 
 namespace ComicRentalSystem_14Days
 {
@@ -27,8 +27,8 @@ namespace ComicRentalSystem_14Days
         private string _currentSortColumnName = string.Empty;
         private ListSortDirection _currentSortDirection = ListSortDirection.Ascending;
 
-        private Button? _currentSelectedNavButton;               // 新UI所需
-        private AdminDashboardUserControl? _adminDashboardControl; // 管理員儀表板使用者控制項
+        private Button? _currentSelectedNavButton;               
+        private AdminDashboardUserControl? _adminDashboardControl;
 
         public MainForm() : base()
         {
@@ -57,7 +57,7 @@ namespace ComicRentalSystem_14Days
             base.SetLogger(logger);
             InitializeComponent();
 
-            // **注意：不要在這裡呼叫 SetupUIAccessControls()，必須等到 Load 事件中再呼叫**
+            // 不要在這裡呼叫 SetupUIAccessControls()，等到 Load 事件中再呼叫
             UpdateStatusBar();
         }
 
@@ -65,9 +65,6 @@ namespace ComicRentalSystem_14Days
         {
             this._logger?.Log("主表單正在載入。");
 
-            //
-            //─── (1) 調整 MenuStrip / StatusStrip 樣式，與原本保持一致 ───
-            //
             if (this.menuStrip2 != null)
             {
                 this.menuStrip2.BackColor = ModernBaseForm.SecondaryColor;
@@ -87,31 +84,20 @@ namespace ComicRentalSystem_14Days
                     this.toolStripStatusLabelUser.ForeColor = ModernBaseForm.TextColor;
             }
 
-            //
-            //─── (2) 如果是 Admin，用新的 Dashboard UserControl 「清空 + 加入」 mainContentPanel ───
-            //
             if (_currentUser.Role == UserRole.Admin && _comicService != null && _memberService != null && _logger != null)
             {
-                // 先清除 mainContentPanel 中所有舊有的子控制項
                 mainContentPanel.Controls.Clear();
 
-                // 建立並加入 Dashboard UC
                 _adminDashboardControl = new AdminDashboardUserControl(_comicService, _memberService, _logger)
                 {
                     Dock = DockStyle.Fill,
-                    Visible = false // 一開始先隱藏，之後在 SetupUIAccessControls 裡顯示
+                    Visible = false 
                 };
                 mainContentPanel.Controls.Add(_adminDashboardControl);
             }
 
-            //
-            //─── (3) 現在 Dashboard UC 已經確定放進 Panel，呼叫 SetupUIAccessControls ───
-            //
             SetupUIAccessControls();
 
-            //
-            //─── 為左側選單按鈕綁定 Click 事件 ───
-            //
             if (btnNavDashboard != null) btnNavDashboard.Click += btnNavDashboard_Click;
             if (btnNavComicMgmt != null) btnNavComicMgmt.Click += btnNavComicMgmt_Click;
             if (btnNavMemberMgmt != null) btnNavMemberMgmt.Click += btnNavMemberMgmt_Click;
@@ -119,9 +105,6 @@ namespace ComicRentalSystem_14Days
             if (btnNavUserReg != null) btnNavUserReg.Click += btnNavUserReg_Click;
             if (btnNavLogs != null) btnNavLogs.Click += btnNavLogs_Click;
 
-            //
-            //─── (4) 接著恢復原本 DataGridView / 會員/漫畫資料載入 流程 ───
-            //
             SetupDataGridView();
 
             if (_currentUser.Role == UserRole.Admin)
@@ -145,9 +128,6 @@ namespace ComicRentalSystem_14Days
                 dgvAvailableComics_SelectionChanged(this, EventArgs.Empty);
             }
 
-            //
-            //─── (5) Admin 的 ComboBox 篩選初始化 ───
-            //
             if (this.cmbAdminComicFilterStatus != null)
             {
                 this.cmbAdminComicFilterStatus.Items.Clear();
@@ -158,9 +138,6 @@ namespace ComicRentalSystem_14Days
                 this.cmbAdminComicFilterStatus.SelectedIndexChanged += cmbAdminComicFilterStatus_SelectedIndexChanged;
             }
 
-            //
-            //─── (6) Member / TabControl 相關樣式與事件綁定 ───
-            //
             if (_currentUser.Role == UserRole.Member)
             {
                 if (btnRentComic != null) StyleModernButton(btnRentComic);
@@ -405,24 +382,14 @@ namespace ComicRentalSystem_14Days
                 return;
             }
 
-            //
-            // (A) 先隱藏所有主要容器／控制項
-            //
-            // 隱藏左側選單
             if (leftNavPanel != null) leftNavPanel.Visible = false;
-            // 隱藏 Dashboard UC
             if (_adminDashboardControl != null) _adminDashboardControl.Visible = false;
-            // 隱藏 TabControl（只留給會員模式用）
             if (memberViewTabControl != null) memberViewTabControl.Visible = false;
 
-            // 隱藏「漫畫管理」用的三個控制項（稍後若要顯示再打開）
             if (lblAvailableComics != null) lblAvailableComics.Visible = false;
             if (cmbAdminComicFilterStatus != null) cmbAdminComicFilterStatus.Visible = false;
             if (dgvAvailableComics != null) dgvAvailableComics.Visible = false;
 
-            //
-            // (B) 調整 MenuStrip 裡「管理」「工具」「使用者註冊」這些項目的可見性
-            //
             if (this.menuStrip2 != null)
             {
                 var managementMenuItem = this.menuStrip2.Items
@@ -445,9 +412,6 @@ namespace ComicRentalSystem_14Days
                 _logger.LogWarning("找不到 MenuStrip 控制項 'menuStrip2' 或其為空。");
             }
 
-            //
-            // (C) 如果是 Admin，就顯示左側選單，並預設選擇 Dashboard
-            //
             if (isAdmin)
             {
                 if (leftNavPanel != null) leftNavPanel.Visible = true;
@@ -462,9 +426,7 @@ namespace ComicRentalSystem_14Days
                     SelectNavButton(btnNavComicMgmt);
                 }
             }
-            //
-            // (D) 否則（一般會員），顯示 TabControl，並載入會員專屬的「可借漫畫」「我的租借」分頁
-            //
+
             else
             {
                 this.Text = "漫畫租借系統";
@@ -496,7 +458,6 @@ namespace ComicRentalSystem_14Days
                     if (dgvMyRentedComics != null) dgvMyRentedComics.Visible = true;
                 }
 
-                // 載入 TabPage 第一頁或第二頁的資料
                 if (memberViewTabControl != null && memberViewTabControl.TabPages.Count > 0)
                 {
                     if (memberViewTabControl.SelectedTab == availableComicsTabPage)
@@ -913,7 +874,6 @@ namespace ComicRentalSystem_14Days
 
             IEnumerable<AdminComicStatusViewModel> viewToShow = _allAdminComicStatuses;
 
-            // (1) 套用篩選
             if (this.cmbAdminComicFilterStatus != null && this.cmbAdminComicFilterStatus.SelectedItem != null)
             {
                 string? selectedStatus = this.cmbAdminComicFilterStatus.SelectedItem.ToString();
@@ -925,10 +885,8 @@ namespace ComicRentalSystem_14Days
                 {
                     viewToShow = viewToShow.Where(vm => vm.Status == "在館中");
                 }
-                // "All" 則不過濾
             }
 
-            // (2) 套用排序
             if (!string.IsNullOrEmpty(_currentSortColumnName))
             {
                 var prop = typeof(AdminComicStatusViewModel).GetProperty(_currentSortColumnName);
@@ -948,7 +906,6 @@ namespace ComicRentalSystem_14Days
                 dgvAvailableComics.DataSource = null;
                 dgvAvailableComics.DataSource = finalViewList ?? new List<AdminComicStatusViewModel>();
 
-                // 重置所有排序符號
                 foreach (DataGridViewColumn column in dgvAvailableComics.Columns)
                     column.HeaderCell.SortGlyphDirection = SortOrder.None;
 
@@ -989,11 +946,8 @@ namespace ComicRentalSystem_14Days
             if (_currentUser == null || _currentUser.Role != UserRole.Admin) return;
             ApplyAdminComicsView();
         }
-
-        // ── (7) 新 Navigation 方法 ──
         private void SelectNavButton(Button selectedButton)
         {
-            // (a) 還原先前被選中按鈕的樣式
             if (_currentSelectedNavButton != null)
             {
                 _currentSelectedNavButton.BackColor = ModernBaseForm.SecondaryColor;
@@ -1001,14 +955,12 @@ namespace ComicRentalSystem_14Days
                 _currentSelectedNavButton.Font = ModernBaseForm.ButtonFont ?? new System.Drawing.Font("Segoe UI Semibold", 9.75F);
             }
 
-            // (b) 設定目前被選中按鈕的樣式
             selectedButton.BackColor = ModernBaseForm.PrimaryColor;
             selectedButton.ForeColor = System.Drawing.Color.White;
             var baseFont = ModernBaseForm.ButtonFont ?? new System.Drawing.Font("Segoe UI Semibold", 9.75F);
             selectedButton.Font = new System.Drawing.Font(baseFont, System.Drawing.FontStyle.Bold);
             _currentSelectedNavButton = selectedButton;
 
-            // (c) 隱藏所有畫面：Dashboard UC、會員 TabControl，以及「漫畫管理」要顯示的三項
             if (_adminDashboardControl != null) _adminDashboardControl.Visible = false;
             if (memberViewTabControl != null) memberViewTabControl.Visible = false;
 
@@ -1016,8 +968,6 @@ namespace ComicRentalSystem_14Days
             if (cmbAdminComicFilterStatus != null) cmbAdminComicFilterStatus.Visible = false;
             if (dgvAvailableComics != null) dgvAvailableComics.Visible = false;
 
-            // (d) 依據按鈕顯示對應畫面
-            // 1. 「概要(Dashboard)」
             if (selectedButton == btnNavDashboard)
             {
                 if (_adminDashboardControl != null)
@@ -1029,10 +979,8 @@ namespace ComicRentalSystem_14Days
                 }
                 _logger?.Log("已選取儀表板視圖。");
             }
-            // 2. 「漫畫管理」
             else if (selectedButton == btnNavComicMgmt)
             {
-                // --- 將三個控制項的 Parent 都設為 mainContentPanel ---
                 if (lblAvailableComics != null && lblAvailableComics.Parent != mainContentPanel)
                 {
                     mainContentPanel.Controls.Add(lblAvailableComics);
@@ -1046,12 +994,10 @@ namespace ComicRentalSystem_14Days
                     mainContentPanel.Controls.Add(dgvAvailableComics);
                 }
 
-                // --- 手動計算位置與尺寸（以 mainContentPanel.ClientSize 為基準） ---
                 var panelWidth = mainContentPanel.ClientSize.Width;
                 var panelHeight = mainContentPanel.ClientSize.Height;
                 const int margin = 8;
 
-                // 2.1 lblAvailableComics：固定高度 28，水平左右各留 8px
                 if (lblAvailableComics != null)
                 {
                     lblAvailableComics.SetBounds(
@@ -1063,7 +1009,6 @@ namespace ComicRentalSystem_14Days
                     lblAvailableComics.Visible = true;
                 }
 
-                // 2.2 cmbAdminComicFilterStatus：寬度約 120，高度約 23，停靠在上方右側，離標題 lbl 底下 8px
                 if (cmbAdminComicFilterStatus != null)
                 {
                     int comboWidth = 120;
@@ -1079,7 +1024,6 @@ namespace ComicRentalSystem_14Days
                     cmbAdminComicFilterStatus.Visible = true;
                 }
 
-                // 2.3 dgvAvailableComics：放在 comboBox 下方，離 combo 底下 8px，左右留 8px，底部也留 8px
                 if (dgvAvailableComics != null)
                 {
                     int dgvY = (cmbAdminComicFilterStatus != null ? cmbAdminComicFilterStatus.Bottom : (lblAvailableComics != null ? lblAvailableComics.Bottom : margin)) + 8;
@@ -1097,25 +1041,21 @@ namespace ComicRentalSystem_14Days
                 this.Text = "漫畫租借系統 - 漫畫管理";
                 _logger?.Log("已選取漫畫管理視圖。");
             }
-            // 3. 「會員管理」
             else if (selectedButton == btnNavMemberMgmt)
             {
                 this.會員管理ToolStripMenuItem_Click(this, EventArgs.Empty);
                 _logger?.Log("會員管理導覽按鈕已點擊。");
             }
-            // 4. 「租借管理」
             else if (selectedButton == btnNavRentalMgmt)
             {
                 this.rentalManagementToolStripMenuItem_Click(this, EventArgs.Empty);
                 _logger?.Log("租借管理導覽按鈕已點擊。");
             }
-            // 5. 「使用者註冊」
             else if (selectedButton == btnNavUserReg)
             {
                 this.使用者註冊ToolStripMenuItem_Click(this, EventArgs.Empty);
                 _logger?.Log("使用者註冊導覽按鈕已點擊。");
             }
-            // 6. 「檢視日誌」
             else if (selectedButton == btnNavLogs)
             {
                 this.檢視日誌ToolStripMenuItem_Click(this, EventArgs.Empty);
@@ -1195,19 +1135,18 @@ namespace ComicRentalSystem_14Days
                 }
             }
 
-            // (2) 判斷是否「逾期」或「即將到期」，整列背景亦變色
             if (dgvAvailableComics.Columns[e.ColumnIndex].DataPropertyName == "ReturnDate" ||
                 dgvAvailableComics.Columns[e.ColumnIndex].DataPropertyName == "Status")
             {
                 if (comicStatus.Status == "被借閱" && comicStatus.ReturnDate.HasValue)
                 {
                     DateTime returnDate = comicStatus.ReturnDate.Value;
-                    if (returnDate.Date < DateTime.Today) // 已逾期
+                    if (returnDate.Date < DateTime.Today)
                     {
                         row.DefaultCellStyle.BackColor = ModernBaseForm.DangerColor;
                         row.DefaultCellStyle.ForeColor = Color.White;
                     }
-                    else if (returnDate.Date <= DateTime.Today.AddDays(3)) // 即將到期
+                    else if (returnDate.Date <= DateTime.Today.AddDays(3))
                     {
                         row.DefaultCellStyle.BackColor = ModernBaseForm.AccentColor;
                         row.DefaultCellStyle.ForeColor = ModernBaseForm.TextColor;
@@ -1257,12 +1196,12 @@ namespace ComicRentalSystem_14Days
                 e.FormattingApplied = true;
             }
 
-            if (returnDate.Value.Date < DateTime.Today) // 已逾期
+            if (returnDate.Value.Date < DateTime.Today) 
             {
                 e.CellStyle.BackColor = ModernBaseForm.DangerColor;
                 e.CellStyle.ForeColor = Color.White;
             }
-            else if (returnDate.Value.Date <= DateTime.Today.AddDays(3)) // 即將到期
+            else if (returnDate.Value.Date <= DateTime.Today.AddDays(3)) 
             {
                 e.CellStyle.BackColor = ModernBaseForm.AccentColor;
                 e.CellStyle.ForeColor = ModernBaseForm.TextColor;
@@ -1285,7 +1224,6 @@ namespace ComicRentalSystem_14Days
             }
         }
 
-        // --- 篩選方法 ---
         private bool IsMemberViewActive()
         {
             return _currentUser != null &&
