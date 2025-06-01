@@ -30,9 +30,9 @@ namespace ComicRentalSystem_14Days
             if (AppFileHelper != null && AppLogger != null)
             {
                 AppComicService = new ComicService(AppFileHelper, AppLogger);
-                AppMemberService = new MemberService(AppFileHelper, AppLogger, AppComicService); // Pass AppComicService
+                AppMemberService = new MemberService(AppFileHelper, AppLogger, AppComicService); // 傳遞 AppComicService
                 AppAuthService = new AuthenticationService(AppFileHelper, AppLogger);
-                // Ensure a default admin user exists for initial setup
+                // 確保初始設定時存在預設管理員使用者
                 AppAuthService.EnsureAdminUserExists("admin", "admin123");
             }
 

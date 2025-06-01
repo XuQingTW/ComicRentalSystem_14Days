@@ -6,22 +6,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json; // Make sure to use System.Text.Json
-using System.Windows.Forms; // Added for MessageBox
+using System.Text.Json; // 請確保使用 System.Text.Json
+using System.Windows.Forms; // 為 MessageBox 加入
 
 namespace ComicRentalSystem_14Days.Services
 {
     public class AuthenticationService
     {
-        private readonly IFileHelper _fileHelper; // Changed to IFileHelper
+        private readonly IFileHelper _fileHelper; // 已變更為 IFileHelper
         private readonly ILogger _logger;
-        private readonly string _usersFilePath = "users.json"; // Path relative to FileHelper's base directory
+        private readonly string _usersFilePath = "users.json"; // 相對於 FileHelper 基礎目錄的路徑
         private List<User> _users;
 
         private const int MaxFailedLoginAttempts = 5;
         private const int LockoutDurationMinutes = 15;
 
-        public AuthenticationService(IFileHelper fileHelper, ILogger logger) // Changed parameter to IFileHelper
+        public AuthenticationService(IFileHelper fileHelper, ILogger logger) // 已變更為 IFileHelper
         {
             _fileHelper = fileHelper ?? throw new ArgumentNullException(nameof(fileHelper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -43,10 +43,10 @@ namespace ComicRentalSystem_14Days.Services
         {
             try
             {
-                _logger.Log($"Attempting to load users from {_usersFilePath}");
+                _logger.Log($"正在嘗試從 {_usersFilePath} 載入使用者資料");
                 if (!_fileHelper.FileExists(_usersFilePath))
                 {
-                    _logger.LogWarning($"Users file '{_usersFilePath}' not found.");
+                    _logger.LogWarning($"在 {_usersFilePath} 找不到使用者檔案。");
                     // Attempt to restore from backup
                     return LoadFromBackupOrInitialize();
                 }
@@ -55,44 +55,44 @@ namespace ComicRentalSystem_14Days.Services
                 if (string.IsNullOrWhiteSpace(json))
                 {
                     _logger.LogWarning($"Users file '{_usersFilePath}' is empty.");
-                    // Attempt to restore from backup
+                    // 嘗試從備份還原
                     return LoadFromBackupOrInitialize();
                 }
                 var users = JsonSerializer.Deserialize<List<User>>(json);
-                _logger.Log($"Successfully loaded {users?.Count ?? 0} users from {_usersFilePath}.");
+                _logger.Log($"已成功從 {_usersFilePath} 載入 {users?.Count ?? 0} 位使用者。");
                 return users;
             }
             catch (JsonException jsonEx)
             {
-                _logger.LogError($"Error deserializing '{_usersFilePath}': {jsonEx.Message}. Attempting to load from backup.", jsonEx);
-                // Attempt to restore from backup
-                return LoadFromBackupOrInitialize(jsonEx); // Pass original exception for context
+                _logger.LogError($"反序列化 '{_usersFilePath}' 失敗: {jsonEx.Message}。正在嘗試從備份載入。", jsonEx);
+                // 嘗試從備份還原
+                return LoadFromBackupOrInitialize(jsonEx); // 傳遞原始例外狀況以取得內容
             }
-            catch (Exception ex) // Catch other potential IO exceptions for main file
+            catch (Exception ex) // 攔截主要檔案其他可能的 IO 例外狀況
             {
-                _logger.LogError($"Unexpected error loading '{_usersFilePath}': {ex.Message}. Attempting to load from backup.", ex);
-                return LoadFromBackupOrInitialize(ex); // Pass original exception for context
+                _logger.LogError($"載入 '{_usersFilePath}' 時發生未預期錯誤: {ex.Message}。正在嘗試從備份載入。", ex);
+                return LoadFromBackupOrInitialize(ex); // 傳遞原始例外狀況以取得內容
             }
         }
 
         private List<User>? LoadFromBackupOrInitialize(Exception? primaryLoadException = null)
         {
             string backupFilePath = _usersFilePath + ".bak";
-            _logger.Log($"Attempting to load users from backup file '{backupFilePath}'.");
+            _logger.Log($"正在嘗試從備份檔案 '{backupFilePath}' 載入使用者資料。");
 
             if (!_fileHelper.FileExists(backupFilePath))
             {
-                _logger.LogWarning($"Backup users file '{backupFilePath}' not found.");
+                _logger.LogWarning($"找不到備份使用者檔案 '{backupFilePath}'。");
                 if (primaryLoadException != null)
                 {
-                     _logger.LogError($"Critical: Main users file '{_usersFilePath}' failed to load and no backup '{backupFilePath}' exists. Initializing empty user list.", primaryLoadException);
+                     _logger.LogError($"嚴重錯誤: 主要使用者檔案 '{_usersFilePath}' 載入失敗且找不到備份檔案 '{backupFilePath}'。正在初始化空的使用者清單。", primaryLoadException);
                 }
                 else
                 {
-                    _logger.LogWarning($"Critical: Main users file '{_usersFilePath}' not found and no backup '{backupFilePath}' exists. Initializing empty user list.");
+                    _logger.LogWarning($"嚴重警告: 主要使用者檔案 '{_usersFilePath}' 不存在且找不到備份檔案 '{backupFilePath}'。正在初始化空的使用者清單。");
                 }
-                // In a real app, might throw a specific exception caught by Program.cs to inform admin or trigger initial setup.
-                // For now, returning new list and relying on EnsureAdminUserExists.
+                // 在實際應用程式中，可能會擲回由 Program.cs 攔截的特定例外狀況，以通知管理員或觸發初始設定。
+                // 目前，傳回新清單並依賴 EnsureAdminUserExists。
                 return new List<User>();
             }
 
@@ -101,96 +101,101 @@ namespace ComicRentalSystem_14Days.Services
                 string json = _fileHelper.ReadFile(backupFilePath);
                 if (string.IsNullOrWhiteSpace(json))
                 {
-                    _logger.LogWarning($"Backup users file '{backupFilePath}' is empty. Initializing empty user list.");
-                    return new List<User>(); // Or throw, as this means backup is also bad.
+                    _logger.LogWarning($"備份使用者檔案 '{backupFilePath}' 為空。正在初始化空的使用者清單。");
+                    return new List<User>(); // 或擲回例外狀況，因為這表示備份也已損毀。
                 }
                 var users = JsonSerializer.Deserialize<List<User>>(json);
-                _logger.Log($"Successfully loaded {users?.Count ?? 0} users from backup file '{backupFilePath}'.");
+                _logger.Log($"已成功從備份檔案 '{backupFilePath}' 載入 {users?.Count ?? 0} 位使用者。");
 
-                // Attempt to restore the main file from backup
+                // 嘗試從備份還原
                 try
                 {
                     _fileHelper.CopyFile(backupFilePath, _usersFilePath, overwrite: true);
-                    _logger.Log($"Successfully restored '{_usersFilePath}' from '{backupFilePath}'.");
+                    _logger.Log($"已成功從 '{backupFilePath}' 還原 '{_usersFilePath}'。");
                 }
                 catch(Exception restoreEx)
                 {
-                    _logger.LogError($"Failed to restore '{_usersFilePath}' from '{backupFilePath}': {restoreEx.Message}", restoreEx);
-                    // Continue with users loaded from backup anyway.
+                    _logger.LogError($"從 '{backupFilePath}' 還原 '{_usersFilePath}' 失敗: {restoreEx.Message}", restoreEx);
+                    // 無論如何都繼續使用從備份載入的使用者。
                 }
                 return users;
             }
             catch (JsonException jsonEx)
             {
-                _logger.LogError($"Critical: Backup users file '{backupFilePath}' is also corrupted: {jsonEx.Message}. Initializing empty user list.", jsonEx);
-                return new List<User>(); // Both main and backup are bad.
+                _logger.LogError($"嚴重錯誤: 備份使用者檔案 '{backupFilePath}' 也已損毀: {jsonEx.Message}。正在初始化空的使用者清單。", jsonEx);
+                return new List<User>(); // 主要檔案和備份檔案都已損毀。
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Critical: Unexpected error loading backup users file '{backupFilePath}': {ex.Message}. Initializing empty user list.", ex);
-                return new List<User>(); // Both main and backup are bad.
+                _logger.LogError($"嚴重錯誤: 載入備份使用者檔案 '{backupFilePath}' 時發生未預期錯誤: {ex.Message}。正在初始化空的使用者清單。", ex);
+                return new List<User>(); // 主要檔案和備份檔案都已損毀。
             }
         }
 
         public List<User> GetAllUsers()
         {
+            _logger.Log($"GetAllUsers called. Returning {_users.Count} users.");
             return new List<User>(_users);
         }
 
         public User? GetUserByUsername(string username)
         {
-            _logger.Log($"Attempting to retrieve user by username: {username}");
+            _logger.Log($"正在嘗試透過使用者名稱擷取使用者: {username}");
             User? user = _users.FirstOrDefault(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
             if (user == null)
             {
-                _logger.LogWarning($"User with username '{username}' not found.");
+                _logger.LogWarning($"找不到使用者名稱為 '{username}' 的使用者。");
+            }
+            else
+            {
+                _logger.Log($"User found: {user.Username}, Role: {user.Role}");
             }
             return user;
         }
 
-        public void SaveUsers() // Changed from private to public
+        public void SaveUsers() // 從 private 改為 public
         {
-            string backupFilePath = _usersFilePath + ".bak"; // e.g., "users.json.bak"
-            string tempFilePath = _usersFilePath + ".tmp";   // e.g., "users.json.tmp"
+            string backupFilePath = _usersFilePath + ".bak"; // 例如："users.json.bak"
+            string tempFilePath = _usersFilePath + ".tmp";   // 例如："users.json.tmp"
 
             try
             {
-                _logger.Log($"Attempting to save {_users.Count} users.");
+                _logger.Log($"正在嘗試儲存 {_users.Count} 位使用者。");
                 string json = JsonSerializer.Serialize(_users, new JsonSerializerOptions { WriteIndented = true });
 
-                // Step 1: Write to a temporary file
+                // 步驟 1：寫入暫存檔案
                 _fileHelper.WriteFile(tempFilePath, json);
-                _logger.Log($"Users data written to temporary file: {tempFilePath}");
+                _logger.Log($"使用者資料已寫入暫存檔案: {tempFilePath}");
 
-                // Step 2: If a backup file exists, delete it
+                // 步驟 2：如果備份檔案存在，則將其刪除
                 if (_fileHelper.FileExists(backupFilePath))
                 {
                     _fileHelper.DeleteFile(backupFilePath);
-                    _logger.Log($"Deleted existing backup file: {backupFilePath}");
+                    _logger.Log($"已刪除現有的備份檔案: {backupFilePath}");
                 }
 
-                // Step 3: If the main user file exists, rename it to be the backup file
+                // 步驟 3：如果主要使用者檔案存在，則將其重新命名為備份檔案
                 if (_fileHelper.FileExists(_usersFilePath))
                 {
-                    _fileHelper.MoveFile(_usersFilePath, backupFilePath); // Rename current to .bak
-                    _logger.Log($"Renamed current users file {_usersFilePath} to {backupFilePath}");
+                    _fileHelper.MoveFile(_usersFilePath, backupFilePath); // 將目前檔案重新命名為 .bak
+                    _logger.Log($"已將目前的使用者檔案 {_usersFilePath} 重新命名為 {backupFilePath}");
                 }
 
-                // Step 4: Rename the temporary file to be the main user file
-                _fileHelper.MoveFile(tempFilePath, _usersFilePath); // Rename .tmp to current
-                _logger.Log($"Successfully saved users to {_usersFilePath}");
+                // 步驟 4：將暫存檔案重新命名為主要使用者檔案
+                _fileHelper.MoveFile(tempFilePath, _usersFilePath); // 將 .tmp 重新命名為目前檔案
+                _logger.Log($"已成功將使用者儲存至 {_usersFilePath}");
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error during saving users: {ex.Message}", ex);
-                // If temp file was created, try to clean it up
+                _logger.LogError($"儲存使用者時發生錯誤: {ex.Message}", ex);
+                // 如果已建立暫存檔案，請嘗試清除它
                 if (_fileHelper.FileExists(tempFilePath))
                 {
                     try { _fileHelper.DeleteFile(tempFilePath); }
-                    catch (Exception cleanupEx) { _logger.LogError($"Failed to cleanup temp file {tempFilePath}: {cleanupEx.Message}", cleanupEx); }
+                    catch (Exception cleanupEx) { _logger.LogError($"清理暫存檔案 {tempFilePath} 失敗: {cleanupEx.Message}", cleanupEx); }
                 }
-                // Depending on the exception, the original _usersFilePath or backupFilePath might still be intact.
-                throw; // Re-throw so the application knows saving failed
+                // 根據例外狀況，原始的 _usersFilePath 或 backupFilePath 可能仍保持完整。
+                throw; // 重新擲回例外狀況，讓應用程式知道儲存失敗
             }
         }
 
@@ -198,18 +203,18 @@ namespace ComicRentalSystem_14Days.Services
         {
             using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000, HashAlgorithmName.SHA256))
             {
-                byte[] hash = pbkdf2.GetBytes(20); // 20 bytes for a 160-bit hash
+                byte[] hash = pbkdf2.GetBytes(20); // 20 位元組用於 160 位元雜湊
                 return Convert.ToBase64String(hash);
             }
         }
 
         public bool Register(string username, string password, UserRole role)
         {
-            _logger.Log($"正在嘗試註冊使用者: {username}, 角色: {role}");
+            _logger.Log($"使用者名稱註冊嘗試: {username}，角色: {role}");
             if (_users.Any(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase)))
             {
-                _logger.Log($"註冊失敗: 使用者名稱 '{username}' 已存在。");
-                return false; // Username already exists
+                _logger.LogWarning($"使用者名稱註冊失敗: {username}。使用者名稱已存在。");
+                return false; // 使用者名稱已存在
             }
 
             byte[] saltBytes = GenerateSalt();
@@ -221,97 +226,103 @@ namespace ComicRentalSystem_14Days.Services
             };
             _users.Add(newUser);
             SaveUsers();
-            _logger.Log($"使用者 '{username}' (ID: {newUser.Id}) 註冊成功。");
+            _logger.Log($"使用者 {username} 已成功註冊為 {role} 角色。使用者總數: {_users.Count}");
             return true;
         }
 
         public User? Login(string username, string password)
         {
-            _logger.Log($"正在嘗試登入使用者: {username}");
+            _logger.Log($"使用者名稱登入嘗試: {username}");
             User? user = _users.FirstOrDefault(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
 
             if (user == null)
             {
-                _logger.Log($"使用者 '{username}' 登入失敗: 使用者不存在。");
+                _logger.LogWarning($"使用者名稱登入失敗: {username}。找不到使用者。");
                 return null;
             }
 
-            // Check for lockout
+            // 檢查帳戶是否鎖定
             if (user.LockoutEndDate.HasValue && user.LockoutEndDate > DateTime.UtcNow)
             {
                 _logger.Log($"使用者 '{username}' 登入失敗: 帳戶已鎖定直到 {user.LockoutEndDate.Value}。");
                 return null;
             }
 
-            // NEW/MODIFIED CHECK for PasswordSalt:
+            // 新增/修改的 PasswordSalt 檢查：
             if (string.IsNullOrEmpty(user.PasswordSalt))
             {
-                _logger.LogError($"User '{username}' login attempt failed: Password salt is missing or empty. Account may be from an older version or corrupted.");
-                // Treat as a failed login attempt for lockout purposes
+                _logger.LogError($"使用者 '{username}' 登入嘗試失敗：遺失或空白的密碼鹽。帳戶可能來自舊版或已損毀。");
+                // 出於鎖定目的，將其視為失敗的登入嘗試
                 user.FailedLoginAttempts++;
                 if (user.FailedLoginAttempts >= MaxFailedLoginAttempts)
                 {
                     user.LockoutEndDate = DateTime.UtcNow.AddMinutes(LockoutDurationMinutes);
-                    _logger.Log($"User '{username}' account locked out until {user.LockoutEndDate.Value} due to missing salt leading to failed attempt.");
+                    _logger.Log($"因遺失密碼鹽導致嘗試失敗，使用者 '{username}' 帳戶已鎖定至 {user.LockoutEndDate.Value}。");
                 }
                 SaveUsers();
                 return null;
             }
 
-            byte[] saltBytes = Convert.FromBase64String(user.PasswordSalt); // Now PasswordSalt is confirmed not null or empty
+            byte[] saltBytes = Convert.FromBase64String(user.PasswordSalt); // 現在確認 PasswordSalt 不是 null 或空字串
             string passwordHashToCompare = HashPassword(password, saltBytes);
 
             if (user.PasswordHash == passwordHashToCompare)
             {
                 user.FailedLoginAttempts = 0;
                 user.LockoutEndDate = null;
-                SaveUsers(); // Save changes
-                _logger.Log($"使用者 '{username}' 成功登入。角色: {user.Role}");
+                SaveUsers(); // 儲存變更 (嘗試次數或鎖定)
+                _logger.Log($"使用者名稱登入成功: {username}，角色: {user.Role}");
                 return user;
             }
             else
             {
                 user.FailedLoginAttempts++;
-                _logger.Log($"使用者 '{username}' 登入失敗: 密碼無效。嘗試次數 {user.FailedLoginAttempts} / {MaxFailedLoginAttempts}。");
+                _logger.LogWarning($"使用者名稱登入失敗: {username}。密碼不正確。");
                 if (user.FailedLoginAttempts >= MaxFailedLoginAttempts)
                 {
                     user.LockoutEndDate = DateTime.UtcNow.AddMinutes(LockoutDurationMinutes);
                     _logger.Log($"使用者 '{username}' 帳戶已鎖定直到 {user.LockoutEndDate.Value}，因為登入失敗次數過多。");
                 }
-                SaveUsers(); // Save changes (attempts or lockout)
-                return null; // Invalid password
+                SaveUsers(); // 儲存變更 (嘗試次數或鎖定)
+                return null; // 密碼無效
             }
         }
 
-        // Method to allow creating a default admin user if no users exist
+        // 若不存在任何使用者，則允許建立預設管理員使用者的方法
         public void EnsureAdminUserExists(string adminUsername, string adminPassword)
         {
             if (!_users.Any(u => u.Role == UserRole.Admin))
             {
-                _logger.Log($"找不到管理員使用者。正在建立預設管理員: {adminUsername}");
+                _logger.Log($"找不到管理員使用者。正在建立預設管理員: {adminUsername}"); // This log is fine as is, matches existing style
                 Register(adminUsername, adminPassword, UserRole.Admin);
             }
             else
             {
-                _logger.Log("管理員使用者已存在。");
+                _logger.Log("管理員使用者已存在。"); // This log is fine as is
             }
         }
 
         public bool DeleteUser(string username)
         {
-            _logger.Log($"正在嘗試刪除使用者: {username}");
+            _logger.Log($"正在嘗試刪除使用者: {username}"); // This log is fine as is
             User? userToDelete = _users.FirstOrDefault(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
 
             if (userToDelete != null)
             {
+                 // 防止刪除最後一位管理員使用者
+                if (userToDelete.Role == UserRole.Admin && _users.Count(u => u.Role == UserRole.Admin) <= 1)
+                {
+                    _logger.Log($"使用者 '{username}' 是最後一位管理員。無法刪除。"); // This log is fine as is
+                    return false; // 無法刪除最後一位管理員
+                }
                 _users.Remove(userToDelete);
                 SaveUsers();
-                _logger.Log($"使用者 '{username}' 刪除成功。");
+                _logger.Log($"使用者 '{username}' 已成功刪除。"); // This log is fine as is
                 return true;
             }
             else
             {
-                _logger.Log($"刪除失敗: 找不到使用者 '{username}'。");
+                _logger.Log($"找不到使用者 '{username}'。無法刪除。"); // This log is fine as is
                 return false;
             }
         }

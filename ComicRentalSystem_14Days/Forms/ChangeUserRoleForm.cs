@@ -2,90 +2,90 @@ using ComicRentalSystem_14Days.Interfaces;
 using ComicRentalSystem_14Days.Models;
 using ComicRentalSystem_14Days.Services;
 using System;
-using System.Linq; // Required for Count()
+using System.Linq; // Count() 所需
 using System.Windows.Forms;
 
 namespace ComicRentalSystem_14Days.Forms
 {
-    public partial class ChangeUserRoleForm : BaseForm // Inherit from BaseForm for logging
+    public partial class ChangeUserRoleForm : BaseForm // 繼承自 BaseForm 以進行日誌記錄
     {
         private readonly User _editingUser;
         private readonly AuthenticationService _authService;
 
-        // UI Controls are now defined in ChangeUserRoleForm.Designer.cs
-        // Manual declarations are no longer needed here.
+        // UI 控制項現在定義在 ChangeUserRoleForm.Designer.cs 中
+        // 此處不再需要手動宣告。
 
         public ChangeUserRoleForm(User userToEdit, AuthenticationService authService, ILogger logger) : base(logger)
         {
-            InitializeComponent(); // This will now call the method from Designer.cs
+            InitializeComponent(); // 這現在將呼叫 Designer.cs 中的方法
 
             _editingUser = userToEdit ?? throw new ArgumentNullException(nameof(userToEdit));
             _authService = authService ?? throw new ArgumentNullException(nameof(authService));
 
-            this.Text = "更改使用者角色"; // Change User Role
+            this.Text = "更改使用者角色"; // 更改使用者角色
             lblUsernameValue.Text = _editingUser.Username;
 
             cmbRole.DataSource = Enum.GetValues(typeof(UserRole));
             cmbRole.SelectedItem = _editingUser.Role;
-            LogActivity($"ChangeUserRoleForm initialized for user: {_editingUser.Username}");
+            LogActivity($"使用者角色變更表單已為使用者初始化: {_editingUser.Username}");
         }
 
-        // Manual InitializeComponent() removed. It's now in ChangeUserRoleForm.Designer.cs
+        // 手動的 InitializeComponent() 已移除。它現在位於 ChangeUserRoleForm.Designer.cs 中
 
-        private void btnSave_Click(object? sender, EventArgs e) // sender changed to object?
+        private void btnSave_Click(object? sender, EventArgs e) // sender 已變更為 object?
         {
             if (cmbRole.SelectedItem == null)
             {
-                MessageBox.Show("請選擇一個角色。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning); // "Please select a role." | "Validation Error"
+                MessageBox.Show("請選擇一個角色。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning); // "請選擇一個角色。" | "驗證錯誤"
                 return;
             }
 
             UserRole newRole = (UserRole)cmbRole.SelectedItem;
             if (_editingUser.Role == newRole)
             {
-                LogActivity($"User role for '{_editingUser.Username}' is already {newRole}. No changes made.");
-                this.DialogResult = DialogResult.Cancel; // Or OK, but nothing changed
+                LogActivity($"使用者 '{_editingUser.Username}' 的角色已經是 {newRole}。未做任何變更。");
+                this.DialogResult = DialogResult.Cancel; // 或 OK，但無任何變更
                 this.Close();
                 return;
             }
 
-            // Prevent changing the role of the last admin to non-admin
+            // 防止將最後一位管理員的角色變更為非管理員
             if (_editingUser.Role == UserRole.Admin && newRole != UserRole.Admin)
             {
-                // Need GetAllUsers() in AuthService for this
+                // 此功能需要在 AuthService 中使用 GetAllUsers()
                 if (_authService.GetAllUsers().Count(u => u.Role == UserRole.Admin) <= 1)
                 {
-                    MessageBox.Show("無法更改最後一位管理員的角色。", "操作禁止", MessageBoxButtons.OK, MessageBoxIcon.Error); // "Cannot change the role of the last administrator." | "Operation Forbidden"
-                    LogActivity($"Attempt to change role of last admin '{_editingUser.Username}' was blocked.");
+                    MessageBox.Show("無法更改最後一位管理員的角色。", "操作禁止", MessageBoxButtons.OK, MessageBoxIcon.Error); // "無法更改最後一位管理員的角色。" | "操作禁止"
+                    LogActivity($"嘗試變更最後一位管理員 '{_editingUser.Username}' 角色的操作已被阻止。");
                     return;
                 }
             }
 
-            LogActivity($"Attempting to change role for user '{_editingUser.Username}' from {_editingUser.Role} to {newRole}.");
+            LogActivity($"嘗試將使用者 '{_editingUser.Username}' 的角色從 {_editingUser.Role} 變更為 {newRole}。");
             _editingUser.Role = newRole;
 
             try
             {
-                // This assumes _authService._users list contains the same instance as _editingUser
-                // and SaveUsers() will persist this change.
+                // 這假設 _authService._users 列表包含與 _editingUser 相同的實例
+                // 且 SaveUsers() 將會永久保存此變更。
                 _authService.SaveUsers();
-                LogActivity($"Successfully changed role for user '{_editingUser.Username}' to {newRole}.");
-                MessageBox.Show("使用者角色已成功更新。", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information); // "User role updated successfully." | "Success"
+                LogActivity($"已成功將使用者 '{_editingUser.Username}' 的角色變更為 {newRole}。");
+                MessageBox.Show("使用者角色已成功更新。", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information); // "使用者角色已成功更新。" | "成功"
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
             catch (Exception ex)
             {
-                LogErrorActivity($"Error saving user role update for '{_editingUser.Username}': {ex.Message}", ex);
-                MessageBox.Show($"儲存角色更新失敗: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error); // $"Failed to save role update: {ex.Message}" | "Error"
-                // Optionally revert role change on _editingUser if save fails, though tricky if it's by reference.
-                // For simplicity, we're not reverting here. The object in memory is changed, but next load would show old role if save failed.
+                LogErrorActivity($"儲存使用者 '{_editingUser.Username}' 的角色更新時發生錯誤: {ex.Message}", ex);
+                MessageBox.Show($"儲存角色更新失敗: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error); // $"儲存角色更新失敗: {ex.Message}" | "錯誤"
+                // 如果儲存失敗，可選擇性地復原對 _editingUser 的角色變更，但如果通過引用操作則較為棘手。
+                // 為簡單起見，此處不進行復原。記憶體中的物件已變更，但如果儲存失敗，下次載入時將顯示舊角色。
             }
         }
 
-        private void btnCancel_Click(object? sender, EventArgs e) // sender changed to object?
+        private void btnCancel_Click(object? sender, EventArgs e) // sender 已變更為 object?
         {
-            LogActivity("ChangeUserRoleForm cancelled by user.");
+            LogActivity("使用者角色變更表單已由使用者取消。");
             this.DialogResult = DialogResult.Cancel;
             this.Close();
         }

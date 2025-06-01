@@ -9,7 +9,7 @@ namespace ComicRentalSystem_14Days
 {
     public class ModernBaseForm : Form
     {
-        // Define a modern color palette
+        // 定義現代色彩調色盤
         public static Color PrimaryColor { get; } = Color.FromArgb(0, 123, 255);
         public static Color SecondaryColor { get; } = Color.FromArgb(248, 249, 250);
         public static Color TextColor { get; } = Color.FromArgb(33, 37, 41);
@@ -18,7 +18,7 @@ namespace ComicRentalSystem_14Days
         public static Color DangerColor { get; } = Color.FromArgb(220, 53, 69);
         public static Color LightBorderColor { get; } = Color.FromArgb(222, 226, 230);
 
-        // Define modern fonts
+        // 定義現代字型
         public static Font PrimaryFont { get; } = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
         public static Font PrimaryFontBold { get; } = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, ((byte)(0)));
         public static Font ButtonFont { get; } = new Font("Segoe UI Semibold", 9.75F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));

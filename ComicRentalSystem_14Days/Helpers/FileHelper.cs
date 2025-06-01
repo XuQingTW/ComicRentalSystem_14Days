@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using ComicRentalSystem_14Days.Interfaces; // Added for IFileHelper
+using ComicRentalSystem_14Days.Interfaces; // 為 IFileHelper 加入
 
 namespace ComicRentalSystem_14Days.Helpers
 {
-    public class FileHelper : IFileHelper // Implement IFileHelper
+    public class FileHelper : IFileHelper // 實作 IFileHelper
     {
         private readonly string _baseDataPath; // 資料檔案存放的基礎路徑
 
@@ -28,35 +28,35 @@ namespace ComicRentalSystem_14Days.Helpers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error creating data directory '{_baseDataPath}': {ex.Message}");
-                throw new IOException($"Failed to create or access data directory: {_baseDataPath}", ex);
+                Console.WriteLine($"建立資料目錄 '{_baseDataPath}' 時發生錯誤: {ex.Message}");
+                throw new IOException($"無法建立或存取資料目錄: {_baseDataPath}", ex);
             }
         }
 
-        // Utility method to get the full path, can be part of the interface or used internally
+        // 取得完整路徑的公用方法，可以是介面的一部分或內部使用
         public string GetFullFilePath(string fileName)
         {
             return Path.Combine(_baseDataPath, fileName);
         }
 
-        // Implementation for AuthenticationService (non-generic)
+        // AuthenticationService 的實作 (非泛型)
         public string ReadFile(string fileName)
         {
             string filePath = GetFullFilePath(fileName);
             if (!File.Exists(filePath))
             {
-                // For AuthenticationService, LoadUsers expects FileNotFoundException to be potentially thrown
-                // or it handles empty string for a new user list.
-                // Throwing FileNotFoundException if not found is one way, or returning empty string.
-                // The current AuthenticationService catches FileNotFoundException specifically.
-                // However, services also expect an empty list if file is just empty.
-                // Let's align with FileHelper<T> behavior: return empty if not found, let service decide.
-                // For users.json, if it's not found, AuthenticationService returns new List<User>().
-                // If ReadFile directly throws FileNotFoundException, then the service's catch block for it is fine.
-                // Let's make it throw for consistency with how services might expect specific exceptions.
-                // Correction: AuthN service expects empty list for FileNotFound, not the exception itself from ReadFile.
-                // It catches it if thrown by File.ReadAllText directly.
-                // So if file not found, return empty string.
+                // 對於 AuthenticationService，LoadUsers 預期可能會擲回 FileNotFoundException
+                // 或者它會處理空字串以建立新的使用者清單。
+                // 若找不到則擲回 FileNotFoundException 是一種方法，或傳回空字串。
+                // 目前的 AuthenticationService 會特別攔截 FileNotFoundException。
+                // 然而，如果檔案僅為空，服務也預期會是空清單。
+                // 讓我們與 FileHelper<T> 的行為保持一致：若找不到則傳回空值，讓服務決定。
+                // 對於 users.json，如果找不到，AuthenticationService 會傳回新的 List<User>()。
+                // 如果 ReadFile 直接擲回 FileNotFoundException，則服務對它的 catch 區塊沒有問題。
+                // 讓我們使其擲回例外狀況，以與服務預期特定例外狀況的方式保持一致。
+                // 更正：AuthN 服務預期 FileNotFound 時為空清單，而不是 ReadFile 本身擲回的例外狀況。
+                // 如果由 File.ReadAllText 直接擲回，它會攔截。
+                // 因此，如果找不到檔案，則傳回空字串。
                 return string.Empty;
             }
             try
@@ -65,12 +65,12 @@ namespace ComicRentalSystem_14Days.Helpers
             }
             catch (IOException ioEx)
             {
-                Console.WriteLine($"Error reading file '{filePath}': {ioEx.Message}");
+                Console.WriteLine($"讀取檔案 '{filePath}' 時發生錯誤: {ioEx.Message}");
                 throw;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"An unexpected error occurred while reading '{filePath}': {ex.Message}");
+                Console.WriteLine($"讀取 '{filePath}' 時發生未預期的錯誤: {ex.Message}");
                 throw;
             }
         }
@@ -84,17 +84,17 @@ namespace ComicRentalSystem_14Days.Helpers
             }
             catch (IOException ioEx)
             {
-                Console.WriteLine($"Error writing to file '{filePath}': {ioEx.Message}");
+                Console.WriteLine($"寫入檔案 '{filePath}' 時發生錯誤: {ioEx.Message}");
                 throw;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"An unexpected error occurred while writing to '{filePath}': {ex.Message}");
+                Console.WriteLine($"寫入 '{filePath}' 時發生未預期的錯誤: {ex.Message}");
                 throw;
             }
         }
 
-        // Implementation for ComicService, MemberService (generic)
+        // ComicService、MemberService 的實作 (泛型)
         public List<T> ReadFile<T>(string fileName, Func<string, T> parseFunc)
         {
             string filePath = GetFullFilePath(fileName);
@@ -121,12 +121,12 @@ namespace ComicRentalSystem_14Days.Helpers
             }
             catch (IOException ioEx) // 技術點 #5: 例外處理
             {
-                Console.WriteLine($"Error reading file '{filePath}': {ioEx.Message}");
+                Console.WriteLine($"讀取檔案 '{filePath}' 時發生錯誤: {ioEx.Message}");
                 throw; 
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"An unexpected error occurred while reading '{filePath}': {ex.Message}");
+                Console.WriteLine($"讀取 '{filePath}' 時發生未預期的錯誤: {ex.Message}");
                 throw;
             }
             return records;
@@ -149,23 +149,23 @@ namespace ComicRentalSystem_14Days.Helpers
             }
             catch (IOException ioEx) // 技術點 #5: 例外處理
             {
-                Console.WriteLine($"Error writing to file '{filePath}': {ioEx.Message}");
+                Console.WriteLine($"寫入檔案 '{filePath}' 時發生錯誤: {ioEx.Message}");
                 throw;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"An unexpected error occurred while writing to '{filePath}': {ex.Message}");
+                Console.WriteLine($"寫入 '{filePath}' 時發生未預期的錯誤: {ex.Message}");
                 throw;
             }
         }
 
         public async Task<string> ReadFileAsync(string filePath)
         {
-            string fullPath = GetFullFilePath(filePath); // Use GetFullFilePath to ensure consistency
-            // Consider behavior if file doesn't exist, similar to synchronous ReadFile
+            string fullPath = GetFullFilePath(filePath); // 使用 GetFullFilePath 以確保一致性
+            // 考慮檔案不存在時的行為，類似於同步的 ReadFile
             if (!File.Exists(fullPath))
             {
-                return string.Empty; // Consistent with synchronous version for non-generic ReadFile
+                return string.Empty; // 與非泛型 ReadFile 的同步版本一致
             }
             try
             {
@@ -173,32 +173,32 @@ namespace ComicRentalSystem_14Days.Helpers
             }
             catch (IOException ioEx)
             {
-                Console.WriteLine($"Error reading file asynchronously '{fullPath}': {ioEx.Message}");
-                throw; // Or handle more gracefully, e.g., log and return empty
+                Console.WriteLine($"非同步讀取檔案 '{fullPath}' 時發生錯誤: {ioEx.Message}");
+                throw; // 或更優雅地處理，例如記錄並傳回空值
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"An unexpected error occurred while reading asynchronously '{fullPath}': {ex.Message}");
-                throw; // Or handle
+                Console.WriteLine($"非同步讀取 '{fullPath}' 時發生未預期的錯誤: {ex.Message}");
+                throw; // 或處理
             }
         }
 
         public async Task WriteFileAsync(string filePath, string content)
         {
-            string fullPath = GetFullFilePath(filePath); // Use GetFullFilePath
+            string fullPath = GetFullFilePath(filePath); // 使用 GetFullFilePath 以確保一致性
             try
             {
                 await File.WriteAllTextAsync(fullPath, content, Encoding.UTF8);
             }
             catch (IOException ioEx)
             {
-                Console.WriteLine($"Error writing to file asynchronously '{fullPath}': {ioEx.Message}");
-                throw; // Or handle
+                Console.WriteLine($"非同步寫入檔案 '{fullPath}' 時發生錯誤: {ioEx.Message}");
+                throw; // 或處理
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"An unexpected error occurred while writing asynchronously '{fullPath}': {ex.Message}");
-                throw; // Or handle
+                Console.WriteLine($"非同步寫入 '{fullPath}' 時發生未預期的錯誤: {ex.Message}");
+                throw; // 或處理
             }
         }
 
@@ -211,8 +211,8 @@ namespace ComicRentalSystem_14Days.Helpers
         public void DeleteFile(string filePath)
         {
             string fullPath = GetFullFilePath(filePath);
-            // Consider File.Exists check if you want to avoid exception for non-existent file
-            // However, File.Delete does not throw if the file doesn't exist.
+            // 如果要避免不存在檔案的例外狀況，請考慮使用 File.Exists 檢查
+            // 然而，如果檔案不存在，File.Delete 不會擲回例外狀況。
             File.Delete(fullPath);
         }
 

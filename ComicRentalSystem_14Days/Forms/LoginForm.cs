@@ -29,10 +29,10 @@ namespace ComicRentalSystem_14Days.Forms
             _reloadService = reloadService ?? throw new ArgumentNullException(nameof(reloadService));
             _logger.Log("登入表單已初始化。");
 
-            // Set password char
+            // 設定密碼字元
             txtPassword.PasswordChar = '*';
 
-            // Attach event handler for btnRegister
+            // 附加 btnRegister 的事件處理常式
             this.btnRegister.Click += new System.EventHandler(this.btnRegister_Click);
         }
 
@@ -62,24 +62,24 @@ namespace ComicRentalSystem_14Days.Forms
             if (user != null)
             {
                 _logger.Log($"使用者 '{username}' 成功登入。角色: {user.Role}。");
-                this.Hide(); // Hide login form
+                this.Hide(); // 隱藏登入表單
                 MainForm mainForm = new MainForm(_logger, _comicService, _memberService, _reloadService, user);
-                mainForm.FormClosed += (s, args) => this.Close(); // Close login form when main form closes
+                mainForm.FormClosed += (s, args) => this.Close(); // 主表單關閉時關閉登入表單
                 mainForm.Show();
             }
             else
             {
                 _logger.Log($"使用者 '{username}' 登入失敗。無效的憑證。");
                 MessageBox.Show("使用者名稱或密碼錯誤。", "登入失敗", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                txtUsername.Clear(); // Clear username field
-                txtPassword.Clear(); // Clear password field
+                txtUsername.Clear(); // 清除使用者名稱欄位
+                txtPassword.Clear(); // 清除密碼欄位
             }
         }
 
         private void LoginForm_Load(object sender, EventArgs e)
         {
             _logger.Log("登入表單已載入。");
-            // You can add any initialization logic here if needed when the form loads
+            // 如果需要在表單載入時新增任何初始化邏輯，可以在此處進行
         }
     }
 }
