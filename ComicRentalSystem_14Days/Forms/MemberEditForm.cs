@@ -5,7 +5,7 @@ using System;
 using System.IO;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
-using System.Linq; // Added for All() method
+using System.Linq; // 為 All() 方法加入
 
 namespace ComicRentalSystem_14Days.Forms
 {
@@ -28,20 +28,20 @@ namespace ComicRentalSystem_14Days.Forms
 
         public MemberEditForm(Member? memberToEdit, MemberService memberService, ILogger logger) : this()
         {
-            base.SetLogger(logger); // Ensure logger is set for BaseForm methods like StyleModern...
+            base.SetLogger(logger); // 確保為 BaseForm 的方法 (如 StyleModern...) 設定了記錄器
 
-            // Apply Modern Styling after InitializeComponent has run (called from :this())
+            // InitializeComponent 執行後 (透過 :this() 呼叫) 套用現代樣式
             if (btnSaveMember != null) StyleModernButton(btnSaveMember);
             if (btnCancelMember != null) StyleSecondaryButton(btnCancelMember);
 
-            // Style GroupBox - using Controls.Find as a safe way if direct field access is an issue
-            // In a typical WinForms setup, this.gbMemberDetails would be directly accessible.
+            // 設定 GroupBox 樣式 - 如果直接欄位存取有問題，則使用 Controls.Find 作為安全方法
+            // 在典型的 WinForms 設定中，this.gbMemberDetails 可以直接存取。
             Control[] foundControls = this.Controls.Find("gbMemberDetails", true);
             if (foundControls.Length > 0 && foundControls[0] is GroupBox gb)
             {
                 StyleModernGroupBox(gb);
             }
-            // else if (this.gbMemberDetails != null) // Fallback if designer made it a direct field
+            // else if (this.gbMemberDetails != null) // 如果設計工具將其設為直接欄位，則為備用方案
             // {
             // StyleModernGroupBox(this.gbMemberDetails);
             // }
@@ -93,15 +93,15 @@ namespace ComicRentalSystem_14Days.Forms
 
             if (!this.ValidateChildren()) {
                  MessageBox.Show("請修正標示的錯誤。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning); // "Please correct the highlighted errors." | "Validation Error"
-                 LogActivity("Validation failed for member edit. Highlighted errors present.");
+                 LogActivity("會員編輯驗證失敗。請修正醒目提示的錯誤。");
                  return;
             }
 
             string name = txtName.Text.Trim();
             string phoneNumber = txtPhoneNumber.Text.Trim();
 
-            // Specific logic for uniqueness or other business rules can remain if needed,
-            // but basic presence/format checks are now handled by Validating events.
+            // 特定邏輯 (例如唯一性或其他業務規則) 如有需要可以保留，
+            // 但基本的欄位存在/格式檢查現在由 Validating 事件處理。
 
             try
             {
@@ -116,15 +116,15 @@ namespace ComicRentalSystem_14Days.Forms
                 }
                 else
                 {
-                    // This block is less likely to be hit if RegistrationForm is used for all new member additions.
-                    // However, keeping the logic sound in case MemberEditForm is used for adding non-user members directly.
+                    // 如果 RegistrationForm 用於所有新會員的新增，則此區塊較不可能被執行。
+                    // 然而，為確保 MemberEditForm 可直接用於新增非使用者會員，故保留此邏輯的完整性。
                     LogActivity("正在嘗試新增會員。");
                     Member newMember = new Member
                     {
                         Name = name,
                         PhoneNumber = phoneNumber
-                        // Username would typically be set if this member was also a User,
-                        // which is handled by RegistrationForm.
+                        // 如果此會員同時也是使用者，通常會設定使用者名稱，
+                        // 這部分由 RegistrationForm 處理。
                     };
                     _memberService.AddMember(newMember);
                     LogActivity($"新會員 '{newMember.Name}' (ID: {newMember.Id}) 已成功新增。");
@@ -154,24 +154,24 @@ namespace ComicRentalSystem_14Days.Forms
             LogActivity("會員編輯表單已完成載入。");
         }
 
-        // Validating Event Handlers
+        // 驗證事件處理常式
         private void txtName_Validating(object? sender, System.ComponentModel.CancelEventArgs e)
         {
             if (sender is TextBox txt)
             {
                 if (string.IsNullOrWhiteSpace(txt.Text))
                 {
-                    errorProvider1?.SetError(txt, "姓名不能為空。"); // Name cannot be empty.
+                    errorProvider1?.SetError(txt, "姓名不能為空。"); // 姓名不能為空。
                     e.Cancel = true;
                 }
                 else if (!txt.Text.Trim().All(c => char.IsLetter(c) || char.IsWhiteSpace(c)))
                 {
-                    errorProvider1?.SetError(txt, "姓名只能包含字母和空格。"); // Name can only contain letters and spaces.
+                    errorProvider1?.SetError(txt, "姓名只能包含字母和空格。"); // 姓名只能包含字母和空格。
                     e.Cancel = true;
                 }
                 else
                 {
-                    errorProvider1?.SetError(txt, ""); // Clear error
+                    errorProvider1?.SetError(txt, ""); // 清除錯誤
                 }
             }
         }
@@ -183,22 +183,22 @@ namespace ComicRentalSystem_14Days.Forms
                 string phoneNumber = txt.Text.Trim();
                 if (string.IsNullOrWhiteSpace(phoneNumber))
                 {
-                    errorProvider1?.SetError(txt, "電話號碼不能為空。"); // Phone number cannot be empty.
+                    errorProvider1?.SetError(txt, "電話號碼不能為空。"); // 電話號碼不能為空。
                     e.Cancel = true;
                 }
                 else if (!phoneNumber.All(char.IsDigit))
                 {
-                    errorProvider1?.SetError(txt, "電話號碼只能包含數字。"); // Phone number can only contain digits.
+                    errorProvider1?.SetError(txt, "電話號碼只能包含數字。"); // 電話號碼只能包含數字。
                     e.Cancel = true;
                 }
                 else if (phoneNumber.Length < 7 || phoneNumber.Length > 15)
                 {
-                    errorProvider1?.SetError(txt, "電話號碼必須介於7到15位數字之間。"); // Phone number must be between 7 and 15 digits.
+                    errorProvider1?.SetError(txt, "電話號碼必須介於7到15位數字之間。"); // 電話號碼必須介於7到15位數字之間。
                     e.Cancel = true;
                 }
                 else
                 {
-                    errorProvider1?.SetError(txt, ""); // Clear error
+                    errorProvider1?.SetError(txt, ""); // 清除錯誤
                 }
             }
         }

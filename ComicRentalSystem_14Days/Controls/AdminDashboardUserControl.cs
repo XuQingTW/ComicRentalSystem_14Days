@@ -54,11 +54,11 @@ namespace ComicRentalSystem_14Days.Controls
                 int activeMembersCount = _memberService.GetAllMembers()?.Count ?? 0;
                 lblActiveMembersValue.Text = activeMembersCount.ToString();
 
-                _logger.Log($"Dashboard Data loaded: Total={totalComicsCount}, Rented={rentedComicsCount}, Available={availableComicsCount}, ActiveMembers={activeMembersCount}");
+                _logger.Log($"儀表板資料已載入: 總數={totalComicsCount}, 已租={rentedComicsCount}, 可借={availableComicsCount}, 活躍會員={activeMembersCount}");
             }
             catch (Exception ex)
             {
-                _logger.LogError("AdminDashboardUserControl.LoadDashboardData: Exception while fetching metrics.", ex);
+                _logger.LogError("AdminDashboardUserControl.LoadDashboardData: 讀取指標時發生例外狀況。", ex);
             }
         }
     }

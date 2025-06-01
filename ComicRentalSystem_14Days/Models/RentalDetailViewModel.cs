@@ -4,17 +4,17 @@ namespace ComicRentalSystem_14Days.Models
 {
     public class RentalDetailViewModel
     {
-        // Member Details
+        // 會員詳細資料
         public int MemberId { get; set; }
         public string MemberName { get; set; } = string.Empty;
         public string MemberPhoneNumber { get; set; } = string.Empty;
 
-        // Comic Details
+        // 漫畫詳細資料
         public int ComicId { get; set; }
         public string ComicTitle { get; set; } = string.Empty;
         public string Author { get; set; } = string.Empty;
 
-        // Rental Details
+        // 租借詳細資料
         public DateTime? RentalDate { get; set; }
         public DateTime? ExpectedReturnDate { get; set; }
         public DateTime? ActualReturnTime { get; set; }

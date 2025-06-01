@@ -1,17 +1,17 @@
 // MainForm.cs
 
-using ComicRentalSystem_14Days.Models;    // Added for AdminComicStatusViewModel
+using ComicRentalSystem_14Days.Models;    // 為 AdminComicStatusViewModel 加入
 using ComicRentalSystem_14Days.Services;
 using ComicRentalSystem_14Days.Forms;
 using ComicRentalSystem_14Days.Interfaces;
 using System;
-using System.Collections.Generic;         // Added for List<>
+using System.Collections.Generic;         // 為 List<> 加入
 using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.ComponentModel;
-using ComicRentalSystem_14Days.Controls;  // Added for AdminDashboardUserControl
+using ComicRentalSystem_14Days.Controls;  // 為 AdminDashboardUserControl 加入
 
 namespace ComicRentalSystem_14Days
 {
@@ -28,7 +28,7 @@ namespace ComicRentalSystem_14Days
         private ListSortDirection _currentSortDirection = ListSortDirection.Ascending;
 
         private Button? _currentSelectedNavButton;               // 新UI所需
-        private AdminDashboardUserControl? _adminDashboardControl; // Admin Dashboard UC
+        private AdminDashboardUserControl? _adminDashboardControl; // 管理員儀表板使用者控制項
 
         public MainForm() : base()
         {
@@ -63,7 +63,7 @@ namespace ComicRentalSystem_14Days
 
         private async void MainForm_Load(object sender, EventArgs e)
         {
-            this._logger?.Log("MainForm is loading.");
+            this._logger?.Log("主表單正在載入。");
 
             //
             //─── (1) 調整 MenuStrip / StatusStrip 樣式，與原本保持一致 ───
@@ -151,10 +151,10 @@ namespace ComicRentalSystem_14Days
             if (this.cmbAdminComicFilterStatus != null)
             {
                 this.cmbAdminComicFilterStatus.Items.Clear();
-                this.cmbAdminComicFilterStatus.Items.Add("All");
-                this.cmbAdminComicFilterStatus.Items.Add("Rented");
-                this.cmbAdminComicFilterStatus.Items.Add("Available");
-                this.cmbAdminComicFilterStatus.SelectedItem = "All";
+                this.cmbAdminComicFilterStatus.Items.Add("全部");
+                this.cmbAdminComicFilterStatus.Items.Add("已租借");
+                this.cmbAdminComicFilterStatus.Items.Add("可租借");
+                this.cmbAdminComicFilterStatus.SelectedItem = "全部";
                 this.cmbAdminComicFilterStatus.SelectedIndexChanged += cmbAdminComicFilterStatus_SelectedIndexChanged;
             }
 
@@ -177,7 +177,7 @@ namespace ComicRentalSystem_14Days
             {
                 txtSearchAvailableComics.GotFocus += (s, ev) =>
                 {
-                    if (txtSearchAvailableComics.Text == "Search by Title/Author...")
+                    if (txtSearchAvailableComics.Text == "依書名/作者搜尋...")
                     {
                         txtSearchAvailableComics.Text = "";
                         txtSearchAvailableComics.ForeColor = ModernBaseForm.TextColor;
@@ -187,7 +187,7 @@ namespace ComicRentalSystem_14Days
                 {
                     if (string.IsNullOrWhiteSpace(txtSearchAvailableComics.Text))
                     {
-                        txtSearchAvailableComics.Text = "Search by Title/Author...";
+                        txtSearchAvailableComics.Text = "依書名/作者搜尋...";
                         txtSearchAvailableComics.ForeColor = System.Drawing.Color.Gray;
                     }
                 };
@@ -198,7 +198,7 @@ namespace ComicRentalSystem_14Days
             if (cmbGenreFilter != null && _comicService != null)
             {
                 cmbGenreFilter.Items.Clear();
-                cmbGenreFilter.Items.Add("All Genres");
+                cmbGenreFilter.Items.Add("所有類型");
                 try
                 {
                     var genres = _comicService.GetAllComics()
@@ -211,7 +211,7 @@ namespace ComicRentalSystem_14Days
                 }
                 catch (Exception ex)
                 {
-                    _logger?.LogError("Failed to populate genre filter.", ex);
+                    _logger?.LogError("填入類型篩選器失敗。", ex);
                 }
                 cmbGenreFilter.SelectedIndex = 0;
                 cmbGenreFilter.Font = ModernBaseForm.PrimaryFont ?? new System.Drawing.Font("Segoe UI", 9F);
@@ -268,15 +268,15 @@ namespace ComicRentalSystem_14Days
 
         private async void ComicService_ComicsChanged(object? sender, EventArgs e)
         {
-            this._logger?.Log("ComicsChanged event received.");
+            this._logger?.Log("收到 ComicsChanged 事件。");
             if (_currentUser.Role == UserRole.Admin)
             {
-                this._logger?.Log("Reloading all comics status for admin.");
+                this._logger?.Log("正在為管理員重新載入所有漫畫狀態。");
                 await LoadAllComicsStatusForAdminAsync();
             }
             else
             {
-                this._logger?.Log("Reloading available comics and member's rented comics.");
+                this._logger?.Log("正在重新載入可借閱漫畫和會員已租借的漫畫。");
                 LoadAvailableComics();
                 LoadMyRentedComics();
             }
@@ -286,28 +286,28 @@ namespace ComicRentalSystem_14Days
         {
             if (dgvAvailableComics == null)
             {
-                _logger?.LogError("SetupDataGridView: dgvAvailableComics is null.");
+                _logger?.LogError("設定DataGridView失敗：dgvAvailableComics 為空。");
                 return;
             }
 
-            this._logger?.Log("Setting up DataGridView for comics.");
+            this._logger?.Log("正在為漫畫設定 DataGridView。");
             dgvAvailableComics.AutoGenerateColumns = false;
             dgvAvailableComics.Columns.Clear();
             dgvAvailableComics.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
             if (_currentUser.Role == UserRole.Admin)
             {
-                _logger.Log("Configuring DataGridView for Admin view (All Comics Status).");
-                dgvAvailableComics!.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Title", HeaderText = "Title", FillWeight = 20 });
-                dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Author", HeaderText = "Author", FillWeight = 15 });
-                dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Status", HeaderText = "Status", FillWeight = 10 });
-                dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "BorrowerName", HeaderText = "Borrower", FillWeight = 15 });
-                dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "BorrowerPhoneNumber", HeaderText = "Borrower Phone", FillWeight = 15 });
+                _logger.Log("正在為管理員視圖設定 DataGridView (所有漫畫狀態)。");
+                dgvAvailableComics!.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Title", HeaderText = "書名", FillWeight = 20 });
+                dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Author", HeaderText = "作者", FillWeight = 15 });
+                dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Status", HeaderText = "狀態", FillWeight = 10 });
+                dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "BorrowerName", HeaderText = "借閱者", FillWeight = 15 });
+                dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "BorrowerPhoneNumber", HeaderText = "借閱者電話", FillWeight = 15 });
 
                 var rentalDateColumn = new DataGridViewTextBoxColumn
                 {
                     DataPropertyName = "RentalDate",
-                    HeaderText = "Rented On",
+                    HeaderText = "租借於",
                     FillWeight = 12,
                     DefaultCellStyle = new DataGridViewCellStyle { Format = "yyyy-MM-dd" }
                 };
@@ -316,7 +316,7 @@ namespace ComicRentalSystem_14Days
                 var returnDateColumn = new DataGridViewTextBoxColumn
                 {
                     DataPropertyName = "ReturnDate",
-                    HeaderText = "Due Date",
+                    HeaderText = "到期日",
                     FillWeight = 13,
                     DefaultCellStyle = new DataGridViewCellStyle { Format = "yyyy-MM-dd" }
                 };
@@ -325,7 +325,7 @@ namespace ComicRentalSystem_14Days
             }
             else // Member view
             {
-                _logger.Log("Configuring DataGridView for Member view (Available Comics).");
+                _logger.Log("正在為會員視圖設定 DataGridView (可借閱漫畫)。");
                 dgvAvailableComics!.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Title", HeaderText = "書名", FillWeight = 40 });
                 dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Author", HeaderText = "作者", FillWeight = 30 });
                 dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Genre", HeaderText = "類型", FillWeight = 20 });
@@ -341,7 +341,7 @@ namespace ComicRentalSystem_14Days
         private void LoadAvailableComics()
         {
             if (dgvAvailableComics == null) return;
-            this._logger?.Log("Loading available comics into MainForm DataGridView.");
+            this._logger?.Log("正在將可借閱漫畫載入到主表單的 DataGridView。");
             try
             {
                 var queryResult = this._comicService.GetAllComics().Where(c => !c.IsRented).ToList();
@@ -358,11 +358,11 @@ namespace ComicRentalSystem_14Days
                 else if (dgvAvailableComics.IsHandleCreated)
                     updateGrid();
 
-                this._logger?.Log($"Successfully loaded {availableComics.Count} available comics.");
+                this._logger?.Log($"已成功載入 {availableComics.Count} 本可借閱漫畫。");
             }
             catch (Exception ex)
             {
-                LogErrorActivity("Error loading available comics.", ex);
+                LogErrorActivity("載入可借閱漫畫時發生錯誤。", ex);
                 MessageBox.Show($"載入可用漫畫列表時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -370,7 +370,7 @@ namespace ComicRentalSystem_14Days
         private async Task LoadAllComicsStatusForAdminAsync()
         {
             if (dgvAvailableComics == null || _memberService == null || _comicService == null) return;
-            _logger?.Log("Loading all comics status for Admin view asynchronously.");
+            _logger?.Log("正在非同步為管理員視圖載入所有漫畫狀態。");
 
             try
             {
@@ -380,11 +380,11 @@ namespace ComicRentalSystem_14Days
                 _allAdminComicStatuses = new List<AdminComicStatusViewModel>(comicStatuses);
                 ApplyAdminComicsView(); // apply filter/sort
 
-                _logger?.Log($"Successfully loaded {comicStatuses.Count} comics for admin view asynchronously.");
+                _logger?.Log($"已成功非同步為管理員視圖載入 {comicStatuses.Count} 本漫畫。");
             }
             catch (Exception ex)
             {
-                LogErrorActivity("Error loading all comics status for admin asynchronously.", ex);
+                LogErrorActivity("非同步載入所有漫畫狀態供管理員檢視時發生錯誤。", ex);
                 Action showError = () => MessageBox.Show($"載入所有漫畫狀態時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 if (this.IsHandleCreated && !this.IsDisposed)
                 {
@@ -397,11 +397,11 @@ namespace ComicRentalSystem_14Days
         private void SetupUIAccessControls()
         {
             bool isAdmin = _currentUser.Role == UserRole.Admin;
-            _logger.Log($"Setting up UI controls. User is Admin: {isAdmin}");
+            _logger.Log($"正在設定UI控制項。使用者是否為管理員: {isAdmin}");
 
             if (mainContentPanel == null)
             {
-                _logger?.LogError("SetupUIAccessControls: mainContentPanel is null.");
+                _logger?.LogError("設定UI控制項存取權限失敗：mainContentPanel 為空。");
                 return;
             }
 
@@ -442,7 +442,7 @@ namespace ComicRentalSystem_14Days
             }
             else
             {
-                _logger.LogWarning("MenuStrip control 'menuStrip2' not found or null.");
+                _logger.LogWarning("找不到 MenuStrip 控制項 'menuStrip2' 或其為空。");
             }
 
             //
@@ -451,7 +451,7 @@ namespace ComicRentalSystem_14Days
             if (isAdmin)
             {
                 if (leftNavPanel != null) leftNavPanel.Visible = true;
-                this.Text = "Comic Rental System - Admin";
+                this.Text = "漫畫租借系統 - 管理員";
 
                 if (btnNavDashboard != null)
                 {
@@ -467,28 +467,28 @@ namespace ComicRentalSystem_14Days
             //
             else
             {
-                this.Text = "Comic Rental System";
+                this.Text = "漫畫租借系統";
                 if (memberViewTabControl != null)
                 {
                     memberViewTabControl.Visible = true;
 
                     if (lblAvailableComics != null)
                     {
-                        lblAvailableComics.Text = "Select a comic below to rent:";
+                        lblAvailableComics.Text = "請選擇下方漫畫進行租借：";
                     }
                     if (lblMyRentedComicsHeader != null)
                     {
-                        lblMyRentedComicsHeader.Text = "Your currently rented items:";
+                        lblMyRentedComicsHeader.Text = "您目前租借的項目：";
                     }
                     if (btnRentComic != null) btnRentComic.Visible = true;
                 }
                 else
                 {
-                    _logger?.LogError("SetupUIAccessControls: memberViewTabControl is null for Member view.");
+                    _logger?.LogError("設定UI控制項存取權限失敗：會員視圖的 memberViewTabControl 為空。");
                     if (lblAvailableComics != null)
                     {
                         lblAvailableComics.Visible = true;
-                        lblAvailableComics.Text = "Available Comics";
+                        lblAvailableComics.Text = "可租借漫畫";
                     }
                     if (dgvAvailableComics != null) dgvAvailableComics.Visible = true;
                     if (btnRentComic != null) btnRentComic.Visible = true;
@@ -510,7 +510,7 @@ namespace ComicRentalSystem_14Days
                 }
             }
 
-            _logger.Log($"UI controls visibility and text updated based on admin status ({isAdmin}).");
+            _logger.Log($"UI 控制項的可見性和文字已根據管理員狀態 ({isAdmin}) 更新。");
         }
 
 
@@ -525,19 +525,19 @@ namespace ComicRentalSystem_14Days
                 }
                 else
                 {
-                    this._logger.LogWarning("ToolStripStatusLabel 'toolStripStatusLabelUser' not found or null.");
+                    this._logger.LogWarning("找不到 ToolStripStatusLabel 控制項 'toolStripStatusLabelUser' 或其為空。");
                 }
             }
             else
             {
-                this._logger.LogWarning("StatusStrip 'statusStrip1' not found or null.");
+                this._logger.LogWarning("找不到 StatusStrip 控制項 'statusStrip1' 或其為空。");
             }
         }
 
         private void SetupMyRentedComicsDataGridView()
         {
             if (dgvMyRentedComics == null) return;
-            _logger?.Log("Setting up DataGridView for member's rented comics (dgvMyRentedComics).");
+            _logger?.Log("正在為會員已租借的漫畫設定 DataGridView (dgvMyRentedComics)。");
             dgvMyRentedComics.AutoGenerateColumns = false;
             dgvMyRentedComics.Columns.Clear();
             dgvMyRentedComics.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
@@ -570,7 +570,7 @@ namespace ComicRentalSystem_14Days
                 var statusColumn = new DataGridViewTextBoxColumn
                 {
                     Name = "statusColumn",
-                    HeaderText = "Status",
+                    HeaderText = "狀態",
                     FillWeight = 14
                 };
                 dgvMyRentedComics.Columns.Add(statusColumn);
@@ -587,47 +587,47 @@ namespace ComicRentalSystem_14Days
             if (dgvMyRentedComics == null) return;
             if (_currentUser == null || _comicService == null || _memberService == null || _logger == null)
             {
-                _logger?.LogWarning("LoadMyRentedComics: CurrentUser or critical services are null. Clearing DGV.");
+                _logger?.LogWarning("載入我的租借漫畫失敗：CurrentUser 或關鍵服務為空。正在清除 DGV。");
                 ClearDgvMyRentedComics();
                 return;
             }
             if (_currentUser.Role != UserRole.Member)
             {
-                _logger?.Log("LoadMyRentedComics: User is not a Member. Clearing DGV.");
+                _logger?.Log("載入我的租借漫畫失敗：使用者不是會員。正在清除 DGV。");
                 ClearDgvMyRentedComics();
                 return;
             }
 
-            _logger?.LogInformation($"LoadMyRentedComics: Attempting to load rentals for user: '{_currentUser?.Username ?? "Unknown user"}'.");
+            _logger?.LogInformation($"載入我的租借漫畫：正在嘗試為使用者載入租借記錄：'{_currentUser?.Username ?? "未知使用者"}'。");
 
             try
             {
                 Member? currentMember = _memberService.GetMemberByUsername(_currentUser.Username);
                 if (currentMember == null)
                 {
-                    _logger?.LogWarning($"LoadMyRentedComics: Member profile not found for username '{_currentUser?.Username ?? "Unknown user"}'. No rentals loaded.");
+                    _logger?.LogWarning($"載入我的租借漫畫失敗：找不到使用者名稱 '{_currentUser?.Username ?? "未知使用者"}' 的會員資料。未載入任何租借記錄。");
                     ClearDgvMyRentedComics();
                     return;
                 }
-                _logger?.LogInformation($"LoadMyRentedComics: Found member: ID={currentMember.Id}, Name='{currentMember.Name}', Username='{currentMember.Username}'.");
+                _logger?.LogInformation($"載入我的租借漫畫：找到會員：ID={currentMember.Id}，姓名='{currentMember.Name}'，使用者名稱='{currentMember.Username}'。");
 
                 var allComics = _comicService.GetAllComics();
-                _logger?.LogDebug($"LoadMyRentedComics: Total comics from service before filter: {allComics?.Count ?? 0}.");
+                _logger?.LogDebug($"載入我的租借漫畫：篩選前從服務取得的漫畫總數：{allComics?.Count ?? 0}。");
 
                 if (allComics == null)
                 {
-                    _logger?.LogWarning($"LoadMyRentedComics: _comicService.GetAllComics() returned null.");
+                    _logger?.LogWarning("載入我的租借漫畫失敗：_comicService.GetAllComics() 回傳為空。");
                     ClearDgvMyRentedComics();
                     return;
                 }
 
-                _logger?.LogDebug($"LoadMyRentedComics: Filtering for Member ID: {currentMember.Id}.");
+                _logger?.LogDebug($"載入我的租借漫畫：正在依會員 ID 篩選：{currentMember.Id}。");
                 if (allComics != null)
                 {
-                    _logger?.LogDebug("LoadMyRentedComics: First few comics (before filter):");
+                    _logger?.LogDebug("載入我的租借漫畫：頭幾本漫畫 (篩選前)：");
                     foreach (var comic in allComics.Take(5))
                     {
-                        _logger?.LogDebug($"  - ID: {comic.Id}, Title: '{comic.Title}', IsRented: {comic.IsRented}, RentedToMemberId: {comic.RentedToMemberId}");
+                        _logger?.LogDebug($"  - ID: {comic.Id}，書名: '{comic.Title}'，是否已租借: {comic.IsRented}，租借會員ID: {comic.RentedToMemberId}");
                     }
                 }
 
@@ -643,16 +643,16 @@ namespace ComicRentalSystem_14Days
                     })
                     .ToList();
 
-                _logger?.LogInformation($"LoadMyRentedComics: Found {myRentedComics.Count} rented comics for Member ID {currentMember.Id}.");
+                _logger?.LogInformation($"載入我的租借漫畫：找到會員 ID {currentMember.Id} 的 {myRentedComics.Count} 本已租借漫畫。");
 
                 if (myRentedComics.Any())
                 {
                     var comicTitles = string.Join(", ", myRentedComics.Select(c => $"'{c.ComicTitle}'"));
-                    _logger?.LogDebug($"LoadMyRentedComics: Rented comics: [{comicTitles}]");
+                    _logger?.LogDebug($"載入我的租借漫畫：已租借漫畫：[{comicTitles}]");
                 }
                 else
                 {
-                    _logger?.LogInformation($"LoadMyRentedComics: No rented comics found for Member ID {currentMember.Id}.");
+                    _logger?.LogInformation($"載入我的租借漫畫：找不到會員 ID {currentMember.Id} 的已租借漫畫。");
                 }
 
                 Action updateGrid = () =>
@@ -668,7 +668,7 @@ namespace ComicRentalSystem_14Days
             }
             catch (Exception ex)
             {
-                _logger?.LogError("LoadMyRentedComics: Error loading member's rented comics.", ex);
+                _logger?.LogError("載入會員已租借漫畫時發生錯誤。", ex);
                 MessageBox.Show($"載入您的租借漫畫列表時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 ClearDgvMyRentedComics();
             }
@@ -686,13 +686,13 @@ namespace ComicRentalSystem_14Days
 
         private void 離開ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this._logger?.Log("Exit menu item clicked.");
+            this._logger?.Log("「離開」選單項目已點擊。");
             Application.Exit();
         }
 
         private void 漫畫管理ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this._logger?.Log("Opening ComicManagementForm.");
+            this._logger?.Log("正在開啟漫畫管理表單。");
             ComicManagementForm comicMgmtForm = new ComicManagementForm(
                 this._logger!,
                 this._comicService,
@@ -703,7 +703,7 @@ namespace ComicRentalSystem_14Days
 
         private void 會員管理ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this._logger?.Log("Opening MemberManagementForm.");
+            this._logger?.Log("正在開啟會員管理表單。");
             if (Program.AppAuthService != null && this._comicService != null)
             {
                 MemberManagementForm memberMgmtForm = new MemberManagementForm(
@@ -717,14 +717,14 @@ namespace ComicRentalSystem_14Days
             }
             else
             {
-                this._logger?.LogError("AuthenticationService is null. Cannot open MemberManagementForm.");
+                this._logger?.LogError("AuthenticationService 為空。無法開啟會員管理表單。");
                 MessageBox.Show("無法開啟會員管理功能，因為驗證服務未正確初始化。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void rentalManagementToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this._logger?.Log("Opening RentalForm.");
+            this._logger?.Log("正在開啟租借表單。");
             try
             {
                 RentalForm rentalForm = new RentalForm(
@@ -737,14 +737,14 @@ namespace ComicRentalSystem_14Days
             }
             catch (Exception ex)
             {
-                this._logger?.LogError("Failed to open RentalForm.", ex);
+                this._logger?.LogError("開啟租借表單失敗。", ex);
                 MessageBox.Show($"開啟租借表單時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void 使用者註冊ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this._logger?.Log("User Registration menu item clicked.");
+            this._logger?.Log("「使用者註冊」選單項目已點擊。");
             if (_currentUser.Role == UserRole.Admin)
             {
                 if (this._logger != null && Program.AppAuthService != null && this._memberService != null)
@@ -759,19 +759,19 @@ namespace ComicRentalSystem_14Days
                 else
                 {
                     MessageBox.Show("Logger, AuthenticationService, 或 MemberService 未初始化，無法開啟使用者註冊。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    this._logger?.LogError("RegistrationForm could not be opened due to null logger, AppAuthService, or _memberService.");
+                    this._logger?.LogError("由於 logger、AppAuthService 或 _memberService 為空，無法開啟註冊表單。");
                 }
             }
             else
             {
                 MessageBox.Show("只有管理員才能註冊新使用者。", "權限不足", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this._logger?.Log($"Non-admin user '{_currentUser.Username}' tried to open RegistrationForm.");
+                this._logger?.Log($"非管理員使用者 '{_currentUser.Username}' 嘗試開啟註冊表單。");
             }
         }
 
         private void logoutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this._logger?.Log($"User '{_currentUser.Username}' logging out.");
+            this._logger?.Log($"使用者 '{_currentUser.Username}' 正在登出。");
             Application.Restart();
         }
 
@@ -779,21 +779,21 @@ namespace ComicRentalSystem_14Days
         {
             if (_currentUser == null || _comicService == null || _memberService == null || _logger == null)
             {
-                MessageBox.Show("System components are not properly initialized. Cannot proceed with rental.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                _logger?.LogError("btnRentComic_Click: Critical services or _currentUser is null.");
+                MessageBox.Show("系統元件未正確初始化。無法繼續租借。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _logger?.LogError("租借漫畫按鈕點擊事件：關鍵服務或 _currentUser 為空。");
                 return;
             }
 
             if (dgvAvailableComics == null || dgvAvailableComics.SelectedRows.Count == 0)
             {
-                _logger?.Log("btnRentComic_Click: No comic selected by user.");
+                _logger?.Log("租借漫畫按鈕點擊事件：使用者未選擇漫畫。");
                 MessageBox.Show("請先選擇一本漫畫。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
             if (_currentUser.Role == UserRole.Admin)
             {
-                _logger?.LogWarning("Admin user attempted to click Rent button. This action is for members only.");
+                _logger?.LogWarning("管理員使用者嘗試點擊租借按鈕。此操作僅供會員使用。");
                 return;
             }
 
@@ -801,13 +801,13 @@ namespace ComicRentalSystem_14Days
             if (selectedComic == null)
             {
                 MessageBox.Show("選擇的項目無效或不是有效的漫畫資料。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                _logger?.LogError("btnRentComic_Click: Selected item is null or not a Comic object.");
+                _logger?.LogError("租借漫畫按鈕點擊事件：選取的項目為空或不是有效的漫畫物件。");
                 return;
             }
 
             if (selectedComic.IsRented)
             {
-                _logger?.Log($"btnRentComic_Click: User '{_currentUser.Username}' attempted to rent comic '{selectedComic.Title}' (ID: {selectedComic.Id}) which is already rented.");
+                _logger?.Log($"租借漫畫按鈕點擊事件：使用者 '{_currentUser.Username}' 嘗試租借漫畫 '{selectedComic.Title}' (ID: {selectedComic.Id})，但該漫畫已被租借。");
                 MessageBox.Show($"漫畫 '{selectedComic.Title}' 已經被借出。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 LoadAvailableComics();
                 return;
@@ -826,7 +826,7 @@ namespace ComicRentalSystem_14Days
 
                     if (member == null)
                     {
-                        _logger?.LogWarning($"btnRentComic_Click: No member found for username '{_currentUser.Username}'.");
+                        _logger?.LogWarning($"租借漫畫按鈕點擊事件：找不到使用者名稱為 '{_currentUser.Username}' 的會員。");
                         MessageBox.Show($"找不到使用者 '{_currentUser.Username}' 對應的會員資料。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
@@ -839,7 +839,7 @@ namespace ComicRentalSystem_14Days
                     try
                     {
                         _comicService.UpdateComic(selectedComic);
-                        _logger?.Log($"Comic '{selectedComic.Title}' (ID: {selectedComic.Id}) rented to member ID {member.Id} (Username: {_currentUser.Username}) until {selectedReturnDate:yyyy-MM-dd}.");
+                        _logger?.Log($"漫畫 '{selectedComic.Title}' (ID: {selectedComic.Id}) 已租借給會員 ID {member.Id} (使用者名稱: {_currentUser.Username}) 至 {selectedReturnDate:yyyy-MM-dd}。");
                         MessageBox.Show($"漫畫 '{selectedComic.Title}' 已成功租借至 {selectedReturnDate:yyyy-MM-dd}。", "租借成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         LoadAvailableComics();
                         LoadMyRentedComics();
@@ -848,7 +848,7 @@ namespace ComicRentalSystem_14Days
                     }
                     catch (Exception ex)
                     {
-                        _logger?.LogError($"btnRentComic_Click: Failed to update comic (ID: {selectedComic.Id}) after rental attempt. {ex.Message}", ex);
+                        _logger?.LogError($"租借漫畫按鈕點擊事件：嘗試租借後更新漫畫 (ID: {selectedComic.Id}) 失敗。{ex.Message}", ex);
                         MessageBox.Show($"更新漫畫狀態時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         selectedComic.IsRented = false;
                         selectedComic.RentedToMemberId = 0;
@@ -858,17 +858,17 @@ namespace ComicRentalSystem_14Days
                 }
                 else
                 {
-                    _logger?.Log($"User '{_currentUser.Username}' cancelled the rental process for comic '{selectedComic.Title}'.");
+                    _logger?.Log($"使用者 '{_currentUser.Username}' 已取消漫畫 '{selectedComic.Title}' 的租借流程。");
                 }
             }
         }
 
         private void 檢視日誌ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this._logger?.Log($"View Log menu item clicked by user '{_currentUser.Username}'.");
+            this._logger?.Log($"使用者 '{_currentUser.Username}' 點擊了「檢視日誌」選單項目。");
             if (_currentUser.Role == UserRole.Admin)
             {
-                this._logger?.Log($"Admin user '{_currentUser.Username}' viewing logs.");
+                this._logger?.Log($"管理員使用者 '{_currentUser.Username}' 正在檢視日誌。");
                 try
                 {
                     string logDirectory = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ComicRentalApp", "Logs");
@@ -885,20 +885,20 @@ namespace ComicRentalSystem_14Days
                 }
                 catch (Exception ex)
                 {
-                    this._logger?.LogError("Failed to open the log file.", ex);
+                    this._logger?.LogError("開啟日誌檔案失敗。", ex);
                     MessageBox.Show($"無法開啟日誌檔案: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
             {
-                this._logger?.Log($"User '{_currentUser.Username}' (Role: {_currentUser.Role}) attempted to view logs. Permission denied.");
+                this._logger?.Log($"使用者 '{_currentUser.Username}' (角色: {_currentUser.Role}) 嘗試檢視日誌。權限不足。");
                 MessageBox.Show("權限不足", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            this._logger?.Log("MainForm is closing. Unsubscribing from events.");
+            this._logger?.Log("主表單正在關閉。正在取消訂閱事件。");
             if (this._comicService != null)
                 this._comicService.ComicsChanged -= ComicService_ComicsChanged;
             if (dgvAvailableComics != null)
@@ -913,7 +913,7 @@ namespace ComicRentalSystem_14Days
 
             IEnumerable<AdminComicStatusViewModel> viewToShow = _allAdminComicStatuses;
 
-            // (1) Apply Filter
+            // (1) 套用篩選
             if (this.cmbAdminComicFilterStatus != null && this.cmbAdminComicFilterStatus.SelectedItem != null)
             {
                 string? selectedStatus = this.cmbAdminComicFilterStatus.SelectedItem.ToString();
@@ -928,7 +928,7 @@ namespace ComicRentalSystem_14Days
                 // "All" 則不過濾
             }
 
-            // (2) Apply Sort
+            // (2) 套用排序
             if (!string.IsNullOrEmpty(_currentSortColumnName))
             {
                 var prop = typeof(AdminComicStatusViewModel).GetProperty(_currentSortColumnName);
@@ -1025,9 +1025,9 @@ namespace ComicRentalSystem_14Days
                     _adminDashboardControl.Visible = true;
                     _adminDashboardControl.BringToFront();
                     _adminDashboardControl.LoadDashboardData();
-                    this.Text = "Comic Rental System - Dashboard";
+                    this.Text = "漫畫租借系統 - 儀表板";
                 }
-                _logger?.Log("Dashboard view selected.");
+                _logger?.Log("已選取儀表板視圖。");
             }
             // 2. 「漫畫管理」
             else if (selectedButton == btnNavComicMgmt)
@@ -1094,32 +1094,32 @@ namespace ComicRentalSystem_14Days
                     dgvAvailableComics.BringToFront();
                 }
 
-                this.Text = "Comic Rental System - Comic Management";
-                _logger?.Log("Comic Management view selected.");
+                this.Text = "漫畫租借系統 - 漫畫管理";
+                _logger?.Log("已選取漫畫管理視圖。");
             }
             // 3. 「會員管理」
             else if (selectedButton == btnNavMemberMgmt)
             {
                 this.會員管理ToolStripMenuItem_Click(this, EventArgs.Empty);
-                _logger?.Log("Member Mgmt navigation button clicked.");
+                _logger?.Log("會員管理導覽按鈕已點擊。");
             }
             // 4. 「租借管理」
             else if (selectedButton == btnNavRentalMgmt)
             {
                 this.rentalManagementToolStripMenuItem_Click(this, EventArgs.Empty);
-                _logger?.Log("Rental Mgmt navigation button clicked.");
+                _logger?.Log("租借管理導覽按鈕已點擊。");
             }
             // 5. 「使用者註冊」
             else if (selectedButton == btnNavUserReg)
             {
                 this.使用者註冊ToolStripMenuItem_Click(this, EventArgs.Empty);
-                _logger?.Log("User Reg navigation button clicked.");
+                _logger?.Log("使用者註冊導覽按鈕已點擊。");
             }
             // 6. 「檢視日誌」
             else if (selectedButton == btnNavLogs)
             {
                 this.檢視日誌ToolStripMenuItem_Click(this, EventArgs.Empty);
-                _logger?.Log("Logs navigation button clicked.");
+                _logger?.Log("檢視日誌導覽按鈕已點擊。");
             }
         }
 
@@ -1202,12 +1202,12 @@ namespace ComicRentalSystem_14Days
                 if (comicStatus.Status == "被借閱" && comicStatus.ReturnDate.HasValue)
                 {
                     DateTime returnDate = comicStatus.ReturnDate.Value;
-                    if (returnDate.Date < DateTime.Today) // Overdue
+                    if (returnDate.Date < DateTime.Today) // 已逾期
                     {
                         row.DefaultCellStyle.BackColor = ModernBaseForm.DangerColor;
                         row.DefaultCellStyle.ForeColor = Color.White;
                     }
-                    else if (returnDate.Date <= DateTime.Today.AddDays(3)) // Due soon
+                    else if (returnDate.Date <= DateTime.Today.AddDays(3)) // 即將到期
                     {
                         row.DefaultCellStyle.BackColor = ModernBaseForm.AccentColor;
                         row.DefaultCellStyle.ForeColor = ModernBaseForm.TextColor;
@@ -1233,7 +1233,7 @@ namespace ComicRentalSystem_14Days
             }
             catch (Exception ex)
             {
-                _logger?.LogError($"Error getting ExpectedReturnDate via reflection in CellFormatting: {ex.Message}");
+                _logger?.LogError($"在 CellFormatting 中透過反映取得 ExpectedReturnDate 時發生錯誤: {ex.Message}");
                 return;
             }
 
@@ -1244,25 +1244,25 @@ namespace ComicRentalSystem_14Days
                 TimeSpan remainingTime = returnDate.Value.Date - DateTime.Today;
                 if (remainingTime.TotalDays < 0)
                 {
-                    e.Value = $"Overdue by {-remainingTime.TotalDays} day(s)";
+                    e.Value = $"逾期 {-remainingTime.TotalDays} 天";
                 }
                 else if (remainingTime.TotalDays == 0)
                 {
-                    e.Value = "Due Today";
+                    e.Value = "今日到期";
                 }
                 else
                 {
-                    e.Value = $"{remainingTime.TotalDays} day(s) remaining";
+                    e.Value = $"剩餘 {remainingTime.TotalDays} 天";
                 }
                 e.FormattingApplied = true;
             }
 
-            if (returnDate.Value.Date < DateTime.Today) // Overdue
+            if (returnDate.Value.Date < DateTime.Today) // 已逾期
             {
                 e.CellStyle.BackColor = ModernBaseForm.DangerColor;
                 e.CellStyle.ForeColor = Color.White;
             }
-            else if (returnDate.Value.Date <= DateTime.Today.AddDays(3)) // Due soon
+            else if (returnDate.Value.Date <= DateTime.Today.AddDays(3)) // 即將到期
             {
                 e.CellStyle.BackColor = ModernBaseForm.AccentColor;
                 e.CellStyle.ForeColor = ModernBaseForm.TextColor;
@@ -1275,17 +1275,17 @@ namespace ComicRentalSystem_14Days
 
             if (memberViewTabControl.SelectedTab == myRentalsTabPage)
             {
-                _logger?.Log("My Rentals tab selected. Reloading rented comics.");
+                _logger?.Log("已選取「我的租借」標籤頁。正在重新載入已租借漫畫。");
                 LoadMyRentedComics();
             }
             else if (memberViewTabControl.SelectedTab == availableComicsTabPage)
             {
-                _logger?.Log("Available Comics tab selected. Re-applying filters.");
+                _logger?.Log("已選取「可租借漫畫」標籤頁。正在重新套用篩選器。");
                 ApplyAvailableComicsFilter();
             }
         }
 
-        // --- Filter Methods ---
+        // --- 篩選方法 ---
         private bool IsMemberViewActive()
         {
             return _currentUser != null &&
@@ -1299,15 +1299,15 @@ namespace ComicRentalSystem_14Days
         {
             if (_comicService == null || dgvAvailableComics == null || _currentUser == null)
             {
-                _logger?.LogWarning("ApplyAvailableComicsFilter: Critical components are null. Skipping filter.");
+                _logger?.LogWarning("套用可租借漫畫篩選器：關鍵元件為空。正在略過篩選。");
                 return;
             }
 
             try
             {
-                _logger?.Log("Applying available comics filter.");
+                _logger?.Log("正在套用可租借漫畫篩選器。");
 
-                string searchText = (txtSearchAvailableComics != null && txtSearchAvailableComics.Text != "Search by Title/Author...")
+                string searchText = (txtSearchAvailableComics != null && txtSearchAvailableComics.Text != "依書名/作者搜尋...")
                                     ? txtSearchAvailableComics.Text.ToLowerInvariant()
                                     : "";
                 string selectedGenre = (cmbGenreFilter != null && cmbGenreFilter.SelectedItem != null && cmbGenreFilter.SelectedIndex > 0)
@@ -1330,11 +1330,11 @@ namespace ComicRentalSystem_14Days
                 }
 
                 dgvAvailableComics.DataSource = comicsToFilter;
-                _logger?.Log($"Filter applied. Search: '{searchText}', Genre: '{selectedGenre}'. Found {comicsToFilter.Count} comics.");
+                _logger?.Log($"已套用篩選器。搜尋: '{searchText}'，類型: '{selectedGenre}'。找到 {comicsToFilter.Count} 本漫畫。");
             }
             catch (Exception ex)
             {
-                _logger?.LogError("Error applying available comics filter.", ex);
+                _logger?.LogError("套用可租借漫畫篩選器時發生錯誤。", ex);
                 if (dgvAvailableComics != null) dgvAvailableComics.DataSource = null;
             }
         }

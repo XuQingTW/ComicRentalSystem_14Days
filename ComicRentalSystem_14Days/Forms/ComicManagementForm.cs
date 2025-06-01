@@ -30,19 +30,19 @@ namespace ComicRentalSystem_14Days.Forms
                 return;
             }
 
-            LogActivity("ComicManagementForm is loading runtime components.");
+            LogActivity("漫畫管理表單正在載入執行階段元件。");
 
             _comicService.ComicsChanged += ComicService_ComicsChanged;
 
-            // Event handlers for btnSearchComics and btnClearSearchComics
-            // are now wired up by the designer in InitializeComponent.
-            // The following Control.Find logic is no longer needed.
+            // btnSearchComics 和 btnClearSearchComics 的事件處理常式
+            // 現在由設計工具在 InitializeComponent 中連接。
+            //不再需要以下的 Control.Find 邏輯。
 
-            SetupDataGridView(); // Already called in constructor, consider if needed here too.
-                                 // If LoadComicsData in constructor is sufficient, this might be redundant.
-                                 // For now, keeping it as per original structure.
-            LoadComicsData(); // Already called in constructor
-            LogActivity("ComicManagementForm initialized successfully.");
+            SetupDataGridView(); // 已在建構函式中呼叫，請考慮此處是否也需要。
+                                 // 如果建構函式中的 LoadComicsData 已足夠，這可能是多餘的。
+                                 // 目前，依照原始結構保留。
+            LoadComicsData(); // 已在建構函式中呼叫
+            LogActivity("漫畫管理表單已成功初始化。");
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -51,7 +51,7 @@ namespace ComicRentalSystem_14Days.Forms
             if (_comicService != null)
             {
                 _comicService.ComicsChanged -= ComicService_ComicsChanged;
-                LogActivity("Unsubscribed from ComicService.ComicsChanged event.");
+                LogActivity("已取消訂閱 ComicService.ComicsChanged 事件。");
             }
             base.OnFormClosing(e);
         }
@@ -59,13 +59,13 @@ namespace ComicRentalSystem_14Days.Forms
         private void ComicService_ComicsChanged(object? sender, EventArgs e)
         {
             if (_comicService == null) return;
-            LogActivity("ComicsChanged event received. Refreshing DataGridView.");
+            LogActivity("已收到 ComicsChanged 事件。正在重新整理 DataGridView。");
             LoadComicsData();
         }
 
         private void SetupDataGridView()
         {
-            LogActivity("Setting up DataGridView columns for comics.");
+            LogActivity("正在設定漫畫的 DataGridView 資料行。");
             dgvComics.AutoGenerateColumns = false;
             dgvComics.Columns.Clear();
 
@@ -76,35 +76,35 @@ namespace ComicRentalSystem_14Days.Forms
             dgvComics.Columns.Add(new DataGridViewCheckBoxColumn { DataPropertyName = "IsRented", HeaderText = "已租借", Width = 70 });
             dgvComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "RentedToMemberId", HeaderText = "租借會員ID", Width = 100 });
 
-            // Add RentalDate column
+            // 新增 RentalDate 資料行
             var rentalDateColumn = new DataGridViewTextBoxColumn
             {
                 DataPropertyName = nameof(Comic.RentalDate), // "RentalDate"
                 HeaderText = "租借日期",
-                Width = 110 // Or another appropriate width
+                Width = 110 // 或其他適當的寬度
             };
             rentalDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
             dgvComics.Columns.Add(rentalDateColumn);
 
-            // Add ReturnDate column
+            // 新增 ReturnDate 資料行
             var returnDateColumn = new DataGridViewTextBoxColumn
             {
                 DataPropertyName = nameof(Comic.ReturnDate), // "ReturnDate"
                 HeaderText = "預計歸還時間",
-                Width = 110 // Or another appropriate width
+                Width = 110 // 或其他適當的寬度
             };
             returnDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
             dgvComics.Columns.Add(returnDateColumn);
 
-            // Add ActualReturnTime column
+            // 新增 ActualReturnTime 資料行
             var actualReturnTimeColumn = new DataGridViewTextBoxColumn
             {
                 DataPropertyName = nameof(Comic.ActualReturnTime),
                 HeaderText = "實際歸還時間",
-                Width = 120 // Or an appropriate width
+                Width = 120 // 或適當的寬度
             };
-            actualReturnTimeColumn.DefaultCellStyle.Format = "yyyy-MM-dd HH:mm:ss"; // Include time
-            actualReturnTimeColumn.DefaultCellStyle.NullValue = ""; // Display empty if null
+            actualReturnTimeColumn.DefaultCellStyle.Format = "yyyy-MM-dd HH:mm:ss"; // 包含時間
+            actualReturnTimeColumn.DefaultCellStyle.NullValue = ""; // 若為空則顯示空白
             dgvComics.Columns.Add(actualReturnTimeColumn);
 
             dgvComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Isbn", HeaderText = "ISBN", Width = 120 });
@@ -113,14 +113,14 @@ namespace ComicRentalSystem_14Days.Forms
             dgvComics.MultiSelect = false;
             dgvComics.ReadOnly = true;
             dgvComics.AllowUserToAddRows = false;
-            LogActivity("DataGridView setup complete.");
+            LogActivity("DataGridView 設定完成。");
         }
 
         private void LoadComicsData()
         {
             if (_comicService == null) return;
 
-            // txtSearchComics is now a member of the form, directly accessible.
+            // txtSearchComics 現在是表單的成員，可直接存取。
             string searchTerm = this.txtSearchComics.Text.Trim();
 
             LogActivity($"Attempting to load comics data. Search term: '{searchTerm}'.");
@@ -143,7 +143,7 @@ namespace ComicRentalSystem_14Days.Forms
                     dgvComics.DataSource = comics;
                 };
 
-                if (dgvComics.IsHandleCreated && !dgvComics.IsDisposed) // Check if control handle is created
+                if (dgvComics.IsHandleCreated && !dgvComics.IsDisposed) // 檢查控制代碼是否已建立
                 {
                     if (dgvComics.InvokeRequired)
                     {
@@ -153,7 +153,7 @@ namespace ComicRentalSystem_14Days.Forms
                             int firstVisibleColumnIndex = -1;
                             foreach (DataGridViewColumn col in dgvComics.Columns)
                             {
-                                if (col.Visible && col.DisplayIndex >= 0) // Ensure column is visible and has a valid display index
+                                if (col.Visible && col.DisplayIndex >= 0) // 確保資料行可見且具有有效的顯示索引
                                 {
                                     if (firstVisibleColumnIndex == -1 || col.DisplayIndex < dgvComics.Columns[firstVisibleColumnIndex].DisplayIndex)
                                     {
@@ -165,9 +165,9 @@ namespace ComicRentalSystem_14Days.Forms
                             {
                                 dgvComics.CurrentCell = dgvComics.Rows[0].Cells[firstVisibleColumnIndex];
                             }
-                            else // Fallback if no visible columns, though unlikely for a populated grid
+                            else // 如果沒有可見的資料行則備用（儘管對於已填入資料的格線來說不太可能）
                             {
-                                 // Optional: Log a warning if no visible column is found, though CurrentCell can't be set.
+                                 // 可選：如果找不到可見的資料行，則記錄警告（儘管無法設定 CurrentCell）。
                                  // Logger?.LogWarning("LoadComicsData: No visible columns found in dgvComics to set CurrentCell.");
                             }
                         }
@@ -180,7 +180,7 @@ namespace ComicRentalSystem_14Days.Forms
                             int firstVisibleColumnIndex = -1;
                             foreach (DataGridViewColumn col in dgvComics.Columns)
                             {
-                                if (col.Visible && col.DisplayIndex >= 0) // Ensure column is visible and has a valid display index
+                                if (col.Visible && col.DisplayIndex >= 0) // 確保資料行可見且具有有效的顯示索引
                                 {
                                     if (firstVisibleColumnIndex == -1 || col.DisplayIndex < dgvComics.Columns[firstVisibleColumnIndex].DisplayIndex)
                                     {
@@ -192,9 +192,9 @@ namespace ComicRentalSystem_14Days.Forms
                             {
         dgvComics.CurrentCell = dgvComics.Rows[0].Cells[firstVisibleColumnIndex];
                             }
-                            else // Fallback if no visible columns, though unlikely for a populated grid
+                            else // 如果沒有可見的資料行則備用（儘管對於已填入資料的格線來說不太可能）
                             {
-                                 // Optional: Log a warning if no visible column is found, though CurrentCell can't be set.
+                                 // 可選：如果找不到可見的資料行，則記錄警告（儘管無法設定 CurrentCell）。
                                  // Logger?.LogWarning("LoadComicsData: No visible columns found in dgvComics to set CurrentCell.");
                             }
                         }
@@ -215,26 +215,26 @@ namespace ComicRentalSystem_14Days.Forms
 
         private void btnSearchComics_Click(object? sender, EventArgs e)
         {
-            LogActivity("Search Comics button clicked.");
-            LoadComicsData(); // LoadComicsData will now use the search term
+            LogActivity("搜尋漫畫按鈕已點擊。");
+            LoadComicsData(); // LoadComicsData 現在將使用搜尋詞彙
         }
 
         private void btnClearSearchComics_Click(object? sender, EventArgs e)
         {
-            LogActivity("Clear Search Comics button clicked.");
-            // txtSearchComics is now a member of the form, directly accessible.
+            LogActivity("清除搜尋漫畫按鈕已點擊。");
+            // txtSearchComics 現在是表單的成員，可直接存取。
             this.txtSearchComics.Text = string.Empty;
-            LoadComicsData(); // Reload all comics
+            LoadComicsData(); // 重新載入所有漫畫
         }
 
-        private async void btnRefresh_Click(object sender, EventArgs e) // Made async void
+        private async void btnRefresh_Click(object sender, EventArgs e) // 設為 async void
         {
             if (_comicService == null) return;
-            LogActivity("Refresh button clicked. Will reload comics from file asynchronously.");
+            LogActivity("重新整理按鈕已點擊。將非同步從檔案重新載入漫畫。");
             try
             {
-                await _comicService.ReloadAsync(); // Call async version
-                // UI update will be handled by the ComicsChanged event calling LoadComicsData
+                await _comicService.ReloadAsync(); // 呼叫非同步版本
+                // UI 更新將由呼叫 LoadComicsData 的 ComicsChanged 事件處理
             }
             catch (Exception ex)
             {
@@ -246,16 +246,16 @@ namespace ComicRentalSystem_14Days.Forms
         private void btnAddComic_Click(object sender, EventArgs e)
         {
             if (_comicService == null || Logger == null) return;
-            LogActivity("Add Comic button clicked. Opening ComicEditForm for new comic.");
+            LogActivity("新增漫畫按鈕已點擊。正在為新漫畫開啟 ComicEditForm。");
             using (ComicEditForm editForm = new ComicEditForm(null, _comicService, Logger, _currentUser))
             {
                 if (editForm.ShowDialog(this) == DialogResult.OK)
                 {
-                    LogActivity("ComicEditForm (Add Mode) closed with OK. Data refresh handled by ComicsChanged event.");
+                    LogActivity("ComicEditForm (新增模式) 已關閉並回傳 OK。資料重新整理將由 ComicsChanged 事件處理。");
                 }
                 else
                 {
-                    LogActivity("ComicEditForm (Add Mode) closed with Cancel or other.");
+                    LogActivity("ComicEditForm (新增模式) 已關閉並回傳 Cancel 或其他。");
                 }
             }
         }
@@ -273,23 +273,23 @@ namespace ComicRentalSystem_14Days.Forms
                     {
                         if (editForm.ShowDialog(this) == DialogResult.OK)
                         {
-                            LogActivity($"ComicEditForm (Edit Mode) for comic ID: {selectedComic.Id} closed with OK. Data refresh handled by ComicsChanged event.");
+                            LogActivity($"漫畫 ID: {selectedComic.Id} 的 ComicEditForm (編輯模式) 已關閉並回傳 OK。資料重新整理將由 ComicsChanged 事件處理。");
                         }
                         else
                         {
-                            LogActivity($"ComicEditForm (Edit Mode) for comic ID: {selectedComic.Id} closed with Cancel or other.");
+                            LogActivity($"漫畫 ID: {selectedComic.Id} 的 ComicEditForm (編輯模式) 已關閉並回傳 Cancel 或其他。");
                         }
                     }
                 }
                 else
                 {
-                    LogErrorActivity("Could not retrieve selected comic data from DataGridView for editing.");
+                    LogErrorActivity("無法從 DataGridView 擷取選定的漫畫資料進行編輯。");
                     MessageBox.Show("無法取得選定的漫畫資料。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
             else
             {
-                LogActivity("Edit Comic button clicked, but no comic was selected or service not ready.");
+                LogActivity("編輯漫畫按鈕已點擊，但未選取任何漫畫或服務未就緒。");
                 MessageBox.Show("請先選擇一本要編輯的漫畫。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
@@ -301,15 +301,15 @@ namespace ComicRentalSystem_14Days.Forms
                 Comic? selectedComic = dgvComics.SelectedRows[0].DataBoundItem as Comic;
                 if (selectedComic != null)
                 {
-                    // Check if the comic is currently rented
+                    // 檢查漫畫目前是否已租借
                     if (selectedComic.IsRented)
                     {
                         MessageBox.Show($"漫畫 '{selectedComic.Title}' (ID: {selectedComic.Id}) 目前已租借中，無法刪除。\n請先處理歸還事宜。", "刪除錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        LogActivity($"Attempt to delete comic ID: {selectedComic.Id}, Title: '{selectedComic.Title}' failed: Comic is currently rented.");
-                        return; // Abort deletion
+                        LogActivity($"嘗試刪除漫畫 ID: {selectedComic.Id}，書名: '{selectedComic.Title}' 失敗：漫畫目前已租借。");
+                        return; // 中止刪除
                     }
 
-                    // If not rented, proceed with the existing confirmation dialog:
+                    // 若未租借，則繼續進行現有的確認對話方塊：
                     LogActivity($"Attempting to delete comic ID: {selectedComic.Id}, Title: '{selectedComic.Title}'. Showing confirmation dialog.");
                     var confirmResult = MessageBox.Show($"您確定要刪除漫畫 '{selectedComic.Title}' (ID: {selectedComic.Id}) 嗎？\n此操作無法復原。",
                                                  "確認刪除",
@@ -317,11 +317,11 @@ namespace ComicRentalSystem_14Days.Forms
                                                  MessageBoxIcon.Warning);
                     if (confirmResult == DialogResult.Yes)
                     {
-                        LogActivity($"User confirmed deletion for comic ID: {selectedComic.Id}.");
+                        LogActivity($"使用者已確認刪除漫畫 ID: {selectedComic.Id}。");
                         try
                         {
                             _comicService.DeleteComic(selectedComic.Id);
-                            LogActivity($"Comic ID: {selectedComic.Id} successfully marked for deletion by service. UI will refresh via event.");
+                            LogActivity($"漫畫 ID: {selectedComic.Id} 已由服務成功標記為待刪除。UI 將透過事件重新整理。");
                             MessageBox.Show("漫畫已刪除。", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         }
                         catch (InvalidOperationException opEx)
@@ -337,13 +337,13 @@ namespace ComicRentalSystem_14Days.Forms
                     }
                     else
                     {
-                        LogActivity($"User cancelled deletion for comic ID: {selectedComic.Id}.");
+                        LogActivity($"使用者已取消刪除漫畫 ID: {selectedComic.Id}。");
                     }
                 }
             }
             else
             {
-                LogActivity("Delete Comic button clicked, but no comic was selected or service not ready.");
+                LogActivity("刪除漫畫按鈕已點擊，但未選取任何漫畫或服務未就緒。");
                 MessageBox.Show("請先選擇一本要刪除的漫畫。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
@@ -352,7 +352,7 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (e.RowIndex >= 0)
             {
-                LogActivity($"DataGridView cell double-clicked at row {e.RowIndex}. Triggering edit action.");
+                LogActivity($"DataGridView 儲存格在資料列 {e.RowIndex} 被雙擊。觸發編輯動作。");
                 btnEditComic_Click(sender, e);
             }
         }

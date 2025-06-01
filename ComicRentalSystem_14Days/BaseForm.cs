@@ -32,11 +32,11 @@ namespace ComicRentalSystem_14Days
         {
             if (Logger != null)
             {
-                Logger.Log($"[{this.Name} ACTIVITY]: {message}");
+                Logger.Log($"[{this.Name} 活動]: {message}");
             }
             else
             {
-                System.Diagnostics.Debug.WriteLine($"[LOG - {this.Name} - NO LOGGER]: {message} at {DateTime.Now}");
+                System.Diagnostics.Debug.WriteLine($"[日誌 - {this.Name} - 無記錄器]: {message} at {DateTime.Now}");
             }
         }
 
@@ -44,11 +44,11 @@ namespace ComicRentalSystem_14Days
         {
             if (Logger != null)
             {
-                Logger.LogError($"[{this.Name} ERROR]: {message}", ex);
+                Logger.LogError($"[{this.Name} 錯誤]: {message}", ex);
             }
             else
             {
-                System.Diagnostics.Debug.WriteLine($"[ERROR LOG - {this.Name} - NO LOGGER]: {message} {(ex != null ? ex.ToString() : "")} at {DateTime.Now}");
+                System.Diagnostics.Debug.WriteLine($"[錯誤日誌 - {this.Name} - 無記錄器]: {message} {(ex != null ? ex.ToString() : "")} at {DateTime.Now}");
             }
         }
     }

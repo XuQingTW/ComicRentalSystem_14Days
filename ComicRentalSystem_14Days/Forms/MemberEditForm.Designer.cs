@@ -126,7 +126,7 @@
             this.Controls.Add(this.btnCancelMember);
             this.Name = "MemberEditForm";
             this.Padding = new System.Windows.Forms.Padding(15);
-            this.Text = "Edit Member"; // Default text
+            this.Text = "編輯會員"; // Default text
             this.gbMemberDetails.ResumeLayout(false);
             this.gbMemberDetails.PerformLayout();
             this.ResumeLayout(false);

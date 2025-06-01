@@ -198,7 +198,7 @@
             this.Controls.Add(this.btnCancel);
             this.Name = "ComicEditForm";
             this.Padding = new System.Windows.Forms.Padding(15);
-            this.Text = "Edit Comic"; // Default title
+            this.Text = "編輯漫畫"; // Default title
             this.gbComicDetails.ResumeLayout(false);
             this.gbComicDetails.PerformLayout();
             this.gbStatus.ResumeLayout(false);

@@ -4,42 +4,42 @@ using ComicRentalSystem_14Days.Interfaces;
 using ComicRentalSystem_14Days.Models;
 using System;
 using System.Collections.Generic;
-using System.IO; // Added for IOException
+using System.IO; // 為 IOException 加入
 using System.Linq;
-using System.Threading.Tasks; // Added for Task
-using System.Windows.Forms; // Added for MessageBox
+using System.Threading.Tasks; // 為 Task 加入
+using System.Windows.Forms; // 為 MessageBox 加入
 
 namespace ComicRentalSystem_14Days.Services
 {
     public class MemberService
     {
-        private readonly IFileHelper _fileHelper; // Changed to IFileHelper
+        private readonly IFileHelper _fileHelper; // 已變更為 IFileHelper
         private readonly string _memberFileName = "members.csv";
         private List<Member> _members = new List<Member> { };
         private readonly ILogger _logger;
-        private readonly ComicService _comicService; // Added ComicService field
+        private readonly ComicService _comicService; // 已新增 ComicService 欄位
 
         public delegate void MemberDataChangedEventHandler(object? sender, EventArgs e);
         public event MemberDataChangedEventHandler? MembersChanged;
 
-        public MemberService(IFileHelper fileHelper, ILogger? logger, ComicService comicService) // Changed parameter to IFileHelper
+        public MemberService(IFileHelper fileHelper, ILogger? logger, ComicService comicService) // 已變更為 IFileHelper
         {
             _fileHelper = fileHelper ?? throw new ArgumentNullException(nameof(fileHelper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger), "MemberService 的記錄器不可為空。");
-            _comicService = comicService ?? throw new ArgumentNullException(nameof(comicService)); // Initialize ComicService
+            _comicService = comicService ?? throw new ArgumentNullException(nameof(comicService)); // 初始化 ComicService
 
             _logger.Log("MemberService 初始化中。");
 
-            LoadMembersFromFile(); // Renamed from LoadMembers
+            LoadMembersFromFile(); // 從 LoadMembers 重新命名
             _logger.Log($"MemberService 初始化完成。已載入 {_members.Count} 位會員。");
         }
 
-        public async Task ReloadAsync() // Changed from Reload to ReloadAsync
+        public async Task ReloadAsync() // 從 Reload 改為 ReloadAsync
         {
-            _logger.Log("已在 MemberService 上呼叫 ReloadAsync。");
+            _logger.Log("MemberService 已呼叫 ReloadAsync。");
             _members = await LoadMembersAsync();
             OnMembersChanged();
-            _logger.Log($"MemberService async reloaded. {_members.Count} members loaded.");
+            _logger.Log($"MemberService 已非同步重新載入。已載入 {_members.Count} 位會員。");
         }
 
         private void LoadMembersFromFile() // Renamed from LoadMembers
@@ -77,7 +77,7 @@ namespace ComicRentalSystem_14Days.Services
                 var membersList = new List<Member>();
                 var lines = csvData.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
-                // Skip header line if present
+                // 若有標頭行則跳過
                 foreach (var line in lines.Skip(1))
                 {
                     if (string.IsNullOrWhiteSpace(line)) continue;
@@ -88,7 +88,7 @@ namespace ComicRentalSystem_14Days.Services
                     catch (FormatException formatEx)
                     {
                         _logger.LogError($"解析會員 CSV 行失敗 (非同步): '{line}'. 錯誤: {formatEx.Message}", formatEx);
-                        // Decide whether to skip or stop
+                        // 決定是跳過還是停止
                     }
                 }
                 _logger.Log($"成功從 '{_memberFileName}' (非同步) 載入並解析 {membersList.Count} 位會員。");
@@ -102,12 +102,12 @@ namespace ComicRentalSystem_14Days.Services
             catch (IOException ioEx)
             {
                 _logger.LogError($"讀取會員檔案 '{_memberFileName}' (非同步) 時發生IO錯誤: {ioEx.Message}", ioEx);
-                return new List<Member>(); // Or rethrow
+                return new List<Member>(); // 或重新擲回
             }
             catch (Exception ex)
             {
                 _logger.LogError($"從 '{_memberFileName}' (非同步) 載入會員時發生未預期的錯誤: {ex.Message}", ex);
-                return new List<Member>(); // Or rethrow
+                return new List<Member>(); // 或重新擲回
             }
         }
 
@@ -304,7 +304,8 @@ namespace ComicRentalSystem_14Days.Services
             }
 
             // Using Member.Username for lookup.
-            // Using OrdinalIgnoreCase for case-insensitive matching, which is common for usernames.
+            // 使用 Member.Username 進行查詢。
+            // 使用 OrdinalIgnoreCase 進行不區分大小寫的比對，這對使用者名稱來說很常見。
             Member? foundMember = allMembers.FirstOrDefault(m =>
                 string.Equals(m.Username, username, StringComparison.OrdinalIgnoreCase)
             );
@@ -326,15 +327,15 @@ namespace ComicRentalSystem_14Days.Services
             _logger.Log($"已呼叫 SearchMembers，搜尋詞: '{searchTerm}'。");
             if (string.IsNullOrWhiteSpace(searchTerm))
             {
-                return new List<Member>(_members); // Return all if search term is empty
+                return new List<Member>(_members); // 如果搜尋字詞為空，則傳回所有結果
             }
 
             var lowerSearchTerm = searchTerm.ToLowerInvariant();
             List<Member> results = _members.Where(m =>
                 (m.Name != null && m.Name.ToLowerInvariant().Contains(lowerSearchTerm)) ||
-                (m.PhoneNumber != null && m.PhoneNumber.Contains(searchTerm)) || // Phone numbers usually don't need case insensitivity
+                (m.PhoneNumber != null && m.PhoneNumber.Contains(searchTerm)) || // 電話號碼通常不需要不區分大小寫
                 (m.Id.ToString().Equals(searchTerm)) ||
-                (m.Username != null && m.Username.ToLowerInvariant().Contains(lowerSearchTerm)) // Also search by Username
+                (m.Username != null && m.Username.ToLowerInvariant().Contains(lowerSearchTerm)) // 同時依使用者名稱搜尋
             ).ToList();
 
             _logger.Log($"SearchMembers 找到 {results.Count} 位符合條件的會員。");
