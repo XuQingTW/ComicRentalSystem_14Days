@@ -1,6 +1,9 @@
+// ModernBaseForm.cs
+
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using ComicRentalSystem_14Days.Interfaces;  // 新增：引入 ILogger 定義所在的命名空間
 
 namespace ComicRentalSystem_14Days
 {

@@ -1,28 +1,27 @@
-﻿using System;
-using ComicRentalSystem_14Days.Interfaces;
+﻿// BaseForm.cs
+
+using System;
+using System.ComponentModel;
 using System.Windows.Forms;
-using System.Drawing; 
-using System.ComponentModel; 
+using ComicRentalSystem_14Days.Interfaces; // 必須引用 ILogger 所在命名空間
 
 namespace ComicRentalSystem_14Days
 {
     [DesignerCategory("Form")]
-    public class BaseForm : ModernBaseForm // Changed inheritance
+    public class BaseForm : ModernBaseForm
     {
         protected ILogger? Logger { get; private set; }
 
-        protected BaseForm() : base() // Added call to base constructor
+        // 無參建構式，直接呼叫 ModernBaseForm 的無參建構式
+        protected BaseForm() : base()
         {
-            // InitializeBaseFormProperties(); // Properties now set by ModernBaseForm or can be removed
         }
 
+        // 帶有 ILogger 的建構式，只呼叫同類別的無參建構式 (this())
         protected BaseForm(ILogger logger) : this()
         {
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
-
-        // Removed InitializeBaseFormProperties as its settings are covered by ModernBaseForm
-        // or are default/undesired in the new styling context.
 
         public void SetLogger(ILogger logger)
         {

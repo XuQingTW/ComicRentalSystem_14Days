@@ -1,70 +1,64 @@
 using System;
-using System.Linq;
 using System.Windows.Forms;
 using ComicRentalSystem_14Days.Services;
-using ComicRentalSystem_14Days.Interfaces;
+using ComicRentalSystem_14Days.Interfaces; // 若需要 ILogger
+using System.Threading.Tasks;
 
 namespace ComicRentalSystem_14Days.Controls
 {
     public partial class AdminDashboardUserControl : UserControl
     {
+        // ── (A) 在這裡宣告 Label 欄位，Designer 中只實例化，不要重複宣告 ──
+        internal Label lblTotalComicsValue;
+        internal Label lblRentedComicsValue;
+        internal Label lblAvailableComicsValue;
+        internal Label lblActiveMembersValue;
+
         private readonly ComicService _comicService;
         private readonly MemberService _memberService;
         private readonly ILogger _logger;
 
-        internal System.Windows.Forms.Label lblTotalComicsValue;
-        internal System.Windows.Forms.Label lblRentedComicsValue;
-        internal System.Windows.Forms.Label lblAvailableComicsValue;
-        internal System.Windows.Forms.Label lblActiveMembersValue;
-
-        public AdminDashboardUserControl(ComicService comicService, MemberService memberService, ILogger logger)
+        public AdminDashboardUserControl(
+            ComicService comicService,
+            MemberService memberService,
+            ILogger logger
+        )
         {
             _comicService = comicService ?? throw new ArgumentNullException(nameof(comicService));
             _memberService = memberService ?? throw new ArgumentNullException(nameof(memberService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
             InitializeComponent();
         }
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-            if (!this.DesignMode)
-            {
-                ApplyModernStyling();
-                LoadDashboardData();
-            }
-        }
-
-        private void ApplyModernStyling()
-        {
-            // This method can be expanded to style child controls if not done in Designer.cs
-            // For example, if GroupBoxes were not styled using ModernBaseForm properties directly.
-            // We are relying on Designer.cs for initial styling based on ModernBaseForm statics.
-        }
-
+        /// <summary>
+        /// 執行時呼叫此方法，從 Service 拿資料並更新四個 Label 的 Text
+        /// </summary>
         public void LoadDashboardData()
         {
             try
             {
-                _logger.Log("AdminDashboardUserControl: Loading dashboard data.");
-                int totalComics = _comicService.GetAllComics().Count;
-                int rentedComics = _comicService.GetAllComics().Count(c => c.IsRented);
-                int availableComics = totalComics - rentedComics;
-                int activeMembers = _memberService.GetAllMembers().Count;
+                // (1) 總漫畫數
+                int totalComicsCount = _comicService.GetAllComics()?.Count ?? 0;
+                lblTotalComicsValue.Text = totalComicsCount.ToString();
 
-                if (lblTotalComicsValue != null) lblTotalComicsValue.Text = totalComics.ToString();
-                if (lblRentedComicsValue != null) lblRentedComicsValue.Text = rentedComics.ToString();
-                if (lblAvailableComicsValue != null) lblAvailableComicsValue.Text = availableComics.ToString();
-                if (lblActiveMembersValue != null) lblActiveMembersValue.Text = activeMembers.ToString();
-                _logger.Log("AdminDashboardUserControl: Dashboard data loaded successfully.");
+                // (2) 已租借漫畫數
+                int rentedComicsCount = _comicService.GetAllComics().Count(c => c.IsRented);
+                lblRentedComicsValue.Text = rentedComicsCount.ToString();
+
+                // (3) 可借漫畫數
+                int availableComicsCount = totalComicsCount - rentedComicsCount;
+                lblAvailableComicsValue.Text = availableComicsCount.ToString();
+
+                // (4) 活躍會員數（範例：假設 MemberService 回傳只有活躍會員）
+                int activeMembersCount = _memberService.GetAllMembers()?.Count ?? 0;
+                lblActiveMembersValue.Text = activeMembersCount.ToString();
+
+                _logger.Log($"Dashboard Data loaded: Total={totalComicsCount}, Rented={rentedComicsCount}, Available={availableComicsCount}, ActiveMembers={activeMembersCount}");
             }
             catch (Exception ex)
             {
-                _logger.LogError("AdminDashboardUserControl: Error loading dashboard data.", ex);
-                if (lblTotalComicsValue != null) lblTotalComicsValue.Text = "N/A";
-                if (lblRentedComicsValue != null) lblRentedComicsValue.Text = "N/A";
-                if (lblAvailableComicsValue != null) lblAvailableComicsValue.Text = "N/A";
-                if (lblActiveMembersValue != null) lblActiveMembersValue.Text = "N/A";
+                _logger.LogError("AdminDashboardUserControl.LoadDashboardData: Exception while fetching metrics.", ex);
             }
         }
     }

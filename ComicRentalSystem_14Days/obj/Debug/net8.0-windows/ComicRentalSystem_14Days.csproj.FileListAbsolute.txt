@@ -204,6 +204,7 @@ C:\Users\Hyman\Desktop\ComicRentalSystem\ComicRentalSystem_14Days\bin\Debug\net8
 C:\Users\Hyman\Desktop\ComicRentalSystem\ComicRentalSystem_14Days\bin\Debug\net8.0-windows\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.xml
 C:\Users\Hyman\Desktop\ComicRentalSystem\ComicRentalSystem_14Days\obj\Debug\net8.0-windows\ComicRentalSystem_14Days.csproj.AssemblyReference.cache
 C:\Users\Hyman\Desktop\ComicRentalSystem\ComicRentalSystem_14Days\obj\Debug\net8.0-windows\ComicRentalSystem_14Days.BaseForm.resources
+C:\Users\Hyman\Desktop\ComicRentalSystem\ComicRentalSystem_14Days\obj\Debug\net8.0-windows\ComicRentalSystem_14Days.Controls.AdminDashboardUserControl.resources
 C:\Users\Hyman\Desktop\ComicRentalSystem\ComicRentalSystem_14Days\obj\Debug\net8.0-windows\ComicRentalSystem_14Days.Forms.ChangeUserRoleForm.resources
 C:\Users\Hyman\Desktop\ComicRentalSystem\ComicRentalSystem_14Days\obj\Debug\net8.0-windows\ComicRentalSystem_14Days.Forms.ComicEditForm.resources
 C:\Users\Hyman\Desktop\ComicRentalSystem\ComicRentalSystem_14Days\obj\Debug\net8.0-windows\ComicRentalSystem_14Days.Forms.ComicManagementForm.resources
