@@ -1277,21 +1277,17 @@ namespace ComicRentalSystem_14Days
                 _logger?.Log("正在套用可租借漫畫篩選器… (ApplyAvailableComicsFilter called)");
 
                 string currentTextInBox = txtSearchAvailableComics?.Text?.Trim() ?? "";
-                string actualSearchText = ""; // Default to no search
+                string actualSearchText = "";
+                string placeholderText = "依書名/作者搜尋..."; // Defined for clarity
 
-                // If the text color is not Gray, then treat the content as a real search term,
-                // provided it's not just whitespace.
-                // This assumes that txtSearchAvailableComics is not null by this point.
-                if (txtSearchAvailableComics != null && txtSearchAvailableComics.ForeColor != System.Drawing.Color.Gray)
+                if (txtSearchAvailableComics != null)
                 {
-                    if (!string.IsNullOrWhiteSpace(currentTextInBox)) // Check after confirming it's not a placeholder
+                    // Only use text as search term if it's NOT the placeholder AND not just whitespace
+                    if (currentTextInBox != placeholderText && !string.IsNullOrWhiteSpace(currentTextInBox))
                     {
                         actualSearchText = currentTextInBox.ToLowerInvariant();
                     }
                 }
-                // If ForeColor is Gray, actualSearchText remains "", effectively ignoring any placeholder text.
-                // This also handles cases where text might be whitespace but not gray (e.g. user typed spaces).
-                // However, LostFocus should ideally set it to placeholder if truly empty.
 
                 var comicsToFilter = _comicService
                                         .GetAllComics()
