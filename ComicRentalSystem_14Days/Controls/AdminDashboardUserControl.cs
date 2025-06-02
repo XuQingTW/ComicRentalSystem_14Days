@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Runtime.Versioning;
 using ComicRentalSystem_14Days.Services;
 using ComicRentalSystem_14Days.Interfaces;
@@ -31,13 +33,14 @@ namespace ComicRentalSystem_14Days.Controls
             InitializeComponent();
         }
 
-        public void LoadDashboardData()
+        public async Task LoadDashboardData()
         {
             try
             {
-                int totalComicsCount = _comicService.GetAllComics()?.Count ?? 0;
+                var comics = await _comicService.GetAllComics();
+                int totalComicsCount = comics?.Count ?? 0;
                 lblTotalComicsValue.Text = totalComicsCount.ToString();
-                int rentedComicsCount = _comicService.GetAllComics().Count(c => c.IsRented);
+                int rentedComicsCount = comics?.Count(c => c.IsRented) ?? 0;
                 lblRentedComicsValue.Text = rentedComicsCount.ToString();
 
                 int availableComicsCount = totalComicsCount - rentedComicsCount;
