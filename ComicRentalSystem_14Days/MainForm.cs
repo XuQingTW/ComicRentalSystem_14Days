@@ -1,17 +1,17 @@
 // MainForm.cs
 
-using ComicRentalSystem_14Days.Models;    
+using ComicRentalSystem_14Days.Models;
 using ComicRentalSystem_14Days.Services;
 using ComicRentalSystem_14Days.Forms;
 using ComicRentalSystem_14Days.Interfaces;
 using System;
-using System.Collections.Generic;         
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.ComponentModel;
-using ComicRentalSystem_14Days.Controls; 
+using ComicRentalSystem_14Days.Controls;
 
 namespace ComicRentalSystem_14Days
 {
@@ -27,7 +27,7 @@ namespace ComicRentalSystem_14Days
         private string _currentSortColumnName = string.Empty;
         private ListSortDirection _currentSortDirection = ListSortDirection.Ascending;
 
-        private Button? _currentSelectedNavButton;               
+        private Button? _currentSelectedNavButton;
         private AdminDashboardUserControl? _adminDashboardControl;
 
         public MainForm() : base()
@@ -63,9 +63,6 @@ namespace ComicRentalSystem_14Days
 
         private async void MainForm_Load(object sender, EventArgs e)
         {
-            if (this.DesignMode)
-                return;
-
             this._logger?.Log("主表單正在載入。");
 
             if (this.menuStrip2 != null)
@@ -94,7 +91,7 @@ namespace ComicRentalSystem_14Days
                 _adminDashboardControl = new AdminDashboardUserControl(_comicService, _memberService, _logger)
                 {
                     Dock = DockStyle.Fill,
-                    Visible = false 
+                    Visible = false
                 };
                 mainContentPanel.Controls.Add(_adminDashboardControl);
             }
@@ -333,8 +330,8 @@ namespace ComicRentalSystem_14Days
 
                 var queryResult = this._comicService.GetAllComics().Where(c => !c.IsRented).ToList();
                 this._logger?.Log($"LoadAvailableComics [After Filter]: After Where(c => !c.IsRented), queryResult count is {queryResult.Count}.");
-                
-                var availableComics = queryResult ?? new List<Comic>(); 
+
+                var availableComics = queryResult ?? new List<Comic>();
 
                 Action updateGrid = () =>
                 {
@@ -457,7 +454,7 @@ namespace ComicRentalSystem_14Days
                     {
                         _logger?.LogWarning("Member View: availableComicsTabPage is null during UI setup.");
                     }
-                    
+
                     if (dgvAvailableComics != null)
                     {
                         _logger?.Log($"Member View: Intended dgvAvailableComics.Visible: true (within member view tab). Current: {dgvAvailableComics.Visible}. Will be set by tab visibility.");
@@ -939,7 +936,6 @@ namespace ComicRentalSystem_14Days
             {
                 dgvAvailableComics.DataSource = null;
                 dgvAvailableComics.DataSource = finalViewList ?? new List<AdminComicStatusViewModel>();
-                dgvAvailableComics.Refresh();
 
                 foreach (DataGridViewColumn column in dgvAvailableComics.Columns)
                     column.HeaderCell.SortGlyphDirection = SortOrder.None;
@@ -1231,12 +1227,12 @@ namespace ComicRentalSystem_14Days
                 e.FormattingApplied = true;
             }
 
-            if (returnDate.Value.Date < DateTime.Today) 
+            if (returnDate.Value.Date < DateTime.Today)
             {
                 e.CellStyle.BackColor = ModernBaseForm.DangerColor;
                 e.CellStyle.ForeColor = Color.White;
             }
-            else if (returnDate.Value.Date <= DateTime.Today.AddDays(3)) 
+            else if (returnDate.Value.Date <= DateTime.Today.AddDays(3))
             {
                 e.CellStyle.BackColor = ModernBaseForm.AccentColor;
                 e.CellStyle.ForeColor = ModernBaseForm.TextColor;
