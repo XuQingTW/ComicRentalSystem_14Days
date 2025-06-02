@@ -113,9 +113,11 @@ namespace ComicRentalSystem_14Days
                 if (this.dgvAvailableComics != null)
                     this.dgvAvailableComics.ColumnHeaderMouseClick += dgvAvailableComics_ColumnHeaderMouseClick;
             }
-            else
+            else // Member role
             {
                 await _comicService.ReloadAsync();
+                // New log
+                _logger.Log($"MainForm_Load (Member) [After ReloadAsync]: _comicService.GetAllComics() reports {_comicService.GetAllComics().Count} comics.");
                 LoadAvailableComics();
                 LoadMyRentedComics();
             }
@@ -319,11 +321,17 @@ namespace ComicRentalSystem_14Days
         private void LoadAvailableComics()
         {
             if (dgvAvailableComics == null) return;
-            this._logger?.Log("正在將可借閱漫畫載入到主表單的 DataGridView。");
+            this._logger?.Log("正在將可借閱漫畫載入到主表單的 DataGridView。 (Existing log for context)");
             try
             {
+                // New logs for counts before and after filter
+                int totalComicsBeforeFilter = this._comicService.GetAllComics().Count;
+                this._logger?.Log($"LoadAvailableComics [Before Filter]: Starting with {totalComicsBeforeFilter} comics from _comicService.GetAllComics().");
+
                 var queryResult = this._comicService.GetAllComics().Where(c => !c.IsRented).ToList();
-                var availableComics = queryResult ?? new List<Comic>(); // 防 null
+                this._logger?.Log($"LoadAvailableComics [After Filter]: After Where(c => !c.IsRented), queryResult count is {queryResult.Count}.");
+                
+                var availableComics = queryResult ?? new List<Comic>(); 
 
                 Action updateGrid = () =>
                 {
@@ -336,11 +344,11 @@ namespace ComicRentalSystem_14Days
                 else if (dgvAvailableComics.IsHandleCreated)
                     updateGrid();
 
-                this._logger?.Log($"已成功載入 {availableComics.Count} 本可借閱漫畫。");
+                this._logger?.Log($"已成功載入 {availableComics.Count} 本可借閱漫畫。 (Existing log for context, shows final bound count)");
             }
             catch (Exception ex)
             {
-                LogErrorActivity("載入可借閱漫畫時發生錯誤。", ex);
+                LogErrorActivity("載入可借閱漫畫時發生錯誤。", ex); // LogErrorActivity presumably uses _logger
                 MessageBox.Show($"載入可用漫畫列表時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
