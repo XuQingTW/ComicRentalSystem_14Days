@@ -1,13 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35931.197 d17.13
+VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComicRentalSystem_14Days", "ComicRentalSystem_14Days\ComicRentalSystem_14Days.csproj", "{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComicRentalSystem_14Days.Tests", "ComicRentalSystem_14Days.Tests\ComicRentalSystem_14Days.Tests.csproj", "{72AC8357-BD66-4346-BF99-10D6CD31362A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComicRentalSystem_14Days.IntegrationTests", "ComicRentalSystem_14Days.IntegrationTests\ComicRentalSystem_14Days.IntegrationTests.csproj", "{8CD50308-4CC7-4F1D-824E-8B5454C51325}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +15,6 @@ Global
 		{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}.Release|Any CPU.Build.0 = Release|Any CPU
-		{72AC8357-BD66-4346-BF99-10D6CD31362A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{72AC8357-BD66-4346-BF99-10D6CD31362A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{72AC8357-BD66-4346-BF99-10D6CD31362A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{72AC8357-BD66-4346-BF99-10D6CD31362A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8CD50308-4CC7-4F1D-824E-8B5454C51325}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8CD50308-4CC7-4F1D-824E-8B5454C51325}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8CD50308-4CC7-4F1D-824E-8B5454C51325}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8CD50308-4CC7-4F1D-824E-8B5454C51325}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -89,7 +89,7 @@ namespace ComicRentalSystem_14Days.Forms
             LogActivity("漫畫資料已載入表單控制項。");
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private async Task btnSave_ClickAsync(object sender, EventArgs e)
         {
             if (_comicService == null)
             {
@@ -155,6 +155,7 @@ namespace ComicRentalSystem_14Days.Forms
                         RentedToMemberId = 0
                     };
                     _comicService.AddComic(newComic);
+                    await _comicService.ReloadAsync();
                     LogActivity($"新漫畫 '{newComic.Title}' (ID: {newComic.Id}) 已成功新增。");
                     MessageBox.Show("漫畫已成功新增。", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
@@ -168,6 +169,12 @@ namespace ComicRentalSystem_14Days.Forms
                 LogErrorActivity($"儲存漫畫時發生錯誤: {ex.Message}", ex);
                 MessageBox.Show($"儲存漫畫時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            // 將原本的非同步邏輯移至此方法內，或呼叫非同步方法
+            btnSave_ClickAsync(sender, e).GetAwaiter().GetResult();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
