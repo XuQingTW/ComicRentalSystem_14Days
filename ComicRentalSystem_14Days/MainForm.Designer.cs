@@ -286,13 +286,12 @@ namespace ComicRentalSystem_14Days
             dgvAvailableComics.AllowUserToDeleteRows = false;
             dgvAvailableComics.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvAvailableComics.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvAvailableComics.Location = new Point(18, 58);
+            dgvAvailableComics.Location = new Point(0, 0);
             dgvAvailableComics.Name = "dgvAvailableComics";
             dgvAvailableComics.ReadOnly = true;
             dgvAvailableComics.RowHeadersWidth = 51;
-            dgvAvailableComics.Size = new Size(1320, 683);
+            dgvAvailableComics.Size = new Size(500, 683);
             dgvAvailableComics.TabIndex = 2;
-            dgvAvailableComics.Visible = false;
             // 
             // mainContentPanel
             // 
@@ -316,7 +315,6 @@ namespace ComicRentalSystem_14Days
             memberViewTabControl.SelectedIndex = 0;
             memberViewTabControl.Size = new Size(885, 478);
             memberViewTabControl.TabIndex = 12;
-            memberViewTabControl.Visible = false;
             // 
             // availableComicsTabPage
             // 
@@ -340,7 +338,7 @@ namespace ComicRentalSystem_14Days
             availableComicsFilterPanel.Location = new Point(8, 38);
             availableComicsFilterPanel.Name = "availableComicsFilterPanel";
             availableComicsFilterPanel.Padding = new Padding(0, 4, 0, 4);
-            availableComicsFilterPanel.Size = new Size(861, 32);
+            availableComicsFilterPanel.Size = new Size(861, 683);
             availableComicsFilterPanel.TabIndex = 0;
             // 
             // txtSearchAvailableComics
@@ -402,7 +400,6 @@ namespace ComicRentalSystem_14Days
             dgvMyRentedComics.RowTemplate.Height = 27;
             dgvMyRentedComics.Size = new Size(861, 416);
             dgvMyRentedComics.TabIndex = 7;
-            dgvMyRentedComics.Visible = false;
             // 
             // lblMyRentedComicsHeader
             // 

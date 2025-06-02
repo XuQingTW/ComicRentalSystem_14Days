@@ -63,6 +63,9 @@ namespace ComicRentalSystem_14Days
 
         private async void MainForm_Load(object sender, EventArgs e)
         {
+            if (this.DesignMode)
+                return;
+
             this._logger?.Log("主表單正在載入。");
 
             if (this.menuStrip2 != null)
@@ -936,6 +939,7 @@ namespace ComicRentalSystem_14Days
             {
                 dgvAvailableComics.DataSource = null;
                 dgvAvailableComics.DataSource = finalViewList ?? new List<AdminComicStatusViewModel>();
+                dgvAvailableComics.Refresh();
 
                 foreach (DataGridViewColumn column in dgvAvailableComics.Columns)
                     column.HeaderCell.SortGlyphDirection = SortOrder.None;
