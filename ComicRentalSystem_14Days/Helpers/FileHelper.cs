@@ -30,6 +30,30 @@ namespace ComicRentalSystem_14Days.Helpers
             }
         }
 
+        public async Task WriteFileAsync<T>(string fileName, IEnumerable<T> records, Func<T, string> toCsvFunc)
+        {
+            string filePath = GetFullFilePath(fileName);
+            try
+            {
+                List<string> lines = new List<string>();
+                foreach (var record in records)
+                {
+                    lines.Add(toCsvFunc(record));
+                }
+                await File.WriteAllLinesAsync(filePath, lines, Encoding.UTF8);
+            }
+            catch (IOException ioEx) 
+            {
+                Console.WriteLine($"寫入檔案 '{filePath}' 時發生錯誤: {ioEx.Message}"); // Or use a proper logger if available
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"寫入 '{filePath}' 時發生未預期的錯誤: {ex.Message}"); // Or use a proper logger
+                throw;
+            }
+        }
+
         public string GetFullFilePath(string fileName)
         {
             return Path.Combine(_baseDataPath, fileName);
