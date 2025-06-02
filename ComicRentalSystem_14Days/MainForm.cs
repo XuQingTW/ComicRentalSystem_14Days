@@ -115,6 +115,7 @@ namespace ComicRentalSystem_14Days
             }
             else
             {
+                await _comicService.ReloadAsync();
                 LoadAvailableComics();
                 LoadMyRentedComics();
             }
@@ -1237,43 +1238,62 @@ namespace ComicRentalSystem_14Days
         {
             if (_comicService == null || dgvAvailableComics == null || _currentUser == null)
             {
-                _logger?.LogWarning("套用可租借漫畫篩選器：關鍵元件為空。正在略過篩選。");
+                _logger?.LogWarning("套用可租借漫畫篩選器：關鍵元件為空，略過篩選。");
                 return;
             }
 
             try
             {
-                _logger?.Log("正在套用可租借漫畫篩選器。");
+                _logger?.Log("正在套用可租借漫畫篩選器…");
 
-                string searchText = (txtSearchAvailableComics != null && txtSearchAvailableComics.Text != "依書名/作者搜尋...")
-                                    ? txtSearchAvailableComics.Text.ToLowerInvariant()
+                // 1. 搜尋文字：若 txtSearchAvailableComics.Text 有值，且不等於 placeholder「依書名/作者搜尋…」時，才視為真正的搜尋關鍵字
+                string rawText = txtSearchAvailableComics?.Text?.Trim() ?? "";
+                string placeholder = "依書名/作者搜尋…";
+                string searchText = (!string.IsNullOrWhiteSpace(rawText) && rawText != placeholder)
+                                    ? rawText.ToLowerInvariant()
                                     : "";
-                string selectedGenre = (cmbGenreFilter != null && cmbGenreFilter.SelectedItem != null && cmbGenreFilter.SelectedIndex > 0)
-                                     ? cmbGenreFilter.SelectedItem.ToString()!
-                                     : "All Genres";
 
-                var comicsToFilter = _comicService.GetAllComics().Where(c => !c.IsRented).ToList();
+                // 2. 先把所有 IsRented == false 的漫畫撈出來
+                var comicsToFilter = _comicService
+                                        .GetAllComics()
+                                        .Where(c => !c.IsRented)
+                                        .ToList();
 
+                // 3. 如果真的有搜尋文字，再做 Title 或 Author 的包含比對
                 if (!string.IsNullOrWhiteSpace(searchText))
                 {
                     comicsToFilter = comicsToFilter
-                        .Where(c => (c.Title != null && c.Title.ToLowerInvariant().Contains(searchText))
-                                 || (c.Author != null && c.Author.ToLowerInvariant().Contains(searchText)))
+                        .Where(c =>
+                            (c.Title != null && c.Title.ToLowerInvariant().Contains(searchText)) ||
+                            (c.Author != null && c.Author.ToLowerInvariant().Contains(searchText))
+                        )
                         .ToList();
                 }
 
-                if (selectedGenre != "All Genres")
+                // 4. 如果 cmbGenreFilter.SelectedIndex > 0，就把 SelectedItem 當成 Genre 來比對；Index == 0，代表「所有類型」，不再做篩選
+                string chosenGenre = "所有類型";
+                if (cmbGenreFilter != null && cmbGenreFilter.SelectedIndex > 0 && cmbGenreFilter.SelectedItem is string genreStr)
                 {
-                    comicsToFilter = comicsToFilter.Where(c => c.Genre == selectedGenre).ToList();
+                    chosenGenre = genreStr;
+                    comicsToFilter = comicsToFilter
+                        .Where(c =>
+                            !string.IsNullOrWhiteSpace(c.Genre) &&
+                            c.Genre.Equals(genreStr, StringComparison.OrdinalIgnoreCase)
+                        )
+                        .ToList();
                 }
 
+                // 5. 把最後結果綁給 DataGridView
                 dgvAvailableComics.DataSource = comicsToFilter;
-                _logger?.Log($"已套用篩選器。搜尋: '{searchText}'，類型: '{selectedGenre}'。找到 {comicsToFilter.Count} 本漫畫。");
+
+                // 6. 把篩選結果寫到 Log：先用變數 chosenGenre 儲存「最終選到的類別」
+                _logger?.Log($"篩選完成：搜尋「{searchText}」、類型「{chosenGenre}」→ 共 {comicsToFilter.Count} 本。");
             }
             catch (Exception ex)
             {
                 _logger?.LogError("套用可租借漫畫篩選器時發生錯誤。", ex);
-                if (dgvAvailableComics != null) dgvAvailableComics.DataSource = null;
+                if (dgvAvailableComics != null)
+                    dgvAvailableComics.DataSource = null;
             }
         }
     }
