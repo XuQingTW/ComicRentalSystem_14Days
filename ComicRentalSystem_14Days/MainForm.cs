@@ -441,7 +441,28 @@ namespace ComicRentalSystem_14Days
                 this.Text = "漫畫租借系統";
                 if (memberViewTabControl != null)
                 {
+                    _logger?.Log($"Member View: Current memberViewTabControl.Visible: {memberViewTabControl.Visible}. Intending to set to true.");
                     memberViewTabControl.Visible = true;
+                    _logger?.Log($"Member View: New memberViewTabControl.Visible: {memberViewTabControl.Visible}.");
+
+                    if (availableComicsTabPage != null)
+                    {
+                        bool isSelected = memberViewTabControl.SelectedTab == availableComicsTabPage;
+                        _logger?.Log($"Member View: availableComicsTabPage is {(isSelected ? "selected" : "not selected")}. Visibility: {availableComicsTabPage.Visible}. memberViewTabControl selectedIndex: {memberViewTabControl.SelectedIndex}");
+                    }
+                    else
+                    {
+                        _logger?.LogWarning("Member View: availableComicsTabPage is null during UI setup.");
+                    }
+                    
+                    if (dgvAvailableComics != null)
+                    {
+                        _logger?.Log($"Member View: Intended dgvAvailableComics.Visible: true (within member view tab). Current: {dgvAvailableComics.Visible}. Will be set by tab visibility.");
+                    }
+                    else
+                    {
+                        _logger?.LogWarning("Member View: dgvAvailableComics is null during UI setup for member view.");
+                    }
 
                     if (lblAvailableComics != null)
                     {
@@ -455,7 +476,8 @@ namespace ComicRentalSystem_14Days
                 }
                 else
                 {
-                    _logger?.LogError("設定UI控制項存取權限失敗：會員視圖的 memberViewTabControl 為空。");
+                    _logger?.LogError("Member View Setup Error: memberViewTabControl is null.");
+                    // Existing logic for when memberViewTabControl is null
                     if (lblAvailableComics != null)
                     {
                         lblAvailableComics.Visible = true;
