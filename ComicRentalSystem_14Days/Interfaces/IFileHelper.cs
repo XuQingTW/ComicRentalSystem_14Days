@@ -9,6 +9,7 @@ namespace ComicRentalSystem_14Days.Interfaces
         void WriteFile(string fileName, string content); 
         List<T> ReadFile<T>(string fileName, Func<string, T> parser); 
         void WriteFile<T>(string fileName, IEnumerable<T> items, Func<T, string> formatter); 
+        Task WriteFileAsync<T>(string fileName, IEnumerable<T> items, Func<T, string> formatter);
         string GetFullFilePath(string fileName); 
 
         Task<string> ReadFileAsync(string filePath);
