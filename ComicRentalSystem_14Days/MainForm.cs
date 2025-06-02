@@ -1252,56 +1252,91 @@ namespace ComicRentalSystem_14Days
 
             try
             {
-                _logger?.Log("正在套用可租借漫畫篩選器…");
+                _logger?.Log("正在套用可租借漫畫篩選器… (ApplyAvailableComicsFilter called)");
 
-                // 1. 搜尋文字：若 txtSearchAvailableComics.Text 有值，且不等於 placeholder「依書名/作者搜尋…」時，才視為真正的搜尋關鍵字
-                string rawText = txtSearchAvailableComics?.Text?.Trim() ?? "";
-                string placeholder = "依書名/作者搜尋…";
-                string searchText = (!string.IsNullOrWhiteSpace(rawText) && rawText != placeholder)
-                                    ? rawText.ToLowerInvariant()
-                                    : "";
+                string currentTextInBox = txtSearchAvailableComics?.Text?.Trim() ?? "";
+                string actualSearchText = ""; // Default to no search
 
-                // 2. 先把所有 IsRented == false 的漫畫撈出來
+                // If the text color is not Gray, then treat the content as a real search term,
+                // provided it's not just whitespace.
+                // This assumes that txtSearchAvailableComics is not null by this point.
+                if (txtSearchAvailableComics != null && txtSearchAvailableComics.ForeColor != System.Drawing.Color.Gray)
+                {
+                    if (!string.IsNullOrWhiteSpace(currentTextInBox)) // Check after confirming it's not a placeholder
+                    {
+                        actualSearchText = currentTextInBox.ToLowerInvariant();
+                    }
+                }
+                // If ForeColor is Gray, actualSearchText remains "", effectively ignoring any placeholder text.
+                // This also handles cases where text might be whitespace but not gray (e.g. user typed spaces).
+                // However, LostFocus should ideally set it to placeholder if truly empty.
+
                 var comicsToFilter = _comicService
                                         .GetAllComics()
                                         .Where(c => !c.IsRented)
                                         .ToList();
+                _logger?.Log($"ApplyAvailableComicsFilter: Initial available comics (not rented): {comicsToFilter.Count}");
 
-                // 3. 如果真的有搜尋文字，再做 Title 或 Author 的包含比對
-                if (!string.IsNullOrWhiteSpace(searchText))
+
+                if (!string.IsNullOrWhiteSpace(actualSearchText))
                 {
                     comicsToFilter = comicsToFilter
                         .Where(c =>
-                            (c.Title != null && c.Title.ToLowerInvariant().Contains(searchText)) ||
-                            (c.Author != null && c.Author.ToLowerInvariant().Contains(searchText))
+                            (c.Title != null && c.Title.ToLowerInvariant().Contains(actualSearchText)) ||
+                            (c.Author != null && c.Author.ToLowerInvariant().Contains(actualSearchText))
                         )
                         .ToList();
                 }
+                _logger?.Log($"ApplyAvailableComicsFilter: After text search ('{actualSearchText}'), count: {comicsToFilter.Count}");
 
-                // 4. 如果 cmbGenreFilter.SelectedIndex > 0，就把 SelectedItem 當成 Genre 來比對；Index == 0，代表「所有類型」，不再做篩選
                 string chosenGenre = "所有類型";
                 if (cmbGenreFilter != null && cmbGenreFilter.SelectedIndex > 0 && cmbGenreFilter.SelectedItem is string genreStr)
                 {
-                    chosenGenre = genreStr;
-                    comicsToFilter = comicsToFilter
-                        .Where(c =>
-                            !string.IsNullOrWhiteSpace(c.Genre) &&
-                            c.Genre.Equals(genreStr, StringComparison.OrdinalIgnoreCase)
-                        )
-                        .ToList();
+                    if (genreStr != "所有類型") // Ensure "所有類型" doesn't filter
+                    {
+                        chosenGenre = genreStr;
+                        comicsToFilter = comicsToFilter
+                            .Where(c =>
+                                !string.IsNullOrWhiteSpace(c.Genre) &&
+                                c.Genre.Equals(chosenGenre, StringComparison.OrdinalIgnoreCase)
+                            )
+                            .ToList();
+                    }
+                }
+                _logger?.Log($"ApplyAvailableComicsFilter: After genre filter ('{chosenGenre}'), count: {comicsToFilter.Count}");
+
+                // Ensure dgvAvailableComics is updated on the UI thread if necessary (though it's usually called from UI event handlers)
+                Action updateGrid = () => {
+                    dgvAvailableComics.DataSource = null;
+                    dgvAvailableComics.DataSource = comicsToFilter;
+                };
+
+                if (dgvAvailableComics.IsHandleCreated && !dgvAvailableComics.IsDisposed)
+                {
+                    if (dgvAvailableComics.InvokeRequired)
+                    {
+                        dgvAvailableComics.Invoke(updateGrid);
+                    }
+                    else
+                    {
+                        updateGrid();
+                    }
                 }
 
-                // 5. 把最後結果綁給 DataGridView
-                dgvAvailableComics.DataSource = comicsToFilter;
-
-                // 6. 把篩選結果寫到 Log：先用變數 chosenGenre 儲存「最終選到的類別」
-                _logger?.Log($"篩選完成：搜尋「{searchText}」、類型「{chosenGenre}」→ 共 {comicsToFilter.Count} 本。");
+                // The existing log message here can be updated or kept, the new ones are more granular.
+                _logger?.Log($"篩選完成：搜尋「{actualSearchText}」、類型「{chosenGenre}」→ 共 {comicsToFilter.Count} 本。 (Final log in ApplyAvailableComicsFilter)");
             }
             catch (Exception ex)
             {
                 _logger?.LogError("套用可租借漫畫篩選器時發生錯誤。", ex);
                 if (dgvAvailableComics != null)
-                    dgvAvailableComics.DataSource = null;
+                {
+                    Action clearGridAction = () => dgvAvailableComics.DataSource = null;
+                    if (dgvAvailableComics.IsHandleCreated && !dgvAvailableComics.IsDisposed)
+                    {
+                        if (dgvAvailableComics.InvokeRequired) dgvAvailableComics.Invoke(clearGridAction); else clearGridAction();
+                    }
+                }
             }
         }
     }
