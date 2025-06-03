@@ -173,7 +173,6 @@ namespace ComicRentalSystem_14Days.Forms
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            // 將原本的非同步邏輯移至此方法內，或呼叫非同步方法
             btnSave_ClickAsync(sender, e).GetAwaiter().GetResult();
         }
 

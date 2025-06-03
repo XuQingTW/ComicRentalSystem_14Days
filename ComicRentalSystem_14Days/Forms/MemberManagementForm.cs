@@ -233,14 +233,14 @@ namespace ComicRentalSystem_14Days.Forms
                         {
                             MessageBox.Show($"會員 '{selectedMember.Name}' (ID: {selectedMember.Id}) 尚有未歸還的漫畫，無法刪除。", "刪除錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             LogActivity($"嘗試刪除會員 ID: {selectedMember.Id}，姓名: '{selectedMember.Name}' 失敗：會員尚有租借中的漫畫。");
-                            return; // 中止刪除
+                            return;
                         }
                     }
                     else
                     {
                         MessageBox.Show("無法檢查會員租借狀態，漫畫服務未初始化。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         LogErrorActivity("Could not check member rental status: _comicService is null.");
-                        return; // 中止刪除
+                        return; 
                     }
 
                     LogActivity($"嘗試刪除會員 ID: {selectedMember.Id}，姓名: '{selectedMember.Name}'。正在顯示確認對話方塊。");

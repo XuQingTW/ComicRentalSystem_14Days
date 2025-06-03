@@ -47,7 +47,7 @@ namespace ComicRentalSystem_14Days.Services
                 if (!_fileHelper.FileExists(_usersFilePath))
                 {
                     _logger.LogWarning($"在 {_usersFilePath} 找不到使用者檔案。");
-                    // Attempt to restore from backup
+                   
                     return LoadFromBackupOrInitialize();
                 }
 
@@ -271,7 +271,6 @@ namespace ComicRentalSystem_14Days.Services
             }
         }
 
-        // 如果不存在任何使用者，則允許建立預設管理員使用者
         public void EnsureAdminUserExists(string adminUsername, string adminPassword)
         {
             if (!_users.Any(u => u.Role == UserRole.Admin))
