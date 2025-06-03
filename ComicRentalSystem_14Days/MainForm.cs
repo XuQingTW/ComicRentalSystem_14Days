@@ -1,17 +1,16 @@
-// MainForm.cs
-
-using ComicRentalSystem_14Days.Models;    
+using System.Drawing; 
+using ComicRentalSystem_14Days.Models;
 using ComicRentalSystem_14Days.Services;
 using ComicRentalSystem_14Days.Forms;
 using ComicRentalSystem_14Days.Interfaces;
 using System;
-using System.Collections.Generic;         
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.ComponentModel;
-using ComicRentalSystem_14Days.Controls; 
+using ComicRentalSystem_14Days.Controls;
 
 namespace ComicRentalSystem_14Days
 {
@@ -27,7 +26,7 @@ namespace ComicRentalSystem_14Days
         private string _currentSortColumnName = string.Empty;
         private ListSortDirection _currentSortDirection = ListSortDirection.Ascending;
 
-        private Button? _currentSelectedNavButton;               
+        private Button? _currentSelectedNavButton;
         private AdminDashboardUserControl? _adminDashboardControl;
 
         public MainForm() : base()
@@ -57,7 +56,6 @@ namespace ComicRentalSystem_14Days
             base.SetLogger(logger);
             InitializeComponent();
 
-            // 不要在這裡呼叫 SetupUIAccessControls()，等到 Load 事件中再呼叫
             UpdateStatusBar();
         }
 
@@ -91,7 +89,7 @@ namespace ComicRentalSystem_14Days
                 _adminDashboardControl = new AdminDashboardUserControl(_comicService, _memberService, _logger)
                 {
                     Dock = DockStyle.Fill,
-                    Visible = false 
+                    Visible = false
                 };
                 mainContentPanel.Controls.Add(_adminDashboardControl);
             }
@@ -113,10 +111,38 @@ namespace ComicRentalSystem_14Days
                 if (this.dgvAvailableComics != null)
                     this.dgvAvailableComics.ColumnHeaderMouseClick += dgvAvailableComics_ColumnHeaderMouseClick;
             }
-            else // Member role
+            else 
             {
+                _logger?.Log("[TARGETED_RUNTIME] Applying visibility settings for availableComicsTabPage and dgvAvailableComics.");
+
+                if (this.availableComicsTabPage != null)
+                {
+                    this.availableComicsTabPage.Visible = true;
+                    _logger?.Log($"[TARGETED_RUNTIME] availableComicsTabPage.Visible = {this.availableComicsTabPage.Visible}");
+                }
+                else
+                {
+                    _logger?.LogWarning("[TARGETED_RUNTIME] availableComicsTabPage is NULL.");
+                }
+
+                if (this.dgvAvailableComics != null)
+                {
+                    this.dgvAvailableComics.Visible = true;
+                    this.dgvAvailableComics.BringToFront();
+
+                    _logger?.Log($"[TARGETED_RUNTIME] dgvAvailableComics.Visible = {this.dgvAvailableComics.Visible}");
+                    _logger?.Log($"[TARGETED_RUNTIME] dgvAvailableComics.Parent = {this.dgvAvailableComics.Parent?.Name}");
+                    _logger?.Log($"[TARGETED_RUNTIME] dgvAvailableComics.Location = {this.dgvAvailableComics.Location}");
+                    _logger?.Log($"[TARGETED_RUNTIME] dgvAvailableComics.Size = {this.dgvAvailableComics.Size}");
+                    _logger?.Log($"[TARGETED_RUNTIME] dgvAvailableComics.BackgroundColor = {this.dgvAvailableComics.BackgroundColor}");
+                    _logger?.Log($"[TARGETED_RUNTIME] dgvAvailableComics.DefaultCellStyle.BackColor = {this.dgvAvailableComics.DefaultCellStyle.BackColor}");
+                    _logger?.Log($"[TARGETED_RUNTIME] dgvAvailableComics.DefaultCellStyle.ForeColor = {this.dgvAvailableComics.DefaultCellStyle.ForeColor}");
+                }
+                else
+                {
+                    _logger?.LogWarning("[TARGETED_RUNTIME] dgvAvailableComics is NULL.");
+                }
                 await _comicService.ReloadAsync();
-                // New log
                 _logger.Log($"MainForm_Load (Member) [After ReloadAsync]: _comicService.GetAllComics() reports {_comicService.GetAllComics().Count} comics.");
                 LoadAvailableComics();
                 LoadMyRentedComics();
@@ -301,9 +327,9 @@ namespace ComicRentalSystem_14Days
                     DefaultCellStyle = new DataGridViewCellStyle { Format = "yyyy-MM-dd" }
                 };
                 dgvAvailableComics.Columns.Add(returnDateColumn);
-                StyleModernDataGridView(dgvAvailableComics); // 套用 Admin 風格
+                StyleModernDataGridView(dgvAvailableComics); 
             }
-            else // Member view
+            else
             {
                 _logger.Log("正在為會員視圖設定 DataGridView (可借閱漫畫)。");
                 dgvAvailableComics!.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Title", HeaderText = "書名", FillWeight = 40 });
@@ -324,14 +350,13 @@ namespace ComicRentalSystem_14Days
             this._logger?.Log("正在將可借閱漫畫載入到主表單的 DataGridView。 (Existing log for context)");
             try
             {
-                // New logs for counts before and after filter
                 int totalComicsBeforeFilter = this._comicService.GetAllComics().Count;
                 this._logger?.Log($"LoadAvailableComics [Before Filter]: Starting with {totalComicsBeforeFilter} comics from _comicService.GetAllComics().");
 
                 var queryResult = this._comicService.GetAllComics().Where(c => !c.IsRented).ToList();
                 this._logger?.Log($"LoadAvailableComics [After Filter]: After Where(c => !c.IsRented), queryResult count is {queryResult.Count}.");
-                
-                var availableComics = queryResult ?? new List<Comic>(); 
+
+                var availableComics = queryResult ?? new List<Comic>();
 
                 Action updateGrid = () =>
                 {
@@ -348,7 +373,7 @@ namespace ComicRentalSystem_14Days
             }
             catch (Exception ex)
             {
-                LogErrorActivity("載入可借閱漫畫時發生錯誤。", ex); // LogErrorActivity presumably uses _logger
+                LogErrorActivity("載入可借閱漫畫時發生錯誤。", ex); 
                 MessageBox.Show($"載入可用漫畫列表時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -364,7 +389,7 @@ namespace ComicRentalSystem_14Days
                 List<AdminComicStatusViewModel> comicStatuses = await Task.Run(() => _comicService.GetAdminComicStatusViewModels(allMembers));
 
                 _allAdminComicStatuses = new List<AdminComicStatusViewModel>(comicStatuses);
-                ApplyAdminComicsView(); // apply filter/sort
+                ApplyAdminComicsView(); 
 
                 _logger?.Log($"已成功非同步為管理員視圖載入 {comicStatuses.Count} 本漫畫。");
             }
@@ -454,7 +479,7 @@ namespace ComicRentalSystem_14Days
                     {
                         _logger?.LogWarning("Member View: availableComicsTabPage is null during UI setup.");
                     }
-                    
+
                     if (dgvAvailableComics != null)
                     {
                         _logger?.Log($"Member View: Intended dgvAvailableComics.Visible: true (within member view tab). Current: {dgvAvailableComics.Visible}. Will be set by tab visibility.");
@@ -477,7 +502,6 @@ namespace ComicRentalSystem_14Days
                 else
                 {
                     _logger?.LogError("Member View Setup Error: memberViewTabControl is null.");
-                    // Existing logic for when memberViewTabControl is null
                     if (lblAvailableComics != null)
                     {
                         lblAvailableComics.Visible = true;
@@ -1153,7 +1177,6 @@ namespace ComicRentalSystem_14Days
             DataGridViewRow row = dgvAvailableComics.Rows[e.RowIndex];
             if (row.DataBoundItem is not AdminComicStatusViewModel comicStatus) return;
 
-            // (1) 狀態欄位文字色
             if (dgvAvailableComics.Columns[e.ColumnIndex].DataPropertyName == "Status")
             {
                 if (e.Value?.ToString() == "被借閱")
@@ -1227,12 +1250,12 @@ namespace ComicRentalSystem_14Days
                 e.FormattingApplied = true;
             }
 
-            if (returnDate.Value.Date < DateTime.Today) 
+            if (returnDate.Value.Date < DateTime.Today)
             {
                 e.CellStyle.BackColor = ModernBaseForm.DangerColor;
                 e.CellStyle.ForeColor = Color.White;
             }
-            else if (returnDate.Value.Date <= DateTime.Today.AddDays(3)) 
+            else if (returnDate.Value.Date <= DateTime.Today.AddDays(3))
             {
                 e.CellStyle.BackColor = ModernBaseForm.AccentColor;
                 e.CellStyle.ForeColor = ModernBaseForm.TextColor;
@@ -1276,17 +1299,19 @@ namespace ComicRentalSystem_14Days
             {
                 _logger?.Log("正在套用可租借漫畫篩選器… (ApplyAvailableComicsFilter called)");
 
-                string currentTextInBox = txtSearchAvailableComics?.Text?.Trim() ?? "";
+                string placeholderText = "依書名/作者搜尋...";
                 string actualSearchText = "";
-                string placeholderText = "依書名/作者搜尋..."; // Defined for clarity
 
-                if (txtSearchAvailableComics != null)
+                bool isPlaceholderActive = (txtSearchAvailableComics != null &&
+                                            txtSearchAvailableComics.Text == placeholderText &&
+                                            txtSearchAvailableComics.ForeColor == Color.Gray);
+
+                if (txtSearchAvailableComics != null &&
+                    txtSearchAvailableComics.Text != null &&
+                    !isPlaceholderActive &&
+                    !string.IsNullOrWhiteSpace(txtSearchAvailableComics.Text))
                 {
-                    // Only use text as search term if it's NOT the placeholder AND not just whitespace
-                    if (currentTextInBox != placeholderText && !string.IsNullOrWhiteSpace(currentTextInBox))
-                    {
-                        actualSearchText = currentTextInBox.ToLowerInvariant();
-                    }
+                    actualSearchText = txtSearchAvailableComics.Text.Trim().ToLowerInvariant();
                 }
 
                 var comicsToFilter = _comicService
@@ -1310,7 +1335,7 @@ namespace ComicRentalSystem_14Days
                 string chosenGenre = "所有類型";
                 if (cmbGenreFilter != null && cmbGenreFilter.SelectedIndex > 0 && cmbGenreFilter.SelectedItem is string genreStr)
                 {
-                    if (genreStr != "所有類型") // Ensure "所有類型" doesn't filter
+                    if (genreStr != "所有類型") 
                     {
                         chosenGenre = genreStr;
                         comicsToFilter = comicsToFilter
@@ -1323,7 +1348,6 @@ namespace ComicRentalSystem_14Days
                 }
                 _logger?.Log($"ApplyAvailableComicsFilter: After genre filter ('{chosenGenre}'), count: {comicsToFilter.Count}");
 
-                // Ensure dgvAvailableComics is updated on the UI thread if necessary (though it's usually called from UI event handlers)
                 Action updateGrid = () => {
                     dgvAvailableComics.DataSource = null;
                     dgvAvailableComics.DataSource = comicsToFilter;
@@ -1341,7 +1365,6 @@ namespace ComicRentalSystem_14Days
                     }
                 }
 
-                // The existing log message here can be updated or kept, the new ones are more granular.
                 _logger?.Log($"篩選完成：搜尋「{actualSearchText}」、類型「{chosenGenre}」→ 共 {comicsToFilter.Count} 本。 (Final log in ApplyAvailableComicsFilter)");
             }
             catch (Exception ex)

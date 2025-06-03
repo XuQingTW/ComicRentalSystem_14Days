@@ -96,10 +96,10 @@ namespace ComicRentalSystem_14Days
             mainContentPanel = new Panel();
             memberViewTabControl = new TabControl();
             availableComicsTabPage = new TabPage();
+            btnRentComic = new Button();
             availableComicsFilterPanel = new Panel();
             txtSearchAvailableComics = new TextBox();
             cmbGenreFilter = new ComboBox();
-            btnRentComic = new Button();
             myRentalsTabPage = new TabPage();
             dgvMyRentedComics = new DataGridView();
             lblMyRentedComicsHeader = new Label();
@@ -140,9 +140,10 @@ namespace ComicRentalSystem_14Days
             leftNavPanel.Controls.Add(btnNavComicMgmt);
             leftNavPanel.Controls.Add(btnNavDashboard);
             leftNavPanel.Dock = DockStyle.Left;
-            leftNavPanel.Location = new Point(8, 56);
+            leftNavPanel.Location = new Point(9, 64);
+            leftNavPanel.Margin = new Padding(3, 4, 3, 4);
             leftNavPanel.Name = "leftNavPanel";
-            leftNavPanel.Size = new Size(140, 478);
+            leftNavPanel.Size = new Size(160, 800);
             leftNavPanel.TabIndex = 0;
             leftNavPanel.Visible = false;
             // 
@@ -154,10 +155,11 @@ namespace ComicRentalSystem_14Days
             btnNavLogs.FlatStyle = FlatStyle.Flat;
             btnNavLogs.Font = new Font("Segoe UI Semibold", 9.75F);
             btnNavLogs.ForeColor = Color.FromArgb(33, 37, 41);
-            btnNavLogs.Location = new Point(0, 180);
+            btnNavLogs.Location = new Point(0, 240);
+            btnNavLogs.Margin = new Padding(3, 4, 3, 4);
             btnNavLogs.Name = "btnNavLogs";
-            btnNavLogs.Padding = new Padding(8, 0, 0, 0);
-            btnNavLogs.Size = new Size(140, 36);
+            btnNavLogs.Padding = new Padding(9, 0, 0, 0);
+            btnNavLogs.Size = new Size(160, 48);
             btnNavLogs.TabIndex = 5;
             btnNavLogs.Text = "檢視日誌";
             btnNavLogs.TextAlign = ContentAlignment.MiddleLeft;
@@ -171,10 +173,11 @@ namespace ComicRentalSystem_14Days
             btnNavUserReg.FlatStyle = FlatStyle.Flat;
             btnNavUserReg.Font = new Font("Segoe UI Semibold", 9.75F);
             btnNavUserReg.ForeColor = Color.FromArgb(33, 37, 41);
-            btnNavUserReg.Location = new Point(0, 144);
+            btnNavUserReg.Location = new Point(0, 192);
+            btnNavUserReg.Margin = new Padding(3, 4, 3, 4);
             btnNavUserReg.Name = "btnNavUserReg";
-            btnNavUserReg.Padding = new Padding(8, 0, 0, 0);
-            btnNavUserReg.Size = new Size(140, 36);
+            btnNavUserReg.Padding = new Padding(9, 0, 0, 0);
+            btnNavUserReg.Size = new Size(160, 48);
             btnNavUserReg.TabIndex = 4;
             btnNavUserReg.Text = "使用者註冊";
             btnNavUserReg.TextAlign = ContentAlignment.MiddleLeft;
@@ -188,10 +191,11 @@ namespace ComicRentalSystem_14Days
             btnNavRentalMgmt.FlatStyle = FlatStyle.Flat;
             btnNavRentalMgmt.Font = new Font("Segoe UI Semibold", 9.75F);
             btnNavRentalMgmt.ForeColor = Color.FromArgb(33, 37, 41);
-            btnNavRentalMgmt.Location = new Point(0, 108);
+            btnNavRentalMgmt.Location = new Point(0, 144);
+            btnNavRentalMgmt.Margin = new Padding(3, 4, 3, 4);
             btnNavRentalMgmt.Name = "btnNavRentalMgmt";
-            btnNavRentalMgmt.Padding = new Padding(8, 0, 0, 0);
-            btnNavRentalMgmt.Size = new Size(140, 36);
+            btnNavRentalMgmt.Padding = new Padding(9, 0, 0, 0);
+            btnNavRentalMgmt.Size = new Size(160, 48);
             btnNavRentalMgmt.TabIndex = 3;
             btnNavRentalMgmt.Text = "租借管理";
             btnNavRentalMgmt.TextAlign = ContentAlignment.MiddleLeft;
@@ -205,10 +209,11 @@ namespace ComicRentalSystem_14Days
             btnNavMemberMgmt.FlatStyle = FlatStyle.Flat;
             btnNavMemberMgmt.Font = new Font("Segoe UI Semibold", 9.75F);
             btnNavMemberMgmt.ForeColor = Color.FromArgb(33, 37, 41);
-            btnNavMemberMgmt.Location = new Point(0, 72);
+            btnNavMemberMgmt.Location = new Point(0, 96);
+            btnNavMemberMgmt.Margin = new Padding(3, 4, 3, 4);
             btnNavMemberMgmt.Name = "btnNavMemberMgmt";
-            btnNavMemberMgmt.Padding = new Padding(8, 0, 0, 0);
-            btnNavMemberMgmt.Size = new Size(140, 36);
+            btnNavMemberMgmt.Padding = new Padding(9, 0, 0, 0);
+            btnNavMemberMgmt.Size = new Size(160, 48);
             btnNavMemberMgmt.TabIndex = 2;
             btnNavMemberMgmt.Text = "會員管理";
             btnNavMemberMgmt.TextAlign = ContentAlignment.MiddleLeft;
@@ -222,10 +227,11 @@ namespace ComicRentalSystem_14Days
             btnNavComicMgmt.FlatStyle = FlatStyle.Flat;
             btnNavComicMgmt.Font = new Font("Segoe UI Semibold", 9.75F);
             btnNavComicMgmt.ForeColor = Color.FromArgb(33, 37, 41);
-            btnNavComicMgmt.Location = new Point(0, 36);
+            btnNavComicMgmt.Location = new Point(0, 48);
+            btnNavComicMgmt.Margin = new Padding(3, 4, 3, 4);
             btnNavComicMgmt.Name = "btnNavComicMgmt";
-            btnNavComicMgmt.Padding = new Padding(8, 0, 0, 0);
-            btnNavComicMgmt.Size = new Size(140, 36);
+            btnNavComicMgmt.Padding = new Padding(9, 0, 0, 0);
+            btnNavComicMgmt.Size = new Size(160, 48);
             btnNavComicMgmt.TabIndex = 1;
             btnNavComicMgmt.Text = "漫畫狀態";
             btnNavComicMgmt.TextAlign = ContentAlignment.MiddleLeft;
@@ -240,9 +246,10 @@ namespace ComicRentalSystem_14Days
             btnNavDashboard.Font = new Font("Segoe UI Semibold", 9.75F);
             btnNavDashboard.ForeColor = Color.FromArgb(33, 37, 41);
             btnNavDashboard.Location = new Point(0, 0);
+            btnNavDashboard.Margin = new Padding(3, 4, 3, 4);
             btnNavDashboard.Name = "btnNavDashboard";
-            btnNavDashboard.Padding = new Padding(8, 0, 0, 0);
-            btnNavDashboard.Size = new Size(140, 36);
+            btnNavDashboard.Padding = new Padding(9, 0, 0, 0);
+            btnNavDashboard.Size = new Size(160, 48);
             btnNavDashboard.TabIndex = 0;
             btnNavDashboard.Text = "概要";
             btnNavDashboard.TextAlign = ContentAlignment.MiddleLeft;
@@ -253,17 +260,19 @@ namespace ComicRentalSystem_14Days
             pnlAdminComicMgmt.Controls.Add(cmbAdminComicFilterStatus);
             pnlAdminComicMgmt.Dock = DockStyle.Fill;
             pnlAdminComicMgmt.Location = new Point(0, 0);
+            pnlAdminComicMgmt.Margin = new Padding(3, 4, 3, 4);
             pnlAdminComicMgmt.Name = "pnlAdminComicMgmt";
-            pnlAdminComicMgmt.Size = new Size(885, 478);
+            pnlAdminComicMgmt.Size = new Size(1108, 800);
             pnlAdminComicMgmt.TabIndex = 20;
             pnlAdminComicMgmt.Visible = false;
             // 
             // cmbAdminComicFilterStatus
             // 
             cmbAdminComicFilterStatus.FormattingEnabled = true;
-            cmbAdminComicFilterStatus.Location = new Point(200, 12);
+            cmbAdminComicFilterStatus.Location = new Point(229, 16);
+            cmbAdminComicFilterStatus.Margin = new Padding(3, 4, 3, 4);
             cmbAdminComicFilterStatus.Name = "cmbAdminComicFilterStatus";
-            cmbAdminComicFilterStatus.Size = new Size(150, 23);
+            cmbAdminComicFilterStatus.Size = new Size(171, 28);
             cmbAdminComicFilterStatus.TabIndex = 1;
             cmbAdminComicFilterStatus.Visible = false;
             // 
@@ -272,10 +281,10 @@ namespace ComicRentalSystem_14Days
             lblAvailableComics.AutoSize = true;
             lblAvailableComics.Dock = DockStyle.Top;
             lblAvailableComics.Font = new Font("Microsoft JhengHei UI", 12F, FontStyle.Bold);
-            lblAvailableComics.Location = new Point(8, 8);
+            lblAvailableComics.Location = new Point(9, 61);
             lblAvailableComics.Name = "lblAvailableComics";
-            lblAvailableComics.Padding = new Padding(5);
-            lblAvailableComics.Size = new Size(83, 30);
+            lblAvailableComics.Padding = new Padding(6, 7, 6, 7);
+            lblAvailableComics.Size = new Size(104, 39);
             lblAvailableComics.TabIndex = 0;
             lblAvailableComics.Text = "漫畫狀態";
             lblAvailableComics.Visible = false;
@@ -284,15 +293,15 @@ namespace ComicRentalSystem_14Days
             // 
             dgvAvailableComics.AllowUserToAddRows = false;
             dgvAvailableComics.AllowUserToDeleteRows = false;
-            dgvAvailableComics.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvAvailableComics.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvAvailableComics.Location = new Point(18, 58);
+            dgvAvailableComics.Dock = DockStyle.Fill;
+            dgvAvailableComics.Location = new Point(9, 100);
+            dgvAvailableComics.Margin = new Padding(3, 4, 3, 4);
             dgvAvailableComics.Name = "dgvAvailableComics";
             dgvAvailableComics.ReadOnly = true;
             dgvAvailableComics.RowHeadersWidth = 51;
-            dgvAvailableComics.Size = new Size(1320, 683);
+            dgvAvailableComics.Size = new Size(1082, 613);
             dgvAvailableComics.TabIndex = 2;
-            dgvAvailableComics.Visible = false;
             // 
             // mainContentPanel
             // 
@@ -300,9 +309,10 @@ namespace ComicRentalSystem_14Days
             mainContentPanel.Controls.Add(memberViewTabControl);
             mainContentPanel.Controls.Add(pnlAdminComicMgmt);
             mainContentPanel.Dock = DockStyle.Fill;
-            mainContentPanel.Location = new Point(148, 56);
+            mainContentPanel.Location = new Point(169, 64);
+            mainContentPanel.Margin = new Padding(3, 4, 3, 4);
             mainContentPanel.Name = "mainContentPanel";
-            mainContentPanel.Size = new Size(885, 478);
+            mainContentPanel.Size = new Size(1108, 800);
             mainContentPanel.TabIndex = 2;
             // 
             // memberViewTabControl
@@ -312,35 +322,51 @@ namespace ComicRentalSystem_14Days
             memberViewTabControl.Dock = DockStyle.Fill;
             memberViewTabControl.Font = new Font("Segoe UI", 9F);
             memberViewTabControl.Location = new Point(0, 0);
+            memberViewTabControl.Margin = new Padding(3, 4, 3, 4);
             memberViewTabControl.Name = "memberViewTabControl";
             memberViewTabControl.SelectedIndex = 0;
-            memberViewTabControl.Size = new Size(885, 478);
+            memberViewTabControl.Size = new Size(1108, 800);
             memberViewTabControl.TabIndex = 12;
-            memberViewTabControl.Visible = false;
             // 
             // availableComicsTabPage
             // 
             availableComicsTabPage.BackColor = Color.White;
-            availableComicsTabPage.Controls.Add(availableComicsFilterPanel);
-            availableComicsTabPage.Controls.Add(lblAvailableComics);
             availableComicsTabPage.Controls.Add(dgvAvailableComics);
             availableComicsTabPage.Controls.Add(btnRentComic);
-            availableComicsTabPage.Location = new Point(4, 24);
+            availableComicsTabPage.Controls.Add(lblAvailableComics);
+            availableComicsTabPage.Controls.Add(availableComicsFilterPanel);
+            availableComicsTabPage.Location = new Point(4, 29);
+            availableComicsTabPage.Margin = new Padding(3, 4, 3, 4);
             availableComicsTabPage.Name = "availableComicsTabPage";
-            availableComicsTabPage.Padding = new Padding(8);
-            availableComicsTabPage.Size = new Size(877, 450);
+            availableComicsTabPage.Padding = new Padding(9, 11, 9, 11);
+            availableComicsTabPage.Size = new Size(1100, 767);
             availableComicsTabPage.TabIndex = 0;
             availableComicsTabPage.Text = "可租借漫畫";
             // 
+            // btnRentComic
+            // 
+            btnRentComic.Dock = DockStyle.Bottom;
+            btnRentComic.Location = new Point(9, 713);
+            btnRentComic.Margin = new Padding(3, 4, 3, 4);
+            btnRentComic.Name = "btnRentComic";
+            btnRentComic.Size = new Size(1082, 43);
+            btnRentComic.TabIndex = 5;
+            btnRentComic.Text = "租借漫畫";
+            btnRentComic.UseVisualStyleBackColor = true;
+            btnRentComic.Visible = false;
+            btnRentComic.Click += btnRentComic_Click;
+            // 
             // availableComicsFilterPanel
             // 
+            availableComicsFilterPanel.AutoSize = true;
             availableComicsFilterPanel.Controls.Add(txtSearchAvailableComics);
             availableComicsFilterPanel.Controls.Add(cmbGenreFilter);
             availableComicsFilterPanel.Dock = DockStyle.Top;
-            availableComicsFilterPanel.Location = new Point(8, 38);
+            availableComicsFilterPanel.Location = new Point(9, 11);
+            availableComicsFilterPanel.Margin = new Padding(3, 4, 3, 4);
             availableComicsFilterPanel.Name = "availableComicsFilterPanel";
-            availableComicsFilterPanel.Padding = new Padding(0, 4, 0, 4);
-            availableComicsFilterPanel.Size = new Size(861, 32);
+            availableComicsFilterPanel.Padding = new Padding(0, 5, 0, 5);
+            availableComicsFilterPanel.Size = new Size(1082, 50);
             availableComicsFilterPanel.TabIndex = 0;
             // 
             // txtSearchAvailableComics
@@ -348,11 +374,11 @@ namespace ComicRentalSystem_14Days
             txtSearchAvailableComics.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             txtSearchAvailableComics.Font = new Font("Segoe UI", 9F);
             txtSearchAvailableComics.ForeColor = Color.Gray;
-            txtSearchAvailableComics.Location = new Point(3, 10);
+            txtSearchAvailableComics.Location = new Point(3, 13);
+            txtSearchAvailableComics.Margin = new Padding(3, 4, 3, 4);
             txtSearchAvailableComics.Name = "txtSearchAvailableComics";
-            txtSearchAvailableComics.Size = new Size(1018, 23);
+            txtSearchAvailableComics.Size = new Size(1075, 27);
             txtSearchAvailableComics.TabIndex = 0;
-            txtSearchAvailableComics.Text = "搜尋書名或作者名稱";
             // 
             // cmbGenreFilter
             // 
@@ -360,32 +386,22 @@ namespace ComicRentalSystem_14Days
             cmbGenreFilter.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbGenreFilter.Font = new Font("Segoe UI", 9F);
             cmbGenreFilter.FormattingEnabled = true;
-            cmbGenreFilter.Location = new Point(1025, 10);
+            cmbGenreFilter.Location = new Point(1269, 13);
+            cmbGenreFilter.Margin = new Padding(3, 4, 3, 4);
             cmbGenreFilter.Name = "cmbGenreFilter";
-            cmbGenreFilter.Size = new Size(141, 23);
+            cmbGenreFilter.Size = new Size(161, 28);
             cmbGenreFilter.TabIndex = 1;
-            // 
-            // btnRentComic
-            // 
-            btnRentComic.Dock = DockStyle.Bottom;
-            btnRentComic.Location = new Point(8, 410);
-            btnRentComic.Name = "btnRentComic";
-            btnRentComic.Size = new Size(861, 32);
-            btnRentComic.TabIndex = 5;
-            btnRentComic.Text = "租借漫畫";
-            btnRentComic.UseVisualStyleBackColor = true;
-            btnRentComic.Visible = false;
-            btnRentComic.Click += btnRentComic_Click;
             // 
             // myRentalsTabPage
             // 
             myRentalsTabPage.BackColor = Color.White;
             myRentalsTabPage.Controls.Add(dgvMyRentedComics);
             myRentalsTabPage.Controls.Add(lblMyRentedComicsHeader);
-            myRentalsTabPage.Location = new Point(4, 24);
+            myRentalsTabPage.Location = new Point(4, 29);
+            myRentalsTabPage.Margin = new Padding(3, 4, 3, 4);
             myRentalsTabPage.Name = "myRentalsTabPage";
-            myRentalsTabPage.Padding = new Padding(8);
-            myRentalsTabPage.Size = new Size(877, 450);
+            myRentalsTabPage.Padding = new Padding(9, 11, 9, 11);
+            myRentalsTabPage.Size = new Size(1100, 767);
             myRentalsTabPage.TabIndex = 1;
             myRentalsTabPage.Text = "我租的漫畫";
             // 
@@ -395,23 +411,23 @@ namespace ComicRentalSystem_14Days
             dgvMyRentedComics.AllowUserToDeleteRows = false;
             dgvMyRentedComics.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvMyRentedComics.Dock = DockStyle.Fill;
-            dgvMyRentedComics.Location = new Point(8, 26);
+            dgvMyRentedComics.Location = new Point(9, 33);
+            dgvMyRentedComics.Margin = new Padding(3, 4, 3, 4);
             dgvMyRentedComics.Name = "dgvMyRentedComics";
             dgvMyRentedComics.ReadOnly = true;
             dgvMyRentedComics.RowHeadersWidth = 51;
             dgvMyRentedComics.RowTemplate.Height = 27;
-            dgvMyRentedComics.Size = new Size(861, 416);
+            dgvMyRentedComics.Size = new Size(1082, 723);
             dgvMyRentedComics.TabIndex = 7;
-            dgvMyRentedComics.Visible = false;
             // 
             // lblMyRentedComicsHeader
             // 
             lblMyRentedComicsHeader.AutoSize = true;
             lblMyRentedComicsHeader.Dock = DockStyle.Top;
             lblMyRentedComicsHeader.Font = new Font("Microsoft JhengHei UI", 10F, FontStyle.Bold);
-            lblMyRentedComicsHeader.Location = new Point(8, 8);
+            lblMyRentedComicsHeader.Location = new Point(9, 11);
             lblMyRentedComicsHeader.Name = "lblMyRentedComicsHeader";
-            lblMyRentedComicsHeader.Size = new Size(92, 18);
+            lblMyRentedComicsHeader.Size = new Size(112, 22);
             lblMyRentedComicsHeader.TabIndex = 6;
             lblMyRentedComicsHeader.Text = "我租借的漫畫";
             lblMyRentedComicsHeader.Visible = false;
@@ -419,10 +435,10 @@ namespace ComicRentalSystem_14Days
             // menuStrip1
             // 
             menuStrip1.ImageScalingSize = new Size(20, 20);
-            menuStrip1.Location = new Point(8, 32);
+            menuStrip1.Location = new Point(9, 40);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Padding = new Padding(5, 2, 0, 2);
-            menuStrip1.Size = new Size(1025, 24);
+            menuStrip1.Padding = new Padding(6, 3, 0, 3);
+            menuStrip1.Size = new Size(1268, 24);
             menuStrip1.TabIndex = 0;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -430,10 +446,10 @@ namespace ComicRentalSystem_14Days
             // 
             menuStrip2.ImageScalingSize = new Size(20, 20);
             menuStrip2.Items.AddRange(new ToolStripItem[] { 檔案ToolStripMenuItem, 管理ToolStripMenuItem, 工具ToolStripMenuItem, 使用者註冊ToolStripMenuItem, logoutToolStripMenuItem });
-            menuStrip2.Location = new Point(8, 8);
+            menuStrip2.Location = new Point(9, 11);
             menuStrip2.Name = "menuStrip2";
-            menuStrip2.Padding = new Padding(5, 2, 0, 2);
-            menuStrip2.Size = new Size(1025, 24);
+            menuStrip2.Padding = new Padding(6, 3, 0, 3);
+            menuStrip2.Size = new Size(1268, 29);
             menuStrip2.TabIndex = 1;
             menuStrip2.Text = "menuStrip2";
             // 
@@ -441,13 +457,13 @@ namespace ComicRentalSystem_14Days
             // 
             檔案ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { 離開ToolStripMenuItem });
             檔案ToolStripMenuItem.Name = "檔案ToolStripMenuItem";
-            檔案ToolStripMenuItem.Size = new Size(43, 20);
+            檔案ToolStripMenuItem.Size = new Size(53, 23);
             檔案ToolStripMenuItem.Text = "檔案";
             // 
             // 離開ToolStripMenuItem
             // 
             離開ToolStripMenuItem.Name = "離開ToolStripMenuItem";
-            離開ToolStripMenuItem.Size = new Size(98, 22);
+            離開ToolStripMenuItem.Size = new Size(122, 26);
             離開ToolStripMenuItem.Text = "離開";
             離開ToolStripMenuItem.Click += 離開ToolStripMenuItem_Click;
             // 
@@ -455,27 +471,27 @@ namespace ComicRentalSystem_14Days
             // 
             管理ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { 漫畫管理ToolStripMenuItem, 會員管理ToolStripMenuItem, rentalManagementToolStripMenuItem });
             管理ToolStripMenuItem.Name = "管理ToolStripMenuItem";
-            管理ToolStripMenuItem.Size = new Size(43, 20);
+            管理ToolStripMenuItem.Size = new Size(53, 23);
             管理ToolStripMenuItem.Text = "管理";
             // 
             // 漫畫管理ToolStripMenuItem
             // 
             漫畫管理ToolStripMenuItem.Name = "漫畫管理ToolStripMenuItem";
-            漫畫管理ToolStripMenuItem.Size = new Size(122, 22);
+            漫畫管理ToolStripMenuItem.Size = new Size(152, 26);
             漫畫管理ToolStripMenuItem.Text = "漫畫管理";
             漫畫管理ToolStripMenuItem.Click += 漫畫管理ToolStripMenuItem_Click;
             // 
             // 會員管理ToolStripMenuItem
             // 
             會員管理ToolStripMenuItem.Name = "會員管理ToolStripMenuItem";
-            會員管理ToolStripMenuItem.Size = new Size(122, 22);
+            會員管理ToolStripMenuItem.Size = new Size(152, 26);
             會員管理ToolStripMenuItem.Text = "會員管理";
             會員管理ToolStripMenuItem.Click += 會員管理ToolStripMenuItem_Click;
             // 
             // rentalManagementToolStripMenuItem
             // 
             rentalManagementToolStripMenuItem.Name = "rentalManagementToolStripMenuItem";
-            rentalManagementToolStripMenuItem.Size = new Size(122, 22);
+            rentalManagementToolStripMenuItem.Size = new Size(152, 26);
             rentalManagementToolStripMenuItem.Text = "租借管理";
             rentalManagementToolStripMenuItem.Click += rentalManagementToolStripMenuItem_Click;
             // 
@@ -483,27 +499,27 @@ namespace ComicRentalSystem_14Days
             // 
             工具ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { 檢視日誌ToolStripMenuItem });
             工具ToolStripMenuItem.Name = "工具ToolStripMenuItem";
-            工具ToolStripMenuItem.Size = new Size(43, 20);
+            工具ToolStripMenuItem.Size = new Size(53, 23);
             工具ToolStripMenuItem.Text = "工具";
             // 
             // 檢視日誌ToolStripMenuItem
             // 
             檢視日誌ToolStripMenuItem.Name = "檢視日誌ToolStripMenuItem";
-            檢視日誌ToolStripMenuItem.Size = new Size(122, 22);
+            檢視日誌ToolStripMenuItem.Size = new Size(152, 26);
             檢視日誌ToolStripMenuItem.Text = "檢視日誌";
             檢視日誌ToolStripMenuItem.Click += 檢視日誌ToolStripMenuItem_Click;
             // 
             // 使用者註冊ToolStripMenuItem
             // 
             使用者註冊ToolStripMenuItem.Name = "使用者註冊ToolStripMenuItem";
-            使用者註冊ToolStripMenuItem.Size = new Size(98, 20);
+            使用者註冊ToolStripMenuItem.Size = new Size(122, 23);
             使用者註冊ToolStripMenuItem.Text = "使用者註冊 (&R)";
             使用者註冊ToolStripMenuItem.Click += 使用者註冊ToolStripMenuItem_Click;
             // 
             // logoutToolStripMenuItem
             // 
             logoutToolStripMenuItem.Name = "logoutToolStripMenuItem";
-            logoutToolStripMenuItem.Size = new Size(60, 20);
+            logoutToolStripMenuItem.Size = new Size(75, 23);
             logoutToolStripMenuItem.Text = "登出 (&L)";
             logoutToolStripMenuItem.Click += logoutToolStripMenuItem_Click;
             // 
@@ -511,32 +527,33 @@ namespace ComicRentalSystem_14Days
             // 
             statusStrip1.ImageScalingSize = new Size(20, 20);
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabelUser });
-            statusStrip1.Location = new Point(8, 534);
+            statusStrip1.Location = new Point(9, 864);
             statusStrip1.Name = "statusStrip1";
-            statusStrip1.Padding = new Padding(1, 0, 11, 0);
-            statusStrip1.Size = new Size(1025, 22);
+            statusStrip1.Padding = new Padding(1, 0, 13, 0);
+            statusStrip1.Size = new Size(1268, 25);
             statusStrip1.TabIndex = 3;
             statusStrip1.Text = "statusStrip1";
             // 
             // toolStripStatusLabelUser
             // 
             toolStripStatusLabelUser.Name = "toolStripStatusLabelUser";
-            toolStripStatusLabelUser.Size = new Size(112, 17);
+            toolStripStatusLabelUser.Size = new Size(140, 19);
             toolStripStatusLabelUser.Text = "使用者: 無 | 角色: 無";
             // 
             // MainForm
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1041, 564);
+            ClientSize = new Size(1286, 900);
             Controls.Add(mainContentPanel);
             Controls.Add(leftNavPanel);
             Controls.Add(menuStrip1);
             Controls.Add(menuStrip2);
             Controls.Add(statusStrip1);
             MainMenuStrip = menuStrip2;
+            Margin = new Padding(3, 4, 3, 4);
             Name = "MainForm";
-            Padding = new Padding(8);
+            Padding = new Padding(9, 11, 9, 11);
             Text = "漫畫租借系統";
             Load += MainForm_Load;
             leftNavPanel.ResumeLayout(false);

@@ -223,7 +223,6 @@ namespace ComicRentalSystem_14Days.Services
                 throw ex;
             }
 
-            // Check for active rentals before deleting
             var allComics = _comicService.GetAllComics();
             if (allComics.Any(c => c.IsRented && c.RentedToMemberId == id))
             {
@@ -291,7 +290,6 @@ namespace ComicRentalSystem_14Days.Services
                 return null;
             }
 
-            // GetAllMembers() ensures the _members list is loaded and returns a copy.
             var allMembers = GetAllMembers();
 
             if (allMembers == null || !allMembers.Any())

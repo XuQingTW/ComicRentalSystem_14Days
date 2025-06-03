@@ -49,7 +49,7 @@ namespace ComicRentalSystem_14Days.Forms
              monthCalendarRental.SetDate(monthCalendarRental.SelectionStart);
 
 
-            lblInfo.Text = $"請選擇歸還日期。\n最短租期: {minDate:yyyy-MM-dd}\n最長租期: {maxDate:yyyy-MM-dd}"; // "Select a return date.\nMin: {minDate:yyyy-MM-dd}\nMax: {maxDate:yyyy-MM-dd}"
+            lblInfo.Text = $"請選擇歸還日期。\n最短租期: {minDate:yyyy-MM-dd}\n最長租期: {maxDate:yyyy-MM-dd}"; 
         }
 
         private void btnConfirmRental_Click(object sender, EventArgs e)
@@ -63,7 +63,7 @@ namespace ComicRentalSystem_14Days.Forms
             }
             else
             {
-                MessageBox.Show("請選擇有效範圍內的日期。", "日期無效", MessageBoxButtons.OK, MessageBoxIcon.Warning); // "Please select a valid date within the allowed range." | "Invalid Date"
+                MessageBox.Show("請選擇有效範圍內的日期。", "日期無效", MessageBoxButtons.OK, MessageBoxIcon.Warning); 
             }
         }
 

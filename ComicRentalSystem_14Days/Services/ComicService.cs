@@ -75,9 +75,9 @@ namespace ComicRentalSystem_14Days.Services
             try
             {
                 _logger.Log($"InternalLoadComicsAsync [Before Read]: Attempting to read from file '{_comicFileName}'. Full path: '{_fileHelper.GetFullFilePath(_comicFileName)}'.");
-                string csvData = await _fileHelper.ReadFileAsync(_comicFileName); // Note: _comicFileName is relative, GetFullFilePath is used in logs.
+                string csvData = await _fileHelper.ReadFileAsync(_comicFileName);
                 
-                // New log for raw data
+               
                 _logger.Log($"InternalLoadComicsAsync [Raw Data]: Read from '{_comicFileName}'. Full path: '{_fileHelper.GetFullFilePath(_comicFileName)}'. Data: '{csvData.Replace("\r", "\\r").Replace("\n", "\\n")}'.");
 
                 if (string.IsNullOrWhiteSpace(csvData))
@@ -97,14 +97,14 @@ namespace ComicRentalSystem_14Days.Services
                     }
                     catch (FormatException formatEx)
                     {
-                        // Enhanced log for parsing failure
+                 
                         _logger.LogError($"解析行失敗 (非同步) for file '{_comicFileName}' (Full path: '{_fileHelper.GetFullFilePath(_comicFileName)}'): '{line}'. 錯誤: {formatEx.Message}", formatEx);
                     }
                 }
                 _logger.Log($"成功從 '{_comicFileName}' (非同步) 載入並解析 {comicsList.Count} 本漫畫。 (Existing log for context)");
                 return comicsList;
             }
-            catch (FileNotFoundException) // Keep specific catch blocks
+            catch (FileNotFoundException)
             {
                 _logger.LogWarning($"漫畫檔案 '{_comicFileName}' (非同步) 找不到。Full path: '{_fileHelper.GetFullFilePath(_comicFileName)}'. 返回空列表。 (Enhanced log)");
                 return new List<Comic>();
@@ -123,28 +123,23 @@ namespace ComicRentalSystem_14Days.Services
 
         private void SaveComics()
         {
-            // The original log message is good. We are adding more specific ones.
             _logger.Log($"正在嘗試將 {_comics.Count} 本漫畫儲存到檔案: '{_comicFileName}'。 (Existing log for context)"); 
             lock (_comicsLock)
             {
-                // New log before writing
                 _logger.Log($"SaveComics [Before Write]: Preparing to write {_comics.Count} comics to file '{_comicFileName}'. Full path: '{_fileHelper.GetFullFilePath(_comicFileName)}'.");
                 
                 try
                 {
                     _fileHelper.WriteFile<Comic>(_comicFileName, _comics, comic => comic.ToCsvString());
                     
-                    // New log immediately after successful write call
                     _logger.Log($"SaveComics [After Write]: Successfully called _fileHelper.WriteFile for '{_comicFileName}' with {_comics.Count} comics.");
                     
-                    OnComicsChanged(); // Existing event trigger
+                    OnComicsChanged(); 
 
-                    // Existing log after successful save, can be kept for its original purpose
                     _logger.Log($"已成功將 {_comics.Count} 本漫畫儲存到 '{_comicFileName}'。 (Existing log for context)");
                 }
                 catch (Exception ex)
                 {
-                    // Enhanced existing error log
                     _logger.LogError($"將漫畫儲存到 '{_comicFileName}' 時發生錯誤。 Full path: '{_fileHelper.GetFullFilePath(_comicFileName)}'.", ex);
                     throw;
                 }

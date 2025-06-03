@@ -455,7 +455,7 @@ namespace ComicRentalSystem_14Days.Forms
         {
             MessageBox.Show($"漫畫 '{comicFromService.Title}' (ID: {comicFromService.Id}) 的狀態已為未租借。", "歸還提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             LogActivity($"歸還操作註記: 漫畫 '{comicFromService.Title}' (ID: {comicFromService.Id}) 已標記為未租借。");
-                LoadRentalDetails(); // 重新整理列表
+                LoadRentalDetails(); 
             return;
         }
 
