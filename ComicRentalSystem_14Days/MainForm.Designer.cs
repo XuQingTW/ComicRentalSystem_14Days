@@ -281,7 +281,7 @@ namespace ComicRentalSystem_14Days
             lblAvailableComics.AutoSize = true;
             lblAvailableComics.Dock = DockStyle.Top;
             lblAvailableComics.Font = new Font("Microsoft JhengHei UI", 12F, FontStyle.Bold);
-            lblAvailableComics.Location = new Point(9, 11);
+            lblAvailableComics.Location = new Point(9, 61);
             lblAvailableComics.Name = "lblAvailableComics";
             lblAvailableComics.Padding = new Padding(6, 7, 6, 7);
             lblAvailableComics.Size = new Size(104, 39);
@@ -295,12 +295,12 @@ namespace ComicRentalSystem_14Days
             dgvAvailableComics.AllowUserToDeleteRows = false;
             dgvAvailableComics.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvAvailableComics.Dock = DockStyle.Fill;
-            dgvAvailableComics.Location = new Point(9, 50);
+            dgvAvailableComics.Location = new Point(9, 100);
             dgvAvailableComics.Margin = new Padding(3, 4, 3, 4);
             dgvAvailableComics.Name = "dgvAvailableComics";
             dgvAvailableComics.ReadOnly = true;
             dgvAvailableComics.RowHeadersWidth = 51;
-            dgvAvailableComics.Size = new Size(1082, 663);
+            dgvAvailableComics.Size = new Size(1082, 613);
             dgvAvailableComics.TabIndex = 2;
             // 
             // mainContentPanel
@@ -333,8 +333,8 @@ namespace ComicRentalSystem_14Days
             availableComicsTabPage.BackColor = Color.White;
             availableComicsTabPage.Controls.Add(dgvAvailableComics);
             availableComicsTabPage.Controls.Add(btnRentComic);
-            availableComicsTabPage.Controls.Add(availableComicsFilterPanel);
             availableComicsTabPage.Controls.Add(lblAvailableComics);
+            availableComicsTabPage.Controls.Add(availableComicsFilterPanel);
             availableComicsTabPage.Location = new Point(4, 29);
             availableComicsTabPage.Margin = new Padding(3, 4, 3, 4);
             availableComicsTabPage.Name = "availableComicsTabPage";
@@ -358,14 +358,15 @@ namespace ComicRentalSystem_14Days
             // 
             // availableComicsFilterPanel
             // 
+            availableComicsFilterPanel.AutoSize = true;
             availableComicsFilterPanel.Controls.Add(txtSearchAvailableComics);
             availableComicsFilterPanel.Controls.Add(cmbGenreFilter);
-            availableComicsFilterPanel.Dock = DockStyle.Fill;
-            availableComicsFilterPanel.Location = new Point(9, 50);
+            availableComicsFilterPanel.Dock = DockStyle.Top;
+            availableComicsFilterPanel.Location = new Point(9, 11);
             availableComicsFilterPanel.Margin = new Padding(3, 4, 3, 4);
             availableComicsFilterPanel.Name = "availableComicsFilterPanel";
             availableComicsFilterPanel.Padding = new Padding(0, 5, 0, 5);
-            availableComicsFilterPanel.Size = new Size(1082, 706);
+            availableComicsFilterPanel.Size = new Size(1082, 50);
             availableComicsFilterPanel.TabIndex = 0;
             // 
             // txtSearchAvailableComics
@@ -378,7 +379,6 @@ namespace ComicRentalSystem_14Days
             txtSearchAvailableComics.Name = "txtSearchAvailableComics";
             txtSearchAvailableComics.Size = new Size(1075, 27);
             txtSearchAvailableComics.TabIndex = 0;
-            txtSearchAvailableComics.Text = "搜尋書名或作者名稱";
             // 
             // cmbGenreFilter
             // 

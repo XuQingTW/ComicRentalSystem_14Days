@@ -1,3 +1,4 @@
+using System.Drawing; 
 using ComicRentalSystem_14Days.Models;
 using ComicRentalSystem_14Days.Services;
 using ComicRentalSystem_14Days.Forms;
@@ -110,10 +111,38 @@ namespace ComicRentalSystem_14Days
                 if (this.dgvAvailableComics != null)
                     this.dgvAvailableComics.ColumnHeaderMouseClick += dgvAvailableComics_ColumnHeaderMouseClick;
             }
-            else
+            else 
             {
+                _logger?.Log("[TARGETED_RUNTIME] Applying visibility settings for availableComicsTabPage and dgvAvailableComics.");
+
+                if (this.availableComicsTabPage != null)
+                {
+                    this.availableComicsTabPage.Visible = true;
+                    _logger?.Log($"[TARGETED_RUNTIME] availableComicsTabPage.Visible = {this.availableComicsTabPage.Visible}");
+                }
+                else
+                {
+                    _logger?.LogWarning("[TARGETED_RUNTIME] availableComicsTabPage is NULL.");
+                }
+
+                if (this.dgvAvailableComics != null)
+                {
+                    this.dgvAvailableComics.Visible = true;
+                    this.dgvAvailableComics.BringToFront();
+
+                    _logger?.Log($"[TARGETED_RUNTIME] dgvAvailableComics.Visible = {this.dgvAvailableComics.Visible}");
+                    _logger?.Log($"[TARGETED_RUNTIME] dgvAvailableComics.Parent = {this.dgvAvailableComics.Parent?.Name}");
+                    _logger?.Log($"[TARGETED_RUNTIME] dgvAvailableComics.Location = {this.dgvAvailableComics.Location}");
+                    _logger?.Log($"[TARGETED_RUNTIME] dgvAvailableComics.Size = {this.dgvAvailableComics.Size}");
+                    _logger?.Log($"[TARGETED_RUNTIME] dgvAvailableComics.BackgroundColor = {this.dgvAvailableComics.BackgroundColor}");
+                    _logger?.Log($"[TARGETED_RUNTIME] dgvAvailableComics.DefaultCellStyle.BackColor = {this.dgvAvailableComics.DefaultCellStyle.BackColor}");
+                    _logger?.Log($"[TARGETED_RUNTIME] dgvAvailableComics.DefaultCellStyle.ForeColor = {this.dgvAvailableComics.DefaultCellStyle.ForeColor}");
+                }
+                else
+                {
+                    _logger?.LogWarning("[TARGETED_RUNTIME] dgvAvailableComics is NULL.");
+                }
                 await _comicService.ReloadAsync();
-              
                 _logger.Log($"MainForm_Load (Member) [After ReloadAsync]: _comicService.GetAllComics() reports {_comicService.GetAllComics().Count} comics.");
                 LoadAvailableComics();
                 LoadMyRentedComics();
@@ -300,7 +329,7 @@ namespace ComicRentalSystem_14Days
                 dgvAvailableComics.Columns.Add(returnDateColumn);
                 StyleModernDataGridView(dgvAvailableComics); 
             }
-            else 
+            else
             {
                 _logger.Log("正在為會員視圖設定 DataGridView (可借閱漫畫)。");
                 dgvAvailableComics!.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Title", HeaderText = "書名", FillWeight = 40 });
@@ -360,7 +389,7 @@ namespace ComicRentalSystem_14Days
                 List<AdminComicStatusViewModel> comicStatuses = await Task.Run(() => _comicService.GetAdminComicStatusViewModels(allMembers));
 
                 _allAdminComicStatuses = new List<AdminComicStatusViewModel>(comicStatuses);
-                ApplyAdminComicsView(); // apply filter/sort
+                ApplyAdminComicsView(); 
 
                 _logger?.Log($"已成功非同步為管理員視圖載入 {comicStatuses.Count} 本漫畫。");
             }
@@ -1148,7 +1177,6 @@ namespace ComicRentalSystem_14Days
             DataGridViewRow row = dgvAvailableComics.Rows[e.RowIndex];
             if (row.DataBoundItem is not AdminComicStatusViewModel comicStatus) return;
 
-            // (1) 狀態欄位文字色
             if (dgvAvailableComics.Columns[e.ColumnIndex].DataPropertyName == "Status")
             {
                 if (e.Value?.ToString() == "被借閱")
@@ -1271,16 +1299,19 @@ namespace ComicRentalSystem_14Days
             {
                 _logger?.Log("正在套用可租借漫畫篩選器… (ApplyAvailableComicsFilter called)");
 
-                string currentTextInBox = txtSearchAvailableComics?.Text?.Trim() ?? "";
+                string placeholderText = "依書名/作者搜尋...";
                 string actualSearchText = "";
-                string placeholderText = "依書名/作者搜尋..."; 
 
-                if (txtSearchAvailableComics != null)
+                bool isPlaceholderActive = (txtSearchAvailableComics != null &&
+                                            txtSearchAvailableComics.Text == placeholderText &&
+                                            txtSearchAvailableComics.ForeColor == Color.Gray);
+
+                if (txtSearchAvailableComics != null &&
+                    txtSearchAvailableComics.Text != null &&
+                    !isPlaceholderActive &&
+                    !string.IsNullOrWhiteSpace(txtSearchAvailableComics.Text))
                 {
-                    if (currentTextInBox != placeholderText && !string.IsNullOrWhiteSpace(currentTextInBox))
-                    {
-                        actualSearchText = currentTextInBox.ToLowerInvariant();
-                    }
+                    actualSearchText = txtSearchAvailableComics.Text.Trim().ToLowerInvariant();
                 }
 
                 var comicsToFilter = _comicService

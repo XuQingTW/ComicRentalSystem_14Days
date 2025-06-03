@@ -5,22 +5,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\hyman\\onedrive\\\u684C\u9762\\comicrentalsystem_14days\\comicrentalsystem_14days\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\hyman\\onedrive\\\u684C\u9762\\comicrentalsystem_14days\\comicrentalsystem_14days\\mainform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\mainform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\hyman\\onedrive\\\u684C\u9762\\comicrentalsystem_14days\\comicrentalsystem_14days\\modernbaseform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\modernbaseform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\hyman\\onedrive\\\u684C\u9762\\comicrentalsystem_14days\\comicrentalsystem_14days\\modernbaseform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\modernbaseform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\hyman\\onedrive\\\u684C\u9762\\comicrentalsystem_14days\\comicrentalsystem_14days\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -40,60 +24,9 @@
               "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\MainForm.cs",
               "ToolTip": "C:\\Users\\Hyman\\OneDrive\\\u684C\u9762\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\MainForm.cs",
               "RelativeToolTip": "ComicRentalSystem_14Days\\MainForm.cs",
-              "ViewState": "AgIAAIAEAAAAAAAAAAAAAEIBAAANAAAAAAAAAA==",
+              "ViewState": "AgIAALkBAAAAAAAAAAAAACUBAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-03T00:33:05.374Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\Hyman\\OneDrive\\\u684C\u9762\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Program.cs",
-              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Program.cs",
-              "ToolTip": "C:\\Users\\Hyman\\OneDrive\\\u684C\u9762\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Program.cs",
-              "RelativeToolTip": "ComicRentalSystem_14Days\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEQAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-03T00:32:13.476Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "ModernBaseForm.cs",
-              "DocumentMoniker": "C:\\Users\\Hyman\\OneDrive\\\u684C\u9762\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\ModernBaseForm.cs",
-              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\ModernBaseForm.cs",
-              "ToolTip": "C:\\Users\\Hyman\\OneDrive\\\u684C\u9762\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\ModernBaseForm.cs",
-              "RelativeToolTip": "ComicRentalSystem_14Days\\ModernBaseForm.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-03T00:32:00.175Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "ModernBaseForm.cs [\u8A2D\u8A08]",
-              "DocumentMoniker": "C:\\Users\\Hyman\\OneDrive\\\u684C\u9762\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\ModernBaseForm.cs",
-              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\ModernBaseForm.cs",
-              "ToolTip": "C:\\Users\\Hyman\\OneDrive\\\u684C\u9762\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\ModernBaseForm.cs [\u8A2D\u8A08]",
-              "RelativeToolTip": "ComicRentalSystem_14Days\\ModernBaseForm.cs [\u8A2D\u8A08]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-03T00:31:55.439Z",
-              "EditorCaption": " [\u8A2D\u8A08]"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "MainForm.Designer.cs",
-              "DocumentMoniker": "C:\\Users\\Hyman\\OneDrive\\\u684C\u9762\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\MainForm.Designer.cs",
-              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\MainForm.Designer.cs",
-              "ToolTip": "C:\\Users\\Hyman\\OneDrive\\\u684C\u9762\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\MainForm.Designer.cs",
-              "RelativeToolTip": "ComicRentalSystem_14Days\\MainForm.Designer.cs",
-              "ViewState": "AgIAABQAAAAAAAAAAAAAwAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-03T00:28:40.42Z",
+              "WhenOpened": "2025-06-03T02:48:41.459Z",
               "EditorCaption": ""
             }
           ]

@@ -75,7 +75,7 @@ namespace ComicRentalSystem_14Days.Services
             try
             {
                 _logger.Log($"InternalLoadComicsAsync [Before Read]: Attempting to read from file '{_comicFileName}'. Full path: '{_fileHelper.GetFullFilePath(_comicFileName)}'.");
-                string csvData = await _fileHelper.ReadFileAsync(_comicFileName); // Note: _comicFileName is relative, GetFullFilePath is used in logs.
+                string csvData = await _fileHelper.ReadFileAsync(_comicFileName);
                 
                
                 _logger.Log($"InternalLoadComicsAsync [Raw Data]: Read from '{_comicFileName}'. Full path: '{_fileHelper.GetFullFilePath(_comicFileName)}'. Data: '{csvData.Replace("\r", "\\r").Replace("\n", "\\n")}'.");
