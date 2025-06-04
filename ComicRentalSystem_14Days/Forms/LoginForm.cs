@@ -10,14 +10,14 @@ namespace ComicRentalSystem_14Days.Forms
     {
         private readonly ILogger _logger;
         private readonly AuthenticationService _authService;
-        private readonly ComicService _comicService;
+        private readonly IComicService _comicService;
         private readonly MemberService _memberService;
         private readonly IReloadService _reloadService;
 
         public LoginForm(
             ILogger logger,
             AuthenticationService authService,
-            ComicService comicService,
+            IComicService comicService,
             MemberService memberService,
             IReloadService reloadService)
         {
