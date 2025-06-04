@@ -18,7 +18,7 @@ namespace ComicRentalSystem_14Days.Services
         private readonly ILogger _logger;
         private readonly object _comicsLock = new object();
 
-        public event EventHandler? ComicsChanged;
+        public event ComicDataChangedEventHandler? ComicsChanged;
 
         public async Task ReloadAsync()
         {
