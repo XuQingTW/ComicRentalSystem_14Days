@@ -18,7 +18,6 @@ namespace ComicRentalSystem_14Days.Services
         private readonly ILogger _logger;
         private readonly object _comicsLock = new object();
 
-        public delegate void ComicDataChangedEventHandler(object? sender, EventArgs e);
         public event ComicDataChangedEventHandler? ComicsChanged;
 
         public async Task ReloadAsync()
@@ -146,6 +145,30 @@ namespace ComicRentalSystem_14Days.Services
             }
         }
 
+        private async Task SaveComicsAsync()
+        {
+            _logger.Log($"正在以非同步方式將 {_comics.Count} 本漫畫儲存到檔案: '{_comicFileName}'。");
+            List<Comic> comicsCopy;
+            lock (_comicsLock)
+            {
+                comicsCopy = new List<Comic>(_comics);
+            }
+
+            string content = string.Join(Environment.NewLine, comicsCopy.Select(c => c.ToCsvString()));
+
+            try
+            {
+                await _fileHelper.WriteFileAsync(_comicFileName, content);
+                _logger.Log($"SaveComicsAsync 已成功將 {comicsCopy.Count} 本漫畫寫入 '{_comicFileName}'。");
+                OnComicsChanged();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"SaveComicsAsync: 將漫畫儲存到 '{_comicFileName}' 時發生錯誤。", ex);
+                throw;
+            }
+        }
+
         protected virtual void OnComicsChanged()
         {
             ComicsChanged?.Invoke(this, EventArgs.Empty);
@@ -182,6 +205,23 @@ namespace ComicRentalSystem_14Days.Services
             {
                 var ex = new ArgumentNullException(nameof(comic));
                 _logger.LogError("嘗試新增空的漫畫物件。", ex);
+                throw ex;
+            }
+
+            if (string.IsNullOrWhiteSpace(comic.Title) ||
+                string.IsNullOrWhiteSpace(comic.Author) ||
+                string.IsNullOrWhiteSpace(comic.Isbn) ||
+                string.IsNullOrWhiteSpace(comic.Genre))
+            {
+                var ex = new ArgumentException("漫畫的基本資訊不可為空。", nameof(comic));
+                _logger.LogError("新增漫畫失敗: 基本資訊缺失。", ex);
+                throw ex;
+            }
+
+            if (comic.Id < 0)
+            {
+                var ex = new ArgumentOutOfRangeException(nameof(comic.Id), "漫畫 ID 不可為負數。");
+                _logger.LogError($"新增漫畫失敗: ID {comic.Id} 為無效值。", ex);
                 throw ex;
             }
 

@@ -31,7 +31,7 @@ namespace ComicRentalSystem_14Days.Forms
 
             _comicService = comicService ?? throw new ArgumentNullException(nameof(comicService));
             _memberService = memberService ?? throw new ArgumentNullException(nameof(memberService));
-            _reloadService = reloadService ?? throw new ArgumentException(nameof(reloadService));
+            _reloadService = reloadService ?? throw new ArgumentNullException(nameof(reloadService));
 
             if (_comicService != null)
             {

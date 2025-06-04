@@ -3,6 +3,7 @@ using ComicRentalSystem_14Days.Models;
 using ComicRentalSystem_14Days.Services;
 using ComicRentalSystem_14Days.Forms;
 using ComicRentalSystem_14Days.Interfaces;
+using ComicRentalSystem_14Days.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -169,7 +170,6 @@ namespace ComicRentalSystem_14Days
 
             if (_currentUser.Role == UserRole.Member)
             {
-                if (btnRentComic != null) StyleModernButton(btnRentComic);
                 if (dgvAvailableComics != null) StyleModernDataGridView(dgvAvailableComics);
                 if (dgvMyRentedComics != null) StyleModernDataGridView(dgvMyRentedComics);
             }
@@ -262,13 +262,7 @@ namespace ComicRentalSystem_14Days
             bool isMember = _currentUser.Role == UserRole.Member;
             if (isMember)
             {
-                if (btnRentComic != null && dgvAvailableComics != null)
-                    btnRentComic.Enabled = dgvAvailableComics.SelectedRows.Count > 0;
-            }
-            else
-            {
-                if (btnRentComic != null)
-                    btnRentComic.Enabled = false;
+                // 移除租借功能後，按鈕不存在，無需處理
             }
         }
 
@@ -491,13 +485,13 @@ namespace ComicRentalSystem_14Days
 
                     if (lblAvailableComics != null)
                     {
-                        lblAvailableComics.Text = "請選擇下方漫畫進行租借：";
+                        lblAvailableComics.Text = "可租借漫畫清單：";
                     }
                     if (lblMyRentedComicsHeader != null)
                     {
                         lblMyRentedComicsHeader.Text = "您目前租借的項目：";
                     }
-                    if (btnRentComic != null) btnRentComic.Visible = true;
+                    
                 }
                 else
                 {
@@ -508,7 +502,6 @@ namespace ComicRentalSystem_14Days
                         lblAvailableComics.Text = "可租借漫畫";
                     }
                     if (dgvAvailableComics != null) dgvAvailableComics.Visible = true;
-                    if (btnRentComic != null) btnRentComic.Visible = true;
                     if (lblMyRentedComicsHeader != null) lblMyRentedComicsHeader.Visible = true;
                     if (dgvMyRentedComics != null) dgvMyRentedComics.Visible = true;
                 }
@@ -791,93 +784,7 @@ namespace ComicRentalSystem_14Days
             Application.Restart();
         }
 
-        private void btnRentComic_Click(object? sender, EventArgs e)
-        {
-            if (_currentUser == null || _comicService == null || _memberService == null || _logger == null)
-            {
-                MessageBox.Show("系統元件未正確初始化。無法繼續租借。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                _logger?.LogError("租借漫畫按鈕點擊事件：關鍵服務或 _currentUser 為空。");
-                return;
-            }
 
-            if (dgvAvailableComics == null || dgvAvailableComics.SelectedRows.Count == 0)
-            {
-                _logger?.Log("租借漫畫按鈕點擊事件：使用者未選擇漫畫。");
-                MessageBox.Show("請先選擇一本漫畫。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-
-            if (_currentUser.Role == UserRole.Admin)
-            {
-                _logger?.LogWarning("管理員使用者嘗試點擊租借按鈕。此操作僅供會員使用。");
-                return;
-            }
-
-            Comic? selectedComic = dgvAvailableComics.SelectedRows[0].DataBoundItem as Comic;
-            if (selectedComic == null)
-            {
-                MessageBox.Show("選擇的項目無效或不是有效的漫畫資料。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                _logger?.LogError("租借漫畫按鈕點擊事件：選取的項目為空或不是有效的漫畫物件。");
-                return;
-            }
-
-            if (selectedComic.IsRented)
-            {
-                _logger?.Log($"租借漫畫按鈕點擊事件：使用者 '{_currentUser.Username}' 嘗試租借漫畫 '{selectedComic.Title}' (ID: {selectedComic.Id})，但該漫畫已被租借。");
-                MessageBox.Show($"漫畫 '{selectedComic.Title}' 已經被借出。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                LoadAvailableComics();
-                return;
-            }
-
-            DateTime today = DateTime.Today;
-            DateTime minRentalReturnDate = today.AddDays(3);
-            DateTime maxRentalReturnDate = today.AddMonths(1);
-
-            using (RentalPeriodForm rentalDialog = new RentalPeriodForm(minRentalReturnDate, maxRentalReturnDate))
-            {
-                if (rentalDialog.ShowDialog(this) == DialogResult.OK)
-                {
-                    DateTime selectedReturnDate = rentalDialog.SelectedReturnDate;
-                    Member? member = _memberService.GetMemberByUsername(_currentUser.Username);
-
-                    if (member == null)
-                    {
-                        _logger?.LogWarning($"租借漫畫按鈕點擊事件：找不到使用者名稱為 '{_currentUser.Username}' 的會員。");
-                        MessageBox.Show($"找不到使用者 '{_currentUser.Username}' 對應的會員資料。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-
-                    selectedComic.IsRented = true;
-                    selectedComic.RentedToMemberId = member.Id;
-                    selectedComic.RentalDate = DateTime.Now;
-                    selectedComic.ReturnDate = selectedReturnDate;
-
-                    try
-                    {
-                        _comicService.UpdateComic(selectedComic);
-                        _logger?.Log($"漫畫 '{selectedComic.Title}' (ID: {selectedComic.Id}) 已租借給會員 ID {member.Id} (使用者名稱: {_currentUser.Username}) 至 {selectedReturnDate:yyyy-MM-dd}。");
-                        MessageBox.Show($"漫畫 '{selectedComic.Title}' 已成功租借至 {selectedReturnDate:yyyy-MM-dd}。", "租借成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        LoadAvailableComics();
-                        LoadMyRentedComics();
-                        if (dgvAvailableComics != null)
-                            dgvAvailableComics_SelectionChanged(null, EventArgs.Empty);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger?.LogError($"租借漫畫按鈕點擊事件：嘗試租借後更新漫畫 (ID: {selectedComic.Id}) 失敗。{ex.Message}", ex);
-                        MessageBox.Show($"更新漫畫狀態時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        selectedComic.IsRented = false;
-                        selectedComic.RentedToMemberId = 0;
-                        selectedComic.RentalDate = null;
-                        selectedComic.ReturnDate = null;
-                    }
-                }
-                else
-                {
-                    _logger?.Log($"使用者 '{_currentUser.Username}' 已取消漫畫 '{selectedComic.Title}' 的租借流程。");
-                }
-            }
-        }
 
         private void 檢視日誌ToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -888,26 +795,37 @@ namespace ComicRentalSystem_14Days
                 try
                 {
                     string logDirectory = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ComicRentalApp", "Logs");
-                    string logFilePath = System.IO.Path.Combine(logDirectory, "ComicRentalSystemLog.txt");
-
-                    if (System.IO.File.Exists(logFilePath))
+                    if (System.IO.Directory.Exists(logDirectory))
                     {
-                        Process.Start(new ProcessStartInfo(logFilePath) { UseShellExecute = true });
+                        Process.Start(new ProcessStartInfo(logDirectory) { UseShellExecute = true });
                     }
                     else
                     {
-                        MessageBox.Show("日誌檔案尚未建立或找不到。", "資訊", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("日誌資料夾尚未建立或找不到。", "資訊", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
                 catch (Exception ex)
                 {
-                    this._logger?.LogError("開啟日誌檔案失敗。", ex);
-                    MessageBox.Show($"無法開啟日誌檔案: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    this._logger?.LogError("開啟日誌資料夾失敗。", ex);
+                    MessageBox.Show($"無法開啟日誌資料夾: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
             {
                 this._logger?.Log($"使用者 '{_currentUser.Username}' (角色: {_currentUser.Role}) 嘗試檢視日誌。權限不足。");
+                MessageBox.Show("權限不足", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void 日誌管理ToolStripMenuItem_Click(object? sender, EventArgs e)
+        {
+            if (_currentUser.Role == UserRole.Admin)
+            {
+                using var f = new LogManagementForm((FileLogger)_logger!);
+                f.ShowDialog(this);
+            }
+            else
+            {
                 MessageBox.Show("權限不足", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
@@ -932,11 +850,11 @@ namespace ComicRentalSystem_14Days
             if (this.cmbAdminComicFilterStatus != null && this.cmbAdminComicFilterStatus.SelectedItem != null)
             {
                 string? selectedStatus = this.cmbAdminComicFilterStatus.SelectedItem.ToString();
-                if (selectedStatus == "Rented")
+                if (selectedStatus == "已租借")
                 {
                     viewToShow = viewToShow.Where(vm => vm.Status == "被借閱");
                 }
-                else if (selectedStatus == "Available")
+                else if (selectedStatus == "可租借")
                 {
                     viewToShow = viewToShow.Where(vm => vm.Status == "在館中");
                 }
@@ -1113,8 +1031,8 @@ namespace ComicRentalSystem_14Days
             }
             else if (selectedButton == btnNavLogs)
             {
-                this.檢視日誌ToolStripMenuItem_Click(this, EventArgs.Empty);
-                _logger?.Log("檢視日誌導覽按鈕已點擊。");
+                this.日誌管理ToolStripMenuItem_Click(this, EventArgs.Empty);
+                _logger?.Log("日誌管理導覽按鈕已點擊。");
             }
         }
 
@@ -1166,6 +1084,8 @@ namespace ComicRentalSystem_14Days
             {
                 SelectNavButton(cb);
                 _logger?.Log("Logs navigation button clicked.");
+                using var f = new LogManagementForm((FileLogger)_logger!);
+                f.ShowDialog(this);
             }
         }
 

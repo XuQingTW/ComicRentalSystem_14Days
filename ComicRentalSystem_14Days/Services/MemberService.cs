@@ -160,6 +160,20 @@ namespace ComicRentalSystem_14Days.Services
                 throw ex;
             }
 
+            if (string.IsNullOrWhiteSpace(member.Name) || string.IsNullOrWhiteSpace(member.PhoneNumber))
+            {
+                var ex = new ArgumentException("會員姓名和電話號碼不可為空。", nameof(member));
+                _logger.LogError("新增會員失敗: 姓名或電話號碼為空。", ex);
+                throw ex;
+            }
+
+            if (member.Id < 0)
+            {
+                var ex = new ArgumentOutOfRangeException(nameof(member.Id), "會員 ID 不可為負數。");
+                _logger.LogError($"新增會員失敗: ID {member.Id} 為無效值。", ex);
+                throw ex;
+            }
+
             _logger.Log($"正在嘗試新增會員: 姓名='{member.Name}', 電話號碼='{member.PhoneNumber}'。");
 
             if (member.Id != 0 && _members.Any(m => m.Id == member.Id))
