@@ -208,6 +208,23 @@ namespace ComicRentalSystem_14Days.Services
                 throw ex;
             }
 
+            if (string.IsNullOrWhiteSpace(comic.Title) ||
+                string.IsNullOrWhiteSpace(comic.Author) ||
+                string.IsNullOrWhiteSpace(comic.Isbn) ||
+                string.IsNullOrWhiteSpace(comic.Genre))
+            {
+                var ex = new ArgumentException("漫畫的基本資訊不可為空。", nameof(comic));
+                _logger.LogError("新增漫畫失敗: 基本資訊缺失。", ex);
+                throw ex;
+            }
+
+            if (comic.Id < 0)
+            {
+                var ex = new ArgumentOutOfRangeException(nameof(comic.Id), "漫畫 ID 不可為負數。");
+                _logger.LogError($"新增漫畫失敗: ID {comic.Id} 為無效值。", ex);
+                throw ex;
+            }
+
             _logger.Log($"正在嘗試新增漫畫: 書名='{comic.Title}', 作者='{comic.Author}'。");
 
             lock (_comicsLock)
