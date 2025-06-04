@@ -16,12 +16,12 @@ namespace ComicRentalSystem_14Days.Services
         private readonly string _memberFileName = "members.csv";
         private List<Member> _members = new List<Member> { };
         private readonly ILogger _logger;
-        private readonly ComicService _comicService;
+        private readonly IComicService _comicService;
 
         public delegate void MemberDataChangedEventHandler(object? sender, EventArgs e);
         public event MemberDataChangedEventHandler? MembersChanged;
 
-        public MemberService(IFileHelper fileHelper, ILogger? logger, ComicService comicService) 
+        public MemberService(IFileHelper fileHelper, ILogger? logger, IComicService comicService)
         {
             _fileHelper = fileHelper ?? throw new ArgumentNullException(nameof(fileHelper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger), "MemberService 的記錄器不可為空。");
@@ -157,6 +157,20 @@ namespace ComicRentalSystem_14Days.Services
             {
                 var ex = new ArgumentNullException(nameof(member));
                 _logger.LogError("嘗試新增空的會員物件。", ex);
+                throw ex;
+            }
+
+            if (string.IsNullOrWhiteSpace(member.Name) || string.IsNullOrWhiteSpace(member.PhoneNumber))
+            {
+                var ex = new ArgumentException("會員姓名和電話號碼不可為空。", nameof(member));
+                _logger.LogError("新增會員失敗: 姓名或電話號碼為空。", ex);
+                throw ex;
+            }
+
+            if (member.Id < 0)
+            {
+                var ex = new ArgumentOutOfRangeException(nameof(member.Id), "會員 ID 不可為負數。");
+                _logger.LogError($"新增會員失敗: ID {member.Id} 為無效值。", ex);
                 throw ex;
             }
 
