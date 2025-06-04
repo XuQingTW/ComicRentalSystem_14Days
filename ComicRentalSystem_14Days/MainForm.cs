@@ -3,6 +3,7 @@ using ComicRentalSystem_14Days.Models;
 using ComicRentalSystem_14Days.Services;
 using ComicRentalSystem_14Days.Forms;
 using ComicRentalSystem_14Days.Interfaces;
+using ComicRentalSystem_14Days.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -888,26 +889,37 @@ namespace ComicRentalSystem_14Days
                 try
                 {
                     string logDirectory = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ComicRentalApp", "Logs");
-                    string logFilePath = System.IO.Path.Combine(logDirectory, "ComicRentalSystemLog.txt");
-
-                    if (System.IO.File.Exists(logFilePath))
+                    if (System.IO.Directory.Exists(logDirectory))
                     {
-                        Process.Start(new ProcessStartInfo(logFilePath) { UseShellExecute = true });
+                        Process.Start(new ProcessStartInfo(logDirectory) { UseShellExecute = true });
                     }
                     else
                     {
-                        MessageBox.Show("日誌檔案尚未建立或找不到。", "資訊", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("日誌資料夾尚未建立或找不到。", "資訊", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
                 catch (Exception ex)
                 {
-                    this._logger?.LogError("開啟日誌檔案失敗。", ex);
-                    MessageBox.Show($"無法開啟日誌檔案: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    this._logger?.LogError("開啟日誌資料夾失敗。", ex);
+                    MessageBox.Show($"無法開啟日誌資料夾: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
             {
                 this._logger?.Log($"使用者 '{_currentUser.Username}' (角色: {_currentUser.Role}) 嘗試檢視日誌。權限不足。");
+                MessageBox.Show("權限不足", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void 日誌管理ToolStripMenuItem_Click(object? sender, EventArgs e)
+        {
+            if (_currentUser.Role == UserRole.Admin)
+            {
+                using var f = new LogManagementForm((FileLogger)_logger!);
+                f.ShowDialog(this);
+            }
+            else
+            {
                 MessageBox.Show("權限不足", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
@@ -1113,8 +1125,8 @@ namespace ComicRentalSystem_14Days
             }
             else if (selectedButton == btnNavLogs)
             {
-                this.檢視日誌ToolStripMenuItem_Click(this, EventArgs.Empty);
-                _logger?.Log("檢視日誌導覽按鈕已點擊。");
+                this.日誌管理ToolStripMenuItem_Click(this, EventArgs.Empty);
+                _logger?.Log("日誌管理導覽按鈕已點擊。");
             }
         }
 
@@ -1166,6 +1178,8 @@ namespace ComicRentalSystem_14Days
             {
                 SelectNavButton(cb);
                 _logger?.Log("Logs navigation button clicked.");
+                using var f = new LogManagementForm((FileLogger)_logger!);
+                f.ShowDialog(this);
             }
         }
 

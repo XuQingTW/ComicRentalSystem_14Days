@@ -58,6 +58,7 @@ namespace ComicRentalSystem_14Days
         private ToolStripMenuItem rentalManagementToolStripMenuItem;
         private ToolStripMenuItem 工具ToolStripMenuItem;
         private ToolStripMenuItem 檢視日誌ToolStripMenuItem;
+        private ToolStripMenuItem 日誌管理ToolStripMenuItem;
         private ToolStripMenuItem 使用者註冊ToolStripMenuItem;
         private ToolStripMenuItem logoutToolStripMenuItem;
 
@@ -113,6 +114,7 @@ namespace ComicRentalSystem_14Days
             rentalManagementToolStripMenuItem = new ToolStripMenuItem();
             工具ToolStripMenuItem = new ToolStripMenuItem();
             檢視日誌ToolStripMenuItem = new ToolStripMenuItem();
+            日誌管理ToolStripMenuItem = new ToolStripMenuItem();
             使用者註冊ToolStripMenuItem = new ToolStripMenuItem();
             logoutToolStripMenuItem = new ToolStripMenuItem();
             statusStrip1 = new StatusStrip();
@@ -161,7 +163,7 @@ namespace ComicRentalSystem_14Days
             btnNavLogs.Padding = new Padding(9, 0, 0, 0);
             btnNavLogs.Size = new Size(160, 48);
             btnNavLogs.TabIndex = 5;
-            btnNavLogs.Text = "檢視日誌";
+            btnNavLogs.Text = "日誌管理";
             btnNavLogs.TextAlign = ContentAlignment.MiddleLeft;
             btnNavLogs.UseVisualStyleBackColor = false;
             // 
@@ -497,7 +499,7 @@ namespace ComicRentalSystem_14Days
             // 
             // 工具ToolStripMenuItem
             // 
-            工具ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { 檢視日誌ToolStripMenuItem });
+            工具ToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { 檢視日誌ToolStripMenuItem, 日誌管理ToolStripMenuItem });
             工具ToolStripMenuItem.Name = "工具ToolStripMenuItem";
             工具ToolStripMenuItem.Size = new Size(53, 23);
             工具ToolStripMenuItem.Text = "工具";
@@ -508,9 +510,16 @@ namespace ComicRentalSystem_14Days
             檢視日誌ToolStripMenuItem.Size = new Size(152, 26);
             檢視日誌ToolStripMenuItem.Text = "檢視日誌";
             檢視日誌ToolStripMenuItem.Click += 檢視日誌ToolStripMenuItem_Click;
-            // 
+            //
+            // 日誌管理ToolStripMenuItem
+            //
+            日誌管理ToolStripMenuItem.Name = "日誌管理ToolStripMenuItem";
+            日誌管理ToolStripMenuItem.Size = new Size(152, 26);
+            日誌管理ToolStripMenuItem.Text = "日誌管理";
+            日誌管理ToolStripMenuItem.Click += 日誌管理ToolStripMenuItem_Click;
+            //
             // 使用者註冊ToolStripMenuItem
-            // 
+            //
             使用者註冊ToolStripMenuItem.Name = "使用者註冊ToolStripMenuItem";
             使用者註冊ToolStripMenuItem.Size = new Size(122, 23);
             使用者註冊ToolStripMenuItem.Text = "使用者註冊 (&R)";
