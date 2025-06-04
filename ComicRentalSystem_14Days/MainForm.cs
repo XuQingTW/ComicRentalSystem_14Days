@@ -932,11 +932,11 @@ namespace ComicRentalSystem_14Days
             if (this.cmbAdminComicFilterStatus != null && this.cmbAdminComicFilterStatus.SelectedItem != null)
             {
                 string? selectedStatus = this.cmbAdminComicFilterStatus.SelectedItem.ToString();
-                if (selectedStatus == "Rented")
+                if (selectedStatus == "已租借")
                 {
                     viewToShow = viewToShow.Where(vm => vm.Status == "被借閱");
                 }
-                else if (selectedStatus == "Available")
+                else if (selectedStatus == "可租借")
                 {
                     viewToShow = viewToShow.Where(vm => vm.Status == "在館中");
                 }
