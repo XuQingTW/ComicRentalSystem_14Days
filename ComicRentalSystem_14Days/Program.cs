@@ -10,7 +10,7 @@ namespace ComicRentalSystem_14Days
     {
         public static ILogger? AppLogger { get; private set; }
         public static FileHelper? AppFileHelper { get; private set; }
-        public static ComicService? AppComicService { get; private set; }
+        public static IComicService? AppComicService { get; private set; }
         public static MemberService? AppMemberService { get; private set; }
         public static IReloadService? AppReloadService { get; private set; }
         public static AuthenticationService? AppAuthService { get; private set; }

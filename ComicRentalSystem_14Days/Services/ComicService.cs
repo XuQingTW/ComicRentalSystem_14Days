@@ -10,7 +10,7 @@ using ComicRentalSystem_14Days.Models;
 
 namespace ComicRentalSystem_14Days.Services
 {
-    public class ComicService
+    public class ComicService : IComicService
     {
         private readonly IFileHelper _fileHelper;
         private readonly string _comicFileName = "comics.csv";
@@ -18,8 +18,7 @@ namespace ComicRentalSystem_14Days.Services
         private readonly ILogger _logger;
         private readonly object _comicsLock = new object();
 
-        public delegate void ComicDataChangedEventHandler(object? sender, EventArgs e);
-        public event ComicDataChangedEventHandler? ComicsChanged;
+        public event EventHandler? ComicsChanged;
 
         public async Task ReloadAsync()
         {

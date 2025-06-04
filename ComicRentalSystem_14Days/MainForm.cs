@@ -17,7 +17,7 @@ namespace ComicRentalSystem_14Days
     public partial class MainForm : BaseForm
     {
         private readonly User _currentUser;
-        private readonly ComicService _comicService;
+        private readonly IComicService _comicService;
         private readonly MemberService _memberService;
         private readonly IReloadService _reloadService;
         private readonly ILogger _logger;
@@ -41,7 +41,7 @@ namespace ComicRentalSystem_14Days
 
         public MainForm(
             ILogger logger,
-            ComicService comicService,
+            IComicService comicService,
             MemberService memberService,
             IReloadService reloadService,
             User currentUser

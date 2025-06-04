@@ -14,12 +14,12 @@ namespace ComicRentalSystem_14Days.Controls
         internal Label lblAvailableComicsValue = new Label();
         internal Label lblActiveMembersValue = new Label();
 
-        private readonly ComicService _comicService;
+        private readonly IComicService _comicService;
         private readonly MemberService _memberService;
         private readonly ILogger _logger;
 
         public AdminDashboardUserControl(
-            ComicService comicService,
+            IComicService comicService,
             MemberService memberService,
             ILogger logger
         )
