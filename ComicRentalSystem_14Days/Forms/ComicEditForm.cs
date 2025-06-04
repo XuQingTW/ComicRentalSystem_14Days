@@ -171,9 +171,9 @@ namespace ComicRentalSystem_14Days.Forms
             }
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private async void btnSave_Click(object sender, EventArgs e)
         {
-            btnSave_ClickAsync(sender, e).GetAwaiter().GetResult();
+            await btnSave_ClickAsync(sender, e);
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
