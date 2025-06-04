@@ -146,6 +146,30 @@ namespace ComicRentalSystem_14Days.Services
             }
         }
 
+        private async Task SaveComicsAsync()
+        {
+            _logger.Log($"正在以非同步方式將 {_comics.Count} 本漫畫儲存到檔案: '{_comicFileName}'。");
+            List<Comic> comicsCopy;
+            lock (_comicsLock)
+            {
+                comicsCopy = new List<Comic>(_comics);
+            }
+
+            string content = string.Join(Environment.NewLine, comicsCopy.Select(c => c.ToCsvString()));
+
+            try
+            {
+                await _fileHelper.WriteFileAsync(_comicFileName, content);
+                _logger.Log($"SaveComicsAsync 已成功將 {comicsCopy.Count} 本漫畫寫入 '{_comicFileName}'。");
+                OnComicsChanged();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"SaveComicsAsync: 將漫畫儲存到 '{_comicFileName}' 時發生錯誤。", ex);
+                throw;
+            }
+        }
+
         protected virtual void OnComicsChanged()
         {
             ComicsChanged?.Invoke(this, EventArgs.Empty);
@@ -211,6 +235,44 @@ namespace ComicRentalSystem_14Days.Services
                 _logger.Log($"漫畫 '{comic.Title}' (ID: {comic.Id}) 已新增至記憶體列表。漫畫總數: {_comics.Count}。");
                 SaveComics(); 
             }
+        }
+
+        public async Task AddComicAsync(Comic comic)
+        {
+            if (comic == null)
+            {
+                var ex = new ArgumentNullException(nameof(comic));
+                _logger.LogError("嘗試新增空的漫畫物件。", ex);
+                throw ex;
+            }
+
+            _logger.Log($"(Async) 正在嘗試新增漫畫: 書名='{comic.Title}', 作者='{comic.Author}'。");
+
+            lock (_comicsLock)
+            {
+                if (comic.Id != 0 && _comics.Any(c => c.Id == comic.Id))
+                {
+                    var ex = new InvalidOperationException($"ID為 {comic.Id} 的漫畫已存在。");
+                    _logger.LogError($"新增漫畫失敗: ID {comic.Id} (書名='{comic.Title}') 已存在。", ex);
+                    throw ex;
+                }
+                if (_comics.Any(c => c.Title.Equals(comic.Title, StringComparison.OrdinalIgnoreCase) &&
+                                     c.Author.Equals(comic.Author, StringComparison.OrdinalIgnoreCase)))
+                {
+                    _logger.LogWarning($"書名='{comic.Title}' 且作者='{comic.Author}' 相同的漫畫已存在。繼續新增。");
+                }
+
+                if (comic.Id == 0)
+                {
+                    comic.Id = GetNextIdInternal();
+                    _logger.Log($"已為漫畫 '{comic.Title}' 產生新的ID {comic.Id}。");
+                }
+
+                _comics.Add(comic);
+                _logger.Log($"漫畫 '{comic.Title}' (ID: {comic.Id}) 已新增至記憶體列表。漫畫總數: {_comics.Count}。");
+            }
+
+            await SaveComicsAsync();
         }
 
         public void UpdateComic(Comic comic)

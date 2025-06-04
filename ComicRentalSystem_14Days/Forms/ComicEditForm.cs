@@ -154,7 +154,7 @@ namespace ComicRentalSystem_14Days.Forms
                         IsRented = false,
                         RentedToMemberId = 0
                     };
-                    _comicService.AddComic(newComic);
+                    await _comicService.AddComicAsync(newComic);
                     await _comicService.ReloadAsync();
                     LogActivity($"新漫畫 '{newComic.Title}' (ID: {newComic.Id}) 已成功新增。");
                     MessageBox.Show("漫畫已成功新增。", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
