@@ -10,7 +10,7 @@ using ComicRentalSystem_14Days.Models;
 
 namespace ComicRentalSystem_14Days.Services
 {
-    public class ComicService
+    public class ComicService : IComicService
     {
         private readonly IFileHelper _fileHelper;
         private readonly string _comicFileName = "comics.csv";
@@ -209,8 +209,13 @@ namespace ComicRentalSystem_14Days.Services
 
                 _comics.Add(comic);
                 _logger.Log($"漫畫 '{comic.Title}' (ID: {comic.Id}) 已新增至記憶體列表。漫畫總數: {_comics.Count}。");
-                SaveComics(); 
+                SaveComics();
             }
+        }
+
+        public async Task AddComicAsync(Comic comic)
+        {
+            await Task.Run(() => AddComic(comic));
         }
 
         public void UpdateComic(Comic comic)

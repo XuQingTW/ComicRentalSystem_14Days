@@ -10,7 +10,7 @@ namespace ComicRentalSystem_14Days
     {
         public static ILogger? AppLogger { get; private set; }
         public static FileHelper? AppFileHelper { get; private set; }
-        public static ComicService? AppComicService { get; private set; }
+        public static IComicService? AppComicService { get; private set; }
         public static MemberService? AppMemberService { get; private set; }
         public static IReloadService? AppReloadService { get; private set; }
         public static AuthenticationService? AppAuthService { get; private set; }
@@ -30,7 +30,7 @@ namespace ComicRentalSystem_14Days
             if (AppFileHelper != null && AppLogger != null)
             {
                 AppComicService = new ComicService(AppFileHelper, AppLogger);
-                AppMemberService = new MemberService(AppFileHelper, AppLogger, AppComicService); 
+                AppMemberService = new MemberService(AppFileHelper, AppLogger, AppComicService);
                 AppAuthService = new AuthenticationService(AppFileHelper, AppLogger);
                 AppAuthService.EnsureAdminUserExists("admin", "admin123");
             }

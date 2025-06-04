@@ -1,5 +1,4 @@
 ﻿using ComicRentalSystem_14Days.Models;
-using ComicRentalSystem_14Days.Services;
 using ComicRentalSystem_14Days.Interfaces;
 using System;
 using System.IO;
@@ -9,7 +8,7 @@ namespace ComicRentalSystem_14Days.Forms
 {
     public partial class ComicEditForm : ComicRentalSystem_14Days.BaseForm
     {
-        private readonly ComicService? _comicService;
+        private readonly IComicService? _comicService;
         private Comic? _editableComic;
         private bool _isEditMode;
         private readonly User? _currentUser;
@@ -25,7 +24,7 @@ namespace ComicRentalSystem_14Days.Forms
             }
         }
 
-        public ComicEditForm(Comic? comicToEdit, ComicService comicService, ILogger logger, User? currentUser = null) : this()
+        public ComicEditForm(Comic? comicToEdit, IComicService comicService, ILogger logger, User? currentUser = null) : this()
         {
             base.SetLogger(logger);
 

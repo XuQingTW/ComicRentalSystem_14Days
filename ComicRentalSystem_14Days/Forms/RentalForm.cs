@@ -1,8 +1,7 @@
 ﻿using ComicRentalSystem_14Days.Interfaces;
 using ComicRentalSystem_14Days.Models; 
-using ComicRentalSystem_14Days.Services;
 using System;
-using System.Collections.Generic; 
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,7 +11,7 @@ namespace ComicRentalSystem_14Days.Forms
 {
     public partial class RentalForm : BaseForm
     {
-        private readonly ComicService? _comicService;
+        private readonly IComicService? _comicService;
         private readonly MemberService? _memberService;
         private readonly IReloadService? _reloadService;
 
@@ -22,7 +21,7 @@ namespace ComicRentalSystem_14Days.Forms
         }
 
         public RentalForm(
-            ComicService comicService,
+            IComicService comicService,
             MemberService memberService,
             ILogger logger,
             IReloadService reloadService
@@ -84,7 +83,7 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (_comicService == null || _memberService == null) return;
 
-            LogActivity($"從 {(sender is ComicService ? "ComicService" : "MemberService")} 收到資料變更事件。正在更新UI。");
+            LogActivity($"從 {(sender is IComicService ? "ComicService" : "MemberService")} 收到資料變更事件。正在更新UI。");
             if (this.IsHandleCreated && !this.IsDisposed)
             {
                 if (this.InvokeRequired)
