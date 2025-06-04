@@ -249,7 +249,7 @@ namespace ComicRentalSystem_14Days.Services
 
                 _comics.Add(comic);
                 _logger.Log($"漫畫 '{comic.Title}' (ID: {comic.Id}) 已新增至記憶體列表。漫畫總數: {_comics.Count}。");
-                SaveComics(); 
+                SaveComics();
             }
         }
 

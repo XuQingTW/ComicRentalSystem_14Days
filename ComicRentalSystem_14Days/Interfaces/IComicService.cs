@@ -1,22 +1,19 @@
 
-using System;
+using ComicRentalSystem_14Days.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ComicRentalSystem_14Days.Models;
 
 namespace ComicRentalSystem_14Days.Interfaces
 {
-    public delegate void ComicDataChangedEventHandler(object? sender, EventArgs e);
-
     public interface IComicService
     {
-        event ComicDataChangedEventHandler? ComicsChanged;
+        event Services.ComicService.ComicDataChangedEventHandler? ComicsChanged;
 
         Task ReloadAsync();
-
         List<Comic> GetAllComics();
         Comic? GetComicById(int id);
         void AddComic(Comic comic);
+        Task AddComicAsync(Comic comic);
         void UpdateComic(Comic comic);
         void DeleteComic(int id);
         List<Comic> GetComicsByGenre(string genreFilter);
