@@ -21,7 +21,7 @@ namespace ComicRentalSystem_14Days
         {
             ApplicationConfiguration.Initialize();
 
-            AppLogger = new FileLogger("ComicRentalSystemLog.txt");
+            AppLogger = new FileLogger();
             AppLogger.Log("應用程式啟動中...");
 
             AppFileHelper = new FileHelper();
