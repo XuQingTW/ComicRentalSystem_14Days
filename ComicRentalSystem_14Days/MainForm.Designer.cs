@@ -44,7 +44,6 @@ namespace ComicRentalSystem_14Days
         private TextBox txtSearchAvailableComics;
         private ComboBox cmbGenreFilter;
 
-        private Button btnRentComic;               // 會員畫面下方的「租借漫畫」按鈕
         private Label lblMyRentedComicsHeader;
         private DataGridView dgvMyRentedComics;
 
@@ -97,7 +96,6 @@ namespace ComicRentalSystem_14Days
             mainContentPanel = new Panel();
             memberViewTabControl = new TabControl();
             availableComicsTabPage = new TabPage();
-            btnRentComic = new Button();
             availableComicsFilterPanel = new Panel();
             txtSearchAvailableComics = new TextBox();
             cmbGenreFilter = new ComboBox();
@@ -334,7 +332,6 @@ namespace ComicRentalSystem_14Days
             // 
             availableComicsTabPage.BackColor = Color.White;
             availableComicsTabPage.Controls.Add(dgvAvailableComics);
-            availableComicsTabPage.Controls.Add(btnRentComic);
             availableComicsTabPage.Controls.Add(lblAvailableComics);
             availableComicsTabPage.Controls.Add(availableComicsFilterPanel);
             availableComicsTabPage.Location = new Point(4, 29);
@@ -345,18 +342,6 @@ namespace ComicRentalSystem_14Days
             availableComicsTabPage.TabIndex = 0;
             availableComicsTabPage.Text = "可租借漫畫";
             // 
-            // btnRentComic
-            // 
-            btnRentComic.Dock = DockStyle.Bottom;
-            btnRentComic.Location = new Point(9, 713);
-            btnRentComic.Margin = new Padding(3, 4, 3, 4);
-            btnRentComic.Name = "btnRentComic";
-            btnRentComic.Size = new Size(1082, 43);
-            btnRentComic.TabIndex = 5;
-            btnRentComic.Text = "租借漫畫";
-            btnRentComic.UseVisualStyleBackColor = true;
-            btnRentComic.Visible = false;
-            btnRentComic.Click += btnRentComic_Click;
             // 
             // availableComicsFilterPanel
             // 
