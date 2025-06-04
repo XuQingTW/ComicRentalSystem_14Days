@@ -12,7 +12,7 @@ namespace ComicRentalSystem_14Days.Forms
 {
     public partial class RentalForm : BaseForm
     {
-        private readonly ComicService? _comicService;
+        private readonly IComicService? _comicService;
         private readonly MemberService? _memberService;
         private readonly IReloadService? _reloadService;
 
@@ -22,7 +22,7 @@ namespace ComicRentalSystem_14Days.Forms
         }
 
         public RentalForm(
-            ComicService comicService,
+            IComicService comicService,
             MemberService memberService,
             ILogger logger,
             IReloadService reloadService
@@ -32,7 +32,7 @@ namespace ComicRentalSystem_14Days.Forms
 
             _comicService = comicService ?? throw new ArgumentNullException(nameof(comicService));
             _memberService = memberService ?? throw new ArgumentNullException(nameof(memberService));
-            _reloadService = reloadService ?? throw new ArgumentException(nameof(reloadService));
+            _reloadService = reloadService ?? throw new ArgumentNullException(nameof(reloadService));
 
             if (_comicService != null)
             {
