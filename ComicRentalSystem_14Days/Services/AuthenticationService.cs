@@ -43,7 +43,7 @@ namespace ComicRentalSystem_14Days.Services
         public User? GetUserByUsername(string username)
         {
             _logger.Log($"正在嘗試透過使用者名稱擷取使用者: {username}");
-            User? user = _context.Users.FirstOrDefault(u => u.Username.ToUpperInvariant() == username.ToUpperInvariant());
+            User? user = _context.Users.FirstOrDefault(u => u.Username.ToLower() == username.ToLower());
           
             if (user == null)
             {
@@ -99,7 +99,7 @@ namespace ComicRentalSystem_14Days.Services
         public User? Login(string username, string password)
         {
             _logger.Log($"使用者名稱登入嘗試: {username}");
-            User? user = _context.Users.FirstOrDefault(u => u.Username.ToUpperInvariant() == username.ToUpperInvariant());
+            User? user = _context.Users.FirstOrDefault(u => u.Username.ToLower() == username.ToLower());
 
             if (user == null)
             {
@@ -167,7 +167,7 @@ namespace ComicRentalSystem_14Days.Services
         public bool DeleteUser(string username)
         {
             _logger.Log($"正在嘗試刪除使用者: {username}"); 
-            User? userToDelete = _context.Users.FirstOrDefault(u => u.Username.ToUpperInvariant() == username.ToUpperInvariant());
+            User? userToDelete = _context.Users.FirstOrDefault(u => u.Username.ToLower() == username.ToLower());
 
             if (userToDelete != null)
             {
