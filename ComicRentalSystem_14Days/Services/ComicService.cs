@@ -12,7 +12,6 @@ namespace ComicRentalSystem_14Days.Services
 
     public class ComicService : IComicService
     {
-        private readonly ComicRentalDbContext _context;
         private readonly ILogger _logger;
 
         public event ComicDataChangedEventHandler? ComicsChanged;
@@ -26,11 +25,15 @@ namespace ComicRentalSystem_14Days.Services
             await Task.CompletedTask; // Placeholder if no other async work
         }
 
-        public ComicService(ComicRentalDbContext context, ILogger logger)
+        public ComicService(ILogger logger)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger), "ComicService logger cannot be null.");
-            _logger.Log("ComicService initialized with ComicRentalDbContext.");
+            _logger.Log("ComicService initialized.");
+        }
+
+        private ComicRentalDbContext CreateContext()
+        {
+            return new ComicRentalDbContext();
         }
 
         protected virtual void OnComicsChanged()
@@ -42,13 +45,15 @@ namespace ComicRentalSystem_14Days.Services
         public List<Comic> GetAllComics()
         {
             _logger.Log("GetAllComics called.");
-            return _context.Comics.OrderBy(c => c.Title).ToList();
+            using var context = CreateContext();
+            return context.Comics.OrderBy(c => c.Title).ToList();
         }
 
         public Comic? GetComicById(int id)
         {
             _logger.Log($"GetComicById called for ID: {id}.");
-            var comic = _context.Comics.Find(id);
+            using var context = CreateContext();
+            var comic = context.Comics.Find(id);
             if (comic == null)
             {
                 _logger.Log($"Comic with ID: {id} not found.");
@@ -80,23 +85,24 @@ namespace ComicRentalSystem_14Days.Services
             }
 
             _logger.Log($"Attempting to add comic: Title='{comic.Title}'. ID will be DB-generated if {comic.Id} is 0.");
-            _context.Comics.Add(comic);
+            using var context = CreateContext();
+            context.Comics.Add(comic);
             try
             {
-                if (comic.Id != 0 && _context.Comics.Any(c => c.Id == comic.Id))
+                if (comic.Id != 0 && context.Comics.Any(c => c.Id == comic.Id))
                 {
                     var ex = new InvalidOperationException($"ID為 {comic.Id} 的漫畫已存在。");
                     _logger.LogError($"新增漫畫失敗: ID {comic.Id} (書名='{comic.Title}') 已存在。", ex);
                     throw ex;
                 }
-                if (_context.Comics.Any(c =>
+                if (context.Comics.Any(c =>
                         c.Title.ToUpperInvariant() == comic.Title.ToUpperInvariant() &&
                         c.Author.ToUpperInvariant() == comic.Author.ToUpperInvariant()))
                 {
                     _logger.LogWarning($"書名='{comic.Title}' 且作者='{comic.Author}' 相同的漫畫已存在。繼續新增。");
                 }
 
-                _context.SaveChanges();
+                context.SaveChanges();
                 _logger.Log($"Comic '{comic.Title}' (ID: {comic.Id}) added to database.");
                 OnComicsChanged();
             }
@@ -126,10 +132,11 @@ namespace ComicRentalSystem_14Days.Services
             }
 
             _logger.Log($"Attempting to add comic asynchronously: Title='{comic.Title}'.");
-            _context.Comics.Add(comic); // comic.Id will be handled by DB if 0
+            await using var context = CreateContext();
+            context.Comics.Add(comic); // comic.Id will be handled by DB if 0
             try
             {
-                await _context.SaveChangesAsync();
+                await context.SaveChangesAsync();
                 _logger.Log($"Comic '{comic.Title}' (ID: {comic.Id}) added to database asynchronously.");
                 OnComicsChanged();
             }
@@ -150,7 +157,8 @@ namespace ComicRentalSystem_14Days.Services
             }
 
             _logger.Log($"Attempting to update comic ID: {comic.Id} (Title='{comic.Title}').");
-            var existingComic = _context.Comics.Find(comic.Id);
+            using var context = CreateContext();
+            var existingComic = context.Comics.Find(comic.Id);
             if (existingComic == null)
             {
                 var ex = new InvalidOperationException($"Cannot update: Comic with ID {comic.Id} not found.");
@@ -158,11 +166,11 @@ namespace ComicRentalSystem_14Days.Services
                 throw ex;
             }
 
-            _context.Entry(existingComic).CurrentValues.SetValues(comic);
+            context.Entry(existingComic).CurrentValues.SetValues(comic);
 
             try
             {
-                _context.SaveChanges();
+                context.SaveChanges();
                 _logger.Log($"Comic ID: {existingComic.Id} updated in database.");
                 OnComicsChanged();
             }
@@ -176,7 +184,8 @@ namespace ComicRentalSystem_14Days.Services
         public void DeleteComic(int id)
         {
             _logger.Log($"Attempting to delete comic with ID: {id}.");
-            var comicToRemove = _context.Comics.Find(id);
+            using var context = CreateContext();
+            var comicToRemove = context.Comics.Find(id);
             if (comicToRemove == null)
             {
                 var ex = new InvalidOperationException($"Cannot delete: Comic with ID {id} not found.");
@@ -190,10 +199,10 @@ namespace ComicRentalSystem_14Days.Services
                 throw new InvalidOperationException("Cannot delete a comic that is currently rented.");
             }
 
-            _context.Comics.Remove(comicToRemove);
+            context.Comics.Remove(comicToRemove);
             try
             {
-                _context.SaveChanges();
+                context.SaveChanges();
                 _logger.Log($"Comic ID: {id} deleted from database.");
                 OnComicsChanged();
             }
@@ -209,12 +218,14 @@ namespace ComicRentalSystem_14Days.Services
             if (string.IsNullOrWhiteSpace(genreFilter))
             {
                 _logger.Log("GetComicsByGenre called with empty or whitespace genreFilter, returning all comics ordered by Title.");
-                return _context.Comics.OrderBy(c => c.Title).ToList();
+                using var context = CreateContext();
+                return context.Comics.OrderBy(c => c.Title).ToList();
             }
             else
             {
                 _logger.Log($"GetComicsByGenre called for genre: '{genreFilter}'.");
-                var filteredComics = _context.Comics
+                using var context = CreateContext();
+                var filteredComics = context.Comics
                                    .Where(c => c.Genre != null && c.Genre.Equals(genreFilter, StringComparison.OrdinalIgnoreCase))
                                    .OrderBy(c => c.Title)
                                    .ToList();
@@ -226,7 +237,8 @@ namespace ComicRentalSystem_14Days.Services
         public List<Comic> SearchComics(string? searchTerm = null)
         {
             _logger.Log($"SearchComics called with searchTerm: '{searchTerm ?? "N/A"}'.");
-            var query = _context.Comics.AsQueryable();
+            using var context = CreateContext();
+            var query = context.Comics.AsQueryable();
 
             if (string.IsNullOrWhiteSpace(searchTerm))
             {
