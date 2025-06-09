@@ -1,15 +1,15 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ASUS\\Source\\Repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj": {}
+    "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ASUS\\Source\\Repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj": {
+    "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ASUS\\Source\\Repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj",
+        "projectUniqueName": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj",
         "projectName": "ComicRentalSystem_14Days",
-        "projectPath": "C:\\Users\\ASUS\\Source\\Repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj",
+        "projectPath": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj",
         "packagesPath": "C:\\Users\\ASUS\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\ASUS\\Source\\Repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\obj\\",
         "projectStyle": "PackageReference",

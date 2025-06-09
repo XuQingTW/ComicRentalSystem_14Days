@@ -3,12 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\asus\\source\\repos\\comicrentalsystem_14days\\comicrentalsystem_14days\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\asus\\source\\repos\\comicrentalsystem_14days\\comicrentalsystem_14days\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\asus\\source\\repos\\comicrentalsystem_14days\\comicrentalsystem_14days\\services\\authenticationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\services\\authenticationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\asus\\source\\repos\\comicrentalsystem_14days\\comicrentalsystem_14days\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|c:\\users\\asus\\source\\repos\\comicrentalsystem_14days\\comicrentalsystem_14days\\mainform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{76A88E66-AB0D-4D34-AC97-BD5532ECDC38}|ComicRentalSystem_14Days\\ComicRentalSystem_14Days.csproj|solutionrelative:comicrentalsystem_14days\\mainform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,7 +26,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Bookmark",
@@ -30,7 +38,32 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 3,
+              "Title": "MainForm.Designer.cs",
+              "DocumentMoniker": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\MainForm.Designer.cs",
+              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\MainForm.Designer.cs",
+              "ToolTip": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\MainForm.Designer.cs",
+              "RelativeToolTip": "ComicRentalSystem_14Days\\MainForm.Designer.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-09T12:38:47.452Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "MainForm.cs [\u8A2D\u8A08]",
+              "DocumentMoniker": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\MainForm.cs",
+              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\MainForm.cs",
+              "ToolTip": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\MainForm.cs [\u8A2D\u8A08]",
+              "RelativeToolTip": "ComicRentalSystem_14Days\\MainForm.cs [\u8A2D\u8A08]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-09T12:38:48.063Z",
+              "EditorCaption": " [\u8A2D\u8A08]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "AuthenticationService.cs",
               "DocumentMoniker": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Services\\AuthenticationService.cs",
               "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Services\\AuthenticationService.cs",
@@ -43,13 +76,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "MainForm.cs",
               "DocumentMoniker": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\MainForm.cs",
               "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\MainForm.cs",
               "ToolTip": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\MainForm.cs",
               "RelativeToolTip": "ComicRentalSystem_14Days\\MainForm.cs",
-              "ViewState": "AgIAALkBAAAAAAAAAAAAACUBAAANAAAAAAAAAA==",
+              "ViewState": "AgIAAD4EAAAAAAAAAAAuwE4EAABEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-06-03T02:48:41.459Z",
               "EditorCaption": ""
