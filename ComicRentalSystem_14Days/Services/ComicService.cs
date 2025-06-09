@@ -1,177 +1,61 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO; 
 using System.Linq;
-using System.Threading.Tasks; 
-using System.Windows.Forms; 
-using ComicRentalSystem_14Days.Helpers;
+using System.Threading.Tasks;
 using ComicRentalSystem_14Days.Interfaces;
 using ComicRentalSystem_14Days.Models;
+using Microsoft.EntityFrameworkCore; // For DbUpdateException
 
 namespace ComicRentalSystem_14Days.Services
 {
-    public class ComicService
-    {
-        private readonly IFileHelper _fileHelper;
-        private readonly string _comicFileName = "comics.csv";
-        private List<Comic> _comics = new List<Comic>();
-        private readonly ILogger _logger;
-        private readonly object _comicsLock = new object();
+    public delegate void ComicDataChangedEventHandler(object? sender, EventArgs e);
 
-        public delegate void ComicDataChangedEventHandler(object? sender, EventArgs e);
+    public class ComicService : IComicService
+    {
+        private readonly ComicRentalDbContext _context;
+        private readonly ILogger _logger;
+
         public event ComicDataChangedEventHandler? ComicsChanged;
 
         public async Task ReloadAsync()
         {
-            _logger.Log("ComicService 要求非同步重新載入。");
-            List<Comic> loadedComics = await InternalLoadComicsAsync();
-            lock (_comicsLock)
-            {
-                _comics = loadedComics;
-            }
-            OnComicsChanged();
-            _logger.Log($"ComicService 已非同步重新載入。已載入 {_comics.Count} 本漫畫。");
+            _logger.Log("ComicService ReloadAsync requested. Data is now live from DB.");
+            // Potentially, this could re-query or refresh some view if needed,
+            // but with direct DB access, explicit reload is less critical for the service itself.
+            OnComicsChanged(); // Notify listeners that data *might* have changed or a refresh is requested
+            await Task.CompletedTask; // Placeholder if no other async work
         }
 
-        public ComicService(IFileHelper fileHelper, ILogger? logger) 
+        public ComicService(ComicRentalDbContext context, ILogger logger)
         {
-            _fileHelper = fileHelper ?? throw new ArgumentNullException(nameof(fileHelper));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger), "ComicService 的記錄器不可為空。");
-
-            _logger.Log("ComicService 初始化中。");
-
-            LoadComicsFromFile(); 
-            _logger.Log($"ComicService 初始化完成。已載入 {_comics.Count} 本漫畫。");
-        }
-
-        private void LoadComicsFromFile()
-        {
-            _logger.Log($"正在嘗試從檔案載入漫畫 (同步): '{_comicFileName}'。 (Existing log for context)");
-            lock (_comicsLock)
-            {
-                _logger.Log($"LoadComicsFromFile [Before Read]: Attempting to read from file '{_comicFileName}'. Full path: '{_fileHelper.GetFullFilePath(_comicFileName)}'.");
-                try
-                {
-                    _comics = _fileHelper.ReadFile<Comic>(_comicFileName, Comic.FromCsvString);
-                    _logger.Log($"LoadComicsFromFile [After Read]: Successfully read and parsed. Loaded {_comics.Count} comics from '{_comicFileName}'.");
-                    _logger.Log($"成功從 '{_comicFileName}' (同步) 載入 {_comics.Count} 本漫畫。 (Existing log for context)");
-                }
-                catch (Exception ex) when (ex is FormatException || ex is IOException)
-                {
-                    _logger.LogError($"嚴重錯誤: 漫畫資料檔案 '{_comicFileName}' (同步) 已損壞或無法讀取。Full path: '{_fileHelper.GetFullFilePath(_comicFileName)}'. 詳細資訊: {ex.Message}", ex);
-                    throw new ApplicationException($"無法從 '{_comicFileName}' (同步) 載入漫畫資料。應用程式可能無法正常運作。", ex);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"從 '{_comicFileName}' (同步) 載入漫畫時發生未預期的錯誤。Full path: '{_fileHelper.GetFullFilePath(_comicFileName)}'. 詳細資訊: {ex.Message}", ex);
-                    throw new ApplicationException("載入漫畫資料期間 (同步) 發生未預期錯誤。", ex);
-                }
-            }
-        }
-
-        private async Task<List<Comic>> InternalLoadComicsAsync()
-        {
-            _logger.Log($"正在嘗試從檔案非同步載入漫畫: '{_comicFileName}'。 (Existing log for context)");
-            try
-            {
-                _logger.Log($"InternalLoadComicsAsync [Before Read]: Attempting to read from file '{_comicFileName}'. Full path: '{_fileHelper.GetFullFilePath(_comicFileName)}'.");
-                string csvData = await _fileHelper.ReadFileAsync(_comicFileName);
-                
-               
-                _logger.Log($"InternalLoadComicsAsync [Raw Data]: Read from '{_comicFileName}'. Full path: '{_fileHelper.GetFullFilePath(_comicFileName)}'. Data: '{csvData.Replace("\r", "\\r").Replace("\n", "\\n")}'.");
-
-                if (string.IsNullOrWhiteSpace(csvData))
-                {
-                    _logger.Log($"漫畫檔案 '{_comicFileName}' (非同步) 為空或找不到。Full path: '{_fileHelper.GetFullFilePath(_comicFileName)}'. (Enhanced log)");
-                    return new List<Comic>();
-                }
-
-                var comicsList = new List<Comic>();
-                var lines = csvData.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (var line in lines)
-                {
-                    if (string.IsNullOrWhiteSpace(line)) continue;
-                    try
-                    {
-                        comicsList.Add(Comic.FromCsvString(line));
-                    }
-                    catch (FormatException formatEx)
-                    {
-                 
-                        _logger.LogError($"解析行失敗 (非同步) for file '{_comicFileName}' (Full path: '{_fileHelper.GetFullFilePath(_comicFileName)}'): '{line}'. 錯誤: {formatEx.Message}", formatEx);
-                    }
-                }
-                _logger.Log($"成功從 '{_comicFileName}' (非同步) 載入並解析 {comicsList.Count} 本漫畫。 (Existing log for context)");
-                return comicsList;
-            }
-            catch (FileNotFoundException)
-            {
-                _logger.LogWarning($"漫畫檔案 '{_comicFileName}' (非同步) 找不到。Full path: '{_fileHelper.GetFullFilePath(_comicFileName)}'. 返回空列表。 (Enhanced log)");
-                return new List<Comic>();
-            }
-            catch (IOException ioEx)
-            {
-                _logger.LogError($"讀取漫畫檔案 '{_comicFileName}' (非同步) 時發生IO錯誤: {ioEx.Message}. Full path: '{_fileHelper.GetFullFilePath(_comicFileName)}'. (Enhanced log)", ioEx);
-                return new List<Comic>(); 
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"從 '{_comicFileName}' (非同步) 載入漫畫時發生未預期的錯誤: {ex.Message}. Full path: '{_fileHelper.GetFullFilePath(_comicFileName)}'. (Enhanced log)", ex);
-                return new List<Comic>();
-            }
-        }
-
-        private void SaveComics()
-        {
-            _logger.Log($"正在嘗試將 {_comics.Count} 本漫畫儲存到檔案: '{_comicFileName}'。 (Existing log for context)"); 
-            lock (_comicsLock)
-            {
-                _logger.Log($"SaveComics [Before Write]: Preparing to write {_comics.Count} comics to file '{_comicFileName}'. Full path: '{_fileHelper.GetFullFilePath(_comicFileName)}'.");
-                
-                try
-                {
-                    _fileHelper.WriteFile<Comic>(_comicFileName, _comics, comic => comic.ToCsvString());
-                    
-                    _logger.Log($"SaveComics [After Write]: Successfully called _fileHelper.WriteFile for '{_comicFileName}' with {_comics.Count} comics.");
-                    
-                    OnComicsChanged(); 
-
-                    _logger.Log($"已成功將 {_comics.Count} 本漫畫儲存到 '{_comicFileName}'。 (Existing log for context)");
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"將漫畫儲存到 '{_comicFileName}' 時發生錯誤。 Full path: '{_fileHelper.GetFullFilePath(_comicFileName)}'.", ex);
-                    throw;
-                }
-            }
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger), "ComicService logger cannot be null.");
+            _logger.Log("ComicService initialized with ComicRentalDbContext.");
         }
 
         protected virtual void OnComicsChanged()
         {
             ComicsChanged?.Invoke(this, EventArgs.Empty);
-            _logger.Log("已觸發 ComicsChanged 事件。");
+            _logger.Log("ComicsChanged event triggered.");
         }
 
         public List<Comic> GetAllComics()
         {
-            _logger.Log("已呼叫 GetAllComics。");
-            lock (_comicsLock)
-            {
-                return new List<Comic>(_comics);
-            }
+            _logger.Log("GetAllComics called.");
+            return _context.Comics.OrderBy(c => c.Title).ToList();
         }
 
         public Comic? GetComicById(int id)
         {
-            _logger.Log($"已為ID: {id} 呼叫 GetComicById。");
-            Comic? comic = _comics.FirstOrDefault(c => c.Id == id);
+            _logger.Log($"GetComicById called for ID: {id}.");
+            var comic = _context.Comics.Find(id);
             if (comic == null)
             {
-                _logger.Log($"找不到ID為: {id} 的漫畫。");
+                _logger.Log($"Comic with ID: {id} not found.");
             }
             else
             {
-                _logger.Log($"找到ID為: {id} 的漫畫: 書名='{comic.Title}'。");
+                _logger.Log($"Comic with ID: {id} found: Title='{comic.Title}'.");
             }
             return comic;
         }
@@ -181,13 +65,23 @@ namespace ComicRentalSystem_14Days.Services
             if (comic == null)
             {
                 var ex = new ArgumentNullException(nameof(comic));
-                _logger.LogError("嘗試新增空的漫畫物件。", ex);
+                _logger.LogError("Attempted to add a null comic object.", ex);
                 throw ex;
             }
 
-            _logger.Log($"正在嘗試新增漫畫: 書名='{comic.Title}', 作者='{comic.Author}'。");
+            if (string.IsNullOrWhiteSpace(comic.Title) ||
+                string.IsNullOrWhiteSpace(comic.Author) ||
+                string.IsNullOrWhiteSpace(comic.Isbn) ||
+                string.IsNullOrWhiteSpace(comic.Genre))
+            {
+                var ex = new ArgumentException("Comic's essential information cannot be empty.", nameof(comic));
+                _logger.LogError("AddComic failed: Essential information missing.", ex);
+                throw ex;
+            }
 
-            lock (_comicsLock)
+            _logger.Log($"Attempting to add comic: Title='{comic.Title}'. ID will be DB-generated if {comic.Id} is 0.");
+            _context.Comics.Add(comic);
+            try
             {
                 if (comic.Id != 0 && _comics.Any(c => c.Id == comic.Id))
                 {
@@ -202,15 +96,36 @@ namespace ComicRentalSystem_14Days.Services
                     _logger.LogWarning($"書名='{comic.Title}' 且作者='{comic.Author}' 相同的漫畫已存在。繼續新增。");
                 }
 
-                if (comic.Id == 0)
-                {
-                    comic.Id = GetNextIdInternal();
-                    _logger.Log($"已為漫畫 '{comic.Title}' 產生新的ID {comic.Id}。");
-                }
+        public async Task AddComicAsync(Comic comic)
+        {
+            if (comic == null)
+            {
+                var ex = new ArgumentNullException(nameof(comic));
+                _logger.LogError("Attempted to add a null comic object asynchronously.", ex);
+                throw ex;
+            }
+            if (string.IsNullOrWhiteSpace(comic.Title) ||
+                string.IsNullOrWhiteSpace(comic.Author) ||
+                string.IsNullOrWhiteSpace(comic.Isbn) ||
+                string.IsNullOrWhiteSpace(comic.Genre))
+            {
+                var ex = new ArgumentException("Comic's essential information cannot be empty for async add.", nameof(comic));
+                _logger.LogError("AddComicAsync failed: Essential information missing.", ex);
+                throw ex;
+            }
 
-                _comics.Add(comic);
-                _logger.Log($"漫畫 '{comic.Title}' (ID: {comic.Id}) 已新增至記憶體列表。漫畫總數: {_comics.Count}。");
-                SaveComics(); 
+            _logger.Log($"Attempting to add comic asynchronously: Title='{comic.Title}'.");
+            _context.Comics.Add(comic); // comic.Id will be handled by DB if 0
+            try
+            {
+                await _context.SaveChangesAsync();
+                _logger.Log($"Comic '{comic.Title}' (ID: {comic.Id}) added to database asynchronously.");
+                OnComicsChanged();
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError($"Error adding comic '{comic.Title}' asynchronously to database.", ex);
+                throw new InvalidOperationException($"Could not add comic asynchronously. Possible constraint violation.", ex);
             }
         }
 
@@ -219,66 +134,63 @@ namespace ComicRentalSystem_14Days.Services
             if (comic == null)
             {
                 var ex = new ArgumentNullException(nameof(comic));
-                _logger.LogError("嘗試使用空的漫畫物件進行更新。", ex);
+                _logger.LogError("Attempted to update with a null comic object.", ex);
                 throw ex;
             }
 
-            _logger.Log($"正在嘗試更新ID為: {comic.Id} (書名='{comic.Title}') 的漫畫。");
-
-            lock (_comicsLock)
+            _logger.Log($"Attempting to update comic ID: {comic.Id} (Title='{comic.Title}').");
+            var existingComic = _context.Comics.Find(comic.Id);
+            if (existingComic == null)
             {
-                Comic? existingComic = _comics.FirstOrDefault(c => c.Id == comic.Id);
-                if (existingComic == null)
-                {
-                    var ex = new InvalidOperationException($"找不到ID為 {comic.Id} 的漫畫進行更新。");
-                    _logger.LogError($"更新漫畫失敗: 找不到ID {comic.Id} (書名='{comic.Title}')。", ex);
-                    throw ex;
-                }
+                var ex = new InvalidOperationException($"Cannot update: Comic with ID {comic.Id} not found.");
+                _logger.LogError(ex.Message, ex);
+                throw ex;
+            }
 
-                existingComic.Title = comic.Title;
-                existingComic.Author = comic.Author;
-                existingComic.Isbn = comic.Isbn;
-                existingComic.Genre = comic.Genre;
-                existingComic.IsRented = comic.IsRented;
-                existingComic.RentedToMemberId = comic.RentedToMemberId;
-                _logger.Log($"ID {comic.Id} (書名='{existingComic.Title}') 的漫畫屬性已在記憶體中更新。");
+            _context.Entry(existingComic).CurrentValues.SetValues(comic);
 
-                SaveComics(); 
-                _logger.Log($"ID為: {comic.Id} (書名='{existingComic.Title}') 的漫畫更新已保存到檔案。");
+            try
+            {
+                _context.SaveChanges();
+                _logger.Log($"Comic ID: {existingComic.Id} updated in database.");
+                OnComicsChanged();
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError($"Error updating comic ID: {existingComic.Id} in database.", ex);
+                throw new InvalidOperationException($"Could not update comic. Possible constraint violation.", ex);
             }
         }
 
         public void DeleteComic(int id)
         {
-            _logger.Log($"正在嘗試刪除ID為: {id} 的漫畫。");
-            lock (_comicsLock)
+            _logger.Log($"Attempting to delete comic with ID: {id}.");
+            var comicToRemove = _context.Comics.Find(id);
+            if (comicToRemove == null)
             {
-                Comic? comicToRemove = _comics.FirstOrDefault(c => c.Id == id);
-
-                if (comicToRemove == null)
-                {
-                    var ex = new InvalidOperationException($"找不到ID為 {id} 的漫畫進行刪除。");
-                    _logger.LogError($"刪除漫畫失敗: 找不到ID {id}。", ex);
-                    throw ex;
-                }
-
-                if (comicToRemove.IsRented)
-                {
-                    _logger.LogWarning($"已阻止刪除已租借的漫畫ID {id} ('{comicToRemove.Title}')。由會員ID: {comicToRemove.RentedToMemberId} 租借。");
-                    throw new InvalidOperationException("無法刪除漫畫: 漫畫目前已租借。");
-                }
-
-                _comics.Remove(comicToRemove);
-                _logger.Log($"漫畫 '{comicToRemove.Title}' (ID: {id}) 已從記憶體列表移除。漫畫總數: {_comics.Count}。");
-                SaveComics(); 
+                var ex = new InvalidOperationException($"Cannot delete: Comic with ID {id} not found.");
+                _logger.LogWarning(ex.Message);
+                throw ex;
             }
-        }
 
-        private int GetNextIdInternal()
-        {
-            int nextId = !_comics.Any() ? 1 : _comics.Max(c => c.Id) + 1;
-            _logger.Log($"下一個可用的漫畫ID已確定為: {nextId}。");
-            return nextId;
+            if (comicToRemove.IsRented)
+            {
+                _logger.LogWarning($"Attempt to delete rented comic ID {id} ('{comicToRemove.Title}') was blocked.");
+                throw new InvalidOperationException("Cannot delete a comic that is currently rented.");
+            }
+
+            _context.Comics.Remove(comicToRemove);
+            try
+            {
+                _context.SaveChanges();
+                _logger.Log($"Comic ID: {id} deleted from database.");
+                OnComicsChanged();
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError($"Error deleting comic ID: {id} from database.", ex);
+                throw new InvalidOperationException($"Could not delete comic. It might be in use or a DB error occurred.", ex);
+            }
         }
 
         public List<Comic> GetComicsByGenre(string genreFilter)
@@ -297,17 +209,22 @@ namespace ComicRentalSystem_14Days.Services
                 _logger.Log($"找到 {filteredComics.Count} 本類型為 '{genreFilter}' 的漫畫。");
                 return filteredComics;
             }
+            _logger.Log($"GetComicsByGenre called for genre: '{genreFilter}'.");
+            return _context.Comics
+                           .Where(c => c.Genre.Equals(genreFilter, StringComparison.OrdinalIgnoreCase))
+                           .OrderBy(c => c.Title)
+                           .ToList();
         }
 
-        public List<Comic> SearchComics(string? searchTerm = null) 
+        public List<Comic> SearchComics(string? searchTerm = null)
         {
-            _logger.Log($"已呼叫 SearchComics，搜尋詞: '{searchTerm ?? "N/A"}'。");
-            var query = _comics.AsQueryable();
+            _logger.Log($"SearchComics called with searchTerm: '{searchTerm ?? "N/A"}'.");
+            var query = _context.Comics.AsQueryable();
 
             if (string.IsNullOrWhiteSpace(searchTerm))
             {
-                _logger.Log("搜尋詞為空，返回所有漫畫。");
-                return _comics.ToList();
+                _logger.Log("SearchTerm is empty, returning all comics ordered by Title.");
+                return query.OrderBy(c => c.Title).ToList();
             }
 
             string searchUpper = searchTerm.ToUpperInvariant();
@@ -318,17 +235,17 @@ namespace ComicRentalSystem_14Days.Services
                 (c.Genre != null && c.Genre.ToUpperInvariant().Contains(searchUpper)) ||
                 (c.Id.ToString().Equals(searchTerm))
             );
-            _logger.Log($"已套用搜尋詞: '{searchTerm}'。");
+            _logger.Log($"Search term '{searchTerm}' applied.");
 
-            List<Comic> results = query.ToList();
-            _logger.Log($"SearchComics 找到 {results.Count} 本相符的漫畫。");
+            List<Comic> results = query.OrderBy(c => c.Title).ToList();
+            _logger.Log($"SearchComics found {results.Count} matching comics.");
             return results;
         }
 
         public List<AdminComicStatusViewModel> GetAdminComicStatusViewModels(IEnumerable<Member> allMembers)
         {
-            _logger.Log("正在產生 AdminComicStatusViewModels，使用提供的會員列表進行查詢。");
-            var allComics = this.GetAllComics(); 
+            _logger.Log("Generating AdminComicStatusViewModels using DB comics and provided member list.");
+            var allComics = this.GetAllComics(); // Fetches from DB now
             var memberLookup = allMembers.ToDictionary(m => m.Id);
             var comicStatuses = new List<AdminComicStatusViewModel>();
 

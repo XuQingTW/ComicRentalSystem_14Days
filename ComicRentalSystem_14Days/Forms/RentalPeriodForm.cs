@@ -31,7 +31,7 @@ namespace ComicRentalSystem_14Days.Forms
                 monthCalendarRental.TrailingForeColor = Color.Gray; 
             }
 
-            monthCalendarRental.MinDate = minDate;
+            monthCalendarRental!.MinDate = minDate;
             monthCalendarRental.MaxDate = maxDate;
 
             if (minDate > monthCalendarRental.TodayDate && minDate <= maxDate)
@@ -40,16 +40,16 @@ namespace ComicRentalSystem_14Days.Forms
             }
             else if (monthCalendarRental.TodayDate >= minDate && monthCalendarRental.TodayDate <= maxDate)
             {
-                 monthCalendarRental.SelectionStart = monthCalendarRental.TodayDate;
+                monthCalendarRental.SelectionStart = monthCalendarRental.TodayDate;
             }
             else
             {
                 monthCalendarRental.SelectionStart = minDate;
             }
-             monthCalendarRental.SetDate(monthCalendarRental.SelectionStart);
+            monthCalendarRental.SetDate(monthCalendarRental.SelectionStart);
 
 
-            lblInfo.Text = $"請選擇歸還日期。\n最短租期: {minDate:yyyy-MM-dd}\n最長租期: {maxDate:yyyy-MM-dd}"; 
+            lblInfo!.Text = $"請選擇歸還日期。\n最短租期: {minDate:yyyy-MM-dd}\n最長租期: {maxDate:yyyy-MM-dd}";
         }
 
         private void btnConfirmRental_Click(object sender, EventArgs e)

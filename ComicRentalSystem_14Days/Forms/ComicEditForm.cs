@@ -1,5 +1,4 @@
 ﻿using ComicRentalSystem_14Days.Models;
-using ComicRentalSystem_14Days.Services;
 using ComicRentalSystem_14Days.Interfaces;
 using System;
 using System.IO;
@@ -9,7 +8,7 @@ namespace ComicRentalSystem_14Days.Forms
 {
     public partial class ComicEditForm : ComicRentalSystem_14Days.BaseForm
     {
-        private readonly ComicService? _comicService;
+        private readonly IComicService? _comicService;
         private Comic? _editableComic;
         private bool _isEditMode;
         private readonly User? _currentUser;
@@ -25,7 +24,7 @@ namespace ComicRentalSystem_14Days.Forms
             }
         }
 
-        public ComicEditForm(Comic? comicToEdit, ComicService comicService, ILogger logger, User? currentUser = null) : this()
+        public ComicEditForm(Comic? comicToEdit, IComicService comicService, ILogger logger, User? currentUser = null) : this()
         {
             base.SetLogger(logger);
 
@@ -154,7 +153,7 @@ namespace ComicRentalSystem_14Days.Forms
                         IsRented = false,
                         RentedToMemberId = 0
                     };
-                    _comicService.AddComic(newComic);
+                    await _comicService.AddComicAsync(newComic);
                     await _comicService.ReloadAsync();
                     LogActivity($"新漫畫 '{newComic.Title}' (ID: {newComic.Id}) 已成功新增。");
                     MessageBox.Show("漫畫已成功新增。", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -171,9 +170,9 @@ namespace ComicRentalSystem_14Days.Forms
             }
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private async void btnSave_Click(object sender, EventArgs e)
         {
-            btnSave_ClickAsync(sender, e).GetAwaiter().GetResult();
+            await btnSave_ClickAsync(sender, e);
         }
 
         private void btnCancel_Click(object sender, EventArgs e)

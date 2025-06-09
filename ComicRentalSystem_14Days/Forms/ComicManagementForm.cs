@@ -1,5 +1,4 @@
 ﻿using ComicRentalSystem_14Days.Models;
-using ComicRentalSystem_14Days.Services;
 using ComicRentalSystem_14Days.Helpers;
 using ComicRentalSystem_14Days.Interfaces;
 using System;
@@ -10,10 +9,10 @@ namespace ComicRentalSystem_14Days.Forms
 {
     public partial class ComicManagementForm : ComicRentalSystem_14Days.BaseForm
     {
-        private ComicService? _comicService;
+        private IComicService? _comicService;
         private readonly User? _currentUser;
 
-        public ComicManagementForm(ILogger logger, ComicService comicService, User? currentUser) : base(logger)
+        public ComicManagementForm(ILogger logger, IComicService comicService, User? currentUser) : base(logger)
         {
             InitializeComponent();
             _comicService = comicService;
