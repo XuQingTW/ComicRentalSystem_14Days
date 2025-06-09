@@ -158,22 +158,22 @@ namespace ComicRentalSystem_14Days
             AppDbContext = new ComicRentalDbContext();
             AppLogger.Log("Main application DbContext initialized.");
 
-            if (AppDbContext != null && AppLogger != null)
+            if (AppLogger != null)
             {
-                AppComicService = new ComicService(AppDbContext, AppLogger);
-                AppLogger.Log("ComicService initialized with DbContext.");
+                AppComicService = new ComicService(AppLogger);
+                AppLogger.Log("ComicService initialized.");
 
-                AppMemberService = new MemberService(AppDbContext, AppLogger, AppComicService);
-                AppLogger.Log("MemberService initialized with DbContext.");
+                AppMemberService = new MemberService(AppLogger, AppComicService);
+                AppLogger.Log("MemberService initialized.");
 
-                AppAuthService = new AuthenticationService(AppDbContext, AppLogger);
-                AppLogger.Log("AuthenticationService initialized with DbContext.");
+                AppAuthService = new AuthenticationService(AppLogger);
+                AppLogger.Log("AuthenticationService initialized.");
 
                 AppAuthService.EnsureAdminUserExists("admin", "admin123");
             }
             else
             {
-                AppLogger?.LogError("Critical error: AppDbContext or AppLogger is null. Cannot initialize core services.");
+                AppLogger?.LogError("Critical error: AppLogger is null. Cannot initialize core services.");
             }
 
             Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
