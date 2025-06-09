@@ -12,9 +12,9 @@ namespace ComicRentalSystem_14Days.Forms
 
         public LogManagementForm(FileLogger logger) : base(logger)
         {
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             InitializeComponent();
-            _logger = logger;
-            numericRetentionDays.Value = _logger != null ? _logger.GetType().GetField("_retentionDays", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.GetValue(_logger) as int? ?? 90 : 90;
+            numericRetentionDays.Value = _logger.GetType().GetField("_retentionDays", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.GetValue(_logger) as int? ?? 90;
             LoadLogFiles();
         }
 

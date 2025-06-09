@@ -43,7 +43,7 @@ namespace ComicRentalSystem_14Days.Services
         public User? GetUserByUsername(string username)
         {
             _logger.Log($"正在嘗試透過使用者名稱擷取使用者: {username}");
-            User? user = _users.FirstOrDefault(u => u.Username.ToUpperInvariant() == username.ToUpperInvariant());
+            User? user = _context.Users.FirstOrDefault(u => u.Username.ToUpperInvariant() == username.ToUpperInvariant());
           
             if (user == null)
             {
@@ -68,7 +68,7 @@ namespace ComicRentalSystem_14Days.Services
         public bool Register(string username, string password, UserRole role)
         {
             _logger.Log($"使用者名稱註冊嘗試: {username}，角色: {role}");
-            if (_users.Any(u => u.Username.ToUpperInvariant() == username.ToUpperInvariant()))
+            if (_context.Users.Any(u => u.Username.ToUpperInvariant() == username.ToUpperInvariant()))
             {
                 _logger.LogWarning($"Registration failed for {username}: Username already exists.");
                 return false;
@@ -99,7 +99,7 @@ namespace ComicRentalSystem_14Days.Services
         public User? Login(string username, string password)
         {
             _logger.Log($"使用者名稱登入嘗試: {username}");
-            User? user = _users.FirstOrDefault(u => u.Username.ToUpperInvariant() == username.ToUpperInvariant());
+            User? user = _context.Users.FirstOrDefault(u => u.Username.ToUpperInvariant() == username.ToUpperInvariant());
 
             if (user == null)
             {
@@ -167,7 +167,7 @@ namespace ComicRentalSystem_14Days.Services
         public bool DeleteUser(string username)
         {
             _logger.Log($"正在嘗試刪除使用者: {username}"); 
-            User? userToDelete = _users.FirstOrDefault(u => u.Username.ToUpperInvariant() == username.ToUpperInvariant());
+            User? userToDelete = _context.Users.FirstOrDefault(u => u.Username.ToUpperInvariant() == username.ToUpperInvariant());
 
             if (userToDelete != null)
             {

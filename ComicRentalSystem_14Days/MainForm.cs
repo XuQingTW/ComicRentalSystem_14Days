@@ -616,7 +616,7 @@ namespace ComicRentalSystem_14Days
 
             try
             {
-                Member? currentMember = _memberService!.GetMemberByUsername(_currentUser.Username);
+                Member? currentMember = _memberService!.GetMemberByUsername(_currentUser!.Username);
                 if (currentMember == null)
                 {
                     _logger?.LogWarning($"載入我的租借漫畫失敗：找不到使用者名稱 '{_currentUser?.Username ?? "未知使用者"}' 的會員資料。未載入任何租借記錄。");
