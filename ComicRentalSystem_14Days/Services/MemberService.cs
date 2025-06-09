@@ -175,7 +175,7 @@ namespace ComicRentalSystem_14Days.Services
                 return null;
             }
             _logger.Log($"已為姓名: '{name}' 呼叫 GetMemberByName。");
-            Member? member = _members.FirstOrDefault(m => m.Name.ToUpperInvariant() == name.ToUpperInvariant());
+            Member? member = _context.Members.FirstOrDefault(m => m.Name.ToUpperInvariant() == name.ToUpperInvariant());
             if (member == null)
             {
                 _logger.Log($"Member with name: '{name}' not found.");
@@ -229,13 +229,13 @@ namespace ComicRentalSystem_14Days.Services
 
             if (foundMember != null)
             {
-                _logger.Log($"Member with username: '{username}' not found.");
+                _logger.Log($"Member with username: '{username}' found: ID='{foundMember.Id}'.");
             }
             else
             {
-                _logger.Log($"Member with username: '{username}' found: ID='{member.Id}'.");
+                _logger.Log($"Member with username: '{username}' not found.");
             }
-            return member;
+            return foundMember;
         }
 
         public List<Member> SearchMembers(string searchTerm)
