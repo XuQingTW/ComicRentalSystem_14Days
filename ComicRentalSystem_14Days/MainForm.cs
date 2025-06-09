@@ -143,8 +143,8 @@ namespace ComicRentalSystem_14Days
                 {
                     _logger?.LogWarning("[TARGETED_RUNTIME] dgvAvailableComics is NULL.");
                 }
-                await _comicService.ReloadAsync();
-                _logger.Log($"MainForm_Load (Member) [After ReloadAsync]: _comicService.GetAllComics() reports {_comicService.GetAllComics().Count} comics.");
+                await _comicService!.ReloadAsync();
+                _logger!.Log($"MainForm_Load (Member) [After ReloadAsync]: _comicService.GetAllComics() reports {_comicService.GetAllComics().Count} comics.");
                 LoadAvailableComics();
                 LoadMyRentedComics();
             }
@@ -207,7 +207,7 @@ namespace ComicRentalSystem_14Days
                 cmbGenreFilter.Items.Add("所有類型");
                 try
                 {
-                    var genres = _comicService.GetAllComics()
+                    var genres = _comicService!.GetAllComics()
                         .Select(c => c.Genre)
                         .Where(g => !string.IsNullOrWhiteSpace(g))
                         .Distinct()
@@ -297,7 +297,7 @@ namespace ComicRentalSystem_14Days
 
             if (_currentUser.Role == UserRole.Admin)
             {
-                _logger.Log("正在為管理員視圖設定 DataGridView (所有漫畫狀態)。");
+                _logger!.Log("正在為管理員視圖設定 DataGridView (所有漫畫狀態)。");
                 dgvAvailableComics!.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Title", HeaderText = "書名", FillWeight = 20 });
                 dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Author", HeaderText = "作者", FillWeight = 15 });
                 dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Status", HeaderText = "狀態", FillWeight = 10 });
@@ -325,7 +325,7 @@ namespace ComicRentalSystem_14Days
             }
             else
             {
-                _logger.Log("正在為會員視圖設定 DataGridView (可借閱漫畫)。");
+                _logger!.Log("正在為會員視圖設定 DataGridView (可借閱漫畫)。");
                 dgvAvailableComics!.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Title", HeaderText = "書名", FillWeight = 40 });
                 dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Author", HeaderText = "作者", FillWeight = 30 });
                 dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Genre", HeaderText = "類型", FillWeight = 20 });
@@ -344,10 +344,10 @@ namespace ComicRentalSystem_14Days
             this._logger?.Log("正在將可借閱漫畫載入到主表單的 DataGridView。 (Existing log for context)");
             try
             {
-                int totalComicsBeforeFilter = this._comicService.GetAllComics().Count;
+                int totalComicsBeforeFilter = this._comicService!.GetAllComics().Count;
                 this._logger?.Log($"LoadAvailableComics [Before Filter]: Starting with {totalComicsBeforeFilter} comics from _comicService.GetAllComics().");
 
-                var queryResult = this._comicService.GetAllComics().Where(c => !c.IsRented).ToList();
+                var queryResult = this._comicService!.GetAllComics().Where(c => !c.IsRented).ToList();
                 this._logger?.Log($"LoadAvailableComics [After Filter]: After Where(c => !c.IsRented), queryResult count is {queryResult.Count}.");
 
                 var availableComics = queryResult ?? new List<Comic>();
@@ -527,28 +527,24 @@ namespace ComicRentalSystem_14Days
                 }
             }
 
-            _logger.Log($"UI 控制項的可見性和文字已根據管理員狀態 ({isAdmin}) 更新。");
+            _logger!.Log($"UI 控制項的可見性和文字已根據管理員狀態 ({isAdmin}) 更新。");
         }
 
 
         private void UpdateStatusBar()
         {
-            if (this.statusStrip1 != null)
+            // _currentUser and _logger are guaranteed non-null by the constructor used for normal operation.
+            // toolStripStatusLabelUser is part of InitializeComponent.
+            if (this.toolStripStatusLabelUser != null)
             {
-                if (this.toolStripStatusLabelUser != null) // Guard for CS8602
-                {
-                    this.toolStripStatusLabelUser.Text = $"使用者: {_currentUser.Username} | 角色: {_currentUser.Role}"; // CS8602
-                    this._logger.Log($"Status bar updated: User: {_currentUser.Username}, Role: {_currentUser.Role}");
-                }
-                else
-                {
-                    this._logger.LogWarning("找不到 ToolStripStatusLabel 控制項 'toolStripStatusLabelUser' 或其為空。");
-                }
+                this.toolStripStatusLabelUser.Text = $"使用者: {_currentUser.Username} | 角色: {_currentUser.Role}";
             }
             else
             {
-                this._logger.LogWarning("找不到 StatusStrip 控制項 'statusStrip1' 或其為空。");
+                this._logger.LogWarning("toolStripStatusLabelUser is null. Cannot update status bar text.");
             }
+            // Log status update attempt regardless of label's state, as user info is available.
+            this._logger.Log($"Status bar update processed for User: {_currentUser.Username}, Role: {_currentUser.Role}");
         }
 
         private void SetupMyRentedComicsDataGridView()
@@ -619,7 +615,7 @@ namespace ComicRentalSystem_14Days
 
             try
             {
-                Member? currentMember = _memberService.GetMemberByUsername(_currentUser.Username);
+                Member? currentMember = _memberService!.GetMemberByUsername(_currentUser.Username);
                 if (currentMember == null)
                 {
                     _logger?.LogWarning($"載入我的租借漫畫失敗：找不到使用者名稱 '{_currentUser?.Username ?? "未知使用者"}' 的會員資料。未載入任何租借記錄。");
@@ -628,7 +624,7 @@ namespace ComicRentalSystem_14Days
                 }
                 _logger?.LogInformation($"載入我的租借漫畫：找到會員：ID={currentMember.Id}，姓名='{currentMember.Name}'，使用者名稱='{currentMember.Username}'。");
 
-                var allComics = _comicService.GetAllComics();
+                var allComics = _comicService!.GetAllComics();
                 _logger?.LogDebug($"載入我的租借漫畫：篩選前從服務取得的漫畫總數：{allComics?.Count ?? 0}。");
 
                 if (allComics == null)
@@ -648,7 +644,7 @@ namespace ComicRentalSystem_14Days
                     }
                 }
 
-                var myRentedComics = allComics
+                var myRentedComics = allComics!
                     .Where(c => c.IsRented && c.RentedToMemberId == currentMember.Id)
                     .Select(c => new RentalDetailViewModel
                     {
@@ -1200,15 +1196,18 @@ namespace ComicRentalSystem_14Days
                 e.FormattingApplied = true;
             }
 
-            if (returnDate.Value.Date < DateTime.Today)
+            if (e.CellStyle != null)
             {
-                e.CellStyle.BackColor = ModernBaseForm.DangerColor;
-                e.CellStyle.ForeColor = Color.White;
-            }
-            else if (returnDate.Value.Date <= DateTime.Today.AddDays(3))
-            {
-                e.CellStyle.BackColor = ModernBaseForm.AccentColor;
-                e.CellStyle.ForeColor = ModernBaseForm.TextColor;
+                if (returnDate.Value.Date < DateTime.Today)
+                {
+                    e.CellStyle.BackColor = ModernBaseForm.DangerColor;
+                    e.CellStyle.ForeColor = Color.White;
+                }
+                else if (returnDate.Value.Date <= DateTime.Today.AddDays(3))
+                {
+                    e.CellStyle.BackColor = ModernBaseForm.AccentColor;
+                    e.CellStyle.ForeColor = ModernBaseForm.TextColor;
+                }
             }
         }
 
@@ -1264,7 +1263,7 @@ namespace ComicRentalSystem_14Days
                     actualSearchText = txtSearchAvailableComics.Text.Trim().ToLowerInvariant();
                 }
 
-                var comicsToFilter = _comicService
+                var comicsToFilter = _comicService!
                                         .GetAllComics()
                                         .Where(c => !c.IsRented)
                                         .ToList();
