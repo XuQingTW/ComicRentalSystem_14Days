@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using System.Runtime.Versioning;
 using ComicRentalSystem_14Days.Interfaces;
+using ComicRentalSystem_14Days.Services;
 
 namespace ComicRentalSystem_14Days.Controls
 {

@@ -1,5 +1,6 @@
 
 using ComicRentalSystem_14Days.Models;
+using ComicRentalSystem_14Days.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -7,7 +8,7 @@ namespace ComicRentalSystem_14Days.Interfaces
 {
     public interface IComicService
     {
-        event Services.ComicService.ComicDataChangedEventHandler? ComicsChanged;
+        event ComicDataChangedEventHandler? ComicsChanged;
 
         Task ReloadAsync();
         List<Comic> GetAllComics();

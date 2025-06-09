@@ -354,13 +354,16 @@ namespace ComicRentalSystem_14Days
 
                 Action updateGrid = () =>
                 {
-                    dgvAvailableComics.DataSource = null;
-                    dgvAvailableComics.DataSource = availableComics;
+                    if (dgvAvailableComics != null) // Guard for CS8602
+                    {
+                        dgvAvailableComics.DataSource = null; // CS8602
+                        dgvAvailableComics.DataSource = availableComics;
+                    }
                 };
 
-                if (dgvAvailableComics.IsHandleCreated && this.InvokeRequired)
+                if (dgvAvailableComics != null && dgvAvailableComics.IsHandleCreated && !dgvAvailableComics.IsDisposed && this.InvokeRequired)
                     this.Invoke(updateGrid);
-                else if (dgvAvailableComics.IsHandleCreated)
+                else if (dgvAvailableComics != null && dgvAvailableComics.IsHandleCreated && !dgvAvailableComics.IsDisposed)
                     updateGrid();
 
                 this._logger?.Log($"已成功載入 {availableComics.Count} 本可借閱漫畫。 (Existing log for context, shows final bound count)");
@@ -379,7 +382,12 @@ namespace ComicRentalSystem_14Days
 
             try
             {
-                List<Member> allMembers = await Task.Run(() => _memberService.GetAllMembers());
+                List<Member>? allMembers = await Task.Run(() => _memberService.GetAllMembers()); // CS8604 addressed by checking null below
+                if (allMembers == null)
+                {
+                    _logger?.LogWarning("LoadAllComicsStatusForAdminAsync: _memberService.GetAllMembers() returned null. Using empty list for statuses.");
+                    allMembers = new List<Member>();
+                }
                 List<AdminComicStatusViewModel> comicStatuses = await Task.Run(() => _comicService.GetAdminComicStatusViewModels(allMembers));
 
                 _allAdminComicStatuses = new List<AdminComicStatusViewModel>(comicStatuses);
@@ -411,7 +419,7 @@ namespace ComicRentalSystem_14Days
             }
 
             if (leftNavPanel != null) leftNavPanel.Visible = false;
-            if (_adminDashboardControl != null) _adminDashboardControl.Visible = false;
+            if (_adminDashboardControl != null) _adminDashboardControl.Visible = false; // Guarded
             if (memberViewTabControl != null) memberViewTabControl.Visible = false;
 
             if (lblAvailableComics != null) lblAvailableComics.Visible = false;
@@ -527,9 +535,9 @@ namespace ComicRentalSystem_14Days
         {
             if (this.statusStrip1 != null)
             {
-                if (this.toolStripStatusLabelUser != null)
+                if (this.toolStripStatusLabelUser != null) // Guard for CS8602
                 {
-                    this.toolStripStatusLabelUser.Text = $"使用者: {_currentUser.Username} | 角色: {_currentUser.Role}";
+                    this.toolStripStatusLabelUser.Text = $"使用者: {_currentUser.Username} | 角色: {_currentUser.Role}"; // CS8602
                     this._logger.Log($"Status bar updated: User: {_currentUser.Username}, Role: {_currentUser.Role}");
                 }
                 else
@@ -686,10 +694,15 @@ namespace ComicRentalSystem_14Days
         private void ClearDgvMyRentedComics()
         {
             if (dgvMyRentedComics == null) return;
-            Action clearGrid = () => dgvMyRentedComics.DataSource = null;
-            if (dgvMyRentedComics.IsHandleCreated && this.InvokeRequired)
+            Action clearGrid = () => {
+                if (dgvMyRentedComics != null) // Guard for CS8602
+                {
+                    dgvMyRentedComics.DataSource = null; // CS8602
+                }
+            };
+            if (dgvMyRentedComics != null && dgvMyRentedComics.IsHandleCreated && !dgvMyRentedComics.IsDisposed && this.InvokeRequired)
                 this.Invoke(clearGrid);
-            else if (dgvMyRentedComics.IsHandleCreated)
+            else if (dgvMyRentedComics != null && dgvMyRentedComics.IsHandleCreated && !dgvMyRentedComics.IsDisposed)
                 clearGrid();
         }
 
@@ -876,21 +889,34 @@ namespace ComicRentalSystem_14Days
 
             Action updateGridAction = () =>
             {
-                dgvAvailableComics.DataSource = null;
-                dgvAvailableComics.DataSource = finalViewList ?? new List<AdminComicStatusViewModel>();
-
-                foreach (DataGridViewColumn column in dgvAvailableComics.Columns)
-                    column.HeaderCell.SortGlyphDirection = SortOrder.None;
-
-                if (!string.IsNullOrEmpty(_currentSortColumnName) && dgvAvailableComics.Columns.Contains(_currentSortColumnName))
+                if (dgvAvailableComics != null) // Guard for CS8602
                 {
-                    dgvAvailableComics.Columns[_currentSortColumnName]!.HeaderCell.SortGlyphDirection =
-                        _currentSortDirection == ListSortDirection.Ascending ? SortOrder.Ascending : SortOrder.Descending;
+                    dgvAvailableComics.DataSource = null; // CS8602
+                    dgvAvailableComics.DataSource = finalViewList ?? new List<AdminComicStatusViewModel>();
+
+                    foreach (DataGridViewColumn column in dgvAvailableComics.Columns)
+                    {
+                        if (column?.HeaderCell != null) // Guard for HeaderCell
+                           column.HeaderCell.SortGlyphDirection = SortOrder.None;
+                    }
+
+                    if (!string.IsNullOrEmpty(_currentSortColumnName) && dgvAvailableComics.Columns.Contains(_currentSortColumnName))
+                    {
+                        var column = dgvAvailableComics.Columns[_currentSortColumnName];
+                        if (column?.HeaderCell != null) // Guard for CS8602 on HeaderCell
+                        {
+                            column.HeaderCell.SortGlyphDirection =
+                                _currentSortDirection == ListSortDirection.Ascending ? SortOrder.Ascending : SortOrder.Descending;
+                        }
+                    }
                 }
             };
 
-            if (this.dgvAvailableComics.InvokeRequired) this.dgvAvailableComics.Invoke(updateGridAction);
-            else updateGridAction();
+            if (this.dgvAvailableComics != null && this.dgvAvailableComics.IsHandleCreated && !this.dgvAvailableComics.IsDisposed)
+            {
+                if (this.dgvAvailableComics.InvokeRequired) this.dgvAvailableComics.Invoke(updateGridAction);
+                else updateGridAction();
+            }
         }
 
         private void dgvAvailableComics_ColumnHeaderMouseClick(object? sender, DataGridViewCellMouseEventArgs e)
@@ -934,7 +960,7 @@ namespace ComicRentalSystem_14Days
             selectedButton.Font = new System.Drawing.Font(baseFont, System.Drawing.FontStyle.Bold);
             _currentSelectedNavButton = selectedButton;
 
-            if (_adminDashboardControl != null) _adminDashboardControl.Visible = false;
+            if (_adminDashboardControl != null) _adminDashboardControl.Visible = false; // Guarded
             if (memberViewTabControl != null) memberViewTabControl.Visible = false;
 
             if (lblAvailableComics != null) lblAvailableComics.Visible = false;
@@ -943,11 +969,11 @@ namespace ComicRentalSystem_14Days
 
             if (selectedButton == btnNavDashboard)
             {
-                if (_adminDashboardControl != null)
+                if (_adminDashboardControl != null) // Guarded
                 {
-                    _adminDashboardControl.Visible = true;
+                    _adminDashboardControl.Visible = true; // Guarded
                     _adminDashboardControl.BringToFront();
-                    _adminDashboardControl.LoadDashboardData();
+                    _adminDashboardControl.LoadDashboardData(); // Guarded
                     this.Text = "漫畫租借系統 - 儀表板";
                 }
                 _logger?.Log("已選取儀表板視圖。");
@@ -1099,31 +1125,35 @@ namespace ComicRentalSystem_14Days
 
             if (dgvAvailableComics.Columns[e.ColumnIndex].DataPropertyName == "Status")
             {
-                if (e.Value?.ToString() == "被借閱")
+                if (e.Value?.ToString() == "被借閱") // CS8602 for e.CellStyle below
                 {
-                    e.CellStyle.ForeColor = ModernBaseForm.DangerColor;
+                    if (e.CellStyle != null) e.CellStyle.ForeColor = ModernBaseForm.DangerColor;
                 }
-                else if (e.Value?.ToString() == "在館中")
+                else if (e.Value?.ToString() == "在館中") // CS8602 for e.CellStyle below
                 {
-                    e.CellStyle.ForeColor = ModernBaseForm.SuccessColor;
+                    if (e.CellStyle != null) e.CellStyle.ForeColor = ModernBaseForm.SuccessColor;
                 }
             }
 
             if (dgvAvailableComics.Columns[e.ColumnIndex].DataPropertyName == "ReturnDate" ||
                 dgvAvailableComics.Columns[e.ColumnIndex].DataPropertyName == "Status")
             {
-                if (comicStatus.Status == "被借閱" && comicStatus.ReturnDate.HasValue)
+                // comicStatus is guaranteed non-null here by `is not AdminComicStatusViewModel comicStatus) return;`
+                if (comicStatus.Status == "被借閱" && comicStatus.ReturnDate.HasValue) // CS8602 for row.DefaultCellStyle below
                 {
                     DateTime returnDate = comicStatus.ReturnDate.Value;
-                    if (returnDate.Date < DateTime.Today)
+                    if (row.DefaultCellStyle != null) // Guard for DefaultCellStyle
                     {
-                        row.DefaultCellStyle.BackColor = ModernBaseForm.DangerColor;
-                        row.DefaultCellStyle.ForeColor = Color.White;
-                    }
-                    else if (returnDate.Date <= DateTime.Today.AddDays(3))
-                    {
-                        row.DefaultCellStyle.BackColor = ModernBaseForm.AccentColor;
-                        row.DefaultCellStyle.ForeColor = ModernBaseForm.TextColor;
+                        if (returnDate.Date < DateTime.Today)
+                        {
+                            row.DefaultCellStyle.BackColor = ModernBaseForm.DangerColor;
+                            row.DefaultCellStyle.ForeColor = Color.White;
+                        }
+                        else if (returnDate.Date <= DateTime.Today.AddDays(3))
+                        {
+                            row.DefaultCellStyle.BackColor = ModernBaseForm.AccentColor;
+                            row.DefaultCellStyle.ForeColor = ModernBaseForm.TextColor;
+                        }
                     }
                 }
             }
