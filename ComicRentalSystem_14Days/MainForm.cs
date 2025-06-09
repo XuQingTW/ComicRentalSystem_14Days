@@ -1269,6 +1269,11 @@ namespace ComicRentalSystem_14Days
             else if (memberViewTabControl.SelectedTab == availableComicsTabPage)
             {
                 _logger?.Log("已選取「可租借漫畫」標籤頁。正在重新套用篩選器。");
+                if (dgvAvailableComics != null)
+                {
+                    dgvAvailableComics.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+                    dgvAvailableComics.RowTemplate.Height = 100;
+                }
                 ApplyAvailableComicsFilter();
                 if (dgvAvailableComics != null)
                 {
