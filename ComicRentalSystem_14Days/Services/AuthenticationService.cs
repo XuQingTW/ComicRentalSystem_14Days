@@ -98,7 +98,7 @@ namespace ComicRentalSystem_14Days.Services
         public User? Login(string username, string password)
         {
             _logger.Log($"Login attempt for username: {username}");
-            User? user = _context.Users.FirstOrDefault(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
+            User? user = _context.Users.FirstOrDefault(u => u.Username.ToLower() == username.ToLower());
 
             if (user == null)
             {
