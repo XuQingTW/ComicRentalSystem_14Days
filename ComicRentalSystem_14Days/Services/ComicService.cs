@@ -10,6 +10,8 @@ using ComicRentalSystem_14Days.Models;
 
 namespace ComicRentalSystem_14Days.Services
 {
+    public delegate void ComicDataChangedEventHandler(object? sender, EventArgs e);
+
     public class ComicService : IComicService
     {
         private readonly IFileHelper _fileHelper;
