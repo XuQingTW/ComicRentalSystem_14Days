@@ -18,26 +18,27 @@ namespace ComicRentalSystem_14Days.Forms
             _comicService = comicService;
             _currentUser = currentUser;
             SetupDataGridView();
-            LoadComicsData();
-            _comicService.ComicsChanged += ComicService_ComicsChanged;
+            // LoadComicsData(); // Will be called by Form_Load
+            if (_comicService != null) _comicService.ComicsChanged += ComicService_ComicsChanged;
         }
 
-        private void ComicManagementForm_Load(object sender, EventArgs e)
+        private async void ComicManagementForm_Load(object sender, EventArgs e)
         {
             if (this.DesignMode || Logger == null || _comicService == null)
             {
                 return;
             }
 
-            LogActivity("漫畫管理表單正在載入執行階段元件。");
+            LogActivity("ComicManagementForm_Load: Form loading, attaching event handlers and loading initial data.");
 
+            // Ensure event is not subscribed multiple times if Load is called again, though typically it's once.
+            _comicService.ComicsChanged -= ComicService_ComicsChanged; // Defensive
             _comicService.ComicsChanged += ComicService_ComicsChanged;
 
+            SetupDataGridView();
 
-            SetupDataGridView(); 
-                                 
-            LoadComicsData(); 
-            LogActivity("漫畫管理表單已成功初始化。");
+            await LoadComicsDataAsync();
+            LogActivity("ComicManagementForm_Load: Form successfully initialized with async data load.");
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -51,11 +52,11 @@ namespace ComicRentalSystem_14Days.Forms
             base.OnFormClosing(e);
         }
 
-        private void ComicService_ComicsChanged(object? sender, EventArgs e)
+        private async void ComicService_ComicsChanged(object? sender, EventArgs e)
         {
             if (_comicService == null) return;
-            LogActivity("已收到 ComicsChanged 事件。正在重新整理 DataGridView。");
-            LoadComicsData();
+            LogActivity("ComicService_ComicsChanged: Received ComicsChanged event. Reloading data asynchronously.");
+            await LoadComicsDataAsync();
         }
 
         private void SetupDataGridView()
@@ -75,16 +76,16 @@ namespace ComicRentalSystem_14Days.Forms
             {
                 DataPropertyName = nameof(Comic.RentalDate),
                 HeaderText = "租借日期",
-                Width = 110 
+                Width = 110
             };
             rentalDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
             dgvComics.Columns.Add(rentalDateColumn);
 
             var returnDateColumn = new DataGridViewTextBoxColumn
             {
-                DataPropertyName = nameof(Comic.ReturnDate), 
+                DataPropertyName = nameof(Comic.ReturnDate),
                 HeaderText = "預計歸還時間",
-                Width = 110 
+                Width = 110
             };
             returnDateColumn.DefaultCellStyle.Format = "yyyy-MM-dd";
             dgvComics.Columns.Add(returnDateColumn);
@@ -93,10 +94,10 @@ namespace ComicRentalSystem_14Days.Forms
             {
                 DataPropertyName = nameof(Comic.ActualReturnTime),
                 HeaderText = "實際歸還時間",
-                Width = 120 
+                Width = 120
             };
-            actualReturnTimeColumn.DefaultCellStyle.Format = "yyyy-MM-dd HH:mm:ss"; 
-            actualReturnTimeColumn.DefaultCellStyle.NullValue = ""; 
+            actualReturnTimeColumn.DefaultCellStyle.Format = "yyyy-MM-dd HH:mm:ss";
+            actualReturnTimeColumn.DefaultCellStyle.NullValue = "";
             dgvComics.Columns.Add(actualReturnTimeColumn);
 
             dgvComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Isbn", HeaderText = "ISBN", Width = 120 });
@@ -108,24 +109,24 @@ namespace ComicRentalSystem_14Days.Forms
             LogActivity("DataGridView 設定完成。");
         }
 
-        private void LoadComicsData()
+        private async Task LoadComicsDataAsync()
         {
             if (_comicService == null) return;
 
             string searchTerm = this.txtSearchComics.Text.Trim();
 
-            LogActivity($"Attempting to load comics data. Search term: '{searchTerm}'.");
+            LogActivity($"LoadComicsDataAsync: Attempting to load comics data. Search term: '{searchTerm}'.");
 
             try
             {
                 List<Comic> comics;
                 if (string.IsNullOrWhiteSpace(searchTerm))
                 {
-                    comics = _comicService.GetAllComics();
+                    comics = await _comicService.GetAllComicsAsync();
                 }
                 else
                 {
-                    comics = _comicService.SearchComics(searchTerm);
+                    comics = await _comicService.SearchComicsAsync(searchTerm);
                 }
 
                 Action updateGrid = () => {
@@ -144,7 +145,7 @@ namespace ComicRentalSystem_14Days.Forms
                             int firstVisibleColumnIndex = -1;
                             foreach (DataGridViewColumn col in dgvComics.Columns)
                             {
-                                if (col.Visible && col.DisplayIndex >= 0) 
+                                if (col.Visible && col.DisplayIndex >= 0)
                                 {
                                     if (firstVisibleColumnIndex == -1 || col.DisplayIndex < dgvComics.Columns[firstVisibleColumnIndex].DisplayIndex)
                                     {
@@ -156,7 +157,7 @@ namespace ComicRentalSystem_14Days.Forms
                             {
                                 dgvComics.CurrentCell = dgvComics.Rows[0].Cells[firstVisibleColumnIndex];
                             }
-                            else 
+                            else
                             {
                             }
                         }
@@ -177,13 +178,13 @@ namespace ComicRentalSystem_14Days.Forms
                                     }
                                 }
                             }
-    if (firstVisibleColumnIndex != -1 && dgvComics.Rows.Count > 0 && dgvComics.Rows[0].Cells.Count > firstVisibleColumnIndex)
+                            if (firstVisibleColumnIndex != -1 && dgvComics.Rows.Count > 0 && dgvComics.Rows[0].Cells.Count > firstVisibleColumnIndex)
                             {
-        dgvComics.CurrentCell = dgvComics.Rows[0].Cells[firstVisibleColumnIndex];
+                                dgvComics.CurrentCell = dgvComics.Rows[0].Cells[firstVisibleColumnIndex];
                             }
-                            else 
+                            else
                             {
-                               
+
                             }
                         }
                     }
@@ -193,7 +194,7 @@ namespace ComicRentalSystem_14Days.Forms
             catch (Exception ex)
             {
                 LogErrorActivity($"Error loading comics data with search term '{searchTerm}'.", ex);
-                 Action showError = () => MessageBox.Show($"載入漫畫資料時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Action showError = () => MessageBox.Show($"載入漫畫資料時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 if (this.IsHandleCreated && !this.IsDisposed)
                 {
                     if (this.InvokeRequired) { this.Invoke(showError); } else { showError(); }
@@ -201,17 +202,17 @@ namespace ComicRentalSystem_14Days.Forms
             }
         }
 
-        private void btnSearchComics_Click(object? sender, EventArgs e)
+        private async void btnSearchComics_Click(object? sender, EventArgs e)
         {
-            LogActivity("搜尋漫畫按鈕已點擊。");
-            LoadComicsData(); 
+            LogActivity("btnSearchComics_Click: Search button clicked. Reloading data asynchronously.");
+            await LoadComicsDataAsync();
         }
 
-        private void btnClearSearchComics_Click(object? sender, EventArgs e)
+        private async void btnClearSearchComics_Click(object? sender, EventArgs e)
         {
-            LogActivity("清除搜尋漫畫按鈕已點擊。");
+            LogActivity("btnClearSearchComics_Click: Clear search button clicked. Reloading data asynchronously.");
             this.txtSearchComics.Text = string.Empty;
-            LoadComicsData();
+            await LoadComicsDataAsync();
         }
 
         private async void btnRefresh_Click(object sender, EventArgs e)
@@ -220,7 +221,7 @@ namespace ComicRentalSystem_14Days.Forms
             LogActivity("重新整理按鈕已點擊。將非同步從檔案重新載入漫畫。");
             try
             {
-                await _comicService.ReloadAsync(); 
+                await _comicService.ReloadAsync();
             }
             catch (Exception ex)
             {
@@ -280,37 +281,42 @@ namespace ComicRentalSystem_14Days.Forms
             }
         }
 
-        private void btnDeleteComic_Click(object sender, EventArgs e)
+        private async void btnDeleteComic_Click(object sender, EventArgs e)
         {
             if (dgvComics.SelectedRows.Count > 0 && _comicService != null)
             {
                 Comic? selectedComic = dgvComics.SelectedRows[0].DataBoundItem as Comic;
                 if (selectedComic != null)
                 {
+                    // This check for IsRented is a quick UI check. The service layer (DeleteComicAsync)
+                    // should have the authoritative check, especially in a multi-user or more complex scenario.
                     if (selectedComic.IsRented)
                     {
                         MessageBox.Show($"漫畫 '{selectedComic.Title}' (ID: {selectedComic.Id}) 目前已租借中，無法刪除。\n請先處理歸還事宜。", "刪除錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        LogActivity($"嘗試刪除漫畫 ID: {selectedComic.Id}，書名: '{selectedComic.Title}' 失敗：漫畫目前已租借。");
-                        return; 
+                        LogActivity($"btnDeleteComic_Click: Attempt to delete rented comic ID: {selectedComic.Id}, Title: '{selectedComic.Title}' blocked by UI check.");
+                        return;
                     }
 
-                    LogActivity($"Attempting to delete comic ID: {selectedComic.Id}, Title: '{selectedComic.Title}'. Showing confirmation dialog.");
+                    LogActivity($"btnDeleteComic_Click: Attempting to delete comic ID: {selectedComic.Id}, Title: '{selectedComic.Title}'. Showing confirmation dialog.");
                     var confirmResult = MessageBox.Show($"您確定要刪除漫畫 '{selectedComic.Title}' (ID: {selectedComic.Id}) 嗎？\n此操作無法復原。",
                                                  "確認刪除",
                                                  MessageBoxButtons.YesNo,
                                                  MessageBoxIcon.Warning);
                     if (confirmResult == DialogResult.Yes)
                     {
-                        LogActivity($"使用者已確認刪除漫畫 ID: {selectedComic.Id}。");
+                        LogActivity($"btnDeleteComic_Click: User confirmed deletion for comic ID: {selectedComic.Id}.");
                         try
                         {
-                            _comicService.DeleteComic(selectedComic.Id);
-                            LogActivity($"漫畫 ID: {selectedComic.Id} 已由服務成功標記為待刪除。UI 將透過事件重新整理。");
-                            MessageBox.Show("漫畫已刪除。", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            await _comicService.DeleteComicAsync(selectedComic.Id);
+                            LogActivity($"btnDeleteComic_Click: Comic ID: {selectedComic.Id} successfully deleted by service. UI should refresh via ComicsChanged event.");
+                            // MessageBox.Show("漫畫已刪除。", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information); 
+                            // The above message might be premature if ComicsChanged event takes time or if other errors occur.
+                            // It's often better to rely on the event to confirm UI state.
+                            // However, for immediate feedback, it can be kept, or changed to "Delete command sent".
                         }
                         catch (InvalidOperationException opEx)
                         {
-                            LogErrorActivity($"Operation error deleting comic ID: {selectedComic.Id}.", opEx);
+                            LogErrorActivity($"btnDeleteComic_Click: Operation error deleting comic ID: {selectedComic.Id}.", opEx);
                             MessageBox.Show(opEx.Message, "操作錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                         catch (Exception ex)

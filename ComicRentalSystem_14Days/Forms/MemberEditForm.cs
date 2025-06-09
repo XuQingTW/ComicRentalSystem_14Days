@@ -5,7 +5,7 @@ using System;
 using System.IO;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
-using System.Linq; 
+using System.Linq;
 
 namespace ComicRentalSystem_14Days.Forms
 {
@@ -27,7 +27,7 @@ namespace ComicRentalSystem_14Days.Forms
 
         public MemberEditForm(Member? memberToEdit, MemberService memberService, ILogger logger) : this()
         {
-            base.SetLogger(logger); 
+            base.SetLogger(logger);
 
             if (btnSaveMember != null) StyleModernButton(btnSaveMember);
             if (btnCancelMember != null) StyleSecondaryButton(btnCancelMember);
@@ -72,60 +72,78 @@ namespace ComicRentalSystem_14Days.Forms
             LogActivity("會員資料已載入表單控制項。");
         }
 
-        private void btnSaveMember_Click(object sender, EventArgs e)
+        private async Task btnSaveMember_Click_Async(object sender, EventArgs e)
         {
             if (_memberService == null)
             {
                 MessageBox.Show("服務未初始化，無法儲存。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                LogErrorActivity("儲存會員按鈕已點擊，但 _memberService 為空。");
+                LogErrorActivity("btnSaveMember_Click_Async: Save button clicked, but _memberService is null.");
                 return;
             }
 
-            LogActivity("儲存會員按鈕已點擊。");
+            LogActivity("btnSaveMember_Click_Async: Save button clicked.");
 
-            if (!this.ValidateChildren()) {
-                 MessageBox.Show("請修正標示的錯誤。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                 LogActivity("會員編輯驗證失敗。請修正醒目提示的錯誤。");
-                 return;
+            if (!this.ValidateChildren())
+            {
+                MessageBox.Show("請修正標示的錯誤。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                LogActivity("btnSaveMember_Click_Async: MemberEdit validation failed. Please correct highlighted errors.");
+                return;
             }
 
             string name = txtName.Text.Trim();
             string phoneNumber = txtPhoneNumber.Text.Trim();
 
-
             try
             {
                 if (_isEditMode && _editableMember != null)
                 {
-                    LogActivity($"正在嘗試儲存現有會員ID: {_editableMember.Id} 的變更。");
+                    LogActivity($"btnSaveMember_Click_Async: Attempting to save changes for existing member ID: {_editableMember.Id}.");
                     _editableMember.Name = name;
                     _editableMember.PhoneNumber = phoneNumber;
-                    _memberService.UpdateMember(_editableMember);
-                    LogActivity($"會員ID: {_editableMember.Id} 已成功更新。");
+                    await _memberService.UpdateMemberAsync(_editableMember);
+
+                    if (!this.IsHandleCreated || this.IsDisposed)
+                    {
+                        LogErrorActivity($"btnSaveMember_Click_Async: Form closed or disposed after UpdateMemberAsync for ID: {_editableMember.Id}.");
+                        return;
+                    }
+                    LogActivity($"btnSaveMember_Click_Async: Member ID: {_editableMember.Id} successfully updated.");
                     MessageBox.Show("會員資料已更新。", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-                else
+                else // Add mode
                 {
-                    LogActivity("正在嘗試新增會員。");
+                    LogActivity("btnSaveMember_Click_Async: Attempting to add a new member.");
                     Member newMember = new Member
                     {
                         Name = name,
                         PhoneNumber = phoneNumber
                     };
-                    _memberService.AddMember(newMember);
-                    LogActivity($"新會員 '{newMember.Name}' (ID: {newMember.Id}) 已成功新增。");
+                    await _memberService.AddMemberAsync(newMember);
+
+                    if (!this.IsHandleCreated || this.IsDisposed)
+                    {
+                        LogErrorActivity($"btnSaveMember_Click_Async: Form closed or disposed after AddMemberAsync for new member '{newMember.Name}'.");
+                        return;
+                    }
+                    LogActivity($"btnSaveMember_Click_Async: New member '{newMember.Name}' (ID: {newMember.Id}) successfully added.");
                     MessageBox.Show("會員已成功新增。", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
 
                 this.DialogResult = DialogResult.OK;
-                LogActivity("會員編輯表單正在以 DialogResult.OK 關閉。");
+                LogActivity("btnSaveMember_Click_Async: MemberEditForm closing with DialogResult.OK.");
                 this.Close();
             }
             catch (Exception ex)
             {
-                LogErrorActivity($"儲存會員時發生錯誤: {ex.Message}", ex);
-                MessageBox.Show($"儲存會員時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                LogErrorActivity($"btnSaveMember_Click_Async: Error saving member: {ex.Message}", ex);
+                if (this.IsHandleCreated && !this.IsDisposed) // Check before showing MessageBox
+                    MessageBox.Show($"儲存會員時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private async void btnSaveMember_Click(object sender, EventArgs e)
+        {
+            await btnSaveMember_Click_Async(sender, e);
         }
 
         private void btnCancelMember_Click(object sender, EventArgs e)
@@ -146,17 +164,17 @@ namespace ComicRentalSystem_14Days.Forms
             {
                 if (string.IsNullOrWhiteSpace(txt.Text))
                 {
-                    errorProvider1?.SetError(txt, "姓名不能為空。"); 
+                    errorProvider1?.SetError(txt, "姓名不能為空。");
                     e.Cancel = true;
                 }
                 else if (!txt.Text.Trim().All(c => char.IsLetter(c) || char.IsWhiteSpace(c)))
                 {
-                    errorProvider1?.SetError(txt, "姓名只能包含字母和空格。"); 
+                    errorProvider1?.SetError(txt, "姓名只能包含字母和空格。");
                     e.Cancel = true;
                 }
                 else
                 {
-                    errorProvider1?.SetError(txt, ""); 
+                    errorProvider1?.SetError(txt, "");
                 }
             }
         }
@@ -168,21 +186,21 @@ namespace ComicRentalSystem_14Days.Forms
                 string phoneNumber = txt.Text.Trim();
                 if (string.IsNullOrWhiteSpace(phoneNumber))
                 {
-                    errorProvider1?.SetError(txt, "電話號碼不能為空。"); 
+                    errorProvider1?.SetError(txt, "電話號碼不能為空。");
                     e.Cancel = true;
                 }
                 else if (!phoneNumber.All(char.IsDigit))
                 {
-                    errorProvider1?.SetError(txt, "電話號碼只能包含數字。"); 
+                    errorProvider1?.SetError(txt, "電話號碼只能包含數字。");
                     e.Cancel = true;
                 }
                 else if (phoneNumber.Length < 7 || phoneNumber.Length > 15)
                 {
-                    errorProvider1?.SetError(txt, "電話號碼必須介於7到15位數字之間。"); 
+                    errorProvider1?.SetError(txt, "電話號碼必須介於7到15位數字之間。");
                 }
                 else
                 {
-                    errorProvider1?.SetError(txt, ""); 
+                    errorProvider1?.SetError(txt, "");
                 }
             }
         }

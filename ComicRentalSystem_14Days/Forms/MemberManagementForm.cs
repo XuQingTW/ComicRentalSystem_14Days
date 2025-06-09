@@ -30,21 +30,23 @@ namespace ComicRentalSystem_14Days.Forms
             LogActivity("會員管理表單正在使用 MemberService、AuthenticationService 和 ComicService 初始化。");
         }
 
-        private void MemberManagementForm_Load(object sender, EventArgs e)
+        private async void MemberManagementForm_Load(object sender, EventArgs e)
         {
-            if (this.DesignMode || Logger == null || _memberService == null || _authenticationService == null || _comicService == null) // 已為 _authenticationService 和 _comicService 新增 null 檢查
+            if (this.DesignMode || Logger == null || _memberService == null || _authenticationService == null || _comicService == null)
             {
                 return;
             }
 
-            LogActivity("MemberManagementForm is loading runtime components.");
+            LogActivity("MemberManagementForm_Load: Form loading, attaching event handlers and loading initial data.");
 
-            _memberService.MembersChanged += MemberService_MembersChanged; 
+            // Ensure event is not subscribed multiple times
+            _memberService.MembersChanged -= MemberService_MembersChanged; // Defensive
+            _memberService.MembersChanged += MemberService_MembersChanged;
 
-            SetupDataGridView(); 
-            LoadMembersData(); 
+            SetupDataGridView();
+            await LoadMembersDataAsync();
 
-            LogActivity("會員管理表單已成功初始化。");
+            LogActivity("MemberManagementForm_Load: Form successfully initialized with async data load.");
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -58,11 +60,11 @@ namespace ComicRentalSystem_14Days.Forms
             base.OnFormClosing(e);
         }
 
-        private void MemberService_MembersChanged(object? sender, EventArgs e)
+        private async void MemberService_MembersChanged(object? sender, EventArgs e)
         {
             if (_memberService == null) return;
-            LogActivity("已收到 MembersChanged 事件。正在重新整理 DataGridView。");
-            LoadMembersData();
+            LogActivity("MemberService_MembersChanged: Received MembersChanged event. Reloading data asynchronously.");
+            await LoadMembersDataAsync();
         }
 
         private void SetupDataGridView()
@@ -82,24 +84,24 @@ namespace ComicRentalSystem_14Days.Forms
             LogActivity("會員的 DataGridView 設定完成。");
         }
 
-        private void LoadMembersData()
+        private async Task LoadMembersDataAsync()
         {
             if (_memberService == null) return;
 
             string searchTerm = this.txtSearchMembers.Text.Trim();
 
-            LogActivity($"嘗試載入會員資料。搜尋關鍵字: '{searchTerm}'。");
+            LogActivity($"LoadMembersDataAsync: Attempting to load members data. Search term: '{searchTerm}'.");
 
             try
             {
                 List<Member> members;
                 if (string.IsNullOrWhiteSpace(searchTerm))
                 {
-                    members = _memberService.GetAllMembers();
+                    members = await _memberService.GetAllMembersAsync();
                 }
                 else
                 {
-                    members = _memberService.SearchMembers(searchTerm);
+                    members = await _memberService.SearchMembersAsync(searchTerm);
                 }
 
                 Action updateGrid = () => {
@@ -131,26 +133,26 @@ namespace ComicRentalSystem_14Days.Forms
             }
         }
 
-        private void btnSearchMembers_Click(object? sender, EventArgs e)
+        private async void btnSearchMembers_Click(object? sender, EventArgs e)
         {
-            LogActivity("搜尋會員按鈕已點擊。");
-            LoadMembersData();
+            LogActivity("btnSearchMembers_Click: Search button clicked. Reloading data asynchronously.");
+            await LoadMembersDataAsync();
         }
 
-        private void btnClearSearchMembers_Click(object? sender, EventArgs e)
+        private async void btnClearSearchMembers_Click(object? sender, EventArgs e)
         {
-            LogActivity("清除搜尋會員按鈕已點擊。");
+            LogActivity("btnClearSearchMembers_Click: Clear search button clicked. Reloading data asynchronously.");
             this.txtSearchMembers.Text = string.Empty;
-            LoadMembersData();
+            await LoadMembersDataAsync();
         }
 
-        private async void btnRefreshMembers_Click(object sender, EventArgs e) // 設為 async void
+        private async void btnRefreshMembers_Click(object sender, EventArgs e)
         {
             if (_memberService == null) return;
             LogActivity("Refresh Members button clicked. Will reload members from file asynchronously.");
             try
             {
-                await _memberService.ReloadAsync(); 
+                await _memberService.ReloadAsync();
             }
             catch (Exception ex)
             {
@@ -172,8 +174,11 @@ namespace ComicRentalSystem_14Days.Forms
             {
                 if (regForm.ShowDialog(this) == DialogResult.OK)
                 {
-                    LogActivity("RegistrationForm (新增會員) 已關閉並回傳 OK。資料重新整理將由 MembersChanged 事件處理。");
-                    LoadMembersData();
+                    LogActivity("btnAddMember_Click: RegistrationForm (add member) closed with OK. Data reload will be handled by MembersChanged event, or explicitly if needed.");
+                    // MembersChanged should ideally handle the reload.
+                    // However, if an explicit reload is desired here for immediate effect:
+                    // await LoadMembersDataAsync(); 
+                    // For now, relying on MembersChanged event from service.
                 }
                 else
                 {
@@ -216,67 +221,60 @@ namespace ComicRentalSystem_14Days.Forms
             }
         }
 
-        private void btnDeleteMember_Click(object sender, EventArgs e)
+        private async void btnDeleteMember_Click(object sender, EventArgs e)
         {
-            if (dgvMembers.SelectedRows.Count > 0 && _memberService != null)
+            if (dgvMembers.SelectedRows.Count > 0 && _memberService != null && _comicService != null)
             {
                 Member? selectedMember = dgvMembers.SelectedRows[0].DataBoundItem as Member;
                 if (selectedMember != null)
                 {
-                    LogActivity($"Attempting to delete member ID: {selectedMember.Id}, Name: '{selectedMember.Name}'.");
+                    LogActivity($"btnDeleteMember_Click: Attempting to delete member ID: {selectedMember.Id}, Name: '{selectedMember.Name}'.");
 
-                    // Check for active rentals
-                    if (_comicService != null)
+                    // Asynchronous check for active rentals using the new specific method
+                    bool hasActiveRentals = await _comicService.HasComicsRentedByMemberAsync(selectedMember.Id);
+                    if (hasActiveRentals)
                     {
-                        bool hasActiveRentals = _comicService.GetAllComics().Any(c => c.IsRented && c.RentedToMemberId == selectedMember.Id);
-                        if (hasActiveRentals)
-                        {
-                            MessageBox.Show($"會員 '{selectedMember.Name}' (ID: {selectedMember.Id}) 尚有未歸還的漫畫，無法刪除。", "刪除錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            LogActivity($"嘗試刪除會員 ID: {selectedMember.Id}，姓名: '{selectedMember.Name}' 失敗：會員尚有租借中的漫畫。");
-                            return;
-                        }
+                        MessageBox.Show($"會員 '{selectedMember.Name}' (ID: {selectedMember.Id}) 尚有未歸還的漫畫，無法刪除。", "刪除錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        LogActivity($"btnDeleteMember_Click: Attempt to delete member ID: {selectedMember.Id}, Name: '{selectedMember.Name}' failed: Member has active rentals.");
+                        return;
                     }
-                    else
-                    {
-                        MessageBox.Show("無法檢查會員租借狀態，漫畫服務未初始化。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        LogErrorActivity("Could not check member rental status: _comicService is null.");
-                        return; 
-                    }
+                    // Removed the _comicService == null check here as it's part of the initial if condition.
 
-                    LogActivity($"嘗試刪除會員 ID: {selectedMember.Id}，姓名: '{selectedMember.Name}'。正在顯示確認對話方塊。");
+                    LogActivity($"btnDeleteMember_Click: Showing confirmation dialog for deleting member ID: {selectedMember.Id}, Name: '{selectedMember.Name}'.");
                     var confirmResult = MessageBox.Show($"您確定要刪除會員 '{selectedMember.Name}' (ID: {selectedMember.Id}) 嗎？\n此操作無法復原。", "確認刪除", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                     if (confirmResult == DialogResult.Yes)
                     {
-                        LogActivity($"使用者已確認刪除會員 ID: {selectedMember.Id}。");
+                        LogActivity($"btnDeleteMember_Click: User confirmed deletion for member ID: {selectedMember.Id}.");
                         try
                         {
-                            _memberService.DeleteMember(selectedMember.Id); 
-                            string usernameToDelete = selectedMember.Username; 
-                            
+                            await _memberService.DeleteMemberAsync(selectedMember.Id);
+                            string usernameToDelete = selectedMember.Username;
+
+                            // AuthenticationService interaction remains synchronous as per subtask scope
                             if (_authenticationService != null)
                             {
                                 bool userDeleted = _authenticationService.DeleteUser(usernameToDelete);
                                 if (userDeleted)
                                 {
-                                    LogActivity($"會員 ID: {selectedMember.Id} 及其關聯的使用者帳戶 '{selectedMember.Username}' 已由服務成功標記為待刪除。UI 將透過事件重新整理。");
+                                    LogActivity($"btnDeleteMember_Click: Member ID: {selectedMember.Id} and associated user account '{selectedMember.Username}' successfully marked for deletion by services. UI should refresh via MembersChanged event.");
                                     MessageBox.Show($"會員 '{selectedMember.Name}' (使用者名稱: '{usernameToDelete}') 及其使用者帳戶已刪除。", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                 }
                                 else
                                 {
-                                    Logger?.LogWarning($"User account for Username: '{usernameToDelete}' (Member Name: '{selectedMember.Name}') not found by AuthenticationService, though member record was deleted. Possible data inconsistency if a user account was expected.");
-                                    LogActivity($"會員 ID: {selectedMember.Id} (無使用者帳戶) 已由服務成功標記為待刪除。UI 將透過事件重新整理。"); // Log for member deletion without user
+                                    Logger?.LogWarning($"btnDeleteMember_Click: User account for Username: '{usernameToDelete}' (Member Name: '{selectedMember.Name}') not found by AuthenticationService, though member record was deleted.");
+                                    LogActivity($"btnDeleteMember_Click: Member ID: {selectedMember.Id} (no user account or not found) marked for deletion. UI should refresh via event.");
                                     MessageBox.Show($"會員 '{selectedMember.Name}' 已從會員列表中刪除，但對應的使用者帳戶 '{usernameToDelete}' 未找到或無法刪除。", "部分成功", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                                 }
                             }
                             else
                             {
-                                LogErrorActivity("AuthenticationService is null. Cannot delete user account.", new InvalidOperationException("_authenticationService is null")); // This is one of the targeted exception messages
+                                LogErrorActivity("btnDeleteMember_Click: AuthenticationService is null. Cannot delete user account.", new InvalidOperationException("_authenticationService is null"));
                                 MessageBox.Show($"會員 '{selectedMember.Name}' 已從會員列表中刪除，但由於內部錯誤無法刪除其使用者帳戶。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
                         }
                         catch (InvalidOperationException opEx)
                         {
-                            LogErrorActivity($"刪除會員 ID: {selectedMember.Id} 時發生操作錯誤。", opEx);
+                            LogErrorActivity($"btnDeleteMember_Click: Operation error deleting member ID: {selectedMember.Id}.", opEx);
                             MessageBox.Show(opEx.Message, "操作錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                         catch (Exception ex)
@@ -311,14 +309,14 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (dgvMembers.SelectedRows.Count == 0)
             {
-                MessageBox.Show("請選擇一位會員。", "未選擇會員", MessageBoxButtons.OK, MessageBoxIcon.Information); 
+                MessageBox.Show("請選擇一位會員。", "未選擇會員", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
-            if (_authenticationService == null || Logger == null) 
+            if (_authenticationService == null || Logger == null)
             {
-                 MessageBox.Show("必要的服務不可用。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error); 
-                 LogErrorActivity("變更使用者角色所需服務不可用。", new InvalidOperationException("服務未初始化。"));
-                 return;
+                MessageBox.Show("必要的服務不可用。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                LogErrorActivity("變更使用者角色所需服務不可用。", new InvalidOperationException("服務未初始化。"));
+                return;
             }
 
             Member? selectedMember = dgvMembers.SelectedRows[0].DataBoundItem as Member;
@@ -332,7 +330,7 @@ namespace ComicRentalSystem_14Days.Forms
             User? userToEdit = _authenticationService.GetUserByUsername(selectedMember.Username);
             if (userToEdit == null)
             {
-                MessageBox.Show($"找不到使用者帳戶 '{selectedMember.Username}'。", "找不到使用者", MessageBoxButtons.OK, MessageBoxIcon.Error); 
+                MessageBox.Show($"找不到使用者帳戶 '{selectedMember.Username}'。", "找不到使用者", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 LogErrorActivity($"User account for member '{selectedMember.Name}' (username: {selectedMember.Username}) not found for role change.");
                 return;
             }
