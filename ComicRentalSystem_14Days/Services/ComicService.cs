@@ -10,7 +10,7 @@ using ComicRentalSystem_14Days.Models;
 
 namespace ComicRentalSystem_14Days.Services
 {
-    public class ComicService
+    public class ComicService : IComicService
     {
         private readonly IFileHelper _fileHelper;
         private readonly string _comicFileName = "comics.csv";
