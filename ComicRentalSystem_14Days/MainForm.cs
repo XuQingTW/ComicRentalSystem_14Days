@@ -1341,7 +1341,7 @@ namespace ComicRentalSystem_14Days
                         comicsToFilter = comicsToFilter
                             .Where(c =>
                                 !string.IsNullOrWhiteSpace(c.Genre) &&
-                                c.Genre.Equals(chosenGenre, StringComparison.OrdinalIgnoreCase)
+                                c.Genre != null && c.Genre.ToUpperInvariant() == chosenGenre.ToUpperInvariant()
                             )
                             .ToList();
                     }

@@ -195,8 +195,9 @@ namespace ComicRentalSystem_14Days.Services
                     _logger.LogError($"新增漫畫失敗: ID {comic.Id} (書名='{comic.Title}') 已存在。", ex);
                     throw ex;
                 }
-                if (_comics.Any(c => c.Title.Equals(comic.Title, StringComparison.OrdinalIgnoreCase) &&
-                                     c.Author.Equals(comic.Author, StringComparison.OrdinalIgnoreCase)))
+                if (_comics.Any(c =>
+                        c.Title.ToUpperInvariant() == comic.Title.ToUpperInvariant() &&
+                        c.Author.ToUpperInvariant() == comic.Author.ToUpperInvariant()))
                 {
                     _logger.LogWarning($"書名='{comic.Title}' 且作者='{comic.Author}' 相同的漫畫已存在。繼續新增。");
                 }
@@ -290,7 +291,9 @@ namespace ComicRentalSystem_14Days.Services
             else
             {
                 _logger.Log($"已呼叫 GetComicsByGenre，依類型篩選: '{genreFilter}'。");
-                List<Comic> filteredComics = _comics.Where(c => c.Genre.Equals(genreFilter, StringComparison.OrdinalIgnoreCase)).ToList();
+                List<Comic> filteredComics = _comics
+                    .Where(c => c.Genre != null && c.Genre.ToUpperInvariant() == genreFilter.ToUpperInvariant())
+                    .ToList();
                 _logger.Log($"找到 {filteredComics.Count} 本類型為 '{genreFilter}' 的漫畫。");
                 return filteredComics;
             }
@@ -307,11 +310,12 @@ namespace ComicRentalSystem_14Days.Services
                 return _comics.ToList();
             }
 
+            string searchUpper = searchTerm.ToUpperInvariant();
             query = query.Where(c =>
-                (c.Title != null && c.Title.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0) ||
-                (c.Author != null && c.Author.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0) ||
-                (c.Isbn != null && c.Isbn.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0) ||
-                (c.Genre != null && c.Genre.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0) ||
+                (c.Title != null && c.Title.ToUpperInvariant().Contains(searchUpper)) ||
+                (c.Author != null && c.Author.ToUpperInvariant().Contains(searchUpper)) ||
+                (c.Isbn != null && c.Isbn.ToUpperInvariant().Contains(searchUpper)) ||
+                (c.Genre != null && c.Genre.ToUpperInvariant().Contains(searchUpper)) ||
                 (c.Id.ToString().Equals(searchTerm))
             );
             _logger.Log($"已套用搜尋詞: '{searchTerm}'。");

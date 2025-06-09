@@ -250,7 +250,7 @@ namespace ComicRentalSystem_14Days.Services
                 return null;
             }
             _logger.Log($"已為姓名: '{name}' 呼叫 GetMemberByName。");
-            Member? member = _members.FirstOrDefault(m => m.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+            Member? member = _members.FirstOrDefault(m => m.Name.ToUpperInvariant() == name.ToUpperInvariant());
             if (member == null)
             {
                 _logger.Log($"找不到姓名為: '{name}' 的會員。");
@@ -298,8 +298,9 @@ namespace ComicRentalSystem_14Days.Services
                 return null;
             }
 
+            string userUpper = username.ToUpperInvariant();
             Member? foundMember = allMembers.FirstOrDefault(m =>
-                string.Equals(m.Username, username, StringComparison.OrdinalIgnoreCase)
+                m.Username != null && m.Username.ToUpperInvariant() == userUpper
             );
 
             if (foundMember != null)
