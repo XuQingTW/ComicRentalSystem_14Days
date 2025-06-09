@@ -95,11 +95,17 @@ namespace ComicRentalSystem_14Days.Services
                 {
                     _logger.LogWarning($"書名='{comic.Title}' 且作者='{comic.Author}' 相同的漫畫已存在。繼續新增。");
                 }
-            } // This closes the try block.
-            // At this point, _context.SaveChanges() would typically be called for AddComic.
-            // Also, OnComicsChanged() would be called.
-            // For now, focusing on fixing CS1513 by closing AddComic method.
-        } // This closes AddComic method.
+
+                _context.SaveChanges();
+                _logger.Log($"Comic '{comic.Title}' (ID: {comic.Id}) added to database.");
+                OnComicsChanged();
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError($"Error adding comic '{comic.Title}' to database.", ex);
+                throw new InvalidOperationException($"Could not add comic. Possible constraint violation.", ex);
+            }
+        }
 
         public async Task AddComicAsync(Comic comic)
         {
