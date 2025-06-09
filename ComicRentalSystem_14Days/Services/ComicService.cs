@@ -96,8 +96,8 @@ namespace ComicRentalSystem_14Days.Services
                     throw ex;
                 }
                 if (context.Comics.Any(c =>
-                        c.Title.ToUpperInvariant() == comic.Title.ToUpperInvariant() &&
-                        c.Author.ToUpperInvariant() == comic.Author.ToUpperInvariant()))
+                        c.Title.ToLower() == comic.Title.ToLower() &&
+                        c.Author.ToLower() == comic.Author.ToLower()))
                 {
                     _logger.LogWarning($"書名='{comic.Title}' 且作者='{comic.Author}' 相同的漫畫已存在。繼續新增。");
                 }
@@ -246,12 +246,12 @@ namespace ComicRentalSystem_14Days.Services
                 return query.OrderBy(c => c.Title).ToList();
             }
 
-            string searchUpper = searchTerm.ToUpperInvariant();
+            string searchLower = searchTerm.ToLower();
             query = query.Where(c =>
-                (c.Title != null && c.Title.ToUpperInvariant().Contains(searchUpper)) ||
-                (c.Author != null && c.Author.ToUpperInvariant().Contains(searchUpper)) ||
-                (c.Isbn != null && c.Isbn.ToUpperInvariant().Contains(searchUpper)) ||
-                (c.Genre != null && c.Genre.ToUpperInvariant().Contains(searchUpper)) ||
+                (c.Title != null && c.Title.ToLower().Contains(searchLower)) ||
+                (c.Author != null && c.Author.ToLower().Contains(searchLower)) ||
+                (c.Isbn != null && c.Isbn.ToLower().Contains(searchLower)) ||
+                (c.Genre != null && c.Genre.ToLower().Contains(searchLower)) ||
                 (c.Id.ToString().Equals(searchTerm))
             );
             _logger.Log($"Search term '{searchTerm}' applied.");

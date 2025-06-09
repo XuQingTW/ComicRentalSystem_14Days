@@ -184,7 +184,10 @@ namespace ComicRentalSystem_14Days.Services
             }
             _logger.Log($"已為姓名: '{name}' 呼叫 GetMemberByName。");
             using var context = CreateContext();
-            Member? member = context.Members.FirstOrDefault(m => m.Name.ToUpperInvariant() == name.ToUpperInvariant());
+            // Use ToLower for case-insensitive comparison as ToUpperInvariant
+            // may not be translated correctly by some EF providers.
+            Member? member = context.Members
+                .FirstOrDefault(m => m.Name.ToLower() == name.ToLower());
             if (member == null)
             {
                 _logger.Log($"Member with name: '{name}' not found.");
@@ -226,7 +229,12 @@ namespace ComicRentalSystem_14Days.Services
             }
             _logger.Log($"GetMemberByUsername called for username: '{username}'.");
             using var context = CreateContext();
-            Member? member = context.Members.FirstOrDefault(m => m.Username != null && m.Username.ToUpperInvariant() == username.ToUpperInvariant());
+            // Avoid using ToUpperInvariant which may not be translatable by EF
+            // Core when generating SQL. Instead use ToLower which is supported
+            // across providers.
+            Member? member = context.Members
+                .FirstOrDefault(m => m.Username != null &&
+                                     m.Username.ToLower() == username.ToLower());
 
             if (member == null)
             {
@@ -249,13 +257,13 @@ namespace ComicRentalSystem_14Days.Services
                 return contextAll.Members.OrderBy(m => m.Name).ToList();
             }
 
-            var lowerSearchTerm = searchTerm.ToLowerInvariant();
+            var lowerSearchTerm = searchTerm.ToLower();
             using var contextFiltered = CreateContext();
             var results = contextFiltered.Members.Where(m =>
-                (m.Name != null && m.Name.ToLowerInvariant().Contains(lowerSearchTerm)) ||
+                (m.Name != null && m.Name.ToLower().Contains(lowerSearchTerm)) ||
                 (m.PhoneNumber != null && m.PhoneNumber.Contains(searchTerm)) || // Phone is exact search here
                 (m.Id.ToString().Equals(searchTerm)) ||
-                (m.Username != null && m.Username.ToLowerInvariant().Contains(lowerSearchTerm))
+                (m.Username != null && m.Username.ToLower().Contains(lowerSearchTerm))
             ).OrderBy(m => m.Name).ToList();
 
             _logger.Log($"SearchMembers found {results.Count} matching members.");
