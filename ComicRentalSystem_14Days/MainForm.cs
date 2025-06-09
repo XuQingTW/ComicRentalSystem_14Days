@@ -1106,8 +1106,6 @@ namespace ComicRentalSystem_14Days
             {
                 SelectNavButton(cb);
                 _logger?.Log("Logs navigation button clicked.");
-                using var f = new LogManagementForm((FileLogger)_logger!);
-                f.ShowDialog(this);
             }
         }
 
