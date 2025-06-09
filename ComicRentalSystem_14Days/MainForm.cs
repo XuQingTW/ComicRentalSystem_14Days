@@ -533,22 +533,18 @@ namespace ComicRentalSystem_14Days
 
         private void UpdateStatusBar()
         {
-            if (this.statusStrip1 != null)
+            // _currentUser and _logger are guaranteed non-null by the constructor used for normal operation.
+            // toolStripStatusLabelUser is part of InitializeComponent.
+            if (this.toolStripStatusLabelUser != null)
             {
-                if (this.toolStripStatusLabelUser != null) // Guard for CS8602
-                {
-                    this.toolStripStatusLabelUser.Text = $"使用者: {_currentUser.Username} | 角色: {_currentUser.Role}"; // CS8602
-                    this._logger.Log($"Status bar updated: User: {_currentUser.Username}, Role: {_currentUser.Role}");
-                }
-                else
-                {
-                    this._logger.LogWarning("找不到 ToolStripStatusLabel 控制項 'toolStripStatusLabelUser' 或其為空。");
-                }
+                this.toolStripStatusLabelUser.Text = $"使用者: {_currentUser.Username} | 角色: {_currentUser.Role}";
             }
             else
             {
-                this._logger.LogWarning("找不到 StatusStrip 控制項 'statusStrip1' 或其為空。");
+                this._logger.LogWarning("toolStripStatusLabelUser is null. Cannot update status bar text.");
             }
+            // Log status update attempt regardless of label's state, as user info is available.
+            this._logger.Log($"Status bar update processed for User: {_currentUser.Username}, Role: {_currentUser.Role}");
         }
 
         private void SetupMyRentedComicsDataGridView()
