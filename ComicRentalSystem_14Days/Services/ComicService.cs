@@ -143,13 +143,6 @@ namespace ComicRentalSystem_14Days.Services
         }
 
         public async Task AddComicAsync(Comic comic)
-            {
-                _logger.LogError($"Error adding comic '{comic.Title}' to database (obsolete).", ex);
-                throw new InvalidOperationException($"Could not add comic (obsolete). Possible constraint violation or other database error.", ex);
-            }
-        }
-
-        public async Task AddComicAsync(Comic comic)
         {
             if (comic == null)
             {
