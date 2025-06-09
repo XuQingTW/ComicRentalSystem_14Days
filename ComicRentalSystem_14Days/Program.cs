@@ -17,7 +17,6 @@ namespace ComicRentalSystem_14Days
     {
         public static ILogger? AppLogger { get; private set; }
         public static FileHelper? AppFileHelper { get; private set; } // Retained for now, in case FileLogger or other parts might use it.
-        public static ComicRentalDbContext? AppDbContext { get; private set; } // Added DbContext
         public static IComicService? AppComicService { get; private set; }
         public static MemberService? AppMemberService { get; private set; }
         public static IReloadService? AppReloadService { get; private set; }
@@ -154,26 +153,25 @@ namespace ComicRentalSystem_14Days
             AppLogger.Log("Database context disposed after migration check/process.");
             // --- END DATA MIGRATION TO SQLITE ---
 
-            AppLogger.Log("Initializing main application DbContext...");
-            AppDbContext = new ComicRentalDbContext();
-            AppLogger.Log("Main application DbContext initialized.");
+            // AppDbContext is no longer initialized here. Services will manage their own.
 
-            if (AppDbContext != null && AppLogger != null)
+            if (AppLogger != null) // AppDbContext check removed
             {
-                AppComicService = new ComicService(AppDbContext, AppLogger);
-                AppLogger.Log("ComicService initialized with DbContext.");
+                AppComicService = new ComicService(AppLogger); // AppDbContext removed
+                AppLogger.Log("ComicService initialized.");
 
-                AppMemberService = new MemberService(AppDbContext, AppLogger, AppComicService);
-                AppLogger.Log("MemberService initialized with DbContext.");
+                AppMemberService = new MemberService(AppLogger, AppComicService); // AppDbContext removed
+                AppLogger.Log("MemberService initialized.");
 
-                AppAuthService = new AuthenticationService(AppDbContext, AppLogger);
-                AppLogger.Log("AuthenticationService initialized with DbContext.");
+                AppAuthService = new AuthenticationService(AppLogger); // AppDbContext removed
+                AppLogger.Log("AuthenticationService initialized.");
 
-                AppAuthService.EnsureAdminUserExists("admin", "admin123");
+                AppAuthService.EnsureAdminUserExists("admin", "admin123"); // This call remains
             }
             else
             {
-                AppLogger?.LogError("Critical error: AppDbContext or AppLogger is null. Cannot initialize core services.");
+                // Simplified error logging as AppDbContext is no longer a factor here for service init
+                AppLogger?.LogError("Critical error: AppLogger is null. Cannot initialize core services.");
             }
 
             Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);

@@ -10,20 +10,18 @@ namespace ComicRentalSystem_14Days.Services
 {
     public class MemberService
     {
-        private readonly ComicRentalDbContext _context;
         private readonly ILogger _logger;
         private readonly IComicService _comicService;
 
         public delegate void MemberDataChangedEventHandler(object? sender, EventArgs e);
         public event MemberDataChangedEventHandler? MembersChanged;
 
-        public MemberService(ComicRentalDbContext context, ILogger logger, IComicService comicService)
+        public MemberService(ILogger logger, IComicService comicService)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger), "MemberService logger cannot be null.");
             _comicService = comicService ?? throw new ArgumentNullException(nameof(comicService));
 
-            _logger.Log("MemberService initialized with ComicRentalDbContext.");
+            _logger.Log("MemberService initialized (DbContext will be created per-operation).");
         }
 
         public async Task ReloadAsync()
@@ -43,22 +41,30 @@ namespace ComicRentalSystem_14Days.Services
         public List<Member> GetAllMembers()
         {
             _logger.Log("GetAllMembers called (obsolete).");
-            return _context.Members.OrderBy(m => m.Name).ToList();
+            using (var context = new ComicRentalDbContext())
+            {
+                return context.Members.OrderBy(m => m.Name).ToList();
+            }
         }
 
         public async Task<List<Member>> GetAllMembersAsync()
         {
             _logger.Log("GetAllMembersAsync called.");
-            return await _context.Members.AsNoTracking().OrderBy(m => m.Name).ToListAsync();
+            using (var context = new ComicRentalDbContext())
+            {
+                return await context.Members.AsNoTracking().OrderBy(m => m.Name).ToListAsync();
+            }
         }
 
         [Obsolete("Use asynchronous version GetMemberByIdAsync instead.")]
         public Member? GetMemberById(int id)
         {
             _logger.Log($"GetMemberById (obsolete) called for ID: {id}.");
-            var member = _context.Members.Find(id);
-            if (member == null)
+            using (var context = new ComicRentalDbContext())
             {
+                var member = context.Members.Find(id);
+                if (member == null)
+                {
                 _logger.Log($"GetMemberById (obsolete): Member with ID: {id} not found.");
             }
             else
@@ -66,14 +72,17 @@ namespace ComicRentalSystem_14Days.Services
                 _logger.Log($"GetMemberById (obsolete): Member with ID: {id} found: Name='{member.Name}'.");
             }
             return member;
+            }
         }
 
         public async Task<Member?> GetMemberByIdAsync(int id)
         {
             _logger.Log($"GetMemberByIdAsync called for ID: {id}.");
-            var member = await _context.Members.AsNoTracking().FirstOrDefaultAsync(m => m.Id == id);
-            if (member == null)
+            using (var context = new ComicRentalDbContext())
             {
+                var member = await context.Members.AsNoTracking().FirstOrDefaultAsync(m => m.Id == id);
+                if (member == null)
+                {
                 _logger.Log($"GetMemberByIdAsync: Member with ID: {id} not found.");
             }
             else
@@ -81,6 +90,7 @@ namespace ComicRentalSystem_14Days.Services
                 _logger.Log($"GetMemberByIdAsync: Member with ID: {id} found: Name='{member.Name}'.");
             }
             return member;
+            }
         }
 
         [Obsolete("Use asynchronous version AddMemberAsync instead.")]
@@ -101,21 +111,24 @@ namespace ComicRentalSystem_14Days.Services
             }
 
             _logger.Log($"AddMember (obsolete): Attempting to add member: Name='{member.Name}'. ID will be DB-generated if {member.Id} is 0.");
-            if (_context.Members.Any(m => m.PhoneNumber == member.PhoneNumber))
+            using (var context = new ComicRentalDbContext())
             {
-                _logger.LogWarning($"AddMember (obsolete): Member with phone number '{member.PhoneNumber}' already exists.");
-            }
-            _context.Members.Add(member);
-            try
-            {
-                _context.SaveChanges();
-                _logger.Log($"AddMember (obsolete): Member '{member.Name}' (ID: {member.Id}) added to database.");
-                OnMembersChanged();
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError($"AddMember (obsolete): Error adding member '{member.Name}' to database.", ex);
-                throw new InvalidOperationException($"AddMember (obsolete): Could not add member. Possible constraint violation.", ex);
+                if (context.Members.Any(m => m.PhoneNumber == member.PhoneNumber))
+                {
+                    _logger.LogWarning($"AddMember (obsolete): Member with phone number '{member.PhoneNumber}' already exists.");
+                }
+                context.Members.Add(member);
+                try
+                {
+                    context.SaveChanges();
+                    _logger.Log($"AddMember (obsolete): Member '{member.Name}' (ID: {member.Id}) added to database.");
+                    OnMembersChanged();
+                }
+                catch (DbUpdateException ex)
+                {
+                    _logger.LogError($"AddMember (obsolete): Error adding member '{member.Name}' to database.", ex);
+                    throw new InvalidOperationException($"AddMember (obsolete): Could not add member. Possible constraint violation.", ex);
+                }
             }
         }
 
@@ -136,23 +149,26 @@ namespace ComicRentalSystem_14Days.Services
             }
 
             _logger.Log($"AddMemberAsync: Attempting to add member: Name='{member.Name}'.");
-            // Consider async check for phone number if it's a critical validation before Add.
-            // For now, keeping behavior similar to original regarding existing phone numbers (log warning, allow add).
-            if (await _context.Members.AnyAsync(m => m.PhoneNumber == member.PhoneNumber))
+            using (var context = new ComicRentalDbContext())
             {
-                _logger.LogWarning($"AddMemberAsync: Member with phone number '{member.PhoneNumber}' already exists.");
-            }
-            _context.Members.Add(member);
-            try
-            {
-                await _context.SaveChangesAsync();
-                _logger.Log($"AddMemberAsync: Member '{member.Name}' (ID: {member.Id}) added to database.");
-                OnMembersChanged();
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError($"AddMemberAsync: Error adding member '{member.Name}' to database.", ex);
-                throw new InvalidOperationException($"AddMemberAsync: Could not add member. Possible constraint violation.", ex);
+                // Consider async check for phone number if it's a critical validation before Add.
+                // For now, keeping behavior similar to original regarding existing phone numbers (log warning, allow add).
+                if (await context.Members.AnyAsync(m => m.PhoneNumber == member.PhoneNumber))
+                {
+                    _logger.LogWarning($"AddMemberAsync: Member with phone number '{member.PhoneNumber}' already exists.");
+                }
+                context.Members.Add(member);
+                try
+                {
+                    await context.SaveChangesAsync();
+                    _logger.Log($"AddMemberAsync: Member '{member.Name}' (ID: {member.Id}) added to database.");
+                    OnMembersChanged();
+                }
+                catch (DbUpdateException ex)
+                {
+                    _logger.LogError($"AddMemberAsync: Error adding member '{member.Name}' to database.", ex);
+                    throw new InvalidOperationException($"AddMemberAsync: Could not add member. Possible constraint violation.", ex);
+                }
             }
         }
 
@@ -167,30 +183,33 @@ namespace ComicRentalSystem_14Days.Services
             }
 
             _logger.Log($"UpdateMember (obsolete): Attempting to update member ID: {member.Id} (Name='{member.Name}').");
-            var existingMember = _context.Members.Find(member.Id);
-            if (existingMember == null)
+            using (var context = new ComicRentalDbContext())
             {
-                var ex = new InvalidOperationException($"UpdateMember (obsolete): Cannot update: Member with ID {member.Id} not found.");
-                _logger.LogError(ex.Message, ex);
-                throw ex;
-            }
+                var existingMember = context.Members.Find(member.Id);
+                if (existingMember == null)
+                {
+                    var ex = new InvalidOperationException($"UpdateMember (obsolete): Cannot update: Member with ID {member.Id} not found.");
+                    _logger.LogError(ex.Message, ex);
+                    throw ex;
+                }
 
-            if (_context.Members.Any(m => m.PhoneNumber == member.PhoneNumber && m.Id != member.Id))
-            {
-                _logger.LogWarning($"UpdateMember (obsolete): Another member with phone number '{member.PhoneNumber}' already exists.");
-            }
+                if (context.Members.Any(m => m.PhoneNumber == member.PhoneNumber && m.Id != member.Id))
+                {
+                    _logger.LogWarning($"UpdateMember (obsolete): Another member with phone number '{member.PhoneNumber}' already exists.");
+                }
 
-            _context.Entry(existingMember).CurrentValues.SetValues(member);
-            try
-            {
-                _context.SaveChanges();
-                _logger.Log($"UpdateMember (obsolete): Member ID: {existingMember.Id} updated in database.");
-                OnMembersChanged();
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError($"UpdateMember (obsolete): Error updating member ID: {existingMember.Id} in database.", ex);
-                throw new InvalidOperationException($"UpdateMember (obsolete): Could not update member. Possible constraint violation.", ex);
+                context.Entry(existingMember).CurrentValues.SetValues(member);
+                try
+                {
+                    context.SaveChanges();
+                    _logger.Log($"UpdateMember (obsolete): Member ID: {existingMember.Id} updated in database.");
+                    OnMembersChanged();
+                }
+                catch (DbUpdateException ex)
+                {
+                    _logger.LogError($"UpdateMember (obsolete): Error updating member ID: {existingMember.Id} in database.", ex);
+                    throw new InvalidOperationException($"UpdateMember (obsolete): Could not update member. Possible constraint violation.", ex);
+                }
             }
         }
 
@@ -204,31 +223,34 @@ namespace ComicRentalSystem_14Days.Services
             }
 
             _logger.Log($"UpdateMemberAsync: Attempting to update member ID: {member.Id} (Name='{member.Name}').");
-            var existingMember = await _context.Members.FindAsync(member.Id);
-            if (existingMember == null)
+            using (var context = new ComicRentalDbContext())
             {
-                var ex = new InvalidOperationException($"UpdateMemberAsync: Cannot update: Member with ID {member.Id} not found.");
-                _logger.LogError(ex.Message, ex);
-                throw ex;
-            }
+                var existingMember = await context.Members.FindAsync(member.Id);
+                if (existingMember == null)
+                {
+                    var ex = new InvalidOperationException($"UpdateMemberAsync: Cannot update: Member with ID {member.Id} not found.");
+                    _logger.LogError(ex.Message, ex);
+                    throw ex;
+                }
 
-            // Async check for phone number uniqueness
-            if (await _context.Members.AnyAsync(m => m.PhoneNumber == member.PhoneNumber && m.Id != member.Id))
-            {
-                _logger.LogWarning($"UpdateMemberAsync: Another member with phone number '{member.PhoneNumber}' already exists.");
-            }
+                // Async check for phone number uniqueness
+                if (await context.Members.AnyAsync(m => m.PhoneNumber == member.PhoneNumber && m.Id != member.Id))
+                {
+                    _logger.LogWarning($"UpdateMemberAsync: Another member with phone number '{member.PhoneNumber}' already exists.");
+                }
 
-            _context.Entry(existingMember).CurrentValues.SetValues(member);
-            try
-            {
-                await _context.SaveChangesAsync();
-                _logger.Log($"UpdateMemberAsync: Member ID: {existingMember.Id} updated in database.");
-                OnMembersChanged();
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError($"UpdateMemberAsync: Error updating member ID: {existingMember.Id} in database.", ex);
-                throw new InvalidOperationException($"UpdateMemberAsync: Could not update member. Possible constraint violation.", ex);
+                context.Entry(existingMember).CurrentValues.SetValues(member);
+                try
+                {
+                    await context.SaveChangesAsync();
+                    _logger.Log($"UpdateMemberAsync: Member ID: {existingMember.Id} updated in database.");
+                    OnMembersChanged();
+                }
+                catch (DbUpdateException ex)
+                {
+                    _logger.LogError($"UpdateMemberAsync: Error updating member ID: {existingMember.Id} in database.", ex);
+                    throw new InvalidOperationException($"UpdateMemberAsync: Could not update member. Possible constraint violation.", ex);
+                }
             }
         }
 
@@ -236,10 +258,12 @@ namespace ComicRentalSystem_14Days.Services
         public void DeleteMember(int id)
         {
             _logger.Log($"DeleteMember (obsolete): Attempting to delete member with ID: {id}.");
-            var memberToRemove = _context.Members.Find(id);
-            if (memberToRemove == null)
+            using (var context = new ComicRentalDbContext())
             {
-                var ex = new InvalidOperationException($"DeleteMember (obsolete): Cannot delete: Member with ID {id} not found.");
+                var memberToRemove = context.Members.Find(id);
+                if (memberToRemove == null)
+                {
+                    var ex = new InvalidOperationException($"DeleteMember (obsolete): Cannot delete: Member with ID {id} not found.");
                 _logger.LogWarning(ex.Message);
                 throw ex;
             }
@@ -254,10 +278,10 @@ namespace ComicRentalSystem_14Days.Services
                 throw new InvalidOperationException("DeleteMember (obsolete): Cannot delete member: Member has active comic rentals.");
             }
 
-            _context.Members.Remove(memberToRemove);
+            context.Members.Remove(memberToRemove);
             try
             {
-                _context.SaveChanges();
+                context.SaveChanges();
                 _logger.Log($"DeleteMember (obsolete): Member ID: {id} deleted from database.");
                 OnMembersChanged();
             }
@@ -266,37 +290,41 @@ namespace ComicRentalSystem_14Days.Services
                 _logger.LogError($"DeleteMember (obsolete): Error deleting member ID: {id} from database.", ex);
                 throw new InvalidOperationException($"DeleteMember (obsolete): Could not delete member. It might be in use or a DB error occurred.", ex);
             }
+            }
         }
 
         public async Task DeleteMemberAsync(int id)
         {
             _logger.Log($"DeleteMemberAsync: Attempting to delete member with ID: {id}.");
-            var memberToRemove = await _context.Members.FindAsync(id);
-            if (memberToRemove == null)
+            using (var context = new ComicRentalDbContext())
             {
-                var ex = new InvalidOperationException($"DeleteMemberAsync: Cannot delete: Member with ID {id} not found.");
-                _logger.LogWarning(ex.Message);
-                throw ex;
-            }
+                var memberToRemove = await context.Members.FindAsync(id);
+                if (memberToRemove == null)
+                {
+                    var ex = new InvalidOperationException($"DeleteMemberAsync: Cannot delete: Member with ID {id} not found.");
+                    _logger.LogWarning(ex.Message);
+                    throw ex;
+                }
 
-            // Asynchronous check for active rentals directly using the context
-            if (await _context.Comics.AnyAsync(c => c.IsRented && c.RentedToMemberId == id))
-            {
-                _logger.LogWarning($"DeleteMemberAsync: Attempt to delete member ID {id} ('{memberToRemove.Name}') with active rentals was blocked.");
-                throw new InvalidOperationException("DeleteMemberAsync: Cannot delete member: Member has active comic rentals.");
-            }
+                // Asynchronous check for active rentals directly using the context
+                if (await context.Comics.AnyAsync(c => c.IsRented && c.RentedToMemberId == id))
+                {
+                    _logger.LogWarning($"DeleteMemberAsync: Attempt to delete member ID {id} ('{memberToRemove.Name}') with active rentals was blocked.");
+                    throw new InvalidOperationException("DeleteMemberAsync: Cannot delete member: Member has active comic rentals.");
+                }
 
-            _context.Members.Remove(memberToRemove);
-            try
-            {
-                await _context.SaveChangesAsync();
-                _logger.Log($"DeleteMemberAsync: Member ID: {id} deleted from database.");
-                OnMembersChanged();
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError($"DeleteMemberAsync: Error deleting member ID: {id} from database.", ex);
-                throw new InvalidOperationException($"DeleteMemberAsync: Could not delete member. It might be in use or a DB error occurred.", ex);
+                context.Members.Remove(memberToRemove);
+                try
+                {
+                    await context.SaveChangesAsync();
+                    _logger.Log($"DeleteMemberAsync: Member ID: {id} deleted from database.");
+                    OnMembersChanged();
+                }
+                catch (DbUpdateException ex)
+                {
+                    _logger.LogError($"DeleteMemberAsync: Error deleting member ID: {id} from database.", ex);
+                    throw new InvalidOperationException($"DeleteMemberAsync: Could not delete member. It might be in use or a DB error occurred.", ex);
+                }
             }
         }
 
@@ -309,9 +337,11 @@ namespace ComicRentalSystem_14Days.Services
                 return null;
             }
             _logger.Log($"GetMemberByName (obsolete) called for name: '{name}'.");
-            Member? member = _context.Members.FirstOrDefault(m => m.Name.ToUpperInvariant() == name.ToUpperInvariant());
-            if (member == null)
+            using (var context = new ComicRentalDbContext())
             {
+                Member? member = context.Members.FirstOrDefault(m => m.Name.ToUpperInvariant() == name.ToUpperInvariant());
+                if (member == null)
+                {
                 _logger.Log($"GetMemberByName (obsolete): Member with name: '{name}' not found.");
             }
             else
@@ -319,6 +349,7 @@ namespace ComicRentalSystem_14Days.Services
                 _logger.Log($"GetMemberByName (obsolete): Member with name: '{name}' found: ID='{member.Id}'.");
             }
             return member;
+            }
         }
 
         public async Task<Member?> GetMemberByNameAsync(string name)
@@ -329,10 +360,12 @@ namespace ComicRentalSystem_14Days.Services
                 return null;
             }
             _logger.Log($"GetMemberByNameAsync called for name: '{name}'.");
-            Member? member = await _context.Members.AsNoTracking()
-                                     .FirstOrDefaultAsync(m => m.Name.ToUpperInvariant() == name.ToUpperInvariant());
-            if (member == null)
+            using (var context = new ComicRentalDbContext())
             {
+                Member? member = await context.Members.AsNoTracking()
+                                         .FirstOrDefaultAsync(m => m.Name.ToUpperInvariant() == name.ToUpperInvariant());
+                if (member == null)
+                {
                 _logger.Log($"GetMemberByNameAsync: Member with name: '{name}' not found.");
             }
             else
@@ -340,6 +373,7 @@ namespace ComicRentalSystem_14Days.Services
                 _logger.Log($"GetMemberByNameAsync: Member with name: '{name}' found: ID='{member.Id}'.");
             }
             return member;
+            }
         }
 
         [Obsolete("Use asynchronous version GetMemberByPhoneNumberAsync instead.")]
@@ -351,9 +385,11 @@ namespace ComicRentalSystem_14Days.Services
                 return null;
             }
             _logger.Log($"GetMemberByPhoneNumber (obsolete) called for phone: '{phoneNumber}'.");
-            var member = _context.Members.FirstOrDefault(m => m.PhoneNumber.Equals(phoneNumber));
-            if (member == null)
+            using (var context = new ComicRentalDbContext())
             {
+                var member = context.Members.FirstOrDefault(m => m.PhoneNumber.Equals(phoneNumber));
+                if (member == null)
+                {
                 _logger.Log($"GetMemberByPhoneNumber (obsolete): Member with phone: '{phoneNumber}' not found.");
             }
             else
@@ -361,6 +397,7 @@ namespace ComicRentalSystem_14Days.Services
                 _logger.Log($"GetMemberByPhoneNumber (obsolete): Member with phone: '{phoneNumber}' found: ID='{member.Id}', Name='{member.Name}'.");
             }
             return member;
+            }
         }
 
         public async Task<Member?> GetMemberByPhoneNumberAsync(string phoneNumber)
@@ -371,10 +408,12 @@ namespace ComicRentalSystem_14Days.Services
                 return null;
             }
             _logger.Log($"GetMemberByPhoneNumberAsync called for phone: '{phoneNumber}'.");
-            var member = await _context.Members.AsNoTracking()
-                                         .FirstOrDefaultAsync(m => m.PhoneNumber.Equals(phoneNumber));
-            if (member == null)
+            using (var context = new ComicRentalDbContext())
             {
+                var member = await context.Members.AsNoTracking()
+                                             .FirstOrDefaultAsync(m => m.PhoneNumber.Equals(phoneNumber));
+                if (member == null)
+                {
                 _logger.Log($"GetMemberByPhoneNumberAsync: Member with phone: '{phoneNumber}' not found.");
             }
             else
@@ -382,6 +421,7 @@ namespace ComicRentalSystem_14Days.Services
                 _logger.Log($"GetMemberByPhoneNumberAsync: Member with phone: '{phoneNumber}' found: ID='{member.Id}', Name='{member.Name}'.");
             }
             return member;
+            }
         }
 
         [Obsolete("Use asynchronous version GetMemberByUsernameAsync instead.")]
@@ -393,30 +433,34 @@ namespace ComicRentalSystem_14Days.Services
                 return null;
             }
             _logger.Log($"GetMemberByUsername (obsolete) called for username: '{username}'.");
-            // The original GetAllMembers() call here is inefficient.
-            // It's being replaced in the async version.
-            var allMembers = GetAllMembers();
-
-            if (allMembers == null || !allMembers.Any())
+            // The original GetAllMembers() call here is inefficient as it fetches all members.
+            // This method will now use its own context.
+            using (var context = new ComicRentalDbContext())
             {
-                _logger.LogWarning("GetMemberByUsername (obsolete): No members available for search.");
-                return null;
-            }
+                // Replicating the inefficient GetAllMembers() call within the new context for this obsolete method.
+                var allMembers = context.Members.ToList(); // Simplified, original GetAllMembers had OrderBy
 
-            string userUpper = username.ToUpperInvariant();
-            Member? foundMember = allMembers.FirstOrDefault(m =>
-                m.Username != null && m.Username.ToUpperInvariant() == userUpper
-            );
+                if (allMembers == null || !allMembers.Any())
+                {
+                    _logger.LogWarning("GetMemberByUsername (obsolete): No members available for search.");
+                    return null;
+                }
 
-            if (foundMember != null)
-            {
-                _logger.Log($"GetMemberByUsername (obsolete): Member with username: '{username}' found: ID='{foundMember.Id}'.");
+                string userUpper = username.ToUpperInvariant();
+                Member? foundMember = allMembers.FirstOrDefault(m =>
+                    m.Username != null && m.Username.ToUpperInvariant() == userUpper
+                );
+
+                if (foundMember != null)
+                {
+                    _logger.Log($"GetMemberByUsername (obsolete): Member with username: '{username}' found: ID='{foundMember.Id}'.");
+                }
+                else
+                {
+                    _logger.Log($"GetMemberByUsername (obsolete): Member with username: '{username}' not found.");
+                }
+                return foundMember;
             }
-            else
-            {
-                _logger.Log($"GetMemberByUsername (obsolete): Member with username: '{username}' not found.");
-            }
-            return foundMember;
         }
 
         public async Task<Member?> GetMemberByUsernameAsync(string username)
@@ -427,67 +471,76 @@ namespace ComicRentalSystem_14Days.Services
                 return null;
             }
             _logger.Log($"GetMemberByUsernameAsync called for username: '{username}'.");
-            string userUpper = username.ToUpperInvariant();
-            Member? foundMember = await _context.Members.AsNoTracking()
-                                          .FirstOrDefaultAsync(m => m.Username != null && m.Username.ToUpperInvariant() == userUpper);
+            using (var context = new ComicRentalDbContext())
+            {
+                string userUpper = username.ToUpperInvariant();
+                Member? foundMember = await context.Members.AsNoTracking()
+                                              .FirstOrDefaultAsync(m => m.Username != null && m.Username.ToUpperInvariant() == userUpper);
 
-            if (foundMember != null)
-            {
-                _logger.Log($"GetMemberByUsernameAsync: Member with username: '{username}' found: ID='{foundMember.Id}'.");
+                if (foundMember != null)
+                {
+                    _logger.Log($"GetMemberByUsernameAsync: Member with username: '{username}' found: ID='{foundMember.Id}'.");
+                }
+                else
+                {
+                    _logger.Log($"GetMemberByUsernameAsync: Member with username: '{username}' not found.");
+                }
+                return foundMember;
             }
-            else
-            {
-                _logger.Log($"GetMemberByUsernameAsync: Member with username: '{username}' not found.");
-            }
-            return foundMember;
         }
 
         [Obsolete("Use asynchronous version SearchMembersAsync instead.")]
         public List<Member> SearchMembers(string searchTerm)
         {
             _logger.Log($"SearchMembers (obsolete) called with searchTerm: '{searchTerm}'.");
-            if (string.IsNullOrWhiteSpace(searchTerm))
+            using (var context = new ComicRentalDbContext())
             {
-                _logger.Log("SearchMembers (obsolete): SearchTerm is empty, returning all members ordered by Name.");
-                return _context.Members.OrderBy(m => m.Name).ToList();
+                if (string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    _logger.Log("SearchMembers (obsolete): SearchTerm is empty, returning all members ordered by Name.");
+                    return context.Members.OrderBy(m => m.Name).ToList();
+                }
+
+                var lowerSearchTerm = searchTerm.ToLowerInvariant();
+                var query = context.Members.Where(m =>
+                    (m.Name != null && m.Name.ToLowerInvariant().Contains(lowerSearchTerm)) ||
+                    (m.PhoneNumber != null && m.PhoneNumber.Contains(searchTerm)) ||
+                    (m.Id.ToString().Equals(searchTerm)) ||
+                    (m.Username != null && m.Username.ToLowerInvariant().Contains(lowerSearchTerm))
+                );
+
+                var results = query.OrderBy(m => m.Name).ToList();
+                _logger.Log($"SearchMembers (obsolete): Found {results.Count} matching members.");
+                return results;
             }
-
-            var lowerSearchTerm = searchTerm.ToLowerInvariant();
-            var query = _context.Members.Where(m =>
-                (m.Name != null && m.Name.ToLowerInvariant().Contains(lowerSearchTerm)) ||
-                (m.PhoneNumber != null && m.PhoneNumber.Contains(searchTerm)) ||
-                (m.Id.ToString().Equals(searchTerm)) ||
-                (m.Username != null && m.Username.ToLowerInvariant().Contains(lowerSearchTerm))
-            );
-
-            var results = query.OrderBy(m => m.Name).ToList();
-            _logger.Log($"SearchMembers (obsolete): Found {results.Count} matching members.");
-            return results;
         }
 
         public async Task<List<Member>> SearchMembersAsync(string searchTerm)
         {
             _logger.Log($"SearchMembersAsync called with searchTerm: '{searchTerm}'.");
-            var query = _context.Members.AsQueryable();
-
-            if (string.IsNullOrWhiteSpace(searchTerm))
+            using (var context = new ComicRentalDbContext())
             {
-                _logger.Log("SearchMembersAsync: SearchTerm is empty, returning all members ordered by Name (AsNoTracking).");
-                return await query.AsNoTracking().OrderBy(m => m.Name).ToListAsync();
+                var query = context.Members.AsQueryable();
+
+                if (string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    _logger.Log("SearchMembersAsync: SearchTerm is empty, returning all members ordered by Name (AsNoTracking).");
+                    return await query.AsNoTracking().OrderBy(m => m.Name).ToListAsync();
+                }
+
+                var lowerSearchTerm = searchTerm.ToLowerInvariant();
+                // Apply AsNoTracking after Where predicates
+                query = query.Where(m =>
+                    (m.Name != null && m.Name.ToLowerInvariant().Contains(lowerSearchTerm)) ||
+                    (m.PhoneNumber != null && m.PhoneNumber.Contains(searchTerm)) || // Phone is typically exact match, Contains might be too broad or slow if not indexed for it.
+                    (m.Id.ToString().Equals(searchTerm)) || // Similar to ComicService, ID search on string conversion can be slow.
+                    (m.Username != null && m.Username.ToLowerInvariant().Contains(lowerSearchTerm))
+                ).AsNoTracking();
+
+                var results = await query.OrderBy(m => m.Name).ToListAsync();
+                _logger.Log($"SearchMembersAsync: Found {results.Count} matching members.");
+                return results;
             }
-
-            var lowerSearchTerm = searchTerm.ToLowerInvariant();
-            // Apply AsNoTracking after Where predicates
-            query = query.Where(m =>
-                (m.Name != null && m.Name.ToLowerInvariant().Contains(lowerSearchTerm)) ||
-                (m.PhoneNumber != null && m.PhoneNumber.Contains(searchTerm)) || // Phone is typically exact match, Contains might be too broad or slow if not indexed for it.
-                (m.Id.ToString().Equals(searchTerm)) || // Similar to ComicService, ID search on string conversion can be slow.
-                (m.Username != null && m.Username.ToLowerInvariant().Contains(lowerSearchTerm))
-            ).AsNoTracking();
-
-            var results = await query.OrderBy(m => m.Name).ToListAsync();
-            _logger.Log($"SearchMembersAsync: Found {results.Count} matching members.");
-            return results;
         }
     }
 }

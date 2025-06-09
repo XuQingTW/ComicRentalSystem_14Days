@@ -12,7 +12,6 @@ namespace ComicRentalSystem_14Days.Services
 
     public class ComicService : IComicService
     {
-        private readonly ComicRentalDbContext _context;
         private readonly ILogger _logger;
 
         public event ComicDataChangedEventHandler? ComicsChanged;
@@ -26,11 +25,10 @@ namespace ComicRentalSystem_14Days.Services
             await Task.CompletedTask; // Placeholder if no other async work
         }
 
-        public ComicService(ComicRentalDbContext context, ILogger logger)
+        public ComicService(ILogger logger)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger), "ComicService logger cannot be null.");
-            _logger.Log("ComicService initialized with ComicRentalDbContext.");
+            _logger.Log("ComicService initialized (DbContext will be created per-operation).");
         }
 
         protected virtual void OnComicsChanged()
@@ -43,22 +41,30 @@ namespace ComicRentalSystem_14Days.Services
         public List<Comic> GetAllComics()
         {
             _logger.Log("GetAllComics called (obsolete).");
-            return _context.Comics.OrderBy(c => c.Title).ToList();
+            using (var context = new ComicRentalDbContext())
+            {
+                return context.Comics.OrderBy(c => c.Title).ToList();
+            }
         }
 
         public async Task<List<Comic>> GetAllComicsAsync()
         {
             _logger.Log("GetAllComicsAsync called.");
-            return await _context.Comics.AsNoTracking().OrderBy(c => c.Title).ToListAsync();
+            using (var context = new ComicRentalDbContext())
+            {
+                return await context.Comics.AsNoTracking().OrderBy(c => c.Title).ToListAsync();
+            }
         }
 
         [Obsolete("Use asynchronous version GetComicByIdAsync instead.")]
         public Comic? GetComicById(int id)
         {
             _logger.Log($"GetComicById called for ID: {id} (obsolete).");
-            var comic = _context.Comics.Find(id);
-            if (comic == null)
+            using (var context = new ComicRentalDbContext())
             {
+                var comic = context.Comics.Find(id);
+                if (comic == null)
+                {
                 _logger.Log($"Comic with ID: {id} not found (obsolete).");
             }
             else
@@ -66,14 +72,17 @@ namespace ComicRentalSystem_14Days.Services
                 _logger.Log($"Comic with ID: {id} found: Title='{comic.Title}' (obsolete).");
             }
             return comic;
+            }
         }
 
         public async Task<Comic?> GetComicByIdAsync(int id)
         {
             _logger.Log($"GetComicByIdAsync called for ID: {id}.");
-            var comic = await _context.Comics.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
-            if (comic == null)
+            using (var context = new ComicRentalDbContext())
             {
+                var comic = await context.Comics.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
+                if (comic == null)
+                {
                 _logger.Log($"Comic with ID: {id} not found using GetComicByIdAsync.");
             }
             else
@@ -81,6 +90,7 @@ namespace ComicRentalSystem_14Days.Services
                 _logger.Log($"Comic with ID: {id} found using GetComicByIdAsync: Title='{comic.Title}'.");
             }
             return comic;
+            }
         }
 
         [Obsolete("Use asynchronous version AddComicAsync instead.")]
@@ -104,25 +114,35 @@ namespace ComicRentalSystem_14Days.Services
             }
 
             _logger.Log($"Attempting to add comic (obsolete): Title='{comic.Title}'. ID will be DB-generated if {comic.Id} is 0.");
-            _context.Comics.Add(comic);
-            try
+            using (var context = new ComicRentalDbContext())
             {
-                if (comic.Id != 0 && _context.Comics.Any(c => c.Id == comic.Id))
+                context.Comics.Add(comic);
+                try
                 {
-                    var ex = new InvalidOperationException($"ID為 {comic.Id} 的漫畫已存在。");
-                    _logger.LogError($"新增漫畫失敗 (obsolete): ID {comic.Id} (書名='{comic.Title}') 已存在。", ex);
-                    throw ex;
+                    if (comic.Id != 0 && context.Comics.Any(c => c.Id == comic.Id))
+                    {
+                        var ex = new InvalidOperationException($"ID為 {comic.Id} 的漫畫已存在。");
+                        _logger.LogError($"新增漫畫失敗 (obsolete): ID {comic.Id} (書名='{comic.Title}') 已存在。", ex);
+                        throw ex;
+                    }
+                    if (context.Comics.Any(c =>
+                            c.Title.ToUpperInvariant() == comic.Title.ToUpperInvariant() &&
+                            c.Author.ToUpperInvariant() == comic.Author.ToUpperInvariant()))
+                    {
+                        _logger.LogWarning($"書名='{comic.Title}' 且作者='{comic.Author}' 相同的漫畫已存在。繼續新增 (obsolete)。");
+                    }
+                    context.SaveChanges();
+                    OnComicsChanged();
                 }
-                if (_context.Comics.Any(c =>
-                        c.Title.ToUpperInvariant() == comic.Title.ToUpperInvariant() &&
-                        c.Author.ToUpperInvariant() == comic.Author.ToUpperInvariant()))
+                catch (DbUpdateException ex)
                 {
-                    _logger.LogWarning($"書名='{comic.Title}' 且作者='{comic.Author}' 相同的漫畫已存在。繼續新增 (obsolete)。");
+                    _logger.LogError($"Error adding comic '{comic.Title}' to database (obsolete).", ex);
+                    throw new InvalidOperationException($"Could not add comic (obsolete). Possible constraint violation or other database error.", ex);
                 }
-                _context.SaveChanges();
-                OnComicsChanged();
             }
-            catch (DbUpdateException ex)
+        }
+
+        public async Task AddComicAsync(Comic comic)
             {
                 _logger.LogError($"Error adding comic '{comic.Title}' to database (obsolete).", ex);
                 throw new InvalidOperationException($"Could not add comic (obsolete). Possible constraint violation or other database error.", ex);
@@ -156,18 +176,20 @@ namespace ComicRentalSystem_14Days.Services
             //     _logger.LogWarning($"AddComicAsync: A comic with Title='{comic.Title}' and Author='{comic.Author}' already exists.");
             //     // Depending on requirements, you might throw or handle this differently.
             // }
-
-            _context.Comics.Add(comic);
-            try
+            using (var context = new ComicRentalDbContext())
             {
-                await _context.SaveChangesAsync();
-                _logger.Log($"AddComicAsync: Comic '{comic.Title}' (ID: {comic.Id}) added to database.");
-                OnComicsChanged();
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError($"AddComicAsync: Error adding comic '{comic.Title}' to database.", ex);
-                throw new InvalidOperationException($"AddComicAsync: Could not add comic. Possible constraint violation.", ex);
+                context.Comics.Add(comic);
+                try
+                {
+                    await context.SaveChangesAsync();
+                    _logger.Log($"AddComicAsync: Comic '{comic.Title}' (ID: {comic.Id}) added to database.");
+                    OnComicsChanged();
+                }
+                catch (DbUpdateException ex)
+                {
+                    _logger.LogError($"AddComicAsync: Error adding comic '{comic.Title}' to database.", ex);
+                    throw new InvalidOperationException($"AddComicAsync: Could not add comic. Possible constraint violation.", ex);
+                }
             }
         }
 
@@ -182,26 +204,29 @@ namespace ComicRentalSystem_14Days.Services
             }
 
             _logger.Log($"UpdateComic (obsolete): Attempting to update comic ID: {comic.Id} (Title='{comic.Title}').");
-            var existingComic = _context.Comics.Find(comic.Id);
-            if (existingComic == null)
+            using (var context = new ComicRentalDbContext())
             {
-                var ex = new InvalidOperationException($"UpdateComic (obsolete): Cannot update: Comic with ID {comic.Id} not found.");
-                _logger.LogError(ex.Message, ex);
-                throw ex;
-            }
+                var existingComic = context.Comics.Find(comic.Id);
+                if (existingComic == null)
+                {
+                    var ex = new InvalidOperationException($"UpdateComic (obsolete): Cannot update: Comic with ID {comic.Id} not found.");
+                    _logger.LogError(ex.Message, ex);
+                    throw ex;
+                }
 
-            _context.Entry(existingComic).CurrentValues.SetValues(comic);
+                context.Entry(existingComic).CurrentValues.SetValues(comic);
 
-            try
-            {
-                _context.SaveChanges();
-                _logger.Log($"UpdateComic (obsolete): Comic ID: {existingComic.Id} updated in database.");
-                OnComicsChanged();
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError($"UpdateComic (obsolete): Error updating comic ID: {existingComic.Id} in database.", ex);
-                throw new InvalidOperationException($"UpdateComic (obsolete): Could not update comic. Possible constraint violation.", ex);
+                try
+                {
+                    context.SaveChanges();
+                    _logger.Log($"UpdateComic (obsolete): Comic ID: {existingComic.Id} updated in database.");
+                    OnComicsChanged();
+                }
+                catch (DbUpdateException ex)
+                {
+                    _logger.LogError($"UpdateComic (obsolete): Error updating comic ID: {existingComic.Id} in database.", ex);
+                    throw new InvalidOperationException($"UpdateComic (obsolete): Could not update comic. Possible constraint violation.", ex);
+                }
             }
         }
 
@@ -215,26 +240,29 @@ namespace ComicRentalSystem_14Days.Services
             }
 
             _logger.Log($"UpdateComicAsync: Attempting to update comic ID: {comic.Id} (Title='{comic.Title}').");
-            var existingComic = await _context.Comics.FindAsync(comic.Id);
-            if (existingComic == null)
+            using (var context = new ComicRentalDbContext())
             {
-                var ex = new InvalidOperationException($"UpdateComicAsync: Cannot update: Comic with ID {comic.Id} not found.");
-                _logger.LogError(ex.Message, ex);
-                throw ex;
-            }
+                var existingComic = await context.Comics.FindAsync(comic.Id);
+                if (existingComic == null)
+                {
+                    var ex = new InvalidOperationException($"UpdateComicAsync: Cannot update: Comic with ID {comic.Id} not found.");
+                    _logger.LogError(ex.Message, ex);
+                    throw ex;
+                }
 
-            _context.Entry(existingComic).CurrentValues.SetValues(comic);
+                context.Entry(existingComic).CurrentValues.SetValues(comic);
 
-            try
-            {
-                await _context.SaveChangesAsync();
-                _logger.Log($"UpdateComicAsync: Comic ID: {existingComic.Id} updated in database.");
-                OnComicsChanged();
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError($"UpdateComicAsync: Error updating comic ID: {existingComic.Id} in database.", ex);
-                throw new InvalidOperationException($"UpdateComicAsync: Could not update comic. Possible constraint violation.", ex);
+                try
+                {
+                    await context.SaveChangesAsync();
+                    _logger.Log($"UpdateComicAsync: Comic ID: {existingComic.Id} updated in database.");
+                    OnComicsChanged();
+                }
+                catch (DbUpdateException ex)
+                {
+                    _logger.LogError($"UpdateComicAsync: Error updating comic ID: {existingComic.Id} in database.", ex);
+                    throw new InvalidOperationException($"UpdateComicAsync: Could not update comic. Possible constraint violation.", ex);
+                }
             }
         }
 
@@ -242,10 +270,12 @@ namespace ComicRentalSystem_14Days.Services
         public void DeleteComic(int id)
         {
             _logger.Log($"DeleteComic (obsolete): Attempting to delete comic with ID: {id}.");
-            var comicToRemove = _context.Comics.Find(id);
-            if (comicToRemove == null)
+            using (var context = new ComicRentalDbContext())
             {
-                var ex = new InvalidOperationException($"DeleteComic (obsolete): Cannot delete: Comic with ID {id} not found.");
+                var comicToRemove = context.Comics.Find(id);
+                if (comicToRemove == null)
+                {
+                    var ex = new InvalidOperationException($"DeleteComic (obsolete): Cannot delete: Comic with ID {id} not found.");
                 _logger.LogWarning(ex.Message);
                 throw ex;
             }
@@ -256,10 +286,10 @@ namespace ComicRentalSystem_14Days.Services
                 throw new InvalidOperationException("DeleteComic (obsolete): Cannot delete a comic that is currently rented.");
             }
 
-            _context.Comics.Remove(comicToRemove);
+            context.Comics.Remove(comicToRemove);
             try
             {
-                _context.SaveChanges();
+                context.SaveChanges();
                 _logger.Log($"DeleteComic (obsolete): Comic ID: {id} deleted from database.");
                 OnComicsChanged();
             }
@@ -268,15 +298,18 @@ namespace ComicRentalSystem_14Days.Services
                 _logger.LogError($"DeleteComic (obsolete): Error deleting comic ID: {id} from database.", ex);
                 throw new InvalidOperationException($"DeleteComic (obsolete): Could not delete comic. It might be in use or a DB error occurred.", ex);
             }
+            }
         }
 
         public async Task DeleteComicAsync(int id)
         {
             _logger.Log($"DeleteComicAsync: Attempting to delete comic with ID: {id}.");
-            var comicToRemove = await _context.Comics.FindAsync(id);
-            if (comicToRemove == null)
+            using (var context = new ComicRentalDbContext())
             {
-                var ex = new InvalidOperationException($"DeleteComicAsync: Cannot delete: Comic with ID {id} not found.");
+                var comicToRemove = await context.Comics.FindAsync(id);
+                if (comicToRemove == null)
+                {
+                    var ex = new InvalidOperationException($"DeleteComicAsync: Cannot delete: Comic with ID {id} not found.");
                 _logger.LogWarning(ex.Message);
                 throw ex;
             }
@@ -287,10 +320,10 @@ namespace ComicRentalSystem_14Days.Services
                 throw new InvalidOperationException("DeleteComicAsync: Cannot delete a comic that is currently rented.");
             }
 
-            _context.Comics.Remove(comicToRemove);
+            context.Comics.Remove(comicToRemove);
             try
             {
-                await _context.SaveChangesAsync();
+                await context.SaveChangesAsync();
                 _logger.Log($"DeleteComicAsync: Comic ID: {id} deleted from database.");
                 OnComicsChanged();
             }
@@ -299,43 +332,48 @@ namespace ComicRentalSystem_14Days.Services
                 _logger.LogError($"DeleteComicAsync: Error deleting comic ID: {id} from database.", ex);
                 throw new InvalidOperationException($"DeleteComicAsync: Could not delete comic. It might be in use or a DB error occurred.", ex);
             }
+            }
         }
 
         [Obsolete("Use asynchronous version GetComicsByGenreAsync instead.")]
         public List<Comic> GetComicsByGenre(string genreFilter)
         {
-            if (string.IsNullOrWhiteSpace(genreFilter))
+            using (var context = new ComicRentalDbContext())
             {
-                _logger.Log("GetComicsByGenre (obsolete): Genre filter is empty, returning all comics.");
-                return _context.Comics.ToList();
-            }
-            else
-            {
-                _logger.Log($"GetComicsByGenre (obsolete): Filtering by genre: '{genreFilter}'.");
-                List<Comic> filteredComics = _context.Comics
-                    .Where(c => c.Genre != null && c.Genre.ToUpperInvariant() == genreFilter.ToUpperInvariant())
-                    .ToList();
-                _logger.Log($"GetComicsByGenre (obsolete): Found {filteredComics.Count} comics of genre '{genreFilter}'.");
+                if (string.IsNullOrWhiteSpace(genreFilter))
+                {
+                    _logger.Log("GetComicsByGenre (obsolete): Genre filter is empty, returning all comics.");
+                    return context.Comics.ToList();
+                }
+                else
+                {
+                    _logger.Log($"GetComicsByGenre (obsolete): Filtering by genre: '{genreFilter}'.");
+                    List<Comic> filteredComics = context.Comics
+                        .Where(c => c.Genre != null && c.Genre.ToUpperInvariant() == genreFilter.ToUpperInvariant())
+                        .ToList();
+                    _logger.Log($"GetComicsByGenre (obsolete): Found {filteredComics.Count} comics of genre '{genreFilter}'.");
                 return filteredComics;
             }
         }
 
         public async Task<List<Comic>> GetComicsByGenreAsync(string genreFilter)
         {
-            if (string.IsNullOrWhiteSpace(genreFilter))
+            using (var context = new ComicRentalDbContext())
             {
-                _logger.Log("GetComicsByGenreAsync: Genre filter is empty, returning all comics (AsNoTracking).");
-                // Consistent with GetAllComicsAsync, using AsNoTracking and OrderBy
-                return await _context.Comics.AsNoTracking().OrderBy(c => c.Title).ToListAsync();
-            }
-            else
-            {
-                _logger.Log($"GetComicsByGenreAsync: Filtering by genre: '{genreFilter}' (AsNoTracking).");
-                List<Comic> filteredComics = await _context.Comics.AsNoTracking()
-                    .Where(c => c.Genre != null && c.Genre.ToUpperInvariant() == genreFilter.ToUpperInvariant())
-                    .OrderBy(c => c.Title) // Added OrderBy for consistency
-                    .ToListAsync();
-                _logger.Log($"GetComicsByGenreAsync: Found {filteredComics.Count} comics of genre '{genreFilter}'.");
+                if (string.IsNullOrWhiteSpace(genreFilter))
+                {
+                    _logger.Log("GetComicsByGenreAsync: Genre filter is empty, returning all comics (AsNoTracking).");
+                    // Consistent with GetAllComicsAsync, using AsNoTracking and OrderBy
+                    return await context.Comics.AsNoTracking().OrderBy(c => c.Title).ToListAsync();
+                }
+                else
+                {
+                    _logger.Log($"GetComicsByGenreAsync: Filtering by genre: '{genreFilter}' (AsNoTracking).");
+                    List<Comic> filteredComics = await context.Comics.AsNoTracking()
+                        .Where(c => c.Genre != null && c.Genre.ToUpperInvariant() == genreFilter.ToUpperInvariant())
+                        .OrderBy(c => c.Title) // Added OrderBy for consistency
+                        .ToListAsync();
+                    _logger.Log($"GetComicsByGenreAsync: Found {filteredComics.Count} comics of genre '{genreFilter}'.");
                 return filteredComics;
             }
         }
@@ -344,62 +382,69 @@ namespace ComicRentalSystem_14Days.Services
         public List<Comic> SearchComics(string? searchTerm = null)
         {
             _logger.Log($"SearchComics (obsolete) called with searchTerm: '{searchTerm ?? "N/A"}'.");
-            var query = _context.Comics.AsQueryable();
-
-            if (string.IsNullOrWhiteSpace(searchTerm))
+            using (var context = new ComicRentalDbContext())
             {
-                _logger.Log("SearchComics (obsolete): SearchTerm is empty, returning all comics ordered by Title.");
-                return query.OrderBy(c => c.Title).ToList();
+                var query = context.Comics.AsQueryable();
+
+                if (string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    _logger.Log("SearchComics (obsolete): SearchTerm is empty, returning all comics ordered by Title.");
+                    return query.OrderBy(c => c.Title).ToList();
+                }
+
+                string searchUpper = searchTerm.ToUpperInvariant();
+                query = query.Where(c =>
+                    (c.Title != null && c.Title.ToUpperInvariant().Contains(searchUpper)) ||
+                    (c.Author != null && c.Author.ToUpperInvariant().Contains(searchUpper)) ||
+                    (c.Isbn != null && c.Isbn.ToUpperInvariant().Contains(searchUpper)) ||
+                    (c.Genre != null && c.Genre.ToUpperInvariant().Contains(searchUpper)) ||
+                    (c.Id.ToString().Equals(searchTerm))
+                );
+                _logger.Log($"SearchComics (obsolete): Search term '{searchTerm}' applied.");
+
+                List<Comic> results = query.OrderBy(c => c.Title).ToList();
+                _logger.Log($"SearchComics (obsolete): Found {results.Count} matching comics.");
+                return results;
             }
-
-            string searchUpper = searchTerm.ToUpperInvariant();
-            query = query.Where(c =>
-                (c.Title != null && c.Title.ToUpperInvariant().Contains(searchUpper)) ||
-                (c.Author != null && c.Author.ToUpperInvariant().Contains(searchUpper)) ||
-                (c.Isbn != null && c.Isbn.ToUpperInvariant().Contains(searchUpper)) ||
-                (c.Genre != null && c.Genre.ToUpperInvariant().Contains(searchUpper)) ||
-                (c.Id.ToString().Equals(searchTerm))
-            );
-            _logger.Log($"SearchComics (obsolete): Search term '{searchTerm}' applied.");
-
-            List<Comic> results = query.OrderBy(c => c.Title).ToList();
-            _logger.Log($"SearchComics (obsolete): Found {results.Count} matching comics.");
-            return results;
         }
 
         public async Task<List<Comic>> SearchComicsAsync(string? searchTerm = null)
         {
             _logger.Log($"SearchComicsAsync called with searchTerm: '{searchTerm ?? "N/A"}'.");
-            var query = _context.Comics.AsQueryable(); // Starts as IQueryable
-
-            if (string.IsNullOrWhiteSpace(searchTerm))
+            using (var context = new ComicRentalDbContext())
             {
-                _logger.Log("SearchComicsAsync: SearchTerm is empty, returning all comics ordered by Title (AsNoTracking).");
-                return await query.AsNoTracking().OrderBy(c => c.Title).ToListAsync();
+                var query = context.Comics.AsQueryable(); // Starts as IQueryable
+
+                if (string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    _logger.Log("SearchComicsAsync: SearchTerm is empty, returning all comics ordered by Title (AsNoTracking).");
+                    return await query.AsNoTracking().OrderBy(c => c.Title).ToListAsync();
+                }
+
+                string searchUpper = searchTerm.ToUpperInvariant();
+                // Ensure AsNoTracking is applied before ToListAsync
+                query = query.Where(c =>
+                    (c.Title != null && c.Title.ToUpperInvariant().Contains(searchUpper)) ||
+                    (c.Author != null && c.Author.ToUpperInvariant().Contains(searchUpper)) ||
+                    (c.Isbn != null && c.Isbn.ToUpperInvariant().Contains(searchUpper)) ||
+                    (c.Genre != null && c.Genre.ToUpperInvariant().Contains(searchUpper)) ||
+                    (c.Id.ToString().Equals(searchTerm)) // This Id search might be slow if not indexed well or if searchTerm is not purely numeric.
+                ).AsNoTracking(); // Apply AsNoTracking here after Where predicates
+
+                _logger.Log($"SearchComicsAsync: Search term '{searchTerm}' applied.");
+
+                List<Comic> results = await query.OrderBy(c => c.Title).ToListAsync();
+                _logger.Log($"SearchComicsAsync: Found {results.Count} matching comics.");
+                return results;
             }
-
-            string searchUpper = searchTerm.ToUpperInvariant();
-            // Ensure AsNoTracking is applied before ToListAsync
-            query = query.Where(c =>
-                (c.Title != null && c.Title.ToUpperInvariant().Contains(searchUpper)) ||
-                (c.Author != null && c.Author.ToUpperInvariant().Contains(searchUpper)) ||
-                (c.Isbn != null && c.Isbn.ToUpperInvariant().Contains(searchUpper)) ||
-                (c.Genre != null && c.Genre.ToUpperInvariant().Contains(searchUpper)) ||
-                (c.Id.ToString().Equals(searchTerm)) // This Id search might be slow if not indexed well or if searchTerm is not purely numeric.
-            ).AsNoTracking(); // Apply AsNoTracking here after Where predicates
-
-            _logger.Log($"SearchComicsAsync: Search term '{searchTerm}' applied.");
-
-            List<Comic> results = await query.OrderBy(c => c.Title).ToListAsync();
-            _logger.Log($"SearchComicsAsync: Found {results.Count} matching comics.");
-            return results;
         }
 
         [Obsolete("Use asynchronous version GetAdminComicStatusViewModelsAsync instead.")]
         public List<AdminComicStatusViewModel> GetAdminComicStatusViewModels(IEnumerable<Member> allMembers)
         {
+            // This method calls this.GetAllComics() which will now use its own context.
             _logger.Log("GetAdminComicStatusViewModels (obsolete): Generating AdminComicStatusViewModels using DB comics and provided member list.");
-            var allComics = this.GetAllComics(); // Fetches from DB now (obsolete call)
+            var allComics = this.GetAllComics();
             var memberLookup = allMembers.ToDictionary(m => m.Id);
             var comicStatuses = new List<AdminComicStatusViewModel>();
 
@@ -444,8 +489,9 @@ namespace ComicRentalSystem_14Days.Services
 
         public async Task<List<AdminComicStatusViewModel>> GetAdminComicStatusViewModelsAsync(IEnumerable<Member> allMembers)
         {
+            // This method calls this.GetAllComicsAsync() which will now use its own context.
             _logger.Log("GetAdminComicStatusViewModelsAsync: Generating AdminComicStatusViewModels using DB comics and provided member list.");
-            var allComics = await this.GetAllComicsAsync(); // Use async version
+            var allComics = await this.GetAllComicsAsync();
             var memberLookup = allMembers.ToDictionary(m => m.Id); // This remains synchronous as per assumption
             var comicStatuses = new List<AdminComicStatusViewModel>();
 
@@ -491,11 +537,14 @@ namespace ComicRentalSystem_14Days.Services
         public async Task<bool> HasComicsRentedByMemberAsync(int memberId)
         {
             _logger.Log($"HasComicsRentedByMemberAsync: Checking if member ID: {memberId} has active rentals.");
-            bool hasRentals = await _context.Comics
-                                      .AsNoTracking()
-                                      .AnyAsync(c => c.IsRented && c.RentedToMemberId == memberId);
-            _logger.Log($"HasComicsRentedByMemberAsync: Member ID: {memberId} has active rentals: {hasRentals}.");
-            return hasRentals;
+            using (var context = new ComicRentalDbContext())
+            {
+                bool hasRentals = await context.Comics
+                                          .AsNoTracking()
+                                          .AnyAsync(c => c.IsRented && c.RentedToMemberId == memberId);
+                _logger.Log($"HasComicsRentedByMemberAsync: Member ID: {memberId} has active rentals: {hasRentals}.");
+                return hasRentals;
+            }
         }
     }
 }
