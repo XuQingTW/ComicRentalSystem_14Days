@@ -7,9 +7,9 @@ using System.Windows.Forms;
 
 namespace ComicRentalSystem_14Days.Forms
 {
-    public partial class RegistrationForm : BaseForm 
+    public partial class RegistrationForm : BaseForm
     {
-        private readonly ILogger _logger; 
+        private readonly ILogger _logger;
         private readonly AuthenticationService _authService;
         private readonly MemberService _memberService;
         private readonly User? _currentUser;
@@ -17,12 +17,12 @@ namespace ComicRentalSystem_14Days.Forms
 
         public RegistrationForm(ILogger logger, AuthenticationService authService, MemberService memberService, User? currentUser = null)
         {
-            InitializeComponent(); 
+            InitializeComponent();
 
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider();
 
             this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            base.SetLogger(this._logger); 
+            base.SetLogger(this._logger);
 
             if (btnRegister != null) StyleModernButton(btnRegister);
             Control[] foundControls = this.Controls.Find("gbAccountCredentials", true);
@@ -41,17 +41,18 @@ namespace ComicRentalSystem_14Days.Forms
             _logger.Log("註冊表單已初始化。");
         }
 
-        private void btnRegister_Click(object sender, EventArgs e)
+        private async void btnRegister_Click(object sender, EventArgs e)
         {
-            if (!this.ValidateChildren()) {
+            if (!this.ValidateChildren())
+            {
                 MessageBox.Show("請修正欄位中提示的錯誤。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                _logger.Log("註冊嘗試因驗證錯誤而失敗。");
+                _logger.Log("btnRegister_Click: Registration attempt failed due to validation errors.");
                 return;
             }
 
             string username = txtUsername.Text.Trim();
             string password = txtPassword.Text;
-            string confirmPassword = txtConfirmPassword.Text;
+            // string confirmPassword = txtConfirmPassword.Text; // confirmPassword is validated by txtConfirmPassword_Validating
             string name = txtName.Text.Trim();
             string phoneNumber = txtPhoneNumber.Text.Trim();
 
@@ -62,20 +63,34 @@ namespace ComicRentalSystem_14Days.Forms
             }
             else
             {
-                selectedRole = UserRole.Member; 
+                selectedRole = UserRole.Member;
             }
 
-            _logger.Log($"使用者註冊嘗試: {username}, 姓名: {name}, 電話: {phoneNumber}, 角色: {selectedRole}");
-            bool success = _authService.Register(username, password, selectedRole);
+            _logger.Log($"btnRegister_Click: User registration attempt: User='{username}', Name='{name}', Phone='{phoneNumber}', Role='{selectedRole}'.");
 
-            if (success)
+            // Authentication part remains synchronous
+            bool authSuccess = _authService.Register(username, password, selectedRole);
+
+            if (authSuccess)
             {
-                _logger.Log($"使用者 '{username}' (來自txtUsername) 已成功註冊為 {selectedRole}。");
+                _logger.Log($"btnRegister_Click: User '{username}' successfully registered with AuthenticationService as {selectedRole}. Proceeding to create member record.");
                 try
                 {
                     Member newMember = new Member { Name = name, PhoneNumber = phoneNumber, Username = username };
-                    _memberService.AddMember(newMember);
-                    _logger.Log($"已為姓名: {name}, 使用者名稱: {username}, 電話: {phoneNumber} 建立會員記錄。");
+                    await _memberService.AddMemberAsync(newMember); // Asynchronous call
+
+                    // Check if form is still valid after await
+                    if (!this.IsHandleCreated || this.IsDisposed)
+                    {
+                        _logger.LogWarning($"btnRegister_Click: Form was closed or disposed after AddMemberAsync for user '{username}'. Further UI updates skipped. Member record for '{username}' was created. Auth record might need manual cleanup if this is unintended.");
+                        // Potentially try to roll back auth registration if member creation succeeded but form closed
+                        // This depends on business logic - for now, just logging.
+                        // bool rollbackSuccess = _authService.DeleteUser(username);
+                        // _logger.Log($"Attempted rollback of auth user '{username}' due to form closure: {rollbackSuccess}");
+                        return;
+                    }
+
+                    _logger.Log($"btnRegister_Click: Member record created for Name='{name}', User='{username}', Phone='{phoneNumber}'.");
 
                     MessageBox.Show($"使用者 '{username}' (姓名: {name}) 已成功註冊，會員資料也已建立。", "註冊成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     txtUsername.Clear();
@@ -119,7 +134,7 @@ namespace ComicRentalSystem_14Days.Forms
                 lblRole.Visible = true;
                 cmbRole.Visible = true;
                 cmbRole.Enabled = true;
-                cmbRole.SelectedItem = UserRole.Member; 
+                cmbRole.SelectedItem = UserRole.Member;
                 _logger.Log("註冊表單由管理員載入。角色選擇已啟用。");
             }
             else

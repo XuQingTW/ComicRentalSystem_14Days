@@ -1,5 +1,4 @@
 ﻿using ComicRentalSystem_14Days.Models;
-using ComicRentalSystem_14Days.Services;
 using ComicRentalSystem_14Days.Interfaces;
 using System;
 using System.IO;
@@ -9,7 +8,7 @@ namespace ComicRentalSystem_14Days.Forms
 {
     public partial class ComicEditForm : ComicRentalSystem_14Days.BaseForm
     {
-        private readonly ComicService? _comicService;
+        private readonly IComicService? _comicService;
         private Comic? _editableComic;
         private bool _isEditMode;
         private readonly User? _currentUser;
@@ -19,13 +18,13 @@ namespace ComicRentalSystem_14Days.Forms
         {
             InitializeComponent();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider();
-            if (this.DesignMode) 
+            if (this.DesignMode)
             {
                 chkIsRented.Enabled = false;
             }
         }
 
-        public ComicEditForm(Comic? comicToEdit, ComicService comicService, ILogger logger, User? currentUser = null) : this()
+        public ComicEditForm(Comic? comicToEdit, IComicService comicService, ILogger logger, User? currentUser = null) : this()
         {
             base.SetLogger(logger);
 
@@ -100,10 +99,11 @@ namespace ComicRentalSystem_14Days.Forms
 
             LogActivity("儲存按鈕已點擊。");
 
-        if (!this.ValidateChildren()) {
-            MessageBox.Show("請修正標示的錯誤。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning); 
-            LogActivity("驗證失敗。請修正醒目提示的錯誤。");
-            return;
+            if (!this.ValidateChildren())
+            {
+                MessageBox.Show("請修正標示的錯誤。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                LogActivity("驗證失敗。請修正醒目提示的錯誤。");
+                return;
             }
 
             try
@@ -114,7 +114,7 @@ namespace ComicRentalSystem_14Days.Forms
 
                     if (_currentUser != null && _currentUser.Role == UserRole.Admin && chkIsRented.Enabled)
                     {
-                        bool originalIsRented = _editableComic.IsRented; 
+                        bool originalIsRented = _editableComic.IsRented;
                         bool currentChkIsRented = chkIsRented.Checked;
 
                         if (originalIsRented && !currentChkIsRented)
@@ -126,7 +126,7 @@ namespace ComicRentalSystem_14Days.Forms
                             _editableComic.ActualReturnTime = DateTime.Now;
                             LogActivity($"管理員已透過編輯表單手動將漫畫 ID: {_editableComic.Id} 標記為已歸還。");
                         }
-                        else if (!originalIsRented && currentChkIsRented) 
+                        else if (!originalIsRented && currentChkIsRented)
                         {
                             MessageBox.Show("若要將漫畫標記為已租借，請使用「租借管理」表單以確保輸入所有必要的租借詳細資料（如會員ID和歸還日期）。\n此變更不會將漫畫標記為已租借。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             chkIsRented.Checked = false;
@@ -138,13 +138,20 @@ namespace ComicRentalSystem_14Days.Forms
                     _editableComic.Author = txtAuthor.Text.Trim();
                     _editableComic.Isbn = txtIsbn.Text.Trim();
                     _editableComic.Genre = txtGenre.Text.Trim();
-                    _comicService.UpdateComic(_editableComic);
-                    LogActivity($"漫畫ID: {_editableComic.Id} 已成功更新。");
+                    // Async call for updating comic
+                    await _comicService.UpdateComicAsync(_editableComic);
+                    // Check form state after await
+                    if (!this.IsHandleCreated || this.IsDisposed)
+                    {
+                        LogErrorActivity($"btnSave_ClickAsync: Form closed or disposed after UpdateComicAsync for ID: {_editableComic.Id}.");
+                        return;
+                    }
+                    LogActivity($"btnSave_ClickAsync: Comic ID: {_editableComic.Id} successfully updated.");
                     MessageBox.Show("漫畫資料已更新。", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {
-                    LogActivity("正在嘗試新增漫畫。");
+                    LogActivity("btnSave_ClickAsync: Attempting to add a new comic.");
                     Comic newComic = new Comic
                     {
                         Title = txtTitle.Text.Trim(),
@@ -154,26 +161,35 @@ namespace ComicRentalSystem_14Days.Forms
                         IsRented = false,
                         RentedToMemberId = 0
                     };
-                    _comicService.AddComic(newComic);
-                    await _comicService.ReloadAsync();
-                    LogActivity($"新漫畫 '{newComic.Title}' (ID: {newComic.Id}) 已成功新增。");
+                    await _comicService.AddComicAsync(newComic);
+                    // Check form state after await
+                    if (!this.IsHandleCreated || this.IsDisposed)
+                    {
+                        LogErrorActivity($"btnSave_ClickAsync: Form closed or disposed after AddComicAsync for new comic '{newComic.Title}'.");
+                        return;
+                    }
+                    // ReloadAsync might not be strictly necessary here if ComicsChanged event is properly handled by management form
+                    // await _comicService.ReloadAsync(); 
+                    // if (!this.IsHandleCreated || this.IsDisposed) return;
+
+                    LogActivity($"btnSave_ClickAsync: New comic '{newComic.Title}' (ID: {newComic.Id}) successfully added.");
                     MessageBox.Show("漫畫已成功新增。", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
 
                 this.DialogResult = DialogResult.OK;
-                LogActivity("漫畫編輯表單正在以 DialogResult.OK 關閉。");
+                LogActivity("btnSave_ClickAsync: ComicEditForm closing with DialogResult.OK.");
                 this.Close();
             }
             catch (Exception ex)
             {
-                LogErrorActivity($"儲存漫畫時發生錯誤: {ex.Message}", ex);
+                LogErrorActivity($"btnSave_ClickAsync: Error saving comic: {ex.Message}", ex);
                 MessageBox.Show($"儲存漫畫時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private async void btnSave_Click(object sender, EventArgs e)
         {
-            btnSave_ClickAsync(sender, e).GetAwaiter().GetResult();
+            await btnSave_ClickAsync(sender, e);
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -192,12 +208,12 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (sender is TextBox txt && string.IsNullOrWhiteSpace(txt.Text))
             {
-                errorProvider1?.SetError(txt, "書名不能為空。"); 
+                errorProvider1?.SetError(txt, "書名不能為空。");
                 e.Cancel = true;
             }
             else if (sender is TextBox txtBox)
             {
-                errorProvider1?.SetError(txtBox, ""); 
+                errorProvider1?.SetError(txtBox, "");
             }
         }
 
@@ -205,12 +221,12 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (sender is TextBox txt && string.IsNullOrWhiteSpace(txt.Text))
             {
-                errorProvider1?.SetError(txt, "作者不能為空。"); 
+                errorProvider1?.SetError(txt, "作者不能為空。");
                 e.Cancel = true;
             }
             else if (sender is TextBox txtBox)
             {
-                errorProvider1?.SetError(txtBox, ""); 
+                errorProvider1?.SetError(txtBox, "");
             }
         }
 
@@ -218,7 +234,7 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (sender is TextBox txt && string.IsNullOrWhiteSpace(txt.Text))
             {
-                errorProvider1?.SetError(txt, "ISBN 不能為空。"); 
+                errorProvider1?.SetError(txt, "ISBN 不能為空。");
                 e.Cancel = true;
             }
             else if (sender is TextBox txtBox)
@@ -231,12 +247,12 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (sender is TextBox txt && string.IsNullOrWhiteSpace(txt.Text))
             {
-                errorProvider1?.SetError(txt, "類型不能為空。"); 
+                errorProvider1?.SetError(txt, "類型不能為空。");
                 e.Cancel = true;
             }
             else if (sender is TextBox txtBox)
             {
-                errorProvider1?.SetError(txtBox, ""); 
+                errorProvider1?.SetError(txtBox, "");
             }
         }
     }

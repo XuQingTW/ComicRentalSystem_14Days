@@ -1,337 +1,546 @@
-﻿using ComicRentalSystem_14Days.Helpers;
-using ComicRentalSystem_14Days.Interfaces;
+﻿using ComicRentalSystem_14Days.Interfaces;
 using ComicRentalSystem_14Days.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.IO; 
 using System.Linq;
-using System.Threading.Tasks; 
-using System.Windows.Forms;
+using System.Threading.Tasks;
 
 namespace ComicRentalSystem_14Days.Services
 {
     public class MemberService
     {
-        private readonly IFileHelper _fileHelper; 
-        private readonly string _memberFileName = "members.csv";
-        private List<Member> _members = new List<Member> { };
         private readonly ILogger _logger;
-        private readonly ComicService _comicService;
+        private readonly IComicService _comicService;
 
         public delegate void MemberDataChangedEventHandler(object? sender, EventArgs e);
         public event MemberDataChangedEventHandler? MembersChanged;
 
-        public MemberService(IFileHelper fileHelper, ILogger? logger, ComicService comicService) 
+        public MemberService(ILogger logger, IComicService comicService)
         {
-            _fileHelper = fileHelper ?? throw new ArgumentNullException(nameof(fileHelper));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger), "MemberService 的記錄器不可為空。");
-            _comicService = comicService ?? throw new ArgumentNullException(nameof(comicService)); 
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger), "MemberService logger cannot be null.");
+            _comicService = comicService ?? throw new ArgumentNullException(nameof(comicService));
 
-            _logger.Log("MemberService 初始化中。");
-
-            LoadMembersFromFile();
-            _logger.Log($"MemberService 初始化完成。已載入 {_members.Count} 位會員。");
+            _logger.Log("MemberService initialized (DbContext will be created per-operation).");
         }
 
-        public async Task ReloadAsync() 
+        public async Task ReloadAsync()
         {
-            _logger.Log("MemberService 已呼叫 ReloadAsync。");
-            _members = await LoadMembersAsync();
-            OnMembersChanged();
-            _logger.Log($"MemberService 已非同步重新載入。已載入 {_members.Count} 位會員。");
-        }
-
-        private void LoadMembersFromFile() 
-        {
-            _logger.Log($"正在嘗試從檔案載入會員 (同步): '{_memberFileName}'。");
-            try
-            {
-                _members = _fileHelper.ReadFile<Member>(_memberFileName, Member.FromCsvString);
-                _logger.Log($"成功從 '{_memberFileName}' (同步) 載入 {_members.Count} 位會員。");
-            }
-            catch (Exception ex) when (ex is FormatException || ex is IOException)
-            {
-                _logger.LogError($"嚴重錯誤: 會員資料檔案 '{_memberFileName}' (同步) 已損壞或無法讀取。詳細資訊: {ex.Message}", ex);
-                throw new ApplicationException($"無法從 '{_memberFileName}' (同步) 載入會員資料。應用程式可能無法正常運作。", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"從 '{_memberFileName}' (同步) 載入會員時發生未預期的錯誤。詳細資訊: {ex.Message}", ex);
-                throw new ApplicationException("載入會員資料期間 (同步) 發生未預期錯誤。", ex);
-            }
-        }
-
-        private async Task<List<Member>> LoadMembersAsync()
-        {
-            _logger.Log($"正在嘗試從檔案非同步載入會員: '{_memberFileName}'。");
-            try
-            {
-                string csvData = await _fileHelper.ReadFileAsync(_memberFileName);
-                if (string.IsNullOrWhiteSpace(csvData))
-                {
-                    _logger.LogWarning($"會員檔案 '{_memberFileName}' (非同步) 為空或找不到。");
-                    return new List<Member>();
-                }
-
-                var membersList = new List<Member>();
-                var lines = csvData.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-
-                foreach (var line in lines.Skip(1))
-                {
-                    if (string.IsNullOrWhiteSpace(line)) continue;
-                    try
-                    {
-                        membersList.Add(Member.FromCsvString(line));
-                    }
-                    catch (FormatException formatEx)
-                    {
-                        _logger.LogError($"解析會員 CSV 行失敗 (非同步): '{line}'. 錯誤: {formatEx.Message}", formatEx);
-                    }
-                }
-                _logger.Log($"成功從 '{_memberFileName}' (非同步) 載入並解析 {membersList.Count} 位會員。");
-                return membersList;
-            }
-            catch (FileNotFoundException)
-            {
-                _logger.LogWarning($"會員檔案 '{_memberFileName}' (非同步) 找不到。返回空列表。");
-                return new List<Member>();
-            }
-            catch (IOException ioEx)
-            {
-                _logger.LogError($"讀取會員檔案 '{_memberFileName}' (非同步) 時發生IO錯誤: {ioEx.Message}", ioEx);
-                return new List<Member>(); 
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"從 '{_memberFileName}' (非同步) 載入會員時發生未預期的錯誤: {ex.Message}", ex);
-                return new List<Member>(); 
-            }
-        }
-
-        private void SaveMembers()
-        {
-            _logger.Log($"正在嘗試將 {_members.Count} 位會員儲存到檔案: '{_memberFileName}'。");
-            try
-            {
-                _fileHelper.WriteFile<Member>(_memberFileName, _members, member => member.ToCsvString());
-                _logger.Log($"已成功將 {_members.Count} 位會員儲存到 '{_memberFileName}'。");
-                OnMembersChanged();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"將會員儲存到 '{_memberFileName}' 時發生錯誤。", ex);
-                throw;
-            }
+            _logger.Log("MemberService ReloadAsync requested. Data is now live from DB.");
+            OnMembersChanged(); // Notify listeners
+            await Task.CompletedTask; // Placeholder
         }
 
         protected virtual void OnMembersChanged()
         {
             MembersChanged?.Invoke(this, EventArgs.Empty);
-            _logger.Log("已觸發 MembersChanged 事件。");
+            _logger.Log("MembersChanged event triggered.");
         }
 
+        [Obsolete("Use asynchronous version GetAllMembersAsync instead.")]
         public List<Member> GetAllMembers()
         {
-            _logger.Log("已呼叫 GetAllMembers。");
-            return new List<Member>(_members);
+            _logger.Log("GetAllMembers called (obsolete).");
+            using (var context = new ComicRentalDbContext())
+            {
+                return context.Members.OrderBy(m => m.Name).ToList();
+            }
         }
 
+        public async Task<List<Member>> GetAllMembersAsync()
+        {
+            _logger.Log("GetAllMembersAsync called.");
+            using (var context = new ComicRentalDbContext())
+            {
+                return await context.Members.AsNoTracking().OrderBy(m => m.Name).ToListAsync();
+            }
+        }
+
+        [Obsolete("Use asynchronous version GetMemberByIdAsync instead.")]
         public Member? GetMemberById(int id)
         {
-            _logger.Log($"已為ID: {id} 呼叫 GetMemberById。");
-            Member? member = _members.FirstOrDefault(m => m.Id == id);
-            if (member == null)
+            _logger.Log($"GetMemberById (obsolete) called for ID: {id}.");
+            using (var context = new ComicRentalDbContext())
             {
-                _logger.Log($"找不到ID為: {id} 的會員。");
+                var member = context.Members.Find(id);
+                if (member == null)
+                {
+                _logger.Log($"GetMemberById (obsolete): Member with ID: {id} not found.");
             }
             else
             {
-                _logger.Log($"找到ID為: {id} 的會員: 姓名='{member.Name}'。");
+                _logger.Log($"GetMemberById (obsolete): Member with ID: {id} found: Name='{member.Name}'.");
             }
             return member;
+            }
         }
 
+        public async Task<Member?> GetMemberByIdAsync(int id)
+        {
+            _logger.Log($"GetMemberByIdAsync called for ID: {id}.");
+            using (var context = new ComicRentalDbContext())
+            {
+                var member = await context.Members.AsNoTracking().FirstOrDefaultAsync(m => m.Id == id);
+                if (member == null)
+                {
+                _logger.Log($"GetMemberByIdAsync: Member with ID: {id} not found.");
+            }
+            else
+            {
+                _logger.Log($"GetMemberByIdAsync: Member with ID: {id} found: Name='{member.Name}'.");
+            }
+            return member;
+            }
+        }
+
+        [Obsolete("Use asynchronous version AddMemberAsync instead.")]
         public void AddMember(Member member)
         {
             if (member == null)
             {
                 var ex = new ArgumentNullException(nameof(member));
-                _logger.LogError("嘗試新增空的會員物件。", ex);
+                _logger.LogError("AddMember (obsolete): Attempted to add a null member object.", ex);
                 throw ex;
             }
 
-            _logger.Log($"正在嘗試新增會員: 姓名='{member.Name}', 電話號碼='{member.PhoneNumber}'。");
-
-            if (member.Id != 0 && _members.Any(m => m.Id == member.Id))
+            if (string.IsNullOrWhiteSpace(member.Name) || string.IsNullOrWhiteSpace(member.PhoneNumber))
             {
-                var ex = new InvalidOperationException($"ID為 {member.Id} 的會員已存在。");
-                _logger.LogError($"新增會員失敗: ID {member.Id} (姓名='{member.Name}') 已存在。", ex);
+                var ex = new ArgumentException("AddMember (obsolete): Member Name and PhoneNumber cannot be empty.", nameof(member));
+                _logger.LogError("AddMember (obsolete): Name or PhoneNumber is empty.", ex);
                 throw ex;
             }
-            if (_members.Any(m => m.PhoneNumber == member.PhoneNumber))
-            {
-                _logger.LogWarning($"電話號碼為 '{member.PhoneNumber}' 的會員已存在 (姓名='{_members.First(m => m.PhoneNumber == member.PhoneNumber).Name}')。繼續新增。");
-            }
 
-            if (member.Id == 0)
+            _logger.Log($"AddMember (obsolete): Attempting to add member: Name='{member.Name}'. ID will be DB-generated if {member.Id} is 0.");
+            using (var context = new ComicRentalDbContext())
             {
-                member.Id = GetNextId();
-                _logger.Log($"已為會員 '{member.Name}' 產生新的ID {member.Id}。");
+                if (context.Members.Any(m => m.PhoneNumber == member.PhoneNumber))
+                {
+                    _logger.LogWarning($"AddMember (obsolete): Member with phone number '{member.PhoneNumber}' already exists.");
+                }
+                context.Members.Add(member);
+                try
+                {
+                    context.SaveChanges();
+                    _logger.Log($"AddMember (obsolete): Member '{member.Name}' (ID: {member.Id}) added to database.");
+                    OnMembersChanged();
+                }
+                catch (DbUpdateException ex)
+                {
+                    _logger.LogError($"AddMember (obsolete): Error adding member '{member.Name}' to database.", ex);
+                    throw new InvalidOperationException($"AddMember (obsolete): Could not add member. Possible constraint violation.", ex);
+                }
             }
-
-            _members.Add(member);
-            _logger.Log($"會員 '{member.Name}' (ID: {member.Id}) 已新增至記憶體列表。會員總數: {_members.Count}。");
-            SaveMembers();
         }
 
+        public async Task AddMemberAsync(Member member)
+        {
+            if (member == null)
+            {
+                var ex = new ArgumentNullException(nameof(member));
+                _logger.LogError("AddMemberAsync: Attempted to add a null member object.", ex);
+                throw ex;
+            }
+
+            if (string.IsNullOrWhiteSpace(member.Name) || string.IsNullOrWhiteSpace(member.PhoneNumber))
+            {
+                var ex = new ArgumentException("AddMemberAsync: Member Name and PhoneNumber cannot be empty.", nameof(member));
+                _logger.LogError("AddMemberAsync: Name or PhoneNumber is empty.", ex);
+                throw ex;
+            }
+
+            _logger.Log($"AddMemberAsync: Attempting to add member: Name='{member.Name}'.");
+            using (var context = new ComicRentalDbContext())
+            {
+                // Consider async check for phone number if it's a critical validation before Add.
+                // For now, keeping behavior similar to original regarding existing phone numbers (log warning, allow add).
+                if (await context.Members.AnyAsync(m => m.PhoneNumber == member.PhoneNumber))
+                {
+                    _logger.LogWarning($"AddMemberAsync: Member with phone number '{member.PhoneNumber}' already exists.");
+                }
+                context.Members.Add(member);
+                try
+                {
+                    await context.SaveChangesAsync();
+                    _logger.Log($"AddMemberAsync: Member '{member.Name}' (ID: {member.Id}) added to database.");
+                    OnMembersChanged();
+                }
+                catch (DbUpdateException ex)
+                {
+                    _logger.LogError($"AddMemberAsync: Error adding member '{member.Name}' to database.", ex);
+                    throw new InvalidOperationException($"AddMemberAsync: Could not add member. Possible constraint violation.", ex);
+                }
+            }
+        }
+
+        [Obsolete("Use asynchronous version UpdateMemberAsync instead.")]
         public void UpdateMember(Member member)
         {
             if (member == null)
             {
                 var ex = new ArgumentNullException(nameof(member));
-                _logger.LogError("嘗試使用空的會員物件進行更新。", ex);
+                _logger.LogError("UpdateMember (obsolete): Attempted to update with a null member object.", ex);
                 throw ex;
             }
 
-            _logger.Log($"正在嘗試更新ID為: {member.Id} (姓名='{member.Name}') 的會員。");
-
-            Member? existingMember = _members.FirstOrDefault(m => m.Id == member.Id);
-            if (existingMember == null)
+            _logger.Log($"UpdateMember (obsolete): Attempting to update member ID: {member.Id} (Name='{member.Name}').");
+            using (var context = new ComicRentalDbContext())
             {
-                var ex = new InvalidOperationException($"找不到ID為 {member.Id} 的會員進行更新。");
-                _logger.LogError($"更新會員失敗: 找不到ID {member.Id} (姓名='{member.Name}')。", ex);
-                throw ex;
+                var existingMember = context.Members.Find(member.Id);
+                if (existingMember == null)
+                {
+                    var ex = new InvalidOperationException($"UpdateMember (obsolete): Cannot update: Member with ID {member.Id} not found.");
+                    _logger.LogError(ex.Message, ex);
+                    throw ex;
+                }
+
+                if (context.Members.Any(m => m.PhoneNumber == member.PhoneNumber && m.Id != member.Id))
+                {
+                    _logger.LogWarning($"UpdateMember (obsolete): Another member with phone number '{member.PhoneNumber}' already exists.");
+                }
+
+                context.Entry(existingMember).CurrentValues.SetValues(member);
+                try
+                {
+                    context.SaveChanges();
+                    _logger.Log($"UpdateMember (obsolete): Member ID: {existingMember.Id} updated in database.");
+                    OnMembersChanged();
+                }
+                catch (DbUpdateException ex)
+                {
+                    _logger.LogError($"UpdateMember (obsolete): Error updating member ID: {existingMember.Id} in database.", ex);
+                    throw new InvalidOperationException($"UpdateMember (obsolete): Could not update member. Possible constraint violation.", ex);
+                }
             }
-
-            existingMember.Name = member.Name;
-            existingMember.PhoneNumber = member.PhoneNumber;
-            _logger.Log($"ID {member.Id} (姓名='{existingMember.Name}') 的會員屬性已在記憶體中更新。");
-
-            SaveMembers();
-            _logger.Log($"ID為: {member.Id} (姓名='{existingMember.Name}') 的會員更新已保存到檔案。");
         }
 
-        public void DeleteMember(int id)
+        public async Task UpdateMemberAsync(Member member)
         {
-            _logger.Log($"正在嘗試刪除ID為: {id} 的會員。");
-            Member? memberToRemove = _members.FirstOrDefault(m => m.Id == id);
-
-            if (memberToRemove == null)
+            if (member == null)
             {
-                var ex = new InvalidOperationException($"找不到ID為 {id} 的會員進行刪除。");
-                _logger.LogError($"刪除會員失敗: 找不到ID {id}。", ex);
+                var ex = new ArgumentNullException(nameof(member));
+                _logger.LogError("UpdateMemberAsync: Attempted to update with a null member object.", ex);
                 throw ex;
             }
 
+            _logger.Log($"UpdateMemberAsync: Attempting to update member ID: {member.Id} (Name='{member.Name}').");
+            using (var context = new ComicRentalDbContext())
+            {
+                var existingMember = await context.Members.FindAsync(member.Id);
+                if (existingMember == null)
+                {
+                    var ex = new InvalidOperationException($"UpdateMemberAsync: Cannot update: Member with ID {member.Id} not found.");
+                    _logger.LogError(ex.Message, ex);
+                    throw ex;
+                }
+
+                // Async check for phone number uniqueness
+                if (await context.Members.AnyAsync(m => m.PhoneNumber == member.PhoneNumber && m.Id != member.Id))
+                {
+                    _logger.LogWarning($"UpdateMemberAsync: Another member with phone number '{member.PhoneNumber}' already exists.");
+                }
+
+                context.Entry(existingMember).CurrentValues.SetValues(member);
+                try
+                {
+                    await context.SaveChangesAsync();
+                    _logger.Log($"UpdateMemberAsync: Member ID: {existingMember.Id} updated in database.");
+                    OnMembersChanged();
+                }
+                catch (DbUpdateException ex)
+                {
+                    _logger.LogError($"UpdateMemberAsync: Error updating member ID: {existingMember.Id} in database.", ex);
+                    throw new InvalidOperationException($"UpdateMemberAsync: Could not update member. Possible constraint violation.", ex);
+                }
+            }
+        }
+
+        [Obsolete("Use asynchronous version DeleteMemberAsync instead.")]
+        public void DeleteMember(int id)
+        {
+            _logger.Log($"DeleteMember (obsolete): Attempting to delete member with ID: {id}.");
+            using (var context = new ComicRentalDbContext())
+            {
+                var memberToRemove = context.Members.Find(id);
+                if (memberToRemove == null)
+                {
+                    var ex = new InvalidOperationException($"DeleteMember (obsolete): Cannot delete: Member with ID {id} not found.");
+                _logger.LogWarning(ex.Message);
+                throw ex;
+            }
+
+            // This still uses the synchronous _comicService.GetAllComics() which might be an issue
+            // if ComicService itself is being made fully async and that method becomes obsolete.
+            // For this step, we are focusing on MemberService, but this is a dependency to note.
             var allComics = _comicService.GetAllComics();
             if (allComics.Any(c => c.IsRented && c.RentedToMemberId == id))
             {
-                _logger.LogWarning($"已阻止刪除擁有有效租借紀錄的會員ID {id} ('{memberToRemove.Name}')。");
-                throw new InvalidOperationException("無法刪除會員: 會員擁有有效的漫畫租借紀錄。");
+                _logger.LogWarning($"DeleteMember (obsolete): Attempt to delete member ID {id} ('{memberToRemove.Name}') with active rentals was blocked.");
+                throw new InvalidOperationException("DeleteMember (obsolete): Cannot delete member: Member has active comic rentals.");
             }
 
-            _members.Remove(memberToRemove);
-            _logger.Log($"會員 '{memberToRemove.Name}' (ID: {id}) 已從記憶體列表移除。會員總數: {_members.Count}。");
-            SaveMembers();
+            context.Members.Remove(memberToRemove);
+            try
+            {
+                context.SaveChanges();
+                _logger.Log($"DeleteMember (obsolete): Member ID: {id} deleted from database.");
+                OnMembersChanged();
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError($"DeleteMember (obsolete): Error deleting member ID: {id} from database.", ex);
+                throw new InvalidOperationException($"DeleteMember (obsolete): Could not delete member. It might be in use or a DB error occurred.", ex);
+            }
+            }
         }
 
-        public int GetNextId()
+        public async Task DeleteMemberAsync(int id)
         {
-            int nextId = !_members.Any() ? 1 : _members.Max(m => m.Id) + 1;
-            _logger.Log($"下一個可用的會員ID已確定為: {nextId}。");
-            return nextId;
+            _logger.Log($"DeleteMemberAsync: Attempting to delete member with ID: {id}.");
+            using (var context = new ComicRentalDbContext())
+            {
+                var memberToRemove = await context.Members.FindAsync(id);
+                if (memberToRemove == null)
+                {
+                    var ex = new InvalidOperationException($"DeleteMemberAsync: Cannot delete: Member with ID {id} not found.");
+                    _logger.LogWarning(ex.Message);
+                    throw ex;
+                }
+
+                // Asynchronous check for active rentals directly using the context
+                if (await context.Comics.AnyAsync(c => c.IsRented && c.RentedToMemberId == id))
+                {
+                    _logger.LogWarning($"DeleteMemberAsync: Attempt to delete member ID {id} ('{memberToRemove.Name}') with active rentals was blocked.");
+                    throw new InvalidOperationException("DeleteMemberAsync: Cannot delete member: Member has active comic rentals.");
+                }
+
+                context.Members.Remove(memberToRemove);
+                try
+                {
+                    await context.SaveChangesAsync();
+                    _logger.Log($"DeleteMemberAsync: Member ID: {id} deleted from database.");
+                    OnMembersChanged();
+                }
+                catch (DbUpdateException ex)
+                {
+                    _logger.LogError($"DeleteMemberAsync: Error deleting member ID: {id} from database.", ex);
+                    throw new InvalidOperationException($"DeleteMemberAsync: Could not delete member. It might be in use or a DB error occurred.", ex);
+                }
+            }
         }
 
+        [Obsolete("Use asynchronous version GetMemberByNameAsync instead.")]
         public Member? GetMemberByName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                _logger.Log("已呼叫 GetMemberByName，姓名為空。");
+                _logger.Log("GetMemberByName (obsolete) called with empty name.");
                 return null;
             }
-            _logger.Log($"已為姓名: '{name}' 呼叫 GetMemberByName。");
-            Member? member = _members.FirstOrDefault(m => m.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-            if (member == null)
+            _logger.Log($"GetMemberByName (obsolete) called for name: '{name}'.");
+            using (var context = new ComicRentalDbContext())
             {
-                _logger.Log($"找不到姓名為: '{name}' 的會員。");
+                Member? member = context.Members.FirstOrDefault(m => m.Name.ToUpperInvariant() == name.ToUpperInvariant());
+                if (member == null)
+                {
+                _logger.Log($"GetMemberByName (obsolete): Member with name: '{name}' not found.");
             }
             else
             {
-                _logger.Log($"找到姓名為: '{name}' 的會員: ID='{member.Id}'。");
+                _logger.Log($"GetMemberByName (obsolete): Member with name: '{name}' found: ID='{member.Id}'.");
             }
             return member;
+            }
         }
 
+        public async Task<Member?> GetMemberByNameAsync(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                _logger.Log("GetMemberByNameAsync called with empty name.");
+                return null;
+            }
+            _logger.Log($"GetMemberByNameAsync called for name: '{name}'.");
+            using (var context = new ComicRentalDbContext())
+            {
+                Member? member = await context.Members.AsNoTracking()
+                                         .FirstOrDefaultAsync(m => m.Name.ToUpperInvariant() == name.ToUpperInvariant());
+                if (member == null)
+                {
+                _logger.Log($"GetMemberByNameAsync: Member with name: '{name}' not found.");
+            }
+            else
+            {
+                _logger.Log($"GetMemberByNameAsync: Member with name: '{name}' found: ID='{member.Id}'.");
+            }
+            return member;
+            }
+        }
+
+        [Obsolete("Use asynchronous version GetMemberByPhoneNumberAsync instead.")]
         public Member? GetMemberByPhoneNumber(string phoneNumber)
         {
             if (string.IsNullOrWhiteSpace(phoneNumber))
             {
-                _logger.Log("已呼叫 GetMemberByPhoneNumber，電話號碼為空。");
+                _logger.Log("GetMemberByPhoneNumber (obsolete) called with empty phone number.");
                 return null;
             }
-            _logger.Log($"已為電話號碼: '{phoneNumber}' 呼叫 GetMemberByPhoneNumber。");
-            Member? member = _members.FirstOrDefault(m => m.PhoneNumber.Equals(phoneNumber));
-            if (member == null)
+            _logger.Log($"GetMemberByPhoneNumber (obsolete) called for phone: '{phoneNumber}'.");
+            using (var context = new ComicRentalDbContext())
             {
-                _logger.Log($"找不到電話號碼為: '{phoneNumber}' 的會員。");
+                var member = context.Members.FirstOrDefault(m => m.PhoneNumber.Equals(phoneNumber));
+                if (member == null)
+                {
+                _logger.Log($"GetMemberByPhoneNumber (obsolete): Member with phone: '{phoneNumber}' not found.");
             }
             else
             {
-                _logger.Log($"找到電話號碼為: '{phoneNumber}' 的會員: ID='{member.Id}', 姓名='{member.Name}'。");
+                _logger.Log($"GetMemberByPhoneNumber (obsolete): Member with phone: '{phoneNumber}' found: ID='{member.Id}', Name='{member.Name}'.");
             }
             return member;
+            }
         }
 
+        public async Task<Member?> GetMemberByPhoneNumberAsync(string phoneNumber)
+        {
+            if (string.IsNullOrWhiteSpace(phoneNumber))
+            {
+                _logger.Log("GetMemberByPhoneNumberAsync called with empty phone number.");
+                return null;
+            }
+            _logger.Log($"GetMemberByPhoneNumberAsync called for phone: '{phoneNumber}'.");
+            using (var context = new ComicRentalDbContext())
+            {
+                var member = await context.Members.AsNoTracking()
+                                             .FirstOrDefaultAsync(m => m.PhoneNumber.Equals(phoneNumber));
+                if (member == null)
+                {
+                _logger.Log($"GetMemberByPhoneNumberAsync: Member with phone: '{phoneNumber}' not found.");
+            }
+            else
+            {
+                _logger.Log($"GetMemberByPhoneNumberAsync: Member with phone: '{phoneNumber}' found: ID='{member.Id}', Name='{member.Name}'.");
+            }
+            return member;
+            }
+        }
+
+        [Obsolete("Use asynchronous version GetMemberByUsernameAsync instead.")]
         public Member? GetMemberByUsername(string username)
         {
             if (string.IsNullOrWhiteSpace(username))
             {
-                _logger.LogWarning("已呼叫 GetMemberByUsername，使用者名稱為空或空白。");
+                _logger.LogWarning("GetMemberByUsername (obsolete) called with empty or whitespace username.");
                 return null;
             }
-
-            var allMembers = GetAllMembers();
-
-            if (allMembers == null || !allMembers.Any())
+            _logger.Log($"GetMemberByUsername (obsolete) called for username: '{username}'.");
+            // The original GetAllMembers() call here is inefficient as it fetches all members.
+            // This method will now use its own context.
+            using (var context = new ComicRentalDbContext())
             {
-                _logger.LogWarning("GetMemberByUsername: 無可用會員進行搜尋。");
-                return null;
-            }
+                // Replicating the inefficient GetAllMembers() call within the new context for this obsolete method.
+                var allMembers = context.Members.ToList(); // Simplified, original GetAllMembers had OrderBy
 
-            Member? foundMember = allMembers.FirstOrDefault(m =>
-                string.Equals(m.Username, username, StringComparison.OrdinalIgnoreCase)
-            );
+                if (allMembers == null || !allMembers.Any())
+                {
+                    _logger.LogWarning("GetMemberByUsername (obsolete): No members available for search.");
+                    return null;
+                }
 
-            if (foundMember != null)
-            {
-                _logger.Log($"GetMemberByUsername: 找到ID為 {foundMember.Id} 且使用者名稱為 '{username}' 的會員。");
-            }
-            else
-            {
-                _logger.Log($"GetMemberByUsername: 找不到使用者名稱為 '{username}' 的會員。");
-            }
+                string userUpper = username.ToUpperInvariant();
+                Member? foundMember = allMembers.FirstOrDefault(m =>
+                    m.Username != null && m.Username.ToUpperInvariant() == userUpper
+                );
 
-            return foundMember;
+                if (foundMember != null)
+                {
+                    _logger.Log($"GetMemberByUsername (obsolete): Member with username: '{username}' found: ID='{foundMember.Id}'.");
+                }
+                else
+                {
+                    _logger.Log($"GetMemberByUsername (obsolete): Member with username: '{username}' not found.");
+                }
+                return foundMember;
+            }
         }
 
+        public async Task<Member?> GetMemberByUsernameAsync(string username)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                _logger.LogWarning("GetMemberByUsernameAsync called with empty or whitespace username.");
+                return null;
+            }
+            _logger.Log($"GetMemberByUsernameAsync called for username: '{username}'.");
+            using (var context = new ComicRentalDbContext())
+            {
+                string userUpper = username.ToUpperInvariant();
+                Member? foundMember = await context.Members.AsNoTracking()
+                                              .FirstOrDefaultAsync(m => m.Username != null && m.Username.ToUpperInvariant() == userUpper);
+
+                if (foundMember != null)
+                {
+                    _logger.Log($"GetMemberByUsernameAsync: Member with username: '{username}' found: ID='{foundMember.Id}'.");
+                }
+                else
+                {
+                    _logger.Log($"GetMemberByUsernameAsync: Member with username: '{username}' not found.");
+                }
+                return foundMember;
+            }
+        }
+
+        [Obsolete("Use asynchronous version SearchMembersAsync instead.")]
         public List<Member> SearchMembers(string searchTerm)
         {
-            _logger.Log($"已呼叫 SearchMembers，搜尋詞: '{searchTerm}'。");
-            if (string.IsNullOrWhiteSpace(searchTerm))
+            _logger.Log($"SearchMembers (obsolete) called with searchTerm: '{searchTerm}'.");
+            using (var context = new ComicRentalDbContext())
             {
-                return new List<Member>(_members); 
+                if (string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    _logger.Log("SearchMembers (obsolete): SearchTerm is empty, returning all members ordered by Name.");
+                    return context.Members.OrderBy(m => m.Name).ToList();
+                }
+
+                var lowerSearchTerm = searchTerm.ToLowerInvariant();
+                var query = context.Members.Where(m =>
+                    (m.Name != null && m.Name.ToLowerInvariant().Contains(lowerSearchTerm)) ||
+                    (m.PhoneNumber != null && m.PhoneNumber.Contains(searchTerm)) ||
+                    (m.Id.ToString().Equals(searchTerm)) ||
+                    (m.Username != null && m.Username.ToLowerInvariant().Contains(lowerSearchTerm))
+                );
+
+                var results = query.OrderBy(m => m.Name).ToList();
+                _logger.Log($"SearchMembers (obsolete): Found {results.Count} matching members.");
+                return results;
             }
+        }
 
-            var lowerSearchTerm = searchTerm.ToLowerInvariant();
-            List<Member> results = _members.Where(m =>
-                (m.Name != null && m.Name.ToLowerInvariant().Contains(lowerSearchTerm)) ||
-                (m.PhoneNumber != null && m.PhoneNumber.Contains(searchTerm)) ||
-                (m.Id.ToString().Equals(searchTerm)) ||
-                (m.Username != null && m.Username.ToLowerInvariant().Contains(lowerSearchTerm)) 
-            ).ToList();
+        public async Task<List<Member>> SearchMembersAsync(string searchTerm)
+        {
+            _logger.Log($"SearchMembersAsync called with searchTerm: '{searchTerm}'.");
+            using (var context = new ComicRentalDbContext())
+            {
+                var query = context.Members.AsQueryable();
 
-            _logger.Log($"SearchMembers 找到 {results.Count} 位符合條件的會員。");
-            return results;
+                if (string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    _logger.Log("SearchMembersAsync: SearchTerm is empty, returning all members ordered by Name (AsNoTracking).");
+                    return await query.AsNoTracking().OrderBy(m => m.Name).ToListAsync();
+                }
+
+                var lowerSearchTerm = searchTerm.ToLowerInvariant();
+                // Apply AsNoTracking after Where predicates
+                query = query.Where(m =>
+                    (m.Name != null && m.Name.ToLowerInvariant().Contains(lowerSearchTerm)) ||
+                    (m.PhoneNumber != null && m.PhoneNumber.Contains(searchTerm)) || // Phone is typically exact match, Contains might be too broad or slow if not indexed for it.
+                    (m.Id.ToString().Equals(searchTerm)) || // Similar to ComicService, ID search on string conversion can be slow.
+                    (m.Username != null && m.Username.ToLowerInvariant().Contains(lowerSearchTerm))
+                ).AsNoTracking();
+
+                var results = await query.OrderBy(m => m.Name).ToListAsync();
+                _logger.Log($"SearchMembersAsync: Found {results.Count} matching members.");
+                return results;
+            }
         }
     }
 }
