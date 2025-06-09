@@ -354,10 +354,11 @@ namespace ComicRentalSystem_14Days
 
                 Action updateGrid = () =>
                 {
-                    if (dgvAvailableComics != null) // Guard for CS8602
+                    var dgv = dgvAvailableComics; // Capture to local variable
+                    if (dgv != null)
                     {
-                        dgvAvailableComics.DataSource = null; // CS8602
-                        dgvAvailableComics.DataSource = availableComics;
+                        dgv.DataSource = null;
+                        dgv.DataSource = availableComics;
                     }
                 };
 
@@ -691,9 +692,10 @@ namespace ComicRentalSystem_14Days
         {
             if (dgvMyRentedComics == null) return;
             Action clearGrid = () => {
-                if (dgvMyRentedComics != null) // Guard for CS8602
+                var dgv = dgvMyRentedComics; // Capture to local variable
+                if (dgv != null)
                 {
-                    dgvMyRentedComics.DataSource = null; // CS8602
+                    dgv.DataSource = null;
                 }
             };
             if (dgvMyRentedComics != null && dgvMyRentedComics.IsHandleCreated && !dgvMyRentedComics.IsDisposed && this.InvokeRequired)
@@ -885,20 +887,21 @@ namespace ComicRentalSystem_14Days
 
             Action updateGridAction = () =>
             {
-                if (dgvAvailableComics != null) // Guard for CS8602
+                var dgv = dgvAvailableComics; // Capture to local variable
+                if (dgv != null)
                 {
-                    dgvAvailableComics.DataSource = null; // CS8602
-                    dgvAvailableComics.DataSource = finalViewList ?? new List<AdminComicStatusViewModel>();
+                    dgv.DataSource = null;
+                    dgv.DataSource = finalViewList ?? new List<AdminComicStatusViewModel>();
 
-                    foreach (DataGridViewColumn column in dgvAvailableComics.Columns)
+                    foreach (DataGridViewColumn column in dgv.Columns)
                     {
                         if (column?.HeaderCell != null) // Guard for HeaderCell
                            column.HeaderCell.SortGlyphDirection = SortOrder.None;
                     }
 
-                    if (!string.IsNullOrEmpty(_currentSortColumnName) && dgvAvailableComics.Columns.Contains(_currentSortColumnName))
+                    if (!string.IsNullOrEmpty(_currentSortColumnName) && dgv.Columns.Contains(_currentSortColumnName))
                     {
-                        var column = dgvAvailableComics.Columns[_currentSortColumnName];
+                        var column = dgv.Columns[_currentSortColumnName];
                         if (column?.HeaderCell != null) // Guard for CS8602 on HeaderCell
                         {
                             column.HeaderCell.SortGlyphDirection =
