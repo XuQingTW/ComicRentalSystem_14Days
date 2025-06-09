@@ -135,7 +135,7 @@ namespace ComicRentalSystem_14Days.Services
         public User? GetUserByUsername(string username)
         {
             _logger.Log($"正在嘗試透過使用者名稱擷取使用者: {username}");
-            User? user = _users.FirstOrDefault(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
+            User? user = _users.FirstOrDefault(u => u.Username.ToUpperInvariant() == username.ToUpperInvariant());
             if (user == null)
             {
                 _logger.LogWarning($"找不到使用者名稱為 '{username}' 的使用者。");
@@ -198,7 +198,7 @@ namespace ComicRentalSystem_14Days.Services
         public bool Register(string username, string password, UserRole role)
         {
             _logger.Log($"使用者名稱註冊嘗試: {username}，角色: {role}");
-            if (_users.Any(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase)))
+            if (_users.Any(u => u.Username.ToUpperInvariant() == username.ToUpperInvariant()))
             {
                 _logger.LogWarning($"使用者名稱註冊失敗: {username}。使用者名稱已存在。");
                 return false;
@@ -220,7 +220,7 @@ namespace ComicRentalSystem_14Days.Services
         public User? Login(string username, string password)
         {
             _logger.Log($"使用者名稱登入嘗試: {username}");
-            User? user = _users.FirstOrDefault(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
+            User? user = _users.FirstOrDefault(u => u.Username.ToUpperInvariant() == username.ToUpperInvariant());
 
             if (user == null)
             {
@@ -287,7 +287,7 @@ namespace ComicRentalSystem_14Days.Services
         public bool DeleteUser(string username)
         {
             _logger.Log($"正在嘗試刪除使用者: {username}"); 
-            User? userToDelete = _users.FirstOrDefault(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
+            User? userToDelete = _users.FirstOrDefault(u => u.Username.ToUpperInvariant() == username.ToUpperInvariant());
 
             if (userToDelete != null)
             {
