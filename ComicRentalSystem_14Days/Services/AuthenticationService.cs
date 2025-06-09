@@ -68,7 +68,7 @@ namespace ComicRentalSystem_14Days.Services
         public bool Register(string username, string password, UserRole role)
         {
             _logger.Log($"使用者名稱註冊嘗試: {username}，角色: {role}");
-            if (_context.Users.Any(u => u.Username.ToUpperInvariant() == username.ToUpperInvariant()))
+            if (_context.Users.Any(u => u.Username.ToLower() == username.ToLower()))
             {
                 _logger.LogWarning($"Registration failed for {username}: Username already exists.");
                 return false;

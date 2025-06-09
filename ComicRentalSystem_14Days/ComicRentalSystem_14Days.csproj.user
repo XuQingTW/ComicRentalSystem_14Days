@@ -19,6 +19,9 @@
     <Compile Update="Forms\LoginForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Forms\LogManagementForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Forms\MemberEditForm.cs">
       <SubType>Form</SubType>
     </Compile>
