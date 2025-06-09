@@ -10,6 +10,7 @@ namespace ComicRentalSystem_14Days.Models
         public string Author { get; set; }
         public string Isbn { get; set; }
         public string Genre { get; set; }
+        public string? CoverImagePath { get; set; }
         public bool IsRented { get; set; }
         public int RentedToMemberId { get; set; }
         public DateTime? RentalDate { get; set; } 
@@ -22,6 +23,7 @@ namespace ComicRentalSystem_14Days.Models
             Author = string.Empty;
             Isbn = string.Empty;
             Genre = string.Empty;
+            CoverImagePath = null;
             RentalDate = null;
             ReturnDate = null;
             ActualReturnTime = null;

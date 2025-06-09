@@ -40,6 +40,9 @@
             this.btnSave = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.gbComicDetails = new System.Windows.Forms.GroupBox();
+            this.lblCoverImage = new System.Windows.Forms.Label();
+            this.pbCoverPreview = new System.Windows.Forms.PictureBox();
+            this.btnBrowseCover = new System.Windows.Forms.Button();
             this.gbStatus = new System.Windows.Forms.GroupBox();
 
             this.gbComicDetails.SuspendLayout();
@@ -56,10 +59,13 @@
             this.gbComicDetails.Controls.Add(this.txtIsbn);
             this.gbComicDetails.Controls.Add(this.lblGenre);
             this.gbComicDetails.Controls.Add(this.txtGenre);
+            this.gbComicDetails.Controls.Add(this.lblCoverImage);
+            this.gbComicDetails.Controls.Add(this.pbCoverPreview);
+            this.gbComicDetails.Controls.Add(this.btnBrowseCover);
             this.gbComicDetails.Location = new System.Drawing.Point(15, 15);
             this.gbComicDetails.Name = "gbComicDetails";
             this.gbComicDetails.Padding = new System.Windows.Forms.Padding(10);
-            this.gbComicDetails.Size = new System.Drawing.Size(450, 155); // Adjusted height
+            this.gbComicDetails.Size = new System.Drawing.Size(450, 270);
             this.gbComicDetails.TabIndex = 0;
             this.gbComicDetails.TabStop = false;
             this.gbComicDetails.Text = "漫畫資訊"; // Comic Information
@@ -139,11 +145,39 @@
             this.txtGenre.Size = new System.Drawing.Size(315, 23);
             this.txtGenre.TabIndex = 7;
             this.txtGenre.Validating += new System.ComponentModel.CancelEventHandler(this.txtGenre_Validating);
+
+            // lblCoverImage
+            //
+            this.lblCoverImage.Location = new System.Drawing.Point(15, 155);
+            this.lblCoverImage.Name = "lblCoverImage";
+            this.lblCoverImage.Size = new System.Drawing.Size(95, 23);
+            this.lblCoverImage.TabIndex = 8;
+            this.lblCoverImage.Text = "封面圖片:";
+            this.lblCoverImage.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+
+            // pbCoverPreview
+            //
+            this.pbCoverPreview.Location = new System.Drawing.Point(120, 155);
+            this.pbCoverPreview.Name = "pbCoverPreview";
+            this.pbCoverPreview.Size = new System.Drawing.Size(80, 100);
+            this.pbCoverPreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pbCoverPreview.TabIndex = 9;
+            this.pbCoverPreview.TabStop = false;
+
+            // btnBrowseCover
+            //
+            this.btnBrowseCover.Location = new System.Drawing.Point(210, 190);
+            this.btnBrowseCover.Name = "btnBrowseCover";
+            this.btnBrowseCover.Size = new System.Drawing.Size(90, 25);
+            this.btnBrowseCover.TabIndex = 10;
+            this.btnBrowseCover.Text = "選擇圖片";
+            this.btnBrowseCover.UseVisualStyleBackColor = true;
+            this.btnBrowseCover.Click += new System.EventHandler(this.btnBrowseCover_Click);
             //
             // gbStatus
             //
             this.gbStatus.Controls.Add(this.chkIsRented);
-            this.gbStatus.Location = new System.Drawing.Point(15, 180); // Positioned below gbComicDetails
+            this.gbStatus.Location = new System.Drawing.Point(15, 295);
             this.gbStatus.Name = "gbStatus";
             this.gbStatus.Padding = new System.Windows.Forms.Padding(10);
             this.gbStatus.Size = new System.Drawing.Size(450, 60);
@@ -165,7 +199,7 @@
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
-            this.btnSave.Location = new System.Drawing.Point(279, 262); // Positioned at bottom right
+            this.btnSave.Location = new System.Drawing.Point(279, 377);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(90, 30);
             this.btnSave.TabIndex = 2;
@@ -176,7 +210,7 @@
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
-            this.btnCancel.Location = new System.Drawing.Point(375, 262); // Positioned at bottom right
+            this.btnCancel.Location = new System.Drawing.Point(375, 377);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(90, 30);
             this.btnCancel.TabIndex = 3;
@@ -191,7 +225,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnableAllowFocusChange;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(480, 307); // Adjusted client size
+            this.ClientSize = new System.Drawing.Size(480, 450);
             this.Controls.Add(this.gbComicDetails);
             this.Controls.Add(this.gbStatus);
             this.Controls.Add(this.btnSave);
@@ -222,5 +256,8 @@
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.GroupBox gbComicDetails;
         private System.Windows.Forms.GroupBox gbStatus;
+        private System.Windows.Forms.Label lblCoverImage;
+        private System.Windows.Forms.PictureBox pbCoverPreview;
+        private System.Windows.Forms.Button btnBrowseCover;
     }
 }
