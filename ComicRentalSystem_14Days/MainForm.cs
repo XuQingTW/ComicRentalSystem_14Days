@@ -349,7 +349,9 @@ namespace ComicRentalSystem_14Days
                 dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Author", HeaderText = "作者", FillWeight = 30 });
                 dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Genre", HeaderText = "類型", FillWeight = 20 });
                 dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Isbn", HeaderText = "ISBN", FillWeight = 30 });
+                StyleModernDataGridView(dgvAvailableComics);
                 dgvAvailableComics.RowTemplate.Height = 100;
+                dgvAvailableComics.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
             }
 
             dgvAvailableComics.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
@@ -1268,6 +1270,11 @@ namespace ComicRentalSystem_14Days
             {
                 _logger?.Log("已選取「可租借漫畫」標籤頁。正在重新套用篩選器。");
                 ApplyAvailableComicsFilter();
+                if (dgvAvailableComics != null)
+                {
+                    dgvAvailableComics.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+                    dgvAvailableComics.RowTemplate.Height = 100;
+                }
             }
         }
 
