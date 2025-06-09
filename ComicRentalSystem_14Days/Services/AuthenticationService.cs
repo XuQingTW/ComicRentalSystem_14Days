@@ -42,9 +42,8 @@ namespace ComicRentalSystem_14Days.Services
 
         public User? GetUserByUsername(string username)
         {
-            _logger.Log($"正在嘗試透過使用者名稱擷取使用者: {username}");
-            User? user = _users.FirstOrDefault(u => u.Username.ToUpperInvariant() == username.ToUpperInvariant());
-          
+            _logger.Log($"Attempting to retrieve user by username: {username}");
+            User? user = _context.Users.FirstOrDefault(u => u.Username.ToLower() == username.ToLower());
             if (user == null)
             {
                 _logger.LogWarning($"User with username '{username}' not found.");
@@ -60,15 +59,15 @@ namespace ComicRentalSystem_14Days.Services
         {
             using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000, HashAlgorithmName.SHA256))
             {
-                byte[] hash = pbkdf2.GetBytes(20); 
+                byte[] hash = pbkdf2.GetBytes(20);
                 return Convert.ToBase64String(hash);
             }
         }
 
         public bool Register(string username, string password, UserRole role)
         {
-            _logger.Log($"使用者名稱註冊嘗試: {username}，角色: {role}");
-            if (_users.Any(u => u.Username.ToUpperInvariant() == username.ToUpperInvariant()))
+            _logger.Log($"Attempting to register user: {username}, Role: {role}");
+            if (_context.Users.Any(u => u.Username.ToLower() == username.ToLower()))
             {
                 _logger.LogWarning($"Registration failed for {username}: Username already exists.");
                 return false;
@@ -98,8 +97,8 @@ namespace ComicRentalSystem_14Days.Services
 
         public User? Login(string username, string password)
         {
-            _logger.Log($"使用者名稱登入嘗試: {username}");
-            User? user = _users.FirstOrDefault(u => u.Username.ToUpperInvariant() == username.ToUpperInvariant());
+            _logger.Log($"Login attempt for username: {username}");
+            User? user = _context.Users.FirstOrDefault(u => u.Username.ToLower() == username.ToLower());
 
             if (user == null)
             {
@@ -147,7 +146,7 @@ namespace ComicRentalSystem_14Days.Services
                     _logger.Log($"User '{username}' account locked until {user.LockoutEndDate.Value} due to too many failed login attempts.");
                 }
                 try { _context.SaveChanges(); } catch (DbUpdateException dbEx) { _logger.LogError($"Failed to save failed login attempt changes for user {username}.", dbEx); }
-                return null; 
+                return null;
             }
         }
 
@@ -166,15 +165,15 @@ namespace ComicRentalSystem_14Days.Services
 
         public bool DeleteUser(string username)
         {
-            _logger.Log($"正在嘗試刪除使用者: {username}"); 
-            User? userToDelete = _users.FirstOrDefault(u => u.Username.ToUpperInvariant() == username.ToUpperInvariant());
+            _logger.Log($"Attempting to delete user: {username}");
+            User? userToDelete = _context.Users.FirstOrDefault(u => u.Username.ToLower() == username.ToLower());
 
             if (userToDelete != null)
             {
                 if (userToDelete.Role == UserRole.Admin && _context.Users.Count(u => u.Role == UserRole.Admin) <= 1)
                 {
                     _logger.LogWarning($"User '{username}' is the last admin. Deletion aborted.");
-                    return false; 
+                    return false;
                 }
                 _context.Users.Remove(userToDelete);
                 try
