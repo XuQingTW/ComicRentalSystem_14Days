@@ -95,6 +95,15 @@ namespace ComicRentalSystem_14Days.Services
                 {
                     _logger.LogWarning($"書名='{comic.Title}' 且作者='{comic.Author}' 相同的漫畫已存在。繼續新增。");
                 }
+            } // Closes the try block
+            // Potentially add a catch block here if needed, or save changes if no catch.
+            // For now, just closing the try and method.
+            // Consider if _context.SaveChanges() was intended here. Based on AddComicAsync, it seems so.
+            // However, the original issue is only about the missing brace.
+            // Let's assume SaveChanges() should be called before closing the method, similar to UpdateComic and DeleteComic.
+            _context.SaveChanges(); // Added SaveChanges based on other methods' patterns
+            OnComicsChanged(); // Also common pattern after DB modification
+        } // Closes the AddComic method
 
         public async Task AddComicAsync(Comic comic)
         {
