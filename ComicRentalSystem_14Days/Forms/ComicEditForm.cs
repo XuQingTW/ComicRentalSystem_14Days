@@ -2,6 +2,7 @@
 using ComicRentalSystem_14Days.Interfaces;
 using System;
 using System.IO;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace ComicRentalSystem_14Days.Forms
@@ -13,6 +14,7 @@ namespace ComicRentalSystem_14Days.Forms
         private bool _isEditMode;
         private readonly User? _currentUser;
         private System.Windows.Forms.ErrorProvider errorProvider1;
+        private string? _selectedCoverImagePath;
 
         public ComicEditForm() : base()
         {
@@ -42,6 +44,7 @@ namespace ComicRentalSystem_14Days.Forms
             _editableComic = comicToEdit;
             _isEditMode = (_editableComic != null);
             _currentUser = currentUser;
+            _selectedCoverImagePath = _editableComic?.CoverImagePath;
 
             LogActivity($"漫畫編輯表單初始化中。模式: {(_isEditMode ? "編輯" : "新增")}" +
                         (_isEditMode && _editableComic != null ? $", 漫畫ID: {_editableComic.Id}" : "") +
@@ -75,6 +78,19 @@ namespace ComicRentalSystem_14Days.Forms
             txtIsbn.Text = _editableComic.Isbn;
             txtGenre.Text = _editableComic.Genre;
             chkIsRented.Checked = _editableComic.IsRented;
+
+            if (!string.IsNullOrEmpty(_editableComic.CoverImagePath) && File.Exists(_editableComic.CoverImagePath))
+            {
+                try
+                {
+                    pbCoverPreview.Image = Image.FromFile(_editableComic.CoverImagePath);
+                }
+                catch { pbCoverPreview.Image = null; }
+            }
+            else
+            {
+                pbCoverPreview.Image = null;
+            }
 
             if (_currentUser != null && _currentUser.Role == UserRole.Admin)
             {
@@ -137,6 +153,7 @@ namespace ComicRentalSystem_14Days.Forms
                     _editableComic.Author = txtAuthor.Text.Trim();
                     _editableComic.Isbn = txtIsbn.Text.Trim();
                     _editableComic.Genre = txtGenre.Text.Trim();
+                    _editableComic.CoverImagePath = _selectedCoverImagePath;
                     _comicService.UpdateComic(_editableComic);
                     LogActivity($"漫畫ID: {_editableComic.Id} 已成功更新。");
                     MessageBox.Show("漫畫資料已更新。", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -151,7 +168,8 @@ namespace ComicRentalSystem_14Days.Forms
                         Isbn = txtIsbn.Text.Trim(),
                         Genre = txtGenre.Text.Trim(),
                         IsRented = false,
-                        RentedToMemberId = 0
+                        RentedToMemberId = 0,
+                        CoverImagePath = _selectedCoverImagePath
                     };
                     await _comicService.AddComicAsync(newComic);
                     await _comicService.ReloadAsync();
@@ -180,6 +198,24 @@ namespace ComicRentalSystem_14Days.Forms
             LogActivity("取消按鈕已點擊。漫畫編輯表單正在以 DialogResult.Cancel 關閉。");
             this.DialogResult = DialogResult.Cancel;
             this.Close();
+        }
+
+        private void btnBrowseCover_Click(object? sender, EventArgs e)
+        {
+            using OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp";
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                _selectedCoverImagePath = ofd.FileName;
+                try
+                {
+                    pbCoverPreview.Image = Image.FromFile(ofd.FileName);
+                }
+                catch
+                {
+                    pbCoverPreview.Image = null;
+                }
+            }
         }
 
         private void ComicEditForm_Load(object sender, EventArgs e)
