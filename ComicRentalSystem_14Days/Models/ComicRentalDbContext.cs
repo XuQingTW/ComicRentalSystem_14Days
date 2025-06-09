@@ -40,11 +40,4 @@ namespace ComicRentalSystem_14Days.Models // Or ComicRentalSystem_14Days.Data
             // modelBuilder.Entity<User>().ToTable("Users");
         }
     }
-
-    // Placeholder for Entity classes - these will be refined later
-    // Ensure these are in the ComicRentalSystem_14Days.Models namespace
-    // or adjust the using statement at the top of this file.
-    public class Comic { /* TODO: Define properties for EF Core */ public int Id { get; set; } public string Title { get; set; } }
-    public class Member { /* TODO: Define properties for EF Core */ public int Id { get; set; } public string Name { get; set; } }
-    public class User { /* TODO: Define properties for EF Core */ public int Id { get; set; } public string Username { get; set; } }
 }
