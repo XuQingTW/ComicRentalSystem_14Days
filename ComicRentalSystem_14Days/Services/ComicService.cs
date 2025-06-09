@@ -83,16 +83,18 @@ namespace ComicRentalSystem_14Days.Services
             _context.Comics.Add(comic);
             try
             {
-                _context.SaveChanges();
-                _logger.Log($"Comic '{comic.Title}' (ID: {comic.Id}) added to database.");
-                OnComicsChanged();
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError($"Error adding comic '{comic.Title}' to database. Possible duplicate ID if comic.Id ({comic.Id}) was non-zero and existed, or other constraint violation.", ex);
-                throw new InvalidOperationException($"Could not add comic. Ensure ISBN is unique if that's a constraint, or ID {comic.Id} doesn't already exist.", ex);
-            }
-        }
+                if (comic.Id != 0 && _comics.Any(c => c.Id == comic.Id))
+                {
+                    var ex = new InvalidOperationException($"ID為 {comic.Id} 的漫畫已存在。");
+                    _logger.LogError($"新增漫畫失敗: ID {comic.Id} (書名='{comic.Title}') 已存在。", ex);
+                    throw ex;
+                }
+                if (_comics.Any(c =>
+                        c.Title.ToUpperInvariant() == comic.Title.ToUpperInvariant() &&
+                        c.Author.ToUpperInvariant() == comic.Author.ToUpperInvariant()))
+                {
+                    _logger.LogWarning($"書名='{comic.Title}' 且作者='{comic.Author}' 相同的漫畫已存在。繼續新增。");
+                }
 
         public async Task AddComicAsync(Comic comic)
         {
@@ -195,8 +197,17 @@ namespace ComicRentalSystem_14Days.Services
         {
             if (string.IsNullOrWhiteSpace(genreFilter))
             {
-                _logger.Log("GetComicsByGenre called with empty filter, returning all comics.");
-                return _context.Comics.OrderBy(c => c.Title).ToList();
+                _logger.Log("已呼叫 GetComicsByGenre，類型過濾器為空，返回所有漫畫。");
+                return new List<Comic>(_comics);
+            }
+            else
+            {
+                _logger.Log($"已呼叫 GetComicsByGenre，依類型篩選: '{genreFilter}'。");
+                List<Comic> filteredComics = _comics
+                    .Where(c => c.Genre != null && c.Genre.ToUpperInvariant() == genreFilter.ToUpperInvariant())
+                    .ToList();
+                _logger.Log($"找到 {filteredComics.Count} 本類型為 '{genreFilter}' 的漫畫。");
+                return filteredComics;
             }
             _logger.Log($"GetComicsByGenre called for genre: '{genreFilter}'.");
             return _context.Comics
@@ -216,11 +227,12 @@ namespace ComicRentalSystem_14Days.Services
                 return query.OrderBy(c => c.Title).ToList();
             }
 
+            string searchUpper = searchTerm.ToUpperInvariant();
             query = query.Where(c =>
-                (c.Title != null && c.Title.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0) ||
-                (c.Author != null && c.Author.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0) ||
-                (c.Isbn != null && c.Isbn.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0) ||
-                (c.Genre != null && c.Genre.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0) ||
+                (c.Title != null && c.Title.ToUpperInvariant().Contains(searchUpper)) ||
+                (c.Author != null && c.Author.ToUpperInvariant().Contains(searchUpper)) ||
+                (c.Isbn != null && c.Isbn.ToUpperInvariant().Contains(searchUpper)) ||
+                (c.Genre != null && c.Genre.ToUpperInvariant().Contains(searchUpper)) ||
                 (c.Id.ToString().Equals(searchTerm))
             );
             _logger.Log($"Search term '{searchTerm}' applied.");

@@ -174,8 +174,8 @@ namespace ComicRentalSystem_14Days.Services
                 _logger.Log("GetMemberByName called with empty name.");
                 return null;
             }
-            _logger.Log($"GetMemberByName called for name: '{name}'.");
-            var member = _context.Members.FirstOrDefault(m => m.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+            _logger.Log($"已為姓名: '{name}' 呼叫 GetMemberByName。");
+            Member? member = _members.FirstOrDefault(m => m.Name.ToUpperInvariant() == name.ToUpperInvariant());
             if (member == null)
             {
                 _logger.Log($"Member with name: '{name}' not found.");
@@ -214,9 +214,20 @@ namespace ComicRentalSystem_14Days.Services
                 _logger.LogWarning("GetMemberByUsername called with empty or whitespace username.");
                 return null;
             }
-            _logger.Log($"GetMemberByUsername called for username: '{username}'.");
-            var member = _context.Members.FirstOrDefault(m => m.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
-            if (member == null)
+            var allMembers = GetAllMembers();
+
+            if (allMembers == null || !allMembers.Any())
+            {
+                _logger.LogWarning("GetMemberByUsername: 無可用會員進行搜尋。");
+                return null;
+            }
+
+            string userUpper = username.ToUpperInvariant();
+            Member? foundMember = allMembers.FirstOrDefault(m =>
+                m.Username != null && m.Username.ToUpperInvariant() == userUpper
+            );
+
+            if (foundMember != null)
             {
                 _logger.Log($"Member with username: '{username}' not found.");
             }

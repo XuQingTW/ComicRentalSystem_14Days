@@ -100,6 +100,7 @@ namespace ComicRentalSystem_14Days.Services
         {
             _logger.Log($"使用者名稱登入嘗試: {username}");
             User? user = _users.FirstOrDefault(u => u.Username.ToUpperInvariant() == username.ToUpperInvariant());
+
             if (user == null)
             {
                 _logger.LogWarning($"Login failed for {username}: User not found.");
