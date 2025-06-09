@@ -1,7 +1,7 @@
 ﻿using ComicRentalSystem_14Days.Models;
-using ComicRentalSystem_14Days.Services;
 using ComicRentalSystem_14Days.Helpers;
 using ComicRentalSystem_14Days.Interfaces;
+using ComicRentalSystem_14Days.Services;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -12,7 +12,7 @@ namespace ComicRentalSystem_14Days.Forms
     {
         private MemberService? _memberService;
         private AuthenticationService? _authenticationService;
-        private readonly ComicService? _comicService;
+        private readonly IComicService? _comicService;
         private readonly User? _currentUser;
 
         public MemberManagementForm()
@@ -20,7 +20,7 @@ namespace ComicRentalSystem_14Days.Forms
             InitializeComponent();
         }
 
-        public MemberManagementForm(ILogger logger, MemberService memberService, AuthenticationService authenticationService, ComicService comicService, User? currentUser) : base(logger)
+        public MemberManagementForm(ILogger logger, MemberService memberService, AuthenticationService authenticationService, IComicService comicService, User? currentUser) : base(logger)
         {
             InitializeComponent();
             _memberService = memberService ?? throw new ArgumentNullException(nameof(memberService));

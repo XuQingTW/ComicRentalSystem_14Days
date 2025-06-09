@@ -17,11 +17,6 @@ namespace ComicRentalSystem_14Days.Controls
 {
     partial class AdminDashboardUserControl
     {
-        /// <summary> 
-        /// Required designer variable.
-        /// </summary>
-        private IContainer components = null;
-
         #region Component Designer generated code
 
         private void InitializeComponent()
