@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using System.IO;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.ComponentModel;
@@ -26,6 +27,8 @@ namespace ComicRentalSystem_14Days
         private List<AdminComicStatusViewModel>? _allAdminComicStatuses;
         private string _currentSortColumnName = string.Empty;
         private ListSortDirection _currentSortDirection = ListSortDirection.Ascending;
+
+        private Image _placeholderCoverImage = CreatePlaceholderCoverImage();
 
         private Button? _currentSelectedNavButton;
         private AdminDashboardUserControl? _adminDashboardControl;
@@ -239,10 +242,18 @@ namespace ComicRentalSystem_14Days
                 dgvMyRentedComics.CellFormatting -= dgvMyRentedComics_CellFormatting;
                 dgvMyRentedComics.CellFormatting += dgvMyRentedComics_CellFormatting;
             }
-            if (dgvAvailableComics != null && _currentUser.Role == UserRole.Admin)
+            if (dgvAvailableComics != null)
             {
                 dgvAvailableComics.CellFormatting -= dgvAvailableComics_AdminView_CellFormatting;
-                dgvAvailableComics.CellFormatting += dgvAvailableComics_AdminView_CellFormatting;
+                dgvAvailableComics.CellFormatting -= dgvAvailableComics_MemberView_CellFormatting;
+                if (_currentUser.Role == UserRole.Admin)
+                {
+                    dgvAvailableComics.CellFormatting += dgvAvailableComics_AdminView_CellFormatting;
+                }
+                else
+                {
+                    dgvAvailableComics.CellFormatting += dgvAvailableComics_MemberView_CellFormatting;
+                }
             }
             if (memberViewTabControl != null)
             {
@@ -326,10 +337,21 @@ namespace ComicRentalSystem_14Days
             else
             {
                 _logger!.Log("正在為會員視圖設定 DataGridView (可借閱漫畫)。");
+                var imgCol = new DataGridViewImageColumn
+                {
+                    Name = "CoverImage",
+                    HeaderText = "封面",
+                    ImageLayout = DataGridViewImageCellLayout.Zoom,
+                    Width = 80
+                };
+                dgvAvailableComics!.Columns.Add(imgCol);
                 dgvAvailableComics!.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Title", HeaderText = "書名", FillWeight = 40 });
                 dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Author", HeaderText = "作者", FillWeight = 30 });
                 dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Genre", HeaderText = "類型", FillWeight = 20 });
                 dgvAvailableComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Isbn", HeaderText = "ISBN", FillWeight = 30 });
+                StyleModernDataGridView(dgvAvailableComics);
+                dgvAvailableComics.RowTemplate.Height = 100;
+                dgvAvailableComics.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
             }
 
             dgvAvailableComics.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
@@ -1156,6 +1178,29 @@ namespace ComicRentalSystem_14Days
             }
         }
 
+        private void dgvAvailableComics_MemberView_CellFormatting(object? sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (_currentUser == null || _currentUser.Role != UserRole.Member) return;
+            if (dgvAvailableComics == null || e.RowIndex < 0 || e.RowIndex >= dgvAvailableComics.Rows.Count) return;
+
+            if (dgvAvailableComics.Columns[e.ColumnIndex].Name == "CoverImage")
+            {
+                DataGridViewRow row = dgvAvailableComics.Rows[e.RowIndex];
+                if (row.DataBoundItem is Comic comic)
+                {
+                    if (!string.IsNullOrEmpty(comic.CoverImagePath) && File.Exists(comic.CoverImagePath))
+                    {
+                        try { e.Value = Image.FromFile(comic.CoverImagePath); }
+                        catch { e.Value = _placeholderCoverImage; }
+                    }
+                    else
+                    {
+                        e.Value = _placeholderCoverImage;
+                    }
+                }
+            }
+        }
+
         private void dgvMyRentedComics_CellFormatting(object? sender, DataGridViewCellFormattingEventArgs e)
         {
             if (dgvMyRentedComics == null || e.RowIndex < 0 || e.RowIndex >= dgvMyRentedComics.Rows.Count)
@@ -1224,6 +1269,11 @@ namespace ComicRentalSystem_14Days
             else if (memberViewTabControl.SelectedTab == availableComicsTabPage)
             {
                 _logger?.Log("已選取「可租借漫畫」標籤頁。正在重新套用篩選器。");
+                if (dgvAvailableComics != null)
+                {
+                    dgvAvailableComics.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+                    dgvAvailableComics.RowTemplate.Height = 100;
+                }
                 ApplyAvailableComicsFilter();
             }
         }
@@ -1329,6 +1379,19 @@ namespace ComicRentalSystem_14Days
                     }
                 }
             }
+        }
+
+        private static Image CreatePlaceholderCoverImage()
+        {
+            Bitmap bmp = new Bitmap(80, 100);
+            using (Graphics g = Graphics.FromImage(bmp))
+            {
+                g.Clear(Color.LightGray);
+                using Font font = new Font("Arial", 8);
+                StringFormat sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
+                g.DrawString("暫無封面圖", font, Brushes.Black, new RectangleF(0, 0, bmp.Width, bmp.Height), sf);
+            }
+            return bmp;
         }
     }
 }
