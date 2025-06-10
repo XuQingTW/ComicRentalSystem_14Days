@@ -29,128 +29,167 @@ namespace ComicRentalSystem_14Days.Forms
             dgvRentedComics = new DataGridView();
             dtpActualReturnTime = new DateTimePicker();
             grpRent = new GroupBox();
-            grpReturn = new GroupBox();
-
             lblMember = new Label();
             lblComic = new Label();
+            grpReturn = new GroupBox();
             lblActualReturnTime = new Label();
             lblRentedComics = new Label();
-
             ((System.ComponentModel.ISupportInitialize)dgvRentedComics).BeginInit();
-            SuspendLayout();
             grpRent.SuspendLayout();
             grpReturn.SuspendLayout();
-            lblMember.AutoSize = true;
-            lblMember.Location = new Point(11, 22);
-            lblMember.Name = "lblMember";
-            lblMember.Size = new Size(44, 15);
-            lblMember.TabIndex = 6;
-            lblMember.Text = "會員:";
+            SuspendLayout();
+            // 
+            // cmbMembers
+            // 
             cmbMembers.FormattingEnabled = true;
-            cmbMembers.Location = new Point(60, 18);
-            cmbMembers.Margin = new Padding(2, 3, 2, 3);
+            cmbMembers.Location = new Point(69, 24);
+            cmbMembers.Margin = new Padding(2, 4, 2, 4);
             cmbMembers.Name = "cmbMembers";
-            cmbMembers.Size = new Size(120, 23);
+            cmbMembers.Size = new Size(137, 28);
             cmbMembers.TabIndex = 0;
             cmbMembers.SelectedIndexChanged += cmbMembers_SelectedIndexChanged;
-            lblComic.AutoSize = true;
-            lblComic.Location = new Point(190, 22);
-            lblComic.Name = "lblComic";
-            lblComic.Size = new Size(44, 15);
-            lblComic.TabIndex = 7;
-            lblComic.Text = "漫畫:";
+            // 
+            // cmbComics
+            // 
             cmbComics.FormattingEnabled = true;
-            cmbComics.Location = new Point(239, 18);
-            cmbComics.Margin = new Padding(2, 3, 2, 3);
+            cmbComics.Location = new Point(273, 24);
+            cmbComics.Margin = new Padding(2, 4, 2, 4);
             cmbComics.Name = "cmbComics";
-            cmbComics.Size = new Size(120, 23); 
+            cmbComics.Size = new Size(137, 28);
             cmbComics.TabIndex = 1;
-            btnRent.Location = new Point(370, 17);
-            btnRent.Margin = new Padding(2, 3, 2, 3);
-            btnRent.Name = "btnRent";
-            btnRent.Size = new Size(52, 24);
-            btnRent.TabIndex = 4;
-            btnRent.Text = "租借 ⬇";
-            btnRent.UseVisualStyleBackColor = true;
-            btnRent.Click += btnRent_Click;
-            lblActualReturnTime.AutoSize = true;
-            lblActualReturnTime.Location = new Point(14, 22);
-            lblActualReturnTime.Name = "lblActualReturnTime";
-            lblActualReturnTime.Size = new Size(92, 15);
-            lblActualReturnTime.TabIndex = 8;
-            lblActualReturnTime.Text = "實際歸還時間:";
-            dtpActualReturnTime.CustomFormat = "yyyy-MM-dd HH:mm:ss";
-            dtpActualReturnTime.Format = DateTimePickerFormat.Custom;
-            dtpActualReturnTime.Location = new Point(112, 18);
-            dtpActualReturnTime.Margin = new Padding(2, 3, 2, 3);
-            dtpActualReturnTime.Name = "dtpActualReturnTime";
-            dtpActualReturnTime.Size = new Size(150, 23); 
-            dtpActualReturnTime.TabIndex = 3;
-            btnReturn.Location = new Point(268, 17);
-            btnReturn.Margin = new Padding(2, 3, 2, 3);
+            // 
+            // btnReturn
+            // 
+            btnReturn.Location = new Point(306, 23);
+            btnReturn.Margin = new Padding(2, 4, 2, 4);
             btnReturn.Name = "btnReturn";
-            btnReturn.Size = new Size(52, 23);
+            btnReturn.Size = new Size(70, 31);
             btnReturn.TabIndex = 2;
             btnReturn.Text = "↩ 歸還";
             btnReturn.UseVisualStyleBackColor = true;
             btnReturn.Click += btnReturn_Click;
-            lblRentedComics.AutoSize = true;
-            lblRentedComics.Location = new Point(14, 52);
-            lblRentedComics.Name = "lblRentedComics";
-            lblRentedComics.Size = new Size(92, 15);
-            lblRentedComics.TabIndex = 9;
-            lblRentedComics.Text = "目前租借記錄:";
-            dgvRentedComics.Anchor = ((AnchorStyles.Top | AnchorStyles.Bottom) | AnchorStyles.Left) | AnchorStyles.Right;
+            // 
+            // btnRent
+            // 
+            btnRent.Location = new Point(423, 23);
+            btnRent.Margin = new Padding(2, 4, 2, 4);
+            btnRent.Name = "btnRent";
+            btnRent.Size = new Size(59, 32);
+            btnRent.TabIndex = 4;
+            btnRent.Text = "租借 ⬇";
+            btnRent.UseVisualStyleBackColor = true;
+            btnRent.Click += btnRent_Click;
+            // 
+            // dgvRentedComics
+            // 
+            dgvRentedComics.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvRentedComics.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvRentedComics.Location = new Point(14, 72);
-            dgvRentedComics.Margin = new Padding(2, 3, 2, 3);
+            dgvRentedComics.Location = new Point(16, 96);
+            dgvRentedComics.Margin = new Padding(2, 4, 2, 4);
             dgvRentedComics.Name = "dgvRentedComics";
             dgvRentedComics.RowHeadersWidth = 51;
-            dgvRentedComics.Size = new Size(704, 405);
+            dgvRentedComics.Size = new Size(805, 540);
             dgvRentedComics.TabIndex = 5;
             dgvRentedComics.SelectionChanged += dgvRentedComics_SelectionChanged;
-
+            // 
+            // dtpActualReturnTime
+            // 
+            dtpActualReturnTime.CustomFormat = "yyyy-MM-dd HH:mm:ss";
+            dtpActualReturnTime.Format = DateTimePickerFormat.Custom;
+            dtpActualReturnTime.Location = new Point(128, 24);
+            dtpActualReturnTime.Margin = new Padding(2, 4, 2, 4);
+            dtpActualReturnTime.Name = "dtpActualReturnTime";
+            dtpActualReturnTime.Size = new Size(171, 27);
+            dtpActualReturnTime.TabIndex = 3;
+            // 
+            // grpRent
+            // 
             grpRent.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            grpRent.Location = new Point(10, 10);
-            grpRent.Name = "grpRent";
-            grpRent.Size = new Size(720, 54);
-            grpRent.TabIndex = 10;
-            grpRent.TabStop = false;
-            grpRent.Text = "租借新漫畫";
             grpRent.Controls.Add(lblMember);
             grpRent.Controls.Add(cmbMembers);
             grpRent.Controls.Add(lblComic);
             grpRent.Controls.Add(cmbComics);
             grpRent.Controls.Add(btnRent);
-
+            grpRent.Location = new Point(11, 13);
+            grpRent.Margin = new Padding(3, 4, 3, 4);
+            grpRent.Name = "grpRent";
+            grpRent.Padding = new Padding(3, 4, 3, 4);
+            grpRent.Size = new Size(823, 72);
+            grpRent.TabIndex = 10;
+            grpRent.TabStop = false;
+            grpRent.Text = "租借新漫畫";
+            // 
+            // lblMember
+            // 
+            lblMember.AutoSize = true;
+            lblMember.Location = new Point(13, 29);
+            lblMember.Name = "lblMember";
+            lblMember.Size = new Size(42, 20);
+            lblMember.TabIndex = 6;
+            lblMember.Text = "會員:";
+            // 
+            // lblComic
+            // 
+            lblComic.AutoSize = true;
+            lblComic.Location = new Point(217, 29);
+            lblComic.Name = "lblComic";
+            lblComic.Size = new Size(42, 20);
+            lblComic.TabIndex = 7;
+            lblComic.Text = "漫畫:";
+            // 
+            // grpReturn
+            // 
             grpReturn.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            grpReturn.Location = new Point(10, 70);
-            grpReturn.Name = "grpReturn";
-            grpReturn.Size = new Size(720, 402);
-            grpReturn.TabIndex = 11;
-            grpReturn.TabStop = false;
-            grpReturn.Text = "歸還已租漫畫";
             grpReturn.Controls.Add(lblActualReturnTime);
             grpReturn.Controls.Add(dtpActualReturnTime);
             grpReturn.Controls.Add(btnReturn);
             grpReturn.Controls.Add(lblRentedComics);
             grpReturn.Controls.Add(dgvRentedComics);
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            grpReturn.Location = new Point(11, 93);
+            grpReturn.Margin = new Padding(3, 4, 3, 4);
+            grpReturn.Name = "grpReturn";
+            grpReturn.Padding = new Padding(3, 4, 3, 4);
+            grpReturn.Size = new Size(823, 536);
+            grpReturn.TabIndex = 11;
+            grpReturn.TabStop = false;
+            grpReturn.Text = "歸還已租漫畫";
+            // 
+            // lblActualReturnTime
+            // 
+            lblActualReturnTime.AutoSize = true;
+            lblActualReturnTime.Location = new Point(16, 29);
+            lblActualReturnTime.Name = "lblActualReturnTime";
+            lblActualReturnTime.Size = new Size(102, 20);
+            lblActualReturnTime.TabIndex = 8;
+            lblActualReturnTime.Text = "實際歸還時間:";
+            // 
+            // lblRentedComics
+            // 
+            lblRentedComics.AutoSize = true;
+            lblRentedComics.Location = new Point(16, 69);
+            lblRentedComics.Name = "lblRentedComics";
+            lblRentedComics.Size = new Size(102, 20);
+            lblRentedComics.TabIndex = 9;
+            lblRentedComics.Text = "目前租借記錄:";
+            // 
+            // RentalForm
+            // 
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(745, 482);
+            ClientSize = new Size(851, 643);
             Controls.Add(grpReturn);
             Controls.Add(grpRent);
-            Margin = new Padding(2, 3, 2, 3);
+            Margin = new Padding(2, 4, 2, 4);
             Name = "RentalForm";
+            Padding = new Padding(11, 13, 11, 13);
             Text = "租借管理";
             Load += RentalForm_Load;
             ((System.ComponentModel.ISupportInitialize)dgvRentedComics).EndInit();
-            grpReturn.ResumeLayout(false);
-            grpReturn.PerformLayout();
             grpRent.ResumeLayout(false);
             grpRent.PerformLayout();
+            grpReturn.ResumeLayout(false);
+            grpReturn.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
