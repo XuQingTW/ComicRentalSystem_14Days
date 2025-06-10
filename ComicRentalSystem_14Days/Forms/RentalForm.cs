@@ -30,6 +30,8 @@ namespace ComicRentalSystem_14Days.Forms
         public RentalForm() : base()
         {
             InitializeComponent();
+            this.KeyPreview = true;
+            this.KeyDown += RentalForm_KeyDown;
         }
 
         public RentalForm(
@@ -44,6 +46,9 @@ namespace ComicRentalSystem_14Days.Forms
             _comicService = comicService ?? throw new ArgumentNullException(nameof(comicService));
             _memberService = memberService ?? throw new ArgumentNullException(nameof(memberService));
             _reloadService = reloadService ?? throw new ArgumentNullException(nameof(reloadService));
+
+            this.KeyPreview = true;
+            this.KeyDown += RentalForm_KeyDown;
 
             if (_comicService != null)
             {
@@ -87,6 +92,8 @@ namespace ComicRentalSystem_14Days.Forms
                 LogActivity("租借表單已成功載入資料。");
                 UpdateRentButtonState();
                 UpdateReturnButtonState();
+                dtpActualReturnTime.MaxDate = DateTime.Now;
+                dtpActualReturnTime.Value = DateTime.Now;
             }
             else
             {
@@ -299,6 +306,7 @@ namespace ComicRentalSystem_14Days.Forms
         dgvRentedComics.MultiSelect = false;
         dgvRentedComics.ReadOnly = true;
         dgvRentedComics.AllowUserToAddRows = false;
+        dgvRentedComics.CellDoubleClick += dgvRentedComics_CellDoubleClick;
         LogActivity("dgvRentedComics 管理員視圖設定完成。");
     }
 
@@ -496,6 +504,7 @@ namespace ComicRentalSystem_14Days.Forms
             LogActivity($"漫畫 '{comicFromService.Title}' (ID: {comicFromService.Id}) 已成功歸還 (由會員 '{returningMemberName}' 租借)。");
             MessageBox.Show($"漫畫 '{comicFromService.Title}' 已成功歸還。", "歸還成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
             LoadRentalDetails();
+            dtpActualReturnTime.MaxDate = DateTime.Now;
             dtpActualReturnTime.Value = DateTime.Now;
             UpdateReturnButtonState();
         }
@@ -509,6 +518,23 @@ namespace ComicRentalSystem_14Days.Forms
         private void dgvRentedComics_SelectionChanged(object sender, EventArgs e)
         {
             UpdateReturnButtonState();
+        }
+
+        private void dgvRentedComics_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                btnReturn_Click(sender, e);
+            }
+        }
+
+        private void RentalForm_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+                btnReturn_Click(sender!, e);
+                e.SuppressKeyPress = true;
+            }
         }
 
         protected override async void OnFormClosing(FormClosingEventArgs e)
