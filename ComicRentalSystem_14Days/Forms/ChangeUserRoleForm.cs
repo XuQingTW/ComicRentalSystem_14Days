@@ -7,18 +7,27 @@ using System.Windows.Forms;
 
 namespace ComicRentalSystem_14Days.Forms
 {
-    public partial class ChangeUserRoleForm : BaseForm 
+    public partial class ChangeUserRoleForm : BaseForm
     {
         private readonly User _editingUser;
+        private readonly Member _editingMember;
         private readonly AuthenticationService _authService;
+        private readonly IComicService _comicService;
 
 
-        public ChangeUserRoleForm(User userToEdit, AuthenticationService authService, ILogger logger) : base(logger)
+        public ChangeUserRoleForm(
+            User userToEdit,
+            Member member,
+            AuthenticationService authService,
+            IComicService comicService,
+            ILogger logger) : base(logger)
         {
-            InitializeComponent(); 
+            InitializeComponent();
 
             _editingUser = userToEdit ?? throw new ArgumentNullException(nameof(userToEdit));
+            _editingMember = member ?? throw new ArgumentNullException(nameof(member));
             _authService = authService ?? throw new ArgumentNullException(nameof(authService));
+            _comicService = comicService ?? throw new ArgumentNullException(nameof(comicService));
 
             this.Text = "更改使用者角色"; 
             lblUsernameValue.Text = _editingUser.Username;
@@ -41,7 +50,7 @@ namespace ComicRentalSystem_14Days.Forms
             if (_editingUser.Role == newRole)
             {
                 LogActivity($"使用者 '{_editingUser.Username}' 的角色已經是 {newRole}。未做任何變更。");
-                this.DialogResult = DialogResult.Cancel; 
+                this.DialogResult = DialogResult.Cancel;
                 this.Close();
                 return;
             }
@@ -52,6 +61,17 @@ namespace ComicRentalSystem_14Days.Forms
                 {
                     MessageBox.Show("無法更改最後一位管理員的角色。", "操作禁止", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     LogActivity($"嘗試變更最後一位管理員 '{_editingUser.Username}' 角色的操作已被阻止。");
+                    return;
+                }
+            }
+
+            if (newRole == UserRole.Admin)
+            {
+                bool hasActiveRentals = _comicService.GetAllComics().Any(c => c.IsRented && c.RentedToMemberId == _editingMember.Id);
+                if (hasActiveRentals)
+                {
+                    MessageBox.Show($"會員 '{_editingMember.Name}' 尚有未歸還的漫畫，無法變更為管理員。", "操作禁止", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    LogActivity($"嘗試將有租借中的會員 '{_editingMember.Name}' 變更為管理員已被阻止。");
                     return;
                 }
             }

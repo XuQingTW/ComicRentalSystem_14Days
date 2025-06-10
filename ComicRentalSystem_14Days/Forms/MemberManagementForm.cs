@@ -354,7 +354,7 @@ namespace ComicRentalSystem_14Days.Forms
             }
 
             LogActivity($"Opening ChangeUserRoleForm for member '{selectedMember.Name}', user '{userToEdit.Username}'.");
-            using (ChangeUserRoleForm changeRoleForm = new ChangeUserRoleForm(userToEdit, _authenticationService, Logger))
+            using (ChangeUserRoleForm changeRoleForm = new ChangeUserRoleForm(userToEdit, selectedMember, _authenticationService, _comicService!, Logger))
             {
                 changeRoleForm.ShowDialog(this);
             }
