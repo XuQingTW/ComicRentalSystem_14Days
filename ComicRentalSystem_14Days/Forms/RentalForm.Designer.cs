@@ -1,4 +1,4 @@
-﻿namespace ComicRentalSystem_14Days.Forms
+namespace ComicRentalSystem_14Days.Forms
 {
     partial class RentalForm
     {
