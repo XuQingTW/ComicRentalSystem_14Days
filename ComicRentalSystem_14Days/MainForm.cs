@@ -1094,7 +1094,7 @@ namespace ComicRentalSystem_14Days
             if (sender is Button cb)
             {
                 SelectNavButton(cb);
-                _logger?.Log("Dashboard navigation button clicked.");
+                _logger?.Log("已點擊儀表板導覽按鈕。");
             }
         }
         private void btnNavComicMgmt_Click(object? sender, EventArgs e)
@@ -1102,7 +1102,7 @@ namespace ComicRentalSystem_14Days
             if (sender is Button cb)
             {
                 SelectNavButton(cb);
-                _logger?.Log("Comic Mgmt navigation button clicked.");
+                _logger?.Log("已點擊漫畫管理導覽按鈕。");
             }
         }
         private void btnNavMemberMgmt_Click(object? sender, EventArgs e)
@@ -1110,7 +1110,7 @@ namespace ComicRentalSystem_14Days
             if (sender is Button cb)
             {
                 SelectNavButton(cb);
-                _logger?.Log("Member Mgmt navigation button clicked.");
+                _logger?.Log("已點擊會員管理導覽按鈕。");
             }
         }
         private void btnNavRentalMgmt_Click(object? sender, EventArgs e)
@@ -1118,7 +1118,7 @@ namespace ComicRentalSystem_14Days
             if (sender is Button cb)
             {
                 SelectNavButton(cb);
-                _logger?.Log("Rental Mgmt navigation button clicked.");
+                _logger?.Log("已點擊租借管理導覽按鈕。");
             }
         }
         private void btnNavUserReg_Click(object? sender, EventArgs e)
@@ -1126,7 +1126,7 @@ namespace ComicRentalSystem_14Days
             if (sender is Button cb)
             {
                 SelectNavButton(cb);
-                _logger?.Log("User Reg navigation button clicked.");
+                _logger?.Log("已點擊使用者註冊導覽按鈕。");
             }
         }
         private void btnNavLogs_Click(object? sender, EventArgs e)
@@ -1134,7 +1134,7 @@ namespace ComicRentalSystem_14Days
             if (sender is Button cb)
             {
                 SelectNavButton(cb);
-                _logger?.Log("Logs navigation button clicked.");
+                _logger?.Log("已點擊日誌管理導覽按鈕。");
             }
         }
 

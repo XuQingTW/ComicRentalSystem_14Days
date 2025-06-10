@@ -18,7 +18,7 @@ namespace ComicRentalSystem_14Days.Services
 
         public async Task ReloadAsync()
         {
-            _logger.Log("ComicService ReloadAsync requested. Data is now live from DB.");
+            _logger.Log("ComicService 的 ReloadAsync 已被呼叫，資料將從資料庫即時載入。");
             OnComicsChanged(); 
             await Task.CompletedTask; 
         }
@@ -26,7 +26,7 @@ namespace ComicRentalSystem_14Days.Services
         public ComicService(ILogger logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger), "ComicService logger cannot be null.");
-            _logger.Log("ComicService initialized.");
+            _logger.Log("漫畫服務已初始化。");
         }
 
         private ComicRentalDbContext CreateContext()
@@ -37,28 +37,28 @@ namespace ComicRentalSystem_14Days.Services
         protected virtual void OnComicsChanged()
         {
             ComicsChanged?.Invoke(this, EventArgs.Empty);
-            _logger.Log("ComicsChanged event triggered.");
+            _logger.Log("ComicsChanged 事件已觸發。");
         }
 
         public List<Comic> GetAllComics()
         {
-            _logger.Log("GetAllComics called.");
+            _logger.Log("已呼叫 GetAllComics。");
             using var context = CreateContext();
             return context.Comics.OrderBy(c => c.Title).ToList();
         }
 
         public Comic? GetComicById(int id)
         {
-            _logger.Log($"GetComicById called for ID: {id}.");
+            _logger.Log($"已呼叫 GetComicById，ID: {id}。");
             using var context = CreateContext();
             var comic = context.Comics.Find(id);
             if (comic == null)
             {
-                _logger.Log($"Comic with ID: {id} not found.");
+                _logger.Log($"找不到 ID 為 {id} 的漫畫。");
             }
             else
             {
-                _logger.Log($"Comic with ID: {id} found: Title='{comic.Title}'.");
+                _logger.Log($"找到 ID 為 {id} 的漫畫，書名：'{comic.Title}'。");
             }
             return comic;
         }
@@ -252,16 +252,16 @@ namespace ComicRentalSystem_14Days.Services
                 (c.Genre != null && c.Genre.ToLower().Contains(searchLower)) ||
                 (c.Id.ToString().Equals(searchTerm))
             );
-            _logger.Log($"Search term '{searchTerm}' applied.");
+            _logger.Log($"已套用搜尋字詞 '{searchTerm}'。");
 
             List<Comic> results = query.OrderBy(c => c.Title).ToList();
-            _logger.Log($"SearchComics found {results.Count} matching comics.");
+            _logger.Log($"SearchComics 找到 {results.Count} 筆符合的漫畫。");
             return results;
         }
 
         public List<AdminComicStatusViewModel> GetAdminComicStatusViewModels(IEnumerable<Member> allMembers)
         {
-            _logger.Log("Generating AdminComicStatusViewModels using DB comics and provided member list.");
+            _logger.Log("正在使用資料庫漫畫及提供的會員清單產生 AdminComicStatusViewModels。");
             var allComics = this.GetAllComics(); 
             var memberLookup = allMembers.ToDictionary(m => m.Id);
             var comicStatuses = new List<AdminComicStatusViewModel>();

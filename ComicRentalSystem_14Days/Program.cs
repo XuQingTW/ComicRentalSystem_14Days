@@ -41,7 +41,7 @@ namespace ComicRentalSystem_14Days
                 var migrationService = scope.ServiceProvider.GetRequiredService<DataMigrationService>();
                 migrationService.MigrateFromFiles();
             }
-            logger.Log("Database context disposed after migration check/process.");
+            logger.Log("遷移檢查與處理完成後，已釋放資料庫內容。");
 
             authService.EnsureAdminUserExists("admin", "admin123");
 

@@ -21,7 +21,7 @@ namespace ComicRentalSystem_14Days.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger), "MemberService logger cannot be null.");
             _comicService = comicService ?? throw new ArgumentNullException(nameof(comicService));
 
-            _logger.Log("MemberService initialized.");
+            _logger.Log("會員服務已初始化。");
         }
 
         private ComicRentalDbContext CreateContext()
@@ -31,7 +31,7 @@ namespace ComicRentalSystem_14Days.Services
 
         public async Task ReloadAsync()
         {
-            _logger.Log("MemberService ReloadAsync requested. Data is now live from DB.");
+            _logger.Log("MemberService ReloadAsync 已被呼叫，資料將從資料庫即時載入。");
             OnMembersChanged(); 
             await Task.CompletedTask; 
         }
@@ -39,28 +39,28 @@ namespace ComicRentalSystem_14Days.Services
         protected virtual void OnMembersChanged()
         {
             MembersChanged?.Invoke(this, EventArgs.Empty);
-            _logger.Log("MembersChanged event triggered.");
+            _logger.Log("MembersChanged 事件已觸發。");
         }
 
         public List<Member> GetAllMembers()
         {
-            _logger.Log("GetAllMembers called.");
+            _logger.Log("已呼叫 GetAllMembers。");
             using var context = CreateContext();
             return context.Members.OrderBy(m => m.Name).ToList();
         }
 
         public Member? GetMemberById(int id)
         {
-            _logger.Log($"GetMemberById called for ID: {id}.");
+            _logger.Log($"已呼叫 GetMemberById，ID: {id}。");
             using var context = CreateContext();
             var member = context.Members.Find(id);
             if (member == null)
             {
-                _logger.Log($"Member with ID: {id} not found.");
+                _logger.Log($"找不到 ID 為 {id} 的會員。");
             }
             else
             {
-                _logger.Log($"Member with ID: {id} found: Name='{member.Name}'.");
+                _logger.Log($"找到 ID 為 {id} 的會員，姓名：'{member.Name}'。");
             }
             return member;
         }
