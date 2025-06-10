@@ -17,6 +17,16 @@ namespace ComicRentalSystem_14Days.Forms
         private readonly MemberService? _memberService;
         private readonly IReloadService? _reloadService;
 
+        private void UpdateRentButtonState()
+        {
+            btnRent.Enabled = cmbMembers.SelectedValue != null && cmbComics.SelectedValue != null;
+        }
+
+        private void UpdateReturnButtonState()
+        {
+            btnReturn.Enabled = dgvRentedComics.SelectedRows.Count > 0;
+        }
+
         public RentalForm() : base()
         {
             InitializeComponent();
@@ -72,9 +82,11 @@ namespace ComicRentalSystem_14Days.Forms
                 if (cmbMembers.Items.Count == 0)
                 {
                     LoadAvailableComics();
-                    LoadRentalDetails(); 
+                    LoadRentalDetails();
                 }
                 LogActivity("租借表單已成功載入資料。");
+                UpdateRentButtonState();
+                UpdateReturnButtonState();
             }
             else
             {
@@ -120,6 +132,8 @@ namespace ComicRentalSystem_14Days.Forms
             }
 
             LoadRentalDetails();
+            UpdateRentButtonState();
+            UpdateReturnButtonState();
         }
 
         private void LoadMembers()
@@ -150,6 +164,7 @@ namespace ComicRentalSystem_14Days.Forms
                 LogErrorActivity("將會員載入到 cmbMembers 時發生錯誤。", ex);
                 MessageBox.Show("載入會員列表時發生錯誤，請查看日誌。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            UpdateRentButtonState();
         }
 
         private void LoadAvailableComics()
@@ -181,6 +196,7 @@ namespace ComicRentalSystem_14Days.Forms
                 LogErrorActivity("將可借閱漫畫載入到 cmbComics 時發生錯誤。", ex);
                 MessageBox.Show("載入可用漫畫列表時發生錯誤，請查看日誌。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            UpdateRentButtonState();
         }
 
     private void LoadRentalDetails() 
@@ -234,6 +250,7 @@ namespace ComicRentalSystem_14Days.Forms
                 dgvRentedComics.DataSource = rentalDetails;
             }
             LogActivity($"已載入 {rentalDetails.Count} 筆租借詳細資料。");
+            UpdateReturnButtonState();
         }
         catch (Exception ex)
         {
@@ -298,7 +315,8 @@ namespace ComicRentalSystem_14Days.Forms
                 LogActivity("會員選擇已清除或無效。正在更新相關漫畫列表。");
             }
             LoadAvailableComics();
-        LoadRentalDetails(); 
+            LoadRentalDetails();
+            UpdateRentButtonState();
         }
 
         private void btnRent_Click(object sender, EventArgs e)
@@ -378,8 +396,11 @@ namespace ComicRentalSystem_14Days.Forms
 
                         LogActivity($"漫畫 '{selectedComic.Title}' (ID: {comicId}) 已成功租借給會員 '{selectedMember.Name}' (ID: {memberId})。租借日期: {selectedComic.RentalDate:yyyy-MM-dd HH:mm}, 預計歸還日期: {selectedComic.ReturnDate:yyyy-MM-dd}。");
                         MessageBox.Show($"漫畫 '{selectedComic.Title}' 已成功租借給會員 '{selectedMember.Name}'。\n租借日期: {selectedComic.RentalDate:yyyy-MM-dd}\n預計歸還日期: {selectedComic.ReturnDate:yyyy-MM-dd}", "租借成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        LoadRentalDetails(); 
-                        LoadAvailableComics(); 
+                       LoadRentalDetails();
+                       LoadAvailableComics();
+                        cmbMembers.SelectedIndex = -1;
+                        cmbComics.SelectedIndex = -1;
+                        UpdateRentButtonState();
                     }
                     else
                     {
@@ -474,13 +495,20 @@ namespace ComicRentalSystem_14Days.Forms
 
             LogActivity($"漫畫 '{comicFromService.Title}' (ID: {comicFromService.Id}) 已成功歸還 (由會員 '{returningMemberName}' 租借)。");
             MessageBox.Show($"漫畫 '{comicFromService.Title}' 已成功歸還。", "歸還成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                LoadRentalDetails();
+            LoadRentalDetails();
+            dtpActualReturnTime.Value = DateTime.Now;
+            UpdateReturnButtonState();
         }
         catch (Exception ex)
         {
             LogErrorActivity($"歸還漫畫ID: {comicFromService.Id} 時發生錯誤。", ex);
             MessageBox.Show($"歸還漫畫時發生錯誤: {ex.Message}\n請查看日誌以獲取詳細資訊。", "歸還錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
+        }
+
+        private void dgvRentedComics_SelectionChanged(object sender, EventArgs e)
+        {
+            UpdateReturnButtonState();
         }
 
         protected override async void OnFormClosing(FormClosingEventArgs e)
