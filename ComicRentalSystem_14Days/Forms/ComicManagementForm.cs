@@ -17,6 +17,8 @@ namespace ComicRentalSystem_14Days.Forms
             InitializeComponent();
             _comicService = comicService;
             _currentUser = currentUser;
+            this.KeyPreview = true;
+            this.KeyDown += ComicManagementForm_KeyDown;
             SetupDataGridView();
             LoadComicsData();
             _comicService.ComicsChanged += ComicService_ComicsChanged;
@@ -364,6 +366,20 @@ namespace ComicRentalSystem_14Days.Forms
             bool rowSelected = dgvComics.SelectedRows.Count > 0;
             btnEditComic.Enabled = rowSelected;
             btnDeleteComic.Enabled = rowSelected;
+        }
+
+        private void ComicManagementForm_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.N)
+            {
+                btnAddComic_Click(sender!, e);
+                e.SuppressKeyPress = true;
+            }
+            else if (e.KeyCode == Keys.Delete)
+            {
+                btnDeleteComic_Click(sender!, e);
+                e.SuppressKeyPress = true;
+            }
         }
     }
 }

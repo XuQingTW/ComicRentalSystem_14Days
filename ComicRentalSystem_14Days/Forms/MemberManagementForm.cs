@@ -18,6 +18,8 @@ namespace ComicRentalSystem_14Days.Forms
         public MemberManagementForm()
         {
             InitializeComponent();
+            this.KeyPreview = true;
+            this.KeyDown += MemberManagementForm_KeyDown;
         }
 
         public MemberManagementForm(ILogger logger, MemberService memberService, AuthenticationService authenticationService, IComicService comicService, User? currentUser) : base(logger)
@@ -27,6 +29,8 @@ namespace ComicRentalSystem_14Days.Forms
             _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
             _comicService = comicService ?? throw new ArgumentNullException(nameof(comicService));
             _currentUser = currentUser;
+            this.KeyPreview = true;
+            this.KeyDown += MemberManagementForm_KeyDown;
             LogActivity("會員管理表單正在使用 MemberService、AuthenticationService 和 ComicService 初始化。");
         }
 
@@ -367,6 +371,20 @@ namespace ComicRentalSystem_14Days.Forms
             btnEditMember.Enabled = rowSelected;
             btnDeleteMember.Enabled = rowSelected;
             btnChangeUserRole.Enabled = rowSelected;
+        }
+
+        private void MemberManagementForm_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.N)
+            {
+                btnAddMember_Click(sender!, e);
+                e.SuppressKeyPress = true;
+            }
+            else if (e.KeyCode == Keys.Delete)
+            {
+                btnDeleteMember_Click(sender!, e);
+                e.SuppressKeyPress = true;
+            }
         }
     }
 }
