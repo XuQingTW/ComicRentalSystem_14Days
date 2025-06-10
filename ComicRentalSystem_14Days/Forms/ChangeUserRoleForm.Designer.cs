@@ -73,8 +73,8 @@ namespace ComicRentalSystem_14Days.Forms
             this.Controls.Add(this.lblRoleLabel);
             this.Controls.Add(this.lblUsernameValue);
             this.Controls.Add(this.lblUsernameLabel);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
+            this.MaximizeBox = true;
             this.MinimizeBox = false;
             this.Name = "ChangeUserRoleForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
