@@ -5,25 +5,32 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using ComicRentalSystem_14Days.Services;
+using ComicRentalSystem_14Days.Interfaces;
 
 
 namespace ComicRentalSystem_14Days.Services
 {
     public class ReloadService : IReloadService
         {
+            private readonly ILogger _logger;
             private CancellationTokenSource? _cts;
+            private Task? _runningTask;
 
-            
 
-            public void Start(Func<Task> reloadAction, TimeSpan interval)
+            public ReloadService(ILogger logger)
+            {
+                _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            }
+
+            public Task Start(Func<Task> reloadAction, TimeSpan interval, CancellationToken cancellationToken)
             {
 
-                Stop();
+                StopAsync().GetAwaiter().GetResult();
 
-                _cts = new CancellationTokenSource();
+                _cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
                 var token = _cts.Token;
 
-                Task.Run(async () =>
+                _runningTask = Task.Run(async () =>
                 {
                     while (!token.IsCancellationRequested)
                     {
@@ -36,20 +43,34 @@ namespace ComicRentalSystem_14Days.Services
                         catch (OperationCanceledException)
                         {
                         }
-                        catch (Exception) 
+                        catch (Exception ex)
                         {
+                            _logger.LogError("Reload loop encountered an error", ex);
                         }
                     }
                 }, token);
+                return _runningTask;
             }
 
-            public void Stop()
+            public async Task StopAsync()
             {
                 if (_cts != null && !_cts.IsCancellationRequested)
                 {
                     _cts.Cancel();
+                    try
+                    {
+                        if (_runningTask != null)
+                        {
+                            await _runningTask;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError("Error while stopping reload loop", ex);
+                    }
                     _cts.Dispose();
                     _cts = null;
+                    _runningTask = null;
                 }
             }
     }
