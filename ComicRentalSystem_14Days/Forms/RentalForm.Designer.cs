@@ -70,7 +70,7 @@ namespace ComicRentalSystem_14Days.Forms
             btnRent.Name = "btnRent";
             btnRent.Size = new Size(52, 24);
             btnRent.TabIndex = 4;
-            btnRent.Text = "租借";
+            btnRent.Text = "租借 ⬇";
             btnRent.UseVisualStyleBackColor = true;
             btnRent.Click += btnRent_Click;
             lblActualReturnTime.AutoSize = true;
@@ -91,7 +91,7 @@ namespace ComicRentalSystem_14Days.Forms
             btnReturn.Name = "btnReturn";
             btnReturn.Size = new Size(52, 23);
             btnReturn.TabIndex = 2;
-            btnReturn.Text = "歸還";
+            btnReturn.Text = "↩ 歸還";
             btnReturn.UseVisualStyleBackColor = true;
             btnReturn.Click += btnReturn_Click;
             lblRentedComics.AutoSize = true;

@@ -144,7 +144,7 @@ namespace ComicRentalSystem_14Days
             btnNavLogs.Padding = new Padding(8, 0, 0, 0);
             btnNavLogs.Size = new Size(140, 36);
             btnNavLogs.TabIndex = 5;
-            btnNavLogs.Text = "日誌管理";
+            btnNavLogs.Text = "📄 日誌管理";
             btnNavLogs.TextAlign = ContentAlignment.MiddleLeft;
             btnNavLogs.UseVisualStyleBackColor = false;
             btnNavUserReg.BackColor = Color.FromArgb(248, 249, 250);
@@ -158,7 +158,7 @@ namespace ComicRentalSystem_14Days
             btnNavUserReg.Padding = new Padding(8, 0, 0, 0);
             btnNavUserReg.Size = new Size(140, 36);
             btnNavUserReg.TabIndex = 4;
-            btnNavUserReg.Text = "使用者註冊";
+            btnNavUserReg.Text = "📝 使用者註冊";
             btnNavUserReg.TextAlign = ContentAlignment.MiddleLeft;
             btnNavUserReg.UseVisualStyleBackColor = false;
             btnNavRentalMgmt.BackColor = Color.FromArgb(248, 249, 250);
@@ -172,7 +172,7 @@ namespace ComicRentalSystem_14Days
             btnNavRentalMgmt.Padding = new Padding(8, 0, 0, 0);
             btnNavRentalMgmt.Size = new Size(140, 36);
             btnNavRentalMgmt.TabIndex = 3;
-            btnNavRentalMgmt.Text = "租借管理";
+            btnNavRentalMgmt.Text = "📖 租借管理";
             btnNavRentalMgmt.TextAlign = ContentAlignment.MiddleLeft;
             btnNavRentalMgmt.UseVisualStyleBackColor = false;
             btnNavMemberMgmt.BackColor = Color.FromArgb(248, 249, 250);
@@ -186,7 +186,7 @@ namespace ComicRentalSystem_14Days
             btnNavMemberMgmt.Padding = new Padding(8, 0, 0, 0);
             btnNavMemberMgmt.Size = new Size(140, 36);
             btnNavMemberMgmt.TabIndex = 2;
-            btnNavMemberMgmt.Text = "會員管理";
+            btnNavMemberMgmt.Text = "👥 會員管理";
             btnNavMemberMgmt.TextAlign = ContentAlignment.MiddleLeft;
             btnNavMemberMgmt.UseVisualStyleBackColor = false;
             btnNavComicMgmt.BackColor = Color.FromArgb(248, 249, 250);
@@ -200,7 +200,7 @@ namespace ComicRentalSystem_14Days
             btnNavComicMgmt.Padding = new Padding(8, 0, 0, 0);
             btnNavComicMgmt.Size = new Size(140, 36);
             btnNavComicMgmt.TabIndex = 1;
-            btnNavComicMgmt.Text = "漫畫狀態";
+            btnNavComicMgmt.Text = "📚 漫畫狀態";
             btnNavComicMgmt.TextAlign = ContentAlignment.MiddleLeft;
             btnNavComicMgmt.UseVisualStyleBackColor = false;
             btnNavDashboard.BackColor = Color.FromArgb(248, 249, 250);
@@ -214,7 +214,7 @@ namespace ComicRentalSystem_14Days
             btnNavDashboard.Padding = new Padding(8, 0, 0, 0);
             btnNavDashboard.Size = new Size(140, 36);
             btnNavDashboard.TabIndex = 0;
-            btnNavDashboard.Text = "概要";
+            btnNavDashboard.Text = "🏠 概要";
             btnNavDashboard.TextAlign = ContentAlignment.MiddleLeft;
             btnNavDashboard.UseVisualStyleBackColor = false;
             pnlAdminComicMgmt.Controls.Add(cmbAdminComicFilterStatus);
