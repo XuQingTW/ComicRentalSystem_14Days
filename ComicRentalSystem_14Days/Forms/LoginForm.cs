@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace ComicRentalSystem_14Days.Forms
 {
-    public partial class LoginForm : Form
+    public partial class LoginForm : BaseForm
     {
         private readonly ILogger _logger;
         private readonly AuthenticationService _authService;
@@ -27,6 +27,10 @@ namespace ComicRentalSystem_14Days.Forms
             _comicService = comicService ?? throw new ArgumentNullException(nameof(comicService));
             _memberService = memberService ?? throw new ArgumentNullException(nameof(memberService));
             _reloadService = reloadService ?? throw new ArgumentNullException(nameof(reloadService));
+            base.SetLogger(_logger);
+            if (btnLogin != null) StyleModernButton(btnLogin);
+            if (btnRegister != null) StyleSecondaryButton(btnRegister);
+
             _logger.Log("登入表單已初始化。");
 
             txtPassword.PasswordChar = '*';
@@ -62,7 +66,8 @@ namespace ComicRentalSystem_14Days.Forms
                 _logger.Log($"使用者 '{username}' 成功登入。角色: {user.Role}。");
                 this.Hide(); 
                 MainForm mainForm = new MainForm(_logger, _comicService, _memberService, _reloadService, _authService, user);
-                mainForm.FormClosed += (s, args) => this.Close(); 
+                mainForm.Icon = Helpers.IconHelper.GetAppIcon();
+                mainForm.FormClosed += (s, args) => this.Close();
                 mainForm.Show();
             }
             else
