@@ -42,6 +42,7 @@
             dgvComics.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvComics.Size = new Size(680, 305);
             dgvComics.TabIndex = 0;
+            dgvComics.SelectionChanged += dgvComics_SelectionChanged;
             panel1.AutoSize = true;
             panel1.Controls.Add(btnRefresh);
             panel1.Controls.Add(btnDeleteComic);
@@ -64,6 +65,7 @@
             btnDeleteComic.Location = new Point(218, 4);
             btnDeleteComic.Name = "btnDeleteComic";
             btnDeleteComic.Size = new Size(95, 25);
+            btnDeleteComic.Enabled = false;
             btnDeleteComic.TabIndex = 2;
             btnDeleteComic.Text = "刪除選定漫畫 🗑";
             btnDeleteComic.UseVisualStyleBackColor = true;
@@ -72,6 +74,7 @@
             btnEditComic.Location = new Point(111, 4);
             btnEditComic.Name = "btnEditComic";
             btnEditComic.Size = new Size(101, 26);
+            btnEditComic.Enabled = false;
             btnEditComic.TabIndex = 1;
             btnEditComic.Text = "編輯選定漫畫 ✎";
             btnEditComic.UseVisualStyleBackColor = true;
@@ -88,6 +91,7 @@
             txtSearchComics.Name = "txtSearchComics";
             txtSearchComics.Size = new Size(200, 23);
             txtSearchComics.TabIndex = 0;
+            txtSearchComics.KeyDown += txtSearchComics_KeyDown;
             btnSearchComics.Location = new Point(218, 2);
             btnSearchComics.Name = "btnSearchComics";
             btnSearchComics.Size = new Size(75, 25);

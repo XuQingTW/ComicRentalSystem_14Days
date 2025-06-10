@@ -18,6 +18,7 @@ namespace ComicRentalSystem_14Days.Forms
         private System.Windows.Forms.Button btnRegister;
         private System.Windows.Forms.GroupBox gbAccountCredentials;
         private System.Windows.Forms.GroupBox gbMemberInfo;
+        private System.Windows.Forms.Label lblSummaryError;
 
         protected override void Dispose(bool disposing)
         {
@@ -45,6 +46,7 @@ namespace ComicRentalSystem_14Days.Forms
             this.btnRegister = new System.Windows.Forms.Button();
             this.gbAccountCredentials = new System.Windows.Forms.GroupBox();
             this.gbMemberInfo = new System.Windows.Forms.GroupBox();
+            this.lblSummaryError = new System.Windows.Forms.Label();
 
             this.gbAccountCredentials.SuspendLayout();
             this.gbMemberInfo.SuspendLayout();
@@ -66,7 +68,7 @@ namespace ComicRentalSystem_14Days.Forms
             this.lblUsername.Name = "lblUsername";
             this.lblUsername.Size = new System.Drawing.Size(125, 23); 
             this.lblUsername.TabIndex = 0;
-            this.lblUsername.Text = "使用者名稱:";
+            this.lblUsername.Text = "使用者名稱(&U):";
             this.lblUsername.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.txtUsername.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                 | System.Windows.Forms.AnchorStyles.Right);
@@ -79,7 +81,7 @@ namespace ComicRentalSystem_14Days.Forms
             this.lblPassword.Name = "lblPassword";
             this.lblPassword.Size = new System.Drawing.Size(125, 23);
             this.lblPassword.TabIndex = 2;
-            this.lblPassword.Text = "密碼:";
+            this.lblPassword.Text = "密碼(&P):";
             this.lblPassword.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.txtPassword.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                 | System.Windows.Forms.AnchorStyles.Right);
@@ -92,7 +94,7 @@ namespace ComicRentalSystem_14Days.Forms
             this.lblConfirmPassword.Name = "lblConfirmPassword";
             this.lblConfirmPassword.Size = new System.Drawing.Size(125, 23);
             this.lblConfirmPassword.TabIndex = 4;
-            this.lblConfirmPassword.Text = "確認密碼:";
+            this.lblConfirmPassword.Text = "確認密碼(&C):";
             this.lblConfirmPassword.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.txtConfirmPassword.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                 | System.Windows.Forms.AnchorStyles.Right);
@@ -118,7 +120,7 @@ namespace ComicRentalSystem_14Days.Forms
             this.lblName.Name = "lblName";
             this.lblName.Size = new System.Drawing.Size(125, 23);
             this.lblName.TabIndex = 0;
-            this.lblName.Text = "姓名:";
+            this.lblName.Text = "姓名(&N):";
             this.lblName.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.txtName.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                 | System.Windows.Forms.AnchorStyles.Right);
@@ -131,7 +133,7 @@ namespace ComicRentalSystem_14Days.Forms
             this.lblPhoneNumber.Name = "lblPhoneNumber";
             this.lblPhoneNumber.Size = new System.Drawing.Size(125, 23);
             this.lblPhoneNumber.TabIndex = 2;
-            this.lblPhoneNumber.Text = "電話號碼:";
+            this.lblPhoneNumber.Text = "電話號碼(&T):";
             this.lblPhoneNumber.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.txtPhoneNumber.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                 | System.Windows.Forms.AnchorStyles.Right);
@@ -144,7 +146,7 @@ namespace ComicRentalSystem_14Days.Forms
             this.lblRole.Name = "lblRole";
             this.lblRole.Size = new System.Drawing.Size(125, 23);
             this.lblRole.TabIndex = 4;
-            this.lblRole.Text = "角色:";
+            this.lblRole.Text = "角色(&R):";
             this.lblRole.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.lblRole.Visible = false;
             this.cmbRole.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
@@ -157,18 +159,27 @@ namespace ComicRentalSystem_14Days.Forms
             this.cmbRole.TabIndex = 5;
             this.cmbRole.Visible = false;
             this.btnRegister.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnRegister.Location = new System.Drawing.Point(175, 330); 
+            this.btnRegister.Location = new System.Drawing.Point(175, 330);
             this.btnRegister.Name = "btnRegister";
             this.btnRegister.Size = new System.Drawing.Size(100, 35);
             this.btnRegister.TabIndex = 2; 
             this.btnRegister.Text = "註冊";
             this.btnRegister.UseVisualStyleBackColor = true;
             this.btnRegister.Click += new System.EventHandler(this.btnRegister_Click);
+
+            this.lblSummaryError.AutoSize = true;
+            this.lblSummaryError.ForeColor = System.Drawing.Color.Red;
+            this.lblSummaryError.Location = new System.Drawing.Point(15, 0);
+            this.lblSummaryError.Name = "lblSummaryError";
+            this.lblSummaryError.Size = new System.Drawing.Size(0, 15);
+            this.lblSummaryError.TabIndex = 3;
+            this.lblSummaryError.Visible = false;
             this.AcceptButton = this.btnRegister;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnableAllowFocusChange;
-            this.ClientSize = new System.Drawing.Size(450, 380); 
+            this.ClientSize = new System.Drawing.Size(450, 380);
+            this.Controls.Add(this.lblSummaryError);
             this.Controls.Add(this.gbAccountCredentials);
             this.Controls.Add(this.gbMemberInfo);
             this.Controls.Add(this.btnRegister);

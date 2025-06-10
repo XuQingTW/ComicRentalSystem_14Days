@@ -38,6 +38,7 @@
             dgvMembers.Name = "dgvMembers";
             dgvMembers.Size = new Size(680, 292);
             dgvMembers.TabIndex = 0;
+            dgvMembers.SelectionChanged += dgvMembers_SelectionChanged;
             panel1.Controls.Add(btnChangeUserRole);
             panel1.Controls.Add(btnRefreshMembers);
             panel1.Controls.Add(btnDeleteMember);
@@ -51,6 +52,7 @@
             btnChangeUserRole.Location = new Point(3, 17);
             btnChangeUserRole.Name = "btnChangeUserRole";
             btnChangeUserRole.Size = new Size(108, 23);
+            btnChangeUserRole.Enabled = false;
             btnChangeUserRole.TabIndex = 4;
             btnChangeUserRole.Text = "更改使用者角色";
             btnChangeUserRole.UseVisualStyleBackColor = true;
@@ -64,6 +66,7 @@
             btnDeleteMember.Location = new Point(299, 17);
             btnDeleteMember.Name = "btnDeleteMember";
             btnDeleteMember.Size = new Size(75, 23);
+            btnDeleteMember.Enabled = false;
             btnDeleteMember.TabIndex = 2;
             btnDeleteMember.Text = "刪除選定會員 🗑";
             btnDeleteMember.UseVisualStyleBackColor = true;
@@ -71,6 +74,7 @@
             btnEditMember.Location = new Point(198, 17);
             btnEditMember.Name = "btnEditMember";
             btnEditMember.Size = new Size(95, 23);
+            btnEditMember.Enabled = false;
             btnEditMember.TabIndex = 1;
             btnEditMember.Text = "編輯選定會員 ✎";
             btnEditMember.UseVisualStyleBackColor = true;
@@ -86,6 +90,7 @@
             txtSearchMembers.Name = "txtSearchMembers";
             txtSearchMembers.Size = new Size(200, 23);
             txtSearchMembers.TabIndex = 0;
+            txtSearchMembers.KeyDown += txtSearchMembers_KeyDown;
             btnSearchMembers.Location = new Point(218, 2);
             btnSearchMembers.Name = "btnSearchMembers";
             btnSearchMembers.Size = new Size(75, 25);

@@ -33,14 +33,14 @@ namespace ComicRentalSystem_14Days.Forms
             lblUsername.Name = "lblUsername";
             lblUsername.Size = new Size(70, 15);
             lblUsername.TabIndex = 0;
-            lblUsername.Text = "使用者名稱:";
+            lblUsername.Text = "使用者名稱(&U):";
             lblUsername.TextAlign = ContentAlignment.MiddleRight;
             lblPassword.AutoSize = false;
             lblPassword.Location = new Point(40, 80);
             lblPassword.Name = "lblPassword";
             lblPassword.Size = new Size(70, 15);
             lblPassword.TabIndex = 1;
-            lblPassword.Text = "密碼:";
+            lblPassword.Text = "密碼(&P):";
             lblPassword.TextAlign = ContentAlignment.MiddleRight;
             txtUsername.Location = new Point(120, 37);
             txtUsername.Name = "txtUsername";
