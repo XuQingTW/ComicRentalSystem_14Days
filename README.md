@@ -85,6 +85,7 @@ B11170047陳家龢
     *   **資料庫檔案**：
         *   `comic_rental.db`：包含所有應用程式資料 (漫畫、會員、使用者帳號等)。
         *   此檔案位於使用者 `%APPDATA%\ComicRentalApp` 目錄下 (例如：`C:\Users\YourUsername\AppData\Roaming\ComicRentalApp\comic_rental.db`)。
+        *   亦可透過環境變數 `COMIC_DB_PATH` 指定其他資料庫檔案路徑。
         *   如果此資料庫檔案在應用程式首次執行時不存在，系統將會自動建立它。
     *   **日誌檔案目錄**：
         *   日誌檔案 (例如 `20231026.txt`) 儲存在使用者「我的文件」資料夾內的 `ComicRentalApp\Logs` 目錄下 (例如：`C:\Users\YourUsername\Documents\ComicRentalApp\Logs`)。
