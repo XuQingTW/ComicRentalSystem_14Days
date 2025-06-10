@@ -92,8 +92,9 @@ namespace ComicRentalSystem_14Days.Forms
                 LogActivity("租借表單已成功載入資料。");
                 UpdateRentButtonState();
                 UpdateReturnButtonState();
-                dtpActualReturnTime.MaxDate = DateTime.Now;
-                dtpActualReturnTime.Value = DateTime.Now;
+                DateTime now = DateTime.Now;
+                dtpActualReturnTime.MaxDate = now;
+                dtpActualReturnTime.Value = now;
             }
             else
             {
@@ -504,8 +505,9 @@ namespace ComicRentalSystem_14Days.Forms
             LogActivity($"漫畫 '{comicFromService.Title}' (ID: {comicFromService.Id}) 已成功歸還 (由會員 '{returningMemberName}' 租借)。");
             MessageBox.Show($"漫畫 '{comicFromService.Title}' 已成功歸還。", "歸還成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
             LoadRentalDetails();
-            dtpActualReturnTime.MaxDate = DateTime.Now;
-            dtpActualReturnTime.Value = DateTime.Now;
+            DateTime now = DateTime.Now;
+            dtpActualReturnTime.MaxDate = now;
+            dtpActualReturnTime.Value = now;
             UpdateReturnButtonState();
         }
         catch (Exception ex)
