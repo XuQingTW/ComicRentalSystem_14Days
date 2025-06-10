@@ -493,11 +493,17 @@ namespace ComicRentalSystem_14Days.Forms
 
         try
         {
-                int previouslyRentedByMemberId = comicFromService.RentedToMemberId; 
+            if (comicFromService.RentalDate.HasValue && dtpActualReturnTime.Value < comicFromService.RentalDate.Value)
+            {
+                MessageBox.Show("實際歸還時間不能早於租借日期。", "日期錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            int previouslyRentedByMemberId = comicFromService.RentedToMemberId;
             comicFromService.IsRented = false;
             comicFromService.RentedToMemberId = 0;
-                comicFromService.ActualReturnTime = dtpActualReturnTime.Value; 
-                _comicService?.UpdateComic(comicFromService);
+            comicFromService.ActualReturnTime = dtpActualReturnTime.Value;
+            _comicService?.UpdateComic(comicFromService);
 
             Member? returningMember = _memberService?.GetMemberById(previouslyRentedByMemberId);
             string returningMemberName = returningMember?.Name ?? $"ID: {previouslyRentedByMemberId}";
