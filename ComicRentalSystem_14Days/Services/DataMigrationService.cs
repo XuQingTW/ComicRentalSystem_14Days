@@ -1,6 +1,7 @@
 using ComicRentalSystem_14Days.Helpers;
 using ComicRentalSystem_14Days.Logging;
 using ComicRentalSystem_14Days.Models;
+using ComicRentalSystem_14Days.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
