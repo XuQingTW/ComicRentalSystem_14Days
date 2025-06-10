@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-// Potentially remove System.Linq, System.Text, System.Threading.Tasks if not used elsewhere
 
 namespace ComicRentalSystem_14Days.Models
 {
@@ -17,7 +16,6 @@ namespace ComicRentalSystem_14Days.Models
             PhoneNumber = string.Empty;
             Username = string.Empty;
         }
-        // CSV related methods removed
     }
 }
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ComicRentalSystem_14Days.Interfaces;
 using ComicRentalSystem_14Days.Models;
-using Microsoft.EntityFrameworkCore; // For DbUpdateException
+using Microsoft.EntityFrameworkCore; 
 
 namespace ComicRentalSystem_14Days.Services
 {
@@ -19,10 +19,8 @@ namespace ComicRentalSystem_14Days.Services
         public async Task ReloadAsync()
         {
             _logger.Log("ComicService ReloadAsync requested. Data is now live from DB.");
-            // Potentially, this could re-query or refresh some view if needed,
-            // but with direct DB access, explicit reload is less critical for the service itself.
-            OnComicsChanged(); // Notify listeners that data *might* have changed or a refresh is requested
-            await Task.CompletedTask; // Placeholder if no other async work
+            OnComicsChanged(); 
+            await Task.CompletedTask; 
         }
 
         public ComicService(ILogger logger)
@@ -133,7 +131,7 @@ namespace ComicRentalSystem_14Days.Services
 
             _logger.Log($"Attempting to add comic asynchronously: Title='{comic.Title}'.");
             await using var context = CreateContext();
-            context.Comics.Add(comic); // comic.Id will be handled by DB if 0
+            context.Comics.Add(comic); 
             try
             {
                 await context.SaveChangesAsync();
@@ -264,7 +262,7 @@ namespace ComicRentalSystem_14Days.Services
         public List<AdminComicStatusViewModel> GetAdminComicStatusViewModels(IEnumerable<Member> allMembers)
         {
             _logger.Log("Generating AdminComicStatusViewModels using DB comics and provided member list.");
-            var allComics = this.GetAllComics(); // Fetches from DB now
+            var allComics = this.GetAllComics(); 
             var memberLookup = allMembers.ToDictionary(m => m.Id);
             var comicStatuses = new List<AdminComicStatusViewModel>();
 

@@ -2,15 +2,8 @@
 {
     partial class MemberManagementForm
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -22,10 +15,6 @@
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             dgvMembers = new DataGridView();
@@ -43,18 +32,12 @@
             panel1.SuspendLayout();
             panelSearch.SuspendLayout();
             SuspendLayout();
-            // 
-            // dgvMembers
-            // 
             dgvMembers.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvMembers.Dock = DockStyle.Fill;
             dgvMembers.Location = new Point(10, 40);
             dgvMembers.Name = "dgvMembers";
             dgvMembers.Size = new Size(680, 292);
             dgvMembers.TabIndex = 0;
-            // 
-            // panel1
-            // 
             panel1.Controls.Add(btnChangeUserRole);
             panel1.Controls.Add(btnRefreshMembers);
             panel1.Controls.Add(btnDeleteMember);
@@ -65,9 +48,6 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(680, 55);
             panel1.TabIndex = 1;
-            // 
-            // btnChangeUserRole
-            // 
             btnChangeUserRole.Location = new Point(3, 17);
             btnChangeUserRole.Name = "btnChangeUserRole";
             btnChangeUserRole.Size = new Size(108, 23);
@@ -75,18 +55,12 @@
             btnChangeUserRole.Text = "更改使用者角色";
             btnChangeUserRole.UseVisualStyleBackColor = true;
             btnChangeUserRole.Click += btnChangeUserRole_Click;
-            // 
-            // btnRefreshMembers
-            // 
             btnRefreshMembers.Location = new Point(380, 17);
             btnRefreshMembers.Name = "btnRefreshMembers";
             btnRefreshMembers.Size = new Size(75, 23);
             btnRefreshMembers.TabIndex = 3;
             btnRefreshMembers.Text = "重新整理";
             btnRefreshMembers.UseVisualStyleBackColor = true;
-            // 
-            // btnDeleteMember
-            // 
             btnDeleteMember.Location = new Point(299, 17);
             btnDeleteMember.Name = "btnDeleteMember";
             btnDeleteMember.Size = new Size(75, 23);
@@ -94,9 +68,6 @@
             btnDeleteMember.Text = "刪除選定會員";
             btnDeleteMember.UseVisualStyleBackColor = true;
             btnDeleteMember.Click += btnDeleteMember_Click;
-            // 
-            // btnEditMember
-            // 
             btnEditMember.Location = new Point(198, 17);
             btnEditMember.Name = "btnEditMember";
             btnEditMember.Size = new Size(95, 23);
@@ -104,9 +75,6 @@
             btnEditMember.Text = "編輯選定會員";
             btnEditMember.UseVisualStyleBackColor = true;
             btnEditMember.Click += btnEditMember_Click;
-            // 
-            // btnAddMember
-            // 
             btnAddMember.Location = new Point(117, 17);
             btnAddMember.Name = "btnAddMember";
             btnAddMember.Size = new Size(75, 23);
@@ -114,16 +82,10 @@
             btnAddMember.Text = "新增會員";
             btnAddMember.UseVisualStyleBackColor = true;
             btnAddMember.Click += btnAddMember_Click;
-            // 
-            // txtSearchMembers
-            // 
             txtSearchMembers.Location = new Point(12, 3);
             txtSearchMembers.Name = "txtSearchMembers";
             txtSearchMembers.Size = new Size(200, 23);
             txtSearchMembers.TabIndex = 0;
-            // 
-            // btnSearchMembers
-            // 
             btnSearchMembers.Location = new Point(218, 2);
             btnSearchMembers.Name = "btnSearchMembers";
             btnSearchMembers.Size = new Size(75, 25);
@@ -131,9 +93,6 @@
             btnSearchMembers.Text = "搜尋";
             btnSearchMembers.UseVisualStyleBackColor = true;
             btnSearchMembers.Click += btnSearchMembers_Click;
-            // 
-            // btnClearSearchMembers
-            // 
             btnClearSearchMembers.Location = new Point(299, 2);
             btnClearSearchMembers.Name = "btnClearSearchMembers";
             btnClearSearchMembers.Size = new Size(75, 25);
@@ -141,9 +100,6 @@
             btnClearSearchMembers.Text = "清除";
             btnClearSearchMembers.UseVisualStyleBackColor = true;
             btnClearSearchMembers.Click += btnClearSearchMembers_Click;
-            // 
-            // panelSearch
-            // 
             panelSearch.Controls.Add(txtSearchMembers);
             panelSearch.Controls.Add(btnSearchMembers);
             panelSearch.Controls.Add(btnClearSearchMembers);
@@ -152,9 +108,6 @@
             panelSearch.Name = "panelSearch";
             panelSearch.Size = new Size(680, 30);
             panelSearch.TabIndex = 2;
-            // 
-            // MemberManagementForm
-            // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(700, 397);
