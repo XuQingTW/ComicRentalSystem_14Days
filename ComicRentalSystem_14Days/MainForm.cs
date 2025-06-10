@@ -112,6 +112,10 @@ namespace ComicRentalSystem_14Days
             if (btnNavLogs != null) btnNavLogs.Click += btnNavLogs_Click;
 
             SetupDataGridView();
+            if (_currentUser.Role == UserRole.Member)
+            {
+                SetupMyRentedComicsDataGridView();
+            }
 
             if (_currentUser.Role == UserRole.Admin)
             {
@@ -277,7 +281,6 @@ namespace ComicRentalSystem_14Days
             bool isMember = _currentUser.Role == UserRole.Member;
             if (isMember)
             {
-                // 移除租借功能後，按鈕不存在，無需處理
             }
         }
 
@@ -380,7 +383,7 @@ namespace ComicRentalSystem_14Days
 
                 Action updateGrid = () =>
                 {
-                    var dgv = dgvAvailableComics; // Capture to local variable
+                    var dgv = dgvAvailableComics; 
                     if (dgv != null)
                     {
                         dgv.DataSource = null;
@@ -409,7 +412,7 @@ namespace ComicRentalSystem_14Days
 
             try
             {
-                List<Member>? allMembers = await Task.Run(() => _memberService.GetAllMembers()); // CS8604 addressed by checking null below
+                List<Member>? allMembers = await Task.Run(() => _memberService.GetAllMembers()); 
                 if (allMembers == null)
                 {
                     _logger?.LogWarning("LoadAllComicsStatusForAdminAsync: _memberService.GetAllMembers() returned null. Using empty list for statuses.");
@@ -446,7 +449,7 @@ namespace ComicRentalSystem_14Days
             }
 
             if (leftNavPanel != null) leftNavPanel.Visible = false;
-            if (_adminDashboardControl != null) _adminDashboardControl.Visible = false; // Guarded
+            if (_adminDashboardControl != null) _adminDashboardControl.Visible = false; 
             if (memberViewTabControl != null) memberViewTabControl.Visible = false;
 
             if (lblAvailableComics != null) lblAvailableComics.Visible = false;
@@ -560,8 +563,6 @@ namespace ComicRentalSystem_14Days
 
         private void UpdateStatusBar()
         {
-            // _currentUser and _logger are guaranteed non-null by the constructor used for normal operation.
-            // toolStripStatusLabelUser is part of InitializeComponent.
             if (this.toolStripStatusLabelUser != null)
             {
                 this.toolStripStatusLabelUser.Text = $"使用者: {_currentUser.Username} | 角色: {_currentUser.Role}";
@@ -570,7 +571,6 @@ namespace ComicRentalSystem_14Days
             {
                 this._logger.LogWarning("toolStripStatusLabelUser is null. Cannot update status bar text.");
             }
-            // Log status update attempt regardless of label's state, as user info is available.
             this._logger.Log($"Status bar update processed for User: {_currentUser.Username}, Role: {_currentUser.Role}");
         }
 
@@ -582,8 +582,8 @@ namespace ComicRentalSystem_14Days
             dgvMyRentedComics.Columns.Clear();
             dgvMyRentedComics.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
-            dgvMyRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "ComicTitle", HeaderText = "書名", FillWeight = 30 });
-            dgvMyRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Author", HeaderText = "作者", FillWeight = 20 });
+            dgvMyRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "ComicTitle", HeaderText = "漫畫名稱", FillWeight = 30 });
+            dgvMyRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Author", HeaderText = "漫畫作者", FillWeight = 20 });
 
             var rentalDateColumn = new DataGridViewTextBoxColumn
             {
@@ -598,7 +598,7 @@ namespace ComicRentalSystem_14Days
             var returnDateColumn = new DataGridViewTextBoxColumn
             {
                 DataPropertyName = "ExpectedReturnDate",
-                HeaderText = "歸還日期",
+                HeaderText = "應還日期",
                 FillWeight = 18
             };
             returnDateColumn.DefaultCellStyle ??= new DataGridViewCellStyle();
@@ -610,7 +610,7 @@ namespace ComicRentalSystem_14Days
                 var statusColumn = new DataGridViewTextBoxColumn
                 {
                     Name = "statusColumn",
-                    HeaderText = "狀態",
+                    HeaderText = "租借狀態",
                     FillWeight = 14
                 };
                 dgvMyRentedComics.Columns.Add(statusColumn);
@@ -718,7 +718,7 @@ namespace ComicRentalSystem_14Days
         {
             if (dgvMyRentedComics == null) return;
             Action clearGrid = () => {
-                var dgv = dgvMyRentedComics; // Capture to local variable
+                var dgv = dgvMyRentedComics; 
                 if (dgv != null)
                 {
                     dgv.DataSource = null;
@@ -913,7 +913,7 @@ namespace ComicRentalSystem_14Days
 
             Action updateGridAction = () =>
             {
-                var dgv = dgvAvailableComics; // Capture to local variable
+                var dgv = dgvAvailableComics; 
                 if (dgv != null)
                 {
                     dgv.DataSource = null;
@@ -921,14 +921,14 @@ namespace ComicRentalSystem_14Days
 
                     foreach (DataGridViewColumn column in dgv.Columns)
                     {
-                        if (column?.HeaderCell != null) // Guard for HeaderCell
+                        if (column?.HeaderCell != null) 
                            column.HeaderCell.SortGlyphDirection = SortOrder.None;
                     }
 
                     if (!string.IsNullOrEmpty(_currentSortColumnName) && dgv.Columns.Contains(_currentSortColumnName))
                     {
                         var column = dgv.Columns[_currentSortColumnName];
-                        if (column?.HeaderCell != null) // Guard for CS8602 on HeaderCell
+                        if (column?.HeaderCell != null) 
                         {
                             column.HeaderCell.SortGlyphDirection =
                                 _currentSortDirection == ListSortDirection.Ascending ? SortOrder.Ascending : SortOrder.Descending;
@@ -985,7 +985,7 @@ namespace ComicRentalSystem_14Days
             selectedButton.Font = new System.Drawing.Font(baseFont, System.Drawing.FontStyle.Bold);
             _currentSelectedNavButton = selectedButton;
 
-            if (_adminDashboardControl != null) _adminDashboardControl.Visible = false; // Guarded
+            if (_adminDashboardControl != null) _adminDashboardControl.Visible = false; 
             if (memberViewTabControl != null) memberViewTabControl.Visible = false;
 
             if (lblAvailableComics != null) lblAvailableComics.Visible = false;
@@ -994,11 +994,11 @@ namespace ComicRentalSystem_14Days
 
             if (selectedButton == btnNavDashboard)
             {
-                if (_adminDashboardControl != null) // Guarded
+                if (_adminDashboardControl != null) 
                 {
-                    _adminDashboardControl.Visible = true; // Guarded
+                    _adminDashboardControl.Visible = true; 
                     _adminDashboardControl.BringToFront();
-                    _adminDashboardControl.LoadDashboardData(); // Guarded
+                    _adminDashboardControl.LoadDashboardData(); 
                     this.Text = "漫畫租借系統 - 儀表板";
                 }
                 _logger?.Log("已選取儀表板視圖。");
@@ -1094,7 +1094,7 @@ namespace ComicRentalSystem_14Days
             if (sender is Button cb)
             {
                 SelectNavButton(cb);
-                _logger?.Log("Dashboard navigation button clicked.");
+                _logger?.Log("已點擊儀表板導覽按鈕。");
             }
         }
         private void btnNavComicMgmt_Click(object? sender, EventArgs e)
@@ -1102,7 +1102,7 @@ namespace ComicRentalSystem_14Days
             if (sender is Button cb)
             {
                 SelectNavButton(cb);
-                _logger?.Log("Comic Mgmt navigation button clicked.");
+                _logger?.Log("已點擊漫畫管理導覽按鈕。");
             }
         }
         private void btnNavMemberMgmt_Click(object? sender, EventArgs e)
@@ -1110,7 +1110,7 @@ namespace ComicRentalSystem_14Days
             if (sender is Button cb)
             {
                 SelectNavButton(cb);
-                _logger?.Log("Member Mgmt navigation button clicked.");
+                _logger?.Log("已點擊會員管理導覽按鈕。");
             }
         }
         private void btnNavRentalMgmt_Click(object? sender, EventArgs e)
@@ -1118,7 +1118,7 @@ namespace ComicRentalSystem_14Days
             if (sender is Button cb)
             {
                 SelectNavButton(cb);
-                _logger?.Log("Rental Mgmt navigation button clicked.");
+                _logger?.Log("已點擊租借管理導覽按鈕。");
             }
         }
         private void btnNavUserReg_Click(object? sender, EventArgs e)
@@ -1126,7 +1126,7 @@ namespace ComicRentalSystem_14Days
             if (sender is Button cb)
             {
                 SelectNavButton(cb);
-                _logger?.Log("User Reg navigation button clicked.");
+                _logger?.Log("已點擊使用者註冊導覽按鈕。");
             }
         }
         private void btnNavLogs_Click(object? sender, EventArgs e)
@@ -1134,7 +1134,7 @@ namespace ComicRentalSystem_14Days
             if (sender is Button cb)
             {
                 SelectNavButton(cb);
-                _logger?.Log("Logs navigation button clicked.");
+                _logger?.Log("已點擊日誌管理導覽按鈕。");
             }
         }
 
@@ -1148,11 +1148,11 @@ namespace ComicRentalSystem_14Days
 
             if (dgvAvailableComics.Columns[e.ColumnIndex].DataPropertyName == "Status")
             {
-                if (e.Value?.ToString() == "被借閱") // CS8602 for e.CellStyle below
+                if (e.Value?.ToString() == "被借閱") 
                 {
                     if (e.CellStyle != null) e.CellStyle.ForeColor = ModernBaseForm.DangerColor;
                 }
-                else if (e.Value?.ToString() == "在館中") // CS8602 for e.CellStyle below
+                else if (e.Value?.ToString() == "在館中") 
                 {
                     if (e.CellStyle != null) e.CellStyle.ForeColor = ModernBaseForm.SuccessColor;
                 }
@@ -1161,11 +1161,10 @@ namespace ComicRentalSystem_14Days
             if (dgvAvailableComics.Columns[e.ColumnIndex].DataPropertyName == "ReturnDate" ||
                 dgvAvailableComics.Columns[e.ColumnIndex].DataPropertyName == "Status")
             {
-                // comicStatus is guaranteed non-null here by `is not AdminComicStatusViewModel comicStatus) return;`
-                if (comicStatus.Status == "被借閱" && comicStatus.ReturnDate.HasValue) // CS8602 for row.DefaultCellStyle below
+                if (comicStatus.Status == "被借閱" && comicStatus.ReturnDate.HasValue) 
                 {
                     DateTime returnDate = comicStatus.ReturnDate.Value;
-                    if (row.DefaultCellStyle != null) // Guard for DefaultCellStyle
+                    if (row.DefaultCellStyle != null) 
                     {
                         if (returnDate.Date < DateTime.Today)
                         {

@@ -26,17 +26,17 @@ namespace ComicRentalSystem_14Days.Services
 
         public void MigrateFromFiles()
         {
-            _logger.Log("Initializing Database Context for migration...");
+            _logger.Log("正在初始化資料庫內容以進行資料移轉...");
             _dbContext.Database.EnsureCreated();
-            _logger.Log("Database schema ensured.");
+            _logger.Log("已確認資料庫結構。");
 
             if (_dbContext.Comics.Any())
             {
-                _logger.Log("Comics table is not empty. Assuming data migration has already occurred. Skipping.");
+                _logger.Log("Comics 資料表不為空，推斷資料已經移轉過，略過此步驟。");
                 return;
             }
 
-            _logger.Log("No existing data found in Comics table. Proceeding with data migration.");
+            _logger.Log("在 Comics 資料表未找到既有資料，開始進行資料移轉。");
 
             ImportComics();
             ImportMembers();
@@ -44,13 +44,13 @@ namespace ComicRentalSystem_14Days.Services
 
             if (_dbContext.ChangeTracker.HasChanges())
             {
-                _logger.Log("Saving changes to SQLite database...");
+                _logger.Log("正在將變更儲存至 SQLite 資料庫...");
                 _dbContext.SaveChanges();
-                _logger.Log("Data migration completed.");
+                _logger.Log("資料移轉完成。");
             }
             else
             {
-                _logger.Log("No data to migrate or no changes detected.");
+                _logger.Log("無資料可移轉或未偵測到任何變更。");
             }
         }
 
@@ -59,11 +59,11 @@ namespace ComicRentalSystem_14Days.Services
             string comicsCsvPath = _fileHelper.GetFullFilePath("comics.csv");
             if (!File.Exists(comicsCsvPath))
             {
-                _logger.LogWarning($"Comics CSV file not found at {comicsCsvPath}. Skipping comic migration.");
+                _logger.LogWarning($"找不到漫畫 CSV 檔 {comicsCsvPath}，略過漫畫資料移轉。");
                 return;
             }
 
-            _logger.Log($"Migrating comics from {comicsCsvPath}");
+            _logger.Log($"從 {comicsCsvPath} 匯入漫畫資料");
             var comicLines = File.ReadAllLines(comicsCsvPath);
             var comicsToMigrate = new List<Comic>();
             foreach (var line in comicLines)
@@ -74,7 +74,7 @@ namespace ComicRentalSystem_14Days.Services
                     List<string> values = ParseCsvLineInternal(line);
                     if (values.Count < 7)
                     {
-                        _logger.LogWarning($"Skipping malformed comic CSV line (not enough values): {line}");
+                        _logger.LogWarning($"略過格式不正確的漫畫 CSV 行：{line} (欄位數不足)");
                         continue;
                     }
                     var comic = new Comic
@@ -94,11 +94,11 @@ namespace ComicRentalSystem_14Days.Services
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError($"Error parsing comic CSV line '{line}': {ex.Message}", ex);
+                    _logger.LogError($"解析漫畫 CSV 行 '{line}' 時發生錯誤：{ex.Message}", ex);
                 }
             }
             _dbContext.Comics.AddRange(comicsToMigrate);
-            _logger.Log($"Added {comicsToMigrate.Count} comics to context for migration.");
+            _logger.Log($"已將 {comicsToMigrate.Count} 本漫畫加入移轉內容。");
         }
 
         private void ImportMembers()
@@ -106,11 +106,11 @@ namespace ComicRentalSystem_14Days.Services
             string membersCsvPath = _fileHelper.GetFullFilePath("members.csv");
             if (!File.Exists(membersCsvPath))
             {
-                _logger.LogWarning($"Members CSV file not found at {membersCsvPath}. Skipping member migration.");
+                _logger.LogWarning($"找不到會員 CSV 檔 {membersCsvPath}，略過會員資料移轉。");
                 return;
             }
 
-            _logger.Log($"Migrating members from {membersCsvPath}");
+            _logger.Log($"從 {membersCsvPath} 匯入會員資料");
             var memberLines = File.ReadAllLines(membersCsvPath);
             var membersToMigrate = new List<Member>();
             foreach (var line in memberLines)
@@ -121,7 +121,7 @@ namespace ComicRentalSystem_14Days.Services
                     List<string> values = ParseCsvLineInternal(line);
                     if (values.Count < 3)
                     {
-                        _logger.LogWarning($"Skipping malformed member CSV line (not enough values): {line}");
+                        _logger.LogWarning($"略過格式不正確的會員 CSV 行：{line} (欄位數不足)");
                         continue;
                     }
                     var member = new Member
@@ -135,11 +135,11 @@ namespace ComicRentalSystem_14Days.Services
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError($"Error parsing member CSV line '{line}': {ex.Message}", ex);
+                    _logger.LogError($"解析會員 CSV 行 '{line}' 時發生錯誤：{ex.Message}", ex);
                 }
             }
             _dbContext.Members.AddRange(membersToMigrate);
-            _logger.Log($"Added {membersToMigrate.Count} members to context for migration.");
+            _logger.Log($"已將 {membersToMigrate.Count} 位會員加入移轉內容。");
         }
 
         private void ImportUsers()
@@ -147,11 +147,11 @@ namespace ComicRentalSystem_14Days.Services
             string usersJsonPath = _fileHelper.GetFullFilePath("users.json");
             if (!File.Exists(usersJsonPath))
             {
-                _logger.LogWarning($"Users JSON file not found at {usersJsonPath}. Skipping user migration.");
+                _logger.LogWarning($"找不到使用者 JSON 檔 {usersJsonPath}，略過使用者資料移轉。");
                 return;
             }
 
-            _logger.Log($"Migrating users from {usersJsonPath}");
+            _logger.Log($"從 {usersJsonPath} 匯入使用者資料");
             try
             {
                 string usersJsonData = File.ReadAllText(usersJsonPath);
@@ -161,21 +161,21 @@ namespace ComicRentalSystem_14Days.Services
                     if (usersToMigrate != null && usersToMigrate.Any())
                     {
                         _dbContext.Users.AddRange(usersToMigrate);
-                        _logger.Log($"Added {usersToMigrate.Count} users to context for migration.");
+                        _logger.Log($"已將 {usersToMigrate.Count} 位使用者加入移轉內容。");
                     }
                     else
                     {
-                        _logger.Log("User JSON was empty or deserialized to null/empty list.");
+                        _logger.Log("使用者 JSON 為空或反序列化後為空清單。");
                     }
                 }
                 else
                 {
-                    _logger.Log("User JSON file is empty. Skipping user migration from JSON.");
+                    _logger.Log("使用者 JSON 檔為空，略過從 JSON 移轉使用者。");
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error reading or deserializing users JSON '{usersJsonPath}': {ex.Message}", ex);
+                _logger.LogError($"讀取或反序列化使用者 JSON '{usersJsonPath}' 時發生錯誤：{ex.Message}", ex);
             }
         }
 

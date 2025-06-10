@@ -21,7 +21,7 @@ namespace ComicRentalSystem_14Days.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger), "MemberService logger cannot be null.");
             _comicService = comicService ?? throw new ArgumentNullException(nameof(comicService));
 
-            _logger.Log("MemberService initialized.");
+            _logger.Log("會員服務已初始化。");
         }
 
         private ComicRentalDbContext CreateContext()
@@ -31,36 +31,36 @@ namespace ComicRentalSystem_14Days.Services
 
         public async Task ReloadAsync()
         {
-            _logger.Log("MemberService ReloadAsync requested. Data is now live from DB.");
-            OnMembersChanged(); // Notify listeners
-            await Task.CompletedTask; // Placeholder
+            _logger.Log("MemberService ReloadAsync 已被呼叫，資料將從資料庫即時載入。");
+            OnMembersChanged(); 
+            await Task.CompletedTask; 
         }
 
         protected virtual void OnMembersChanged()
         {
             MembersChanged?.Invoke(this, EventArgs.Empty);
-            _logger.Log("MembersChanged event triggered.");
+            _logger.Log("MembersChanged 事件已觸發。");
         }
 
         public List<Member> GetAllMembers()
         {
-            _logger.Log("GetAllMembers called.");
+            _logger.Log("已呼叫 GetAllMembers。");
             using var context = CreateContext();
             return context.Members.OrderBy(m => m.Name).ToList();
         }
 
         public Member? GetMemberById(int id)
         {
-            _logger.Log($"GetMemberById called for ID: {id}.");
+            _logger.Log($"已呼叫 GetMemberById，ID: {id}。");
             using var context = CreateContext();
             var member = context.Members.Find(id);
             if (member == null)
             {
-                _logger.Log($"Member with ID: {id} not found.");
+                _logger.Log($"找不到 ID 為 {id} 的會員。");
             }
             else
             {
-                _logger.Log($"Member with ID: {id} found: Name='{member.Name}'.");
+                _logger.Log($"找到 ID 為 {id} 的會員，姓名：'{member.Name}'。");
             }
             return member;
         }
@@ -86,8 +86,6 @@ namespace ComicRentalSystem_14Days.Services
             if (context.Members.Any(m => m.PhoneNumber == member.PhoneNumber))
             {
                 _logger.LogWarning($"AddMember: Member with phone number '{member.PhoneNumber}' already exists.");
-                // Original logic allowed adding, so we maintain that.
-                // For a stricter system, one might throw new InvalidOperationException($"Member with phone number '{member.PhoneNumber}' already exists.");
             }
             context.Members.Add(member);
             try
@@ -125,7 +123,6 @@ namespace ComicRentalSystem_14Days.Services
             if (context.Members.Any(m => m.PhoneNumber == member.PhoneNumber && m.Id != member.Id))
             {
                  _logger.LogWarning($"UpdateMember: Another member with phone number '{member.PhoneNumber}' already exists.");
-                // Depending on business rules, might throw or just log.
             }
 
             context.Entry(existingMember).CurrentValues.SetValues(member);
@@ -184,8 +181,6 @@ namespace ComicRentalSystem_14Days.Services
             }
             _logger.Log($"已為姓名: '{name}' 呼叫 GetMemberByName。");
             using var context = CreateContext();
-            // Use ToLower for case-insensitive comparison as ToUpperInvariant
-            // may not be translated correctly by some EF providers.
             Member? member = context.Members
                 .FirstOrDefault(m => m.Name.ToLower() == name.ToLower());
             if (member == null)
@@ -229,9 +224,6 @@ namespace ComicRentalSystem_14Days.Services
             }
             _logger.Log($"GetMemberByUsername called for username: '{username}'.");
             using var context = CreateContext();
-            // Avoid using ToUpperInvariant which may not be translatable by EF
-            // Core when generating SQL. Instead use ToLower which is supported
-            // across providers.
             Member? member = context.Members
                 .FirstOrDefault(m => m.Username != null &&
                                      m.Username.ToLower() == username.ToLower());
@@ -261,7 +253,7 @@ namespace ComicRentalSystem_14Days.Services
             using var contextFiltered = CreateContext();
             var results = contextFiltered.Members.Where(m =>
                 (m.Name != null && m.Name.ToLower().Contains(lowerSearchTerm)) ||
-                (m.PhoneNumber != null && m.PhoneNumber.Contains(searchTerm)) || // Phone is exact search here
+                (m.PhoneNumber != null && m.PhoneNumber.Contains(searchTerm)) || 
                 (m.Id.ToString().Equals(searchTerm)) ||
                 (m.Username != null && m.Username.ToLower().Contains(lowerSearchTerm))
             ).OrderBy(m => m.Name).ToList();

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ComicRentalSystem_14Days.Interfaces;
 using ComicRentalSystem_14Days.Models;
-using Microsoft.EntityFrameworkCore; // For DbUpdateException
+using Microsoft.EntityFrameworkCore; 
 
 namespace ComicRentalSystem_14Days.Services
 {
@@ -18,17 +18,15 @@ namespace ComicRentalSystem_14Days.Services
 
         public async Task ReloadAsync()
         {
-            _logger.Log("ComicService ReloadAsync requested. Data is now live from DB.");
-            // Potentially, this could re-query or refresh some view if needed,
-            // but with direct DB access, explicit reload is less critical for the service itself.
-            OnComicsChanged(); // Notify listeners that data *might* have changed or a refresh is requested
-            await Task.CompletedTask; // Placeholder if no other async work
+            _logger.Log("ComicService 的 ReloadAsync 已被呼叫，資料將從資料庫即時載入。");
+            OnComicsChanged(); 
+            await Task.CompletedTask; 
         }
 
         public ComicService(ILogger logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger), "ComicService logger cannot be null.");
-            _logger.Log("ComicService initialized.");
+            _logger.Log("漫畫服務已初始化。");
         }
 
         private ComicRentalDbContext CreateContext()
@@ -39,28 +37,28 @@ namespace ComicRentalSystem_14Days.Services
         protected virtual void OnComicsChanged()
         {
             ComicsChanged?.Invoke(this, EventArgs.Empty);
-            _logger.Log("ComicsChanged event triggered.");
+            _logger.Log("ComicsChanged 事件已觸發。");
         }
 
         public List<Comic> GetAllComics()
         {
-            _logger.Log("GetAllComics called.");
+            _logger.Log("已呼叫 GetAllComics。");
             using var context = CreateContext();
             return context.Comics.OrderBy(c => c.Title).ToList();
         }
 
         public Comic? GetComicById(int id)
         {
-            _logger.Log($"GetComicById called for ID: {id}.");
+            _logger.Log($"已呼叫 GetComicById，ID: {id}。");
             using var context = CreateContext();
             var comic = context.Comics.Find(id);
             if (comic == null)
             {
-                _logger.Log($"Comic with ID: {id} not found.");
+                _logger.Log($"找不到 ID 為 {id} 的漫畫。");
             }
             else
             {
-                _logger.Log($"Comic with ID: {id} found: Title='{comic.Title}'.");
+                _logger.Log($"找到 ID 為 {id} 的漫畫，書名：'{comic.Title}'。");
             }
             return comic;
         }
@@ -133,7 +131,7 @@ namespace ComicRentalSystem_14Days.Services
 
             _logger.Log($"Attempting to add comic asynchronously: Title='{comic.Title}'.");
             await using var context = CreateContext();
-            context.Comics.Add(comic); // comic.Id will be handled by DB if 0
+            context.Comics.Add(comic); 
             try
             {
                 await context.SaveChangesAsync();
@@ -254,17 +252,17 @@ namespace ComicRentalSystem_14Days.Services
                 (c.Genre != null && c.Genre.ToLower().Contains(searchLower)) ||
                 (c.Id.ToString().Equals(searchTerm))
             );
-            _logger.Log($"Search term '{searchTerm}' applied.");
+            _logger.Log($"已套用搜尋字詞 '{searchTerm}'。");
 
             List<Comic> results = query.OrderBy(c => c.Title).ToList();
-            _logger.Log($"SearchComics found {results.Count} matching comics.");
+            _logger.Log($"SearchComics 找到 {results.Count} 筆符合的漫畫。");
             return results;
         }
 
         public List<AdminComicStatusViewModel> GetAdminComicStatusViewModels(IEnumerable<Member> allMembers)
         {
-            _logger.Log("Generating AdminComicStatusViewModels using DB comics and provided member list.");
-            var allComics = this.GetAllComics(); // Fetches from DB now
+            _logger.Log("正在使用資料庫漫畫及提供的會員清單產生 AdminComicStatusViewModels。");
+            var allComics = this.GetAllComics(); 
             var memberLookup = allMembers.ToDictionary(m => m.Id);
             var comicStatuses = new List<AdminComicStatusViewModel>();
 

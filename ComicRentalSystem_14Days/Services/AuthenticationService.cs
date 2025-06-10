@@ -19,7 +19,7 @@ namespace ComicRentalSystem_14Days.Services
         public AuthenticationService(ILogger logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _logger.Log("AuthenticationService initialized.");
+            _logger.Log("驗證服務已初始化。");
         }
 
         private ComicRentalDbContext CreateContext()
@@ -39,7 +39,7 @@ namespace ComicRentalSystem_14Days.Services
 
         public List<User> GetAllUsers()
         {
-            _logger.Log("GetAllUsers called.");
+            _logger.Log("已呼叫 GetAllUsers。");
             using var context = CreateContext();
             return context.Users.ToList();
         }
@@ -184,12 +184,12 @@ namespace ComicRentalSystem_14Days.Services
             using var context = CreateContext();
             if (!context.Users.Any(u => u.Role == UserRole.Admin))
             {
-                _logger.Log($"No admin user found. Creating default admin: {adminUsername}");
+                _logger.Log($"未找到管理員帳號，正在建立預設管理員：{adminUsername}");
                 Register(adminUsername, adminPassword, UserRole.Admin);
             }
             else
             {
-                _logger.Log("Admin user already exists.");
+                _logger.Log("管理員帳號已存在。");
             }
         }
 
@@ -226,14 +226,9 @@ namespace ComicRentalSystem_14Days.Services
             }
         }
 
-        /// <summary>
-        /// Persists pending changes for the user table. This helper was kept
-        /// for backwards compatibility with forms that previously relied on a
-        /// separate save step when user data was stored in files.
-        /// </summary>
         public void SaveUsers()
         {
-            _logger.Log("Saving user changes to database via AuthenticationService.SaveUsers().");
+            _logger.Log("透過 AuthenticationService.SaveUsers() 將使用者變更寫入資料庫。");
             using var context = CreateContext();
             context.SaveChanges();
         }

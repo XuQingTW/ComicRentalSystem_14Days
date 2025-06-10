@@ -249,10 +249,10 @@ namespace ComicRentalSystem_14Days.Forms
         dgvRentedComics.Columns.Clear();
         dgvRentedComics.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
-        dgvRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = nameof(RentalDetailViewModel.MemberName), HeaderText = "會員姓名", FillWeight = 18 }); // Adjusted
-        dgvRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = nameof(RentalDetailViewModel.MemberId), HeaderText = "會員ID", FillWeight = 9 }); // 已調整
-        dgvRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = nameof(RentalDetailViewModel.MemberPhoneNumber), HeaderText = "會員電話", FillWeight = 18 }); // 已調整
-        dgvRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = nameof(RentalDetailViewModel.ComicTitle), HeaderText = "租借書名", FillWeight = 20 }); // 已調整
+        dgvRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = nameof(RentalDetailViewModel.MemberName), HeaderText = "會員姓名", FillWeight = 18 }); 
+        dgvRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = nameof(RentalDetailViewModel.MemberId), HeaderText = "會員ID", FillWeight = 9 }); 
+        dgvRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = nameof(RentalDetailViewModel.MemberPhoneNumber), HeaderText = "會員電話", FillWeight = 18 }); 
+        dgvRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = nameof(RentalDetailViewModel.ComicTitle), HeaderText = "租借書名", FillWeight = 20 }); 
 
         var rentalDateColumn = new DataGridViewTextBoxColumn {
             DataPropertyName = nameof(RentalDetailViewModel.RentalDate),
@@ -442,13 +442,13 @@ namespace ComicRentalSystem_14Days.Forms
             return;
         }
 
-        Comic? comicFromService = _comicService?.GetComicById(selectedRentalDetail.ComicId); // Use ComicId
+        Comic? comicFromService = _comicService?.GetComicById(selectedRentalDetail.ComicId); 
 
         if (comicFromService == null)
         {
             MessageBox.Show($"漫畫 '{selectedRentalDetail.ComicTitle}' (ID: {selectedRentalDetail.ComicId}) 在系統中已不存在，可能已被刪除。", "歸還錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             LogErrorActivity($"歸還操作失敗: 在服務層找不到漫畫 '{selectedRentalDetail.ComicTitle}' (ID: {selectedRentalDetail.ComicId})。");
-            LoadRentalDetails(); // Or LoadRentalDetails()
+            LoadRentalDetails(); 
             return;
         }
 

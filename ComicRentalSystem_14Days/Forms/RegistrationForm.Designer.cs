@@ -49,9 +49,6 @@ namespace ComicRentalSystem_14Days.Forms
             this.gbAccountCredentials.SuspendLayout();
             this.gbMemberInfo.SuspendLayout();
             this.SuspendLayout();
-            //
-            // gbAccountCredentials
-            //
             this.gbAccountCredentials.Controls.Add(this.lblUsername);
             this.gbAccountCredentials.Controls.Add(this.txtUsername);
             this.gbAccountCredentials.Controls.Add(this.lblPassword);
@@ -61,22 +58,16 @@ namespace ComicRentalSystem_14Days.Forms
             this.gbAccountCredentials.Location = new System.Drawing.Point(15, 15);
             this.gbAccountCredentials.Name = "gbAccountCredentials";
             this.gbAccountCredentials.Padding = new System.Windows.Forms.Padding(10);
-            this.gbAccountCredentials.Size = new System.Drawing.Size(420, 130); // Adjusted size
+            this.gbAccountCredentials.Size = new System.Drawing.Size(420, 130); 
             this.gbAccountCredentials.TabIndex = 0;
             this.gbAccountCredentials.TabStop = false;
             this.gbAccountCredentials.Text = "帳戶憑證";
-            //
-            // lblUsername
-            //
             this.lblUsername.Location = new System.Drawing.Point(15, 30);
             this.lblUsername.Name = "lblUsername";
-            this.lblUsername.Size = new System.Drawing.Size(125, 23); // Adjusted width
+            this.lblUsername.Size = new System.Drawing.Size(125, 23); 
             this.lblUsername.TabIndex = 0;
             this.lblUsername.Text = "使用者名稱:";
             this.lblUsername.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            //
-            // txtUsername
-            //
             this.txtUsername.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                 | System.Windows.Forms.AnchorStyles.Right);
             this.txtUsername.Location = new System.Drawing.Point(150, 30);
@@ -84,18 +75,12 @@ namespace ComicRentalSystem_14Days.Forms
             this.txtUsername.Size = new System.Drawing.Size(250, 23);
             this.txtUsername.TabIndex = 1;
             this.txtUsername.Validating += new System.ComponentModel.CancelEventHandler(this.txtUsername_Validating);
-            //
-            // lblPassword
-            //
             this.lblPassword.Location = new System.Drawing.Point(15, 60);
             this.lblPassword.Name = "lblPassword";
             this.lblPassword.Size = new System.Drawing.Size(125, 23);
             this.lblPassword.TabIndex = 2;
             this.lblPassword.Text = "密碼:";
             this.lblPassword.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            //
-            // txtPassword
-            //
             this.txtPassword.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                 | System.Windows.Forms.AnchorStyles.Right);
             this.txtPassword.Location = new System.Drawing.Point(150, 60);
@@ -103,18 +88,12 @@ namespace ComicRentalSystem_14Days.Forms
             this.txtPassword.Size = new System.Drawing.Size(250, 23);
             this.txtPassword.TabIndex = 3;
             this.txtPassword.Validating += new System.ComponentModel.CancelEventHandler(this.txtPassword_Validating);
-            //
-            // lblConfirmPassword
-            //
             this.lblConfirmPassword.Location = new System.Drawing.Point(15, 90);
             this.lblConfirmPassword.Name = "lblConfirmPassword";
             this.lblConfirmPassword.Size = new System.Drawing.Size(125, 23);
             this.lblConfirmPassword.TabIndex = 4;
             this.lblConfirmPassword.Text = "確認密碼:";
             this.lblConfirmPassword.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            //
-            // txtConfirmPassword
-            //
             this.txtConfirmPassword.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                 | System.Windows.Forms.AnchorStyles.Right);
             this.txtConfirmPassword.Location = new System.Drawing.Point(150, 90);
@@ -122,34 +101,25 @@ namespace ComicRentalSystem_14Days.Forms
             this.txtConfirmPassword.Size = new System.Drawing.Size(250, 23);
             this.txtConfirmPassword.TabIndex = 5;
             this.txtConfirmPassword.Validating += new System.ComponentModel.CancelEventHandler(this.txtConfirmPassword_Validating);
-            //
-            // gbMemberInfo
-            //
             this.gbMemberInfo.Controls.Add(this.lblName);
             this.gbMemberInfo.Controls.Add(this.txtName);
             this.gbMemberInfo.Controls.Add(this.lblPhoneNumber);
             this.gbMemberInfo.Controls.Add(this.txtPhoneNumber);
             this.gbMemberInfo.Controls.Add(this.lblRole);
             this.gbMemberInfo.Controls.Add(this.cmbRole);
-            this.gbMemberInfo.Location = new System.Drawing.Point(15, 155); // Adjusted Y
+            this.gbMemberInfo.Location = new System.Drawing.Point(15, 155); 
             this.gbMemberInfo.Name = "gbMemberInfo";
             this.gbMemberInfo.Padding = new System.Windows.Forms.Padding(10);
-            this.gbMemberInfo.Size = new System.Drawing.Size(420, 160); // Adjusted size
+            this.gbMemberInfo.Size = new System.Drawing.Size(420, 160); 
             this.gbMemberInfo.TabIndex = 1;
             this.gbMemberInfo.TabStop = false;
             this.gbMemberInfo.Text = "會員資訊";
-            //
-            // lblName
-            //
             this.lblName.Location = new System.Drawing.Point(15, 30);
             this.lblName.Name = "lblName";
             this.lblName.Size = new System.Drawing.Size(125, 23);
             this.lblName.TabIndex = 0;
             this.lblName.Text = "姓名:";
             this.lblName.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            //
-            // txtName
-            //
             this.txtName.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                 | System.Windows.Forms.AnchorStyles.Right);
             this.txtName.Location = new System.Drawing.Point(150, 30);
@@ -157,18 +127,12 @@ namespace ComicRentalSystem_14Days.Forms
             this.txtName.Size = new System.Drawing.Size(250, 23);
             this.txtName.TabIndex = 1;
             this.txtName.Validating += new System.ComponentModel.CancelEventHandler(this.txtName_Validating);
-            //
-            // lblPhoneNumber
-            //
             this.lblPhoneNumber.Location = new System.Drawing.Point(15, 60);
             this.lblPhoneNumber.Name = "lblPhoneNumber";
             this.lblPhoneNumber.Size = new System.Drawing.Size(125, 23);
             this.lblPhoneNumber.TabIndex = 2;
             this.lblPhoneNumber.Text = "電話號碼:";
             this.lblPhoneNumber.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            //
-            // txtPhoneNumber
-            //
             this.txtPhoneNumber.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                 | System.Windows.Forms.AnchorStyles.Right);
             this.txtPhoneNumber.Location = new System.Drawing.Point(150, 60);
@@ -176,9 +140,6 @@ namespace ComicRentalSystem_14Days.Forms
             this.txtPhoneNumber.Size = new System.Drawing.Size(250, 23);
             this.txtPhoneNumber.TabIndex = 3;
             this.txtPhoneNumber.Validating += new System.ComponentModel.CancelEventHandler(this.txtPhoneNumber_Validating);
-            //
-            // lblRole
-            //
             this.lblRole.Location = new System.Drawing.Point(15, 90);
             this.lblRole.Name = "lblRole";
             this.lblRole.Size = new System.Drawing.Size(125, 23);
@@ -186,9 +147,6 @@ namespace ComicRentalSystem_14Days.Forms
             this.lblRole.Text = "角色:";
             this.lblRole.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.lblRole.Visible = false;
-            //
-            // cmbRole
-            //
             this.cmbRole.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                 | System.Windows.Forms.AnchorStyles.Right);
             this.cmbRole.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -198,25 +156,19 @@ namespace ComicRentalSystem_14Days.Forms
             this.cmbRole.Size = new System.Drawing.Size(250, 23);
             this.cmbRole.TabIndex = 5;
             this.cmbRole.Visible = false;
-            //
-            // btnRegister
-            //
             this.btnRegister.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnRegister.Location = new System.Drawing.Point(175, 330); // Adjusted Y for new form height
+            this.btnRegister.Location = new System.Drawing.Point(175, 330); 
             this.btnRegister.Name = "btnRegister";
             this.btnRegister.Size = new System.Drawing.Size(100, 35);
-            this.btnRegister.TabIndex = 2; // Form-level tab index
+            this.btnRegister.TabIndex = 2; 
             this.btnRegister.Text = "註冊";
             this.btnRegister.UseVisualStyleBackColor = true;
             this.btnRegister.Click += new System.EventHandler(this.btnRegister_Click);
-            //
-            // RegistrationForm
-            //
             this.AcceptButton = this.btnRegister;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnableAllowFocusChange;
-            this.ClientSize = new System.Drawing.Size(450, 380); // Adjusted ClientSize
+            this.ClientSize = new System.Drawing.Size(450, 380); 
             this.Controls.Add(this.gbAccountCredentials);
             this.Controls.Add(this.gbMemberInfo);
             this.Controls.Add(this.btnRegister);

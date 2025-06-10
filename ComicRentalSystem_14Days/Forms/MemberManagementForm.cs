@@ -32,7 +32,7 @@ namespace ComicRentalSystem_14Days.Forms
 
         private void MemberManagementForm_Load(object sender, EventArgs e)
         {
-            if (this.DesignMode || Logger == null || _memberService == null || _authenticationService == null || _comicService == null) // 已為 _authenticationService 和 _comicService 新增 null 檢查
+            if (this.DesignMode || Logger == null || _memberService == null || _authenticationService == null || _comicService == null) 
             {
                 return;
             }
@@ -144,7 +144,7 @@ namespace ComicRentalSystem_14Days.Forms
             LoadMembersData();
         }
 
-        private async void btnRefreshMembers_Click(object sender, EventArgs e) // 設為 async void
+        private async void btnRefreshMembers_Click(object sender, EventArgs e) 
         {
             if (_memberService == null) return;
             LogActivity("Refresh Members button clicked. Will reload members from file asynchronously.");
@@ -225,7 +225,6 @@ namespace ComicRentalSystem_14Days.Forms
                 {
                     LogActivity($"Attempting to delete member ID: {selectedMember.Id}, Name: '{selectedMember.Name}'.");
 
-                    // Check for active rentals
                     if (_comicService != null)
                     {
                         bool hasActiveRentals = _comicService.GetAllComics().Any(c => c.IsRented && c.RentedToMemberId == selectedMember.Id);
@@ -264,13 +263,13 @@ namespace ComicRentalSystem_14Days.Forms
                                 else
                                 {
                                     Logger?.LogWarning($"User account for Username: '{usernameToDelete}' (Member Name: '{selectedMember.Name}') not found by AuthenticationService, though member record was deleted. Possible data inconsistency if a user account was expected.");
-                                    LogActivity($"會員 ID: {selectedMember.Id} (無使用者帳戶) 已由服務成功標記為待刪除。UI 將透過事件重新整理。"); // Log for member deletion without user
+                                    LogActivity($"會員 ID: {selectedMember.Id} (無使用者帳戶) 已由服務成功標記為待刪除。UI 將透過事件重新整理。"); 
                                     MessageBox.Show($"會員 '{selectedMember.Name}' 已從會員列表中刪除，但對應的使用者帳戶 '{usernameToDelete}' 未找到或無法刪除。", "部分成功", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                                 }
                             }
                             else
                             {
-                                LogErrorActivity("AuthenticationService is null. Cannot delete user account.", new InvalidOperationException("_authenticationService is null")); // This is one of the targeted exception messages
+                                LogErrorActivity("AuthenticationService is null. Cannot delete user account.", new InvalidOperationException("_authenticationService is null")); 
                                 MessageBox.Show($"會員 '{selectedMember.Name}' 已從會員列表中刪除，但由於內部錯誤無法刪除其使用者帳戶。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
                         }
