@@ -7,18 +7,27 @@ using System.Windows.Forms;
 
 namespace ComicRentalSystem_14Days.Forms
 {
-    public partial class ChangeUserRoleForm : BaseForm 
+    public partial class ChangeUserRoleForm : BaseForm
     {
         private readonly User _editingUser;
+        private readonly Member _editingMember;
         private readonly AuthenticationService _authService;
+        private readonly IComicService _comicService;
 
 
-        public ChangeUserRoleForm(User userToEdit, AuthenticationService authService, ILogger logger) : base(logger)
+        public ChangeUserRoleForm(
+            User userToEdit,
+            Member member,
+            AuthenticationService authService,
+            IComicService comicService,
+            ILogger logger) : base(logger)
         {
-            InitializeComponent(); 
+            InitializeComponent();
 
             _editingUser = userToEdit ?? throw new ArgumentNullException(nameof(userToEdit));
+            _editingMember = member ?? throw new ArgumentNullException(nameof(member));
             _authService = authService ?? throw new ArgumentNullException(nameof(authService));
+            _comicService = comicService ?? throw new ArgumentNullException(nameof(comicService));
 
             this.Text = "更改使用者角色"; 
             lblUsernameValue.Text = _editingUser.Username;
@@ -41,7 +50,7 @@ namespace ComicRentalSystem_14Days.Forms
             if (_editingUser.Role == newRole)
             {
                 LogActivity($"使用者 '{_editingUser.Username}' 的角色已經是 {newRole}。未做任何變更。");
-                this.DialogResult = DialogResult.Cancel; 
+                this.DialogResult = DialogResult.Cancel;
                 this.Close();
                 return;
             }
@@ -56,12 +65,23 @@ namespace ComicRentalSystem_14Days.Forms
                 }
             }
 
+            if (newRole == UserRole.Admin)
+            {
+                bool hasActiveRentals = _comicService.GetAllComics().Any(c => c.IsRented && c.RentedToMemberId == _editingMember.Id);
+                if (hasActiveRentals)
+                {
+                    MessageBox.Show($"會員 '{_editingMember.Name}' 尚有未歸還的漫畫，無法變更為管理員。", "操作禁止", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    LogActivity($"嘗試將有租借中的會員 '{_editingMember.Name}' 變更為管理員已被阻止。");
+                    return;
+                }
+            }
+
             LogActivity($"嘗試將使用者 '{_editingUser.Username}' 的角色從 {_editingUser.Role} 變更為 {newRole}。");
             _editingUser.Role = newRole;
 
             try
             {
-                _authService.SaveUsers();
+                _authService.SaveUser(_editingUser);
                 LogActivity($"已成功將使用者 '{_editingUser.Username}' 的角色變更為 {newRole}。");
                 MessageBox.Show("使用者角色已成功更新。", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information); 
                 this.DialogResult = DialogResult.OK;

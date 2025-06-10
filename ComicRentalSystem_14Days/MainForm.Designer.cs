@@ -38,6 +38,9 @@ namespace ComicRentalSystem_14Days
         private Label lblMyRentedComicsHeader;
         private DataGridView dgvMyRentedComics;
 
+        private Label lblAvailableLegend;
+        private Label lblMyRentalsLegend;
+
         private MenuStrip menuStrip1;
         private MenuStrip menuStrip2;
         private ToolStripMenuItem 檔案ToolStripMenuItem;
@@ -141,7 +144,7 @@ namespace ComicRentalSystem_14Days
             btnNavLogs.Padding = new Padding(8, 0, 0, 0);
             btnNavLogs.Size = new Size(140, 36);
             btnNavLogs.TabIndex = 5;
-            btnNavLogs.Text = "日誌管理";
+            btnNavLogs.Text = "📄 日誌管理";
             btnNavLogs.TextAlign = ContentAlignment.MiddleLeft;
             btnNavLogs.UseVisualStyleBackColor = false;
             btnNavUserReg.BackColor = Color.FromArgb(248, 249, 250);
@@ -155,7 +158,7 @@ namespace ComicRentalSystem_14Days
             btnNavUserReg.Padding = new Padding(8, 0, 0, 0);
             btnNavUserReg.Size = new Size(140, 36);
             btnNavUserReg.TabIndex = 4;
-            btnNavUserReg.Text = "使用者註冊";
+            btnNavUserReg.Text = "📝 使用者註冊";
             btnNavUserReg.TextAlign = ContentAlignment.MiddleLeft;
             btnNavUserReg.UseVisualStyleBackColor = false;
             btnNavRentalMgmt.BackColor = Color.FromArgb(248, 249, 250);
@@ -169,7 +172,7 @@ namespace ComicRentalSystem_14Days
             btnNavRentalMgmt.Padding = new Padding(8, 0, 0, 0);
             btnNavRentalMgmt.Size = new Size(140, 36);
             btnNavRentalMgmt.TabIndex = 3;
-            btnNavRentalMgmt.Text = "租借管理";
+            btnNavRentalMgmt.Text = "📖 租借管理";
             btnNavRentalMgmt.TextAlign = ContentAlignment.MiddleLeft;
             btnNavRentalMgmt.UseVisualStyleBackColor = false;
             btnNavMemberMgmt.BackColor = Color.FromArgb(248, 249, 250);
@@ -183,7 +186,7 @@ namespace ComicRentalSystem_14Days
             btnNavMemberMgmt.Padding = new Padding(8, 0, 0, 0);
             btnNavMemberMgmt.Size = new Size(140, 36);
             btnNavMemberMgmt.TabIndex = 2;
-            btnNavMemberMgmt.Text = "會員管理";
+            btnNavMemberMgmt.Text = "👥 會員管理";
             btnNavMemberMgmt.TextAlign = ContentAlignment.MiddleLeft;
             btnNavMemberMgmt.UseVisualStyleBackColor = false;
             btnNavComicMgmt.BackColor = Color.FromArgb(248, 249, 250);
@@ -197,7 +200,7 @@ namespace ComicRentalSystem_14Days
             btnNavComicMgmt.Padding = new Padding(8, 0, 0, 0);
             btnNavComicMgmt.Size = new Size(140, 36);
             btnNavComicMgmt.TabIndex = 1;
-            btnNavComicMgmt.Text = "漫畫狀態";
+            btnNavComicMgmt.Text = "📚 漫畫狀態";
             btnNavComicMgmt.TextAlign = ContentAlignment.MiddleLeft;
             btnNavComicMgmt.UseVisualStyleBackColor = false;
             btnNavDashboard.BackColor = Color.FromArgb(248, 249, 250);
@@ -211,7 +214,7 @@ namespace ComicRentalSystem_14Days
             btnNavDashboard.Padding = new Padding(8, 0, 0, 0);
             btnNavDashboard.Size = new Size(140, 36);
             btnNavDashboard.TabIndex = 0;
-            btnNavDashboard.Text = "概要";
+            btnNavDashboard.Text = "🏠 概要";
             btnNavDashboard.TextAlign = ContentAlignment.MiddleLeft;
             btnNavDashboard.UseVisualStyleBackColor = false;
             pnlAdminComicMgmt.Controls.Add(cmbAdminComicFilterStatus);
@@ -229,7 +232,7 @@ namespace ComicRentalSystem_14Days
             cmbAdminComicFilterStatus.Visible = false;
             lblAvailableComics.AutoSize = true;
             lblAvailableComics.Dock = DockStyle.Top;
-            lblAvailableComics.Font = new Font("Microsoft JhengHei UI", 12F, FontStyle.Bold);
+            lblAvailableComics.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Regular);
             lblAvailableComics.Location = new Point(8, 48);
             lblAvailableComics.Name = "lblAvailableComics";
             lblAvailableComics.Padding = new Padding(5);
@@ -298,6 +301,14 @@ namespace ComicRentalSystem_14Days
             cmbGenreFilter.Name = "cmbGenreFilter";
             cmbGenreFilter.Size = new Size(141, 23);
             cmbGenreFilter.TabIndex = 1;
+            lblAvailableLegend = new Label();
+            lblAvailableLegend.AutoSize = true;
+            lblAvailableLegend.Dock = DockStyle.Bottom;
+            lblAvailableLegend.Font = new Font("Segoe UI", 9F);
+            lblAvailableLegend.ForeColor = Color.FromArgb(33, 37, 41);
+            lblAvailableLegend.Padding = new Padding(5);
+            lblAvailableLegend.Text = "紅色表示逾期，黃色表示即將到期";
+            availableComicsTabPage.Controls.Add(lblAvailableLegend);
             myRentalsTabPage.BackColor = Color.White;
             myRentalsTabPage.Controls.Add(dgvMyRentedComics);
             myRentalsTabPage.Controls.Add(lblMyRentedComicsHeader);
@@ -318,9 +329,17 @@ namespace ComicRentalSystem_14Days
             dgvMyRentedComics.RowTemplate.Height = 27;
             dgvMyRentedComics.Size = new Size(945, 520);
             dgvMyRentedComics.TabIndex = 7;
+            lblMyRentalsLegend = new Label();
+            lblMyRentalsLegend.AutoSize = true;
+            lblMyRentalsLegend.Dock = DockStyle.Bottom;
+            lblMyRentalsLegend.Font = new Font("Segoe UI", 9F);
+            lblMyRentalsLegend.ForeColor = Color.FromArgb(33, 37, 41);
+            lblMyRentalsLegend.Padding = new Padding(5);
+            lblMyRentalsLegend.Text = "紅色表示逾期，黃色表示即將到期";
+            myRentalsTabPage.Controls.Add(lblMyRentalsLegend);
             lblMyRentedComicsHeader.AutoSize = true;
             lblMyRentedComicsHeader.Dock = DockStyle.Top;
-            lblMyRentedComicsHeader.Font = new Font("Microsoft JhengHei UI", 10F, FontStyle.Bold);
+            lblMyRentedComicsHeader.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Regular);
             lblMyRentedComicsHeader.Location = new Point(8, 8);
             lblMyRentedComicsHeader.Name = "lblMyRentedComicsHeader";
             lblMyRentedComicsHeader.Size = new Size(92, 18);

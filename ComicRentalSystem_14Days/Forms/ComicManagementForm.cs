@@ -17,6 +17,8 @@ namespace ComicRentalSystem_14Days.Forms
             InitializeComponent();
             _comicService = comicService;
             _currentUser = currentUser;
+            this.KeyPreview = true;
+            this.KeyDown += ComicManagementForm_KeyDown;
             SetupDataGridView();
             LoadComicsData();
             _comicService.ComicsChanged += ComicService_ComicsChanged;
@@ -34,9 +36,10 @@ namespace ComicRentalSystem_14Days.Forms
             _comicService.ComicsChanged += ComicService_ComicsChanged;
 
 
-            SetupDataGridView(); 
-                                 
-            LoadComicsData(); 
+            SetupDataGridView();
+
+            LoadComicsData();
+            UpdateActionButtonsState();
             LogActivity("漫畫管理表單已成功初始化。");
         }
 
@@ -105,6 +108,7 @@ namespace ComicRentalSystem_14Days.Forms
             dgvComics.MultiSelect = false;
             dgvComics.ReadOnly = true;
             dgvComics.AllowUserToAddRows = false;
+            dgvComics.SelectionChanged += dgvComics_SelectionChanged;
             LogActivity("DataGridView 設定完成。");
         }
 
@@ -188,6 +192,7 @@ namespace ComicRentalSystem_14Days.Forms
                         }
                     }
                 }
+                UpdateActionButtonsState();
                 LogActivity($"Successfully loaded {comics.Count} comics into DataGridView with search term '{searchTerm}'.");
             }
             catch (Exception ex)
@@ -204,7 +209,16 @@ namespace ComicRentalSystem_14Days.Forms
         private void btnSearchComics_Click(object? sender, EventArgs e)
         {
             LogActivity("搜尋漫畫按鈕已點擊。");
-            LoadComicsData(); 
+            LoadComicsData();
+        }
+
+        private void txtSearchComics_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+                btnSearchComics_Click(sender, e);
+            }
         }
 
         private void btnClearSearchComics_Click(object? sender, EventArgs e)
@@ -212,6 +226,7 @@ namespace ComicRentalSystem_14Days.Forms
             LogActivity("清除搜尋漫畫按鈕已點擊。");
             this.txtSearchComics.Text = string.Empty;
             LoadComicsData();
+            UpdateActionButtonsState();
         }
 
         private async void btnRefresh_Click(object sender, EventArgs e)
@@ -338,6 +353,32 @@ namespace ComicRentalSystem_14Days.Forms
             {
                 LogActivity($"DataGridView 儲存格在資料列 {e.RowIndex} 被雙擊。觸發編輯動作。");
                 btnEditComic_Click(sender, e);
+            }
+        }
+
+        private void dgvComics_SelectionChanged(object? sender, EventArgs e)
+        {
+            UpdateActionButtonsState();
+        }
+
+        private void UpdateActionButtonsState()
+        {
+            bool rowSelected = dgvComics.SelectedRows.Count > 0;
+            btnEditComic.Enabled = rowSelected;
+            btnDeleteComic.Enabled = rowSelected;
+        }
+
+        private void ComicManagementForm_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.N)
+            {
+                btnAddComic_Click(sender!, e);
+                e.SuppressKeyPress = true;
+            }
+            else if (e.KeyCode == Keys.Delete)
+            {
+                btnDeleteComic_Click(sender!, e);
+                e.SuppressKeyPress = true;
             }
         }
     }

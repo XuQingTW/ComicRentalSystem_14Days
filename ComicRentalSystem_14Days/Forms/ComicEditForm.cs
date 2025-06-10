@@ -20,7 +20,9 @@ namespace ComicRentalSystem_14Days.Forms
         {
             InitializeComponent();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider();
-            if (this.DesignMode) 
+            this.KeyPreview = true;
+            this.KeyDown += ComicEditForm_KeyDown;
+            if (this.DesignMode)
             {
                 chkIsRented.Enabled = false;
             }
@@ -108,7 +110,7 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (_comicService == null)
             {
-                MessageBox.Show("服務未初始化，無法儲存。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("系統發生異常，請重新啟動應用程式。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 LogErrorActivity("儲存按鈕已點擊，但 _comicService 為空。");
                 return;
             }
@@ -266,12 +268,21 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (sender is TextBox txt && string.IsNullOrWhiteSpace(txt.Text))
             {
-                errorProvider1?.SetError(txt, "類型不能為空。"); 
+                errorProvider1?.SetError(txt, "類型不能為空。");
                 e.Cancel = true;
             }
             else if (sender is TextBox txtBox)
             {
-                errorProvider1?.SetError(txtBox, ""); 
+                errorProvider1?.SetError(txtBox, "");
+            }
+        }
+
+        private void ComicEditForm_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.S)
+            {
+                btnSave_Click(sender!, e);
+                e.SuppressKeyPress = true;
             }
         }
     }

@@ -18,6 +18,8 @@ namespace ComicRentalSystem_14Days.Forms
         public MemberManagementForm()
         {
             InitializeComponent();
+            this.KeyPreview = true;
+            this.KeyDown += MemberManagementForm_KeyDown;
         }
 
         public MemberManagementForm(ILogger logger, MemberService memberService, AuthenticationService authenticationService, IComicService comicService, User? currentUser) : base(logger)
@@ -27,6 +29,8 @@ namespace ComicRentalSystem_14Days.Forms
             _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
             _comicService = comicService ?? throw new ArgumentNullException(nameof(comicService));
             _currentUser = currentUser;
+            this.KeyPreview = true;
+            this.KeyDown += MemberManagementForm_KeyDown;
             LogActivity("會員管理表單正在使用 MemberService、AuthenticationService 和 ComicService 初始化。");
         }
 
@@ -39,10 +43,11 @@ namespace ComicRentalSystem_14Days.Forms
 
             LogActivity("MemberManagementForm is loading runtime components.");
 
-            _memberService.MembersChanged += MemberService_MembersChanged; 
+            _memberService.MembersChanged += MemberService_MembersChanged;
 
-            SetupDataGridView(); 
-            LoadMembersData(); 
+            SetupDataGridView();
+            LoadMembersData();
+            UpdateActionButtonsState();
 
             LogActivity("會員管理表單已成功初始化。");
         }
@@ -79,6 +84,7 @@ namespace ComicRentalSystem_14Days.Forms
             dgvMembers.MultiSelect = false;
             dgvMembers.ReadOnly = true;
             dgvMembers.AllowUserToAddRows = false;
+            dgvMembers.SelectionChanged += dgvMembers_SelectionChanged;
             LogActivity("會員的 DataGridView 設定完成。");
         }
 
@@ -118,6 +124,7 @@ namespace ComicRentalSystem_14Days.Forms
                         updateGrid();
                     }
                 }
+                UpdateActionButtonsState();
                 LogActivity($"已成功使用搜尋關鍵字 '{searchTerm}' 將 {members.Count} 位會員載入 DataGridView。");
             }
             catch (Exception ex)
@@ -137,11 +144,21 @@ namespace ComicRentalSystem_14Days.Forms
             LoadMembersData();
         }
 
+        private void txtSearchMembers_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+                btnSearchMembers_Click(sender, e);
+            }
+        }
+
         private void btnClearSearchMembers_Click(object? sender, EventArgs e)
         {
             LogActivity("清除搜尋會員按鈕已點擊。");
             this.txtSearchMembers.Text = string.Empty;
             LoadMembersData();
+            UpdateActionButtonsState();
         }
 
         private async void btnRefreshMembers_Click(object sender, EventArgs e) 
@@ -164,7 +181,7 @@ namespace ComicRentalSystem_14Days.Forms
             if (_memberService == null || Logger == null || _authenticationService == null)
             {
                 LogErrorActivity("新增會員所需的基本服務不可用。", new InvalidOperationException("服務未初始化。"));
-                MessageBox.Show("無法開啟註冊表單，必要的服務未初始化。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("系統發生異常，請重新啟動應用程式。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             LogActivity("新增會員按鈕已點擊。正在為新會員開啟 RegistrationForm。");
@@ -237,9 +254,9 @@ namespace ComicRentalSystem_14Days.Forms
                     }
                     else
                     {
-                        MessageBox.Show("無法檢查會員租借狀態，漫畫服務未初始化。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("系統發生異常，請重新啟動應用程式。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         LogErrorActivity("Could not check member rental status: _comicService is null.");
-                        return; 
+                        return;
                     }
 
                     LogActivity($"嘗試刪除會員 ID: {selectedMember.Id}，姓名: '{selectedMember.Name}'。正在顯示確認對話方塊。");
@@ -313,9 +330,9 @@ namespace ComicRentalSystem_14Days.Forms
                 MessageBox.Show("請選擇一位會員。", "未選擇會員", MessageBoxButtons.OK, MessageBoxIcon.Information); 
                 return;
             }
-            if (_authenticationService == null || Logger == null) 
+            if (_authenticationService == null || Logger == null)
             {
-                 MessageBox.Show("必要的服務不可用。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error); 
+                 MessageBox.Show("系統發生異常，請重新啟動應用程式。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                  LogErrorActivity("變更使用者角色所需服務不可用。", new InvalidOperationException("服務未初始化。"));
                  return;
             }
@@ -337,9 +354,36 @@ namespace ComicRentalSystem_14Days.Forms
             }
 
             LogActivity($"Opening ChangeUserRoleForm for member '{selectedMember.Name}', user '{userToEdit.Username}'.");
-            using (ChangeUserRoleForm changeRoleForm = new ChangeUserRoleForm(userToEdit, _authenticationService, Logger))
+            using (ChangeUserRoleForm changeRoleForm = new ChangeUserRoleForm(userToEdit, selectedMember, _authenticationService, _comicService!, Logger))
             {
                 changeRoleForm.ShowDialog(this);
+            }
+        }
+
+        private void dgvMembers_SelectionChanged(object? sender, EventArgs e)
+        {
+            UpdateActionButtonsState();
+        }
+
+        private void UpdateActionButtonsState()
+        {
+            bool rowSelected = dgvMembers.SelectedRows.Count > 0;
+            btnEditMember.Enabled = rowSelected;
+            btnDeleteMember.Enabled = rowSelected;
+            btnChangeUserRole.Enabled = rowSelected;
+        }
+
+        private void MemberManagementForm_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.N)
+            {
+                btnAddMember_Click(sender!, e);
+                e.SuppressKeyPress = true;
+            }
+            else if (e.KeyCode == Keys.Delete)
+            {
+                btnDeleteMember_Click(sender!, e);
+                e.SuppressKeyPress = true;
             }
         }
     }

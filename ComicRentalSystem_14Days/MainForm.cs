@@ -33,6 +33,8 @@ namespace ComicRentalSystem_14Days
 
         private Button? _currentSelectedNavButton;
         private AdminDashboardUserControl? _adminDashboardControl;
+        private MemberManagementForm? _memberManagementForm;
+        private RentalForm? _rentalManagementForm;
 
         public MainForm() : base()
         {
@@ -739,52 +741,28 @@ namespace ComicRentalSystem_14Days
         private void 漫畫管理ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this._logger?.Log("正在開啟漫畫管理表單。");
-            ComicManagementForm comicMgmtForm = new ComicManagementForm(
-                this._logger!,
-                this._comicService,
-                this._currentUser
-            );
-            comicMgmtForm.ShowDialog(this);
+            this._logger?.Log("正在切換至漫畫管理頁面。");
+            if (btnNavComicMgmt != null)
+            {
+                SelectNavButton(btnNavComicMgmt);
+            }
         }
 
         private void 會員管理ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this._logger?.Log("正在開啟會員管理表單。");
-            if (this._authenticationService != null && this._comicService != null)
+            this._logger?.Log("正在切換至會員管理頁面。");
+            if (btnNavMemberMgmt != null)
             {
-                MemberManagementForm memberMgmtForm = new MemberManagementForm(
-                    this._logger!,
-                    this._memberService,
-                    this._authenticationService,
-                    this._comicService,
-                    this._currentUser
-                );
-                memberMgmtForm.ShowDialog(this);
-            }
-            else
-            {
-                this._logger?.LogError("AuthenticationService 為空。無法開啟會員管理表單。");
-                MessageBox.Show("無法開啟會員管理功能，因為驗證服務未正確初始化。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                SelectNavButton(btnNavMemberMgmt);
             }
         }
 
         private void rentalManagementToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this._logger?.Log("正在開啟租借表單。");
-            try
+            this._logger?.Log("正在切換至租借管理頁面。");
+            if (btnNavRentalMgmt != null)
             {
-                RentalForm rentalForm = new RentalForm(
-                    this._comicService,
-                    this._memberService,
-                    this._logger!,
-                    this._reloadService
-                );
-                rentalForm.ShowDialog(this);
-            }
-            catch (Exception ex)
-            {
-                this._logger?.LogError("開啟租借表單失敗。", ex);
-                MessageBox.Show($"開啟租借表單時發生錯誤: {ex.Message}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                SelectNavButton(btnNavRentalMgmt);
             }
         }
 
@@ -804,13 +782,13 @@ namespace ComicRentalSystem_14Days
                 }
                 else
                 {
-                    MessageBox.Show("Logger, AuthenticationService, 或 MemberService 未初始化，無法開啟使用者註冊。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("系統發生異常，請重新啟動應用程式。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     this._logger?.LogError("由於 logger、AppAuthService 或 _memberService 為空，無法開啟註冊表單。");
                 }
             }
             else
             {
-                MessageBox.Show("只有管理員才能註冊新使用者。", "權限不足", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("只有管理員才能註冊新使用者。\n請以管理員身份登入後再試。", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this._logger?.Log($"非管理員使用者 '{_currentUser.Username}' 嘗試開啟註冊表單。");
             }
         }
@@ -850,7 +828,7 @@ namespace ComicRentalSystem_14Days
             else
             {
                 this._logger?.Log($"使用者 '{_currentUser.Username}' (角色: {_currentUser.Role}) 嘗試檢視日誌。權限不足。");
-                MessageBox.Show("權限不足", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("權限不足，請以管理員身份登入執行此操作。", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
@@ -863,7 +841,7 @@ namespace ComicRentalSystem_14Days
             }
             else
             {
-                MessageBox.Show("權限不足", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("權限不足，請以管理員身份登入執行此操作。", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
@@ -1067,13 +1045,34 @@ namespace ComicRentalSystem_14Days
             }
             else if (selectedButton == btnNavMemberMgmt)
             {
-                this.會員管理ToolStripMenuItem_Click(this, EventArgs.Empty);
-                _logger?.Log("會員管理導覽按鈕已點擊。");
+                if (_memberManagementForm == null || _memberManagementForm.IsDisposed)
+                {
+                    _memberManagementForm = new MemberManagementForm(
+                        this._logger!,
+                        this._memberService,
+                        this._authenticationService,
+                        this._comicService,
+                        this._currentUser
+                    );
+                }
+                ShowFormInMainPanel(_memberManagementForm);
+                this.Text = "漫畫租借系統 - 會員管理";
+                _logger?.Log("已選取會員管理視圖。");
             }
             else if (selectedButton == btnNavRentalMgmt)
             {
-                this.rentalManagementToolStripMenuItem_Click(this, EventArgs.Empty);
-                _logger?.Log("租借管理導覽按鈕已點擊。");
+                if (_rentalManagementForm == null || _rentalManagementForm.IsDisposed)
+                {
+                    _rentalManagementForm = new RentalForm(
+                        this._comicService,
+                        this._memberService,
+                        this._logger!,
+                        this._reloadService
+                    );
+                }
+                ShowFormInMainPanel(_rentalManagementForm);
+                this.Text = "漫畫租借系統 - 租借管理";
+                _logger?.Log("已選取租借管理視圖。");
             }
             else if (selectedButton == btnNavUserReg)
             {
@@ -1383,10 +1382,35 @@ namespace ComicRentalSystem_14Days
                     Action clearGridAction = () => dgvAvailableComics.DataSource = null;
                     if (dgvAvailableComics.IsHandleCreated && !dgvAvailableComics.IsDisposed)
                     {
-                        if (dgvAvailableComics.InvokeRequired) dgvAvailableComics.Invoke(clearGridAction); else clearGridAction();
+                if (dgvAvailableComics.InvokeRequired) dgvAvailableComics.Invoke(clearGridAction); else clearGridAction();
                     }
                 }
             }
+        }
+
+        private void ShowFormInMainPanel(Form form)
+        {
+            if (mainContentPanel == null) return;
+
+            foreach (Control ctrl in mainContentPanel.Controls)
+            {
+                if (ctrl != form) ctrl.Visible = false;
+            }
+
+            if (!mainContentPanel.Controls.Contains(form))
+            {
+                form.TopLevel = false;
+                form.FormBorderStyle = FormBorderStyle.None;
+                form.Dock = DockStyle.Fill;
+                mainContentPanel.Controls.Add(form);
+                form.Show();
+            }
+            else
+            {
+                form.Visible = true;
+            }
+
+            form.BringToFront();
         }
 
         private static Image CreatePlaceholderCoverImage()

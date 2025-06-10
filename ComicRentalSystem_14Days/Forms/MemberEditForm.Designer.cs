@@ -42,13 +42,13 @@
             this.lblName.Name = "lblName";
             this.lblName.Size = new System.Drawing.Size(95, 23);
             this.lblName.TabIndex = 0;
-            this.lblName.Text = "姓名:"; 
+            this.lblName.Text = "姓名(&N):";
             this.lblName.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.lblPhoneNumber.Location = new System.Drawing.Point(15, 60);
             this.lblPhoneNumber.Name = "lblPhoneNumber";
             this.lblPhoneNumber.Size = new System.Drawing.Size(95, 23);
             this.lblPhoneNumber.TabIndex = 2;
-            this.lblPhoneNumber.Text = "電話號碼:"; 
+            this.lblPhoneNumber.Text = "電話號碼(&T):";
             this.lblPhoneNumber.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.txtName.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                 | System.Windows.Forms.AnchorStyles.Right);

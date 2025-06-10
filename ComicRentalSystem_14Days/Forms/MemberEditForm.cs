@@ -20,6 +20,9 @@ namespace ComicRentalSystem_14Days.Forms
         {
             InitializeComponent();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider();
+            this.KeyPreview = true;
+            this.KeyDown += MemberEditForm_KeyDown;
+            this.txtPhoneNumber.KeyPress += txtPhoneNumber_KeyPress;
             if (this.DesignMode)
             {
             }
@@ -76,7 +79,7 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (_memberService == null)
             {
-                MessageBox.Show("服務未初始化，無法儲存。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("系統發生異常，請重新啟動應用程式。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 LogErrorActivity("儲存會員按鈕已點擊，但 _memberService 為空。");
                 return;
             }
@@ -182,8 +185,25 @@ namespace ComicRentalSystem_14Days.Forms
                 }
                 else
                 {
-                    errorProvider1?.SetError(txt, ""); 
+                    errorProvider1?.SetError(txt, "");
                 }
+            }
+        }
+
+        private void txtPhoneNumber_KeyPress(object? sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void MemberEditForm_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.S)
+            {
+                btnSaveMember_Click(sender!, e);
+                e.SuppressKeyPress = true;
             }
         }
     }

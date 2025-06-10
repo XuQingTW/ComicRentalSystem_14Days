@@ -18,7 +18,7 @@
         private void InitializeComponent()
         {
             dgvComics = new DataGridView();
-            panel1 = new Panel();
+            panel1 = new FlowLayoutPanel();
             btnRefresh = new Button();
             btnDeleteComic = new Button();
             btnEditComic = new Button();
@@ -42,7 +42,10 @@
             dgvComics.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvComics.Size = new Size(680, 305);
             dgvComics.TabIndex = 0;
+            dgvComics.SelectionChanged += dgvComics_SelectionChanged;
             panel1.AutoSize = true;
+            panel1.FlowDirection = FlowDirection.LeftToRight;
+            panel1.WrapContents = true;
             panel1.Controls.Add(btnRefresh);
             panel1.Controls.Add(btnDeleteComic);
             panel1.Controls.Add(btnEditComic);
@@ -64,16 +67,18 @@
             btnDeleteComic.Location = new Point(218, 4);
             btnDeleteComic.Name = "btnDeleteComic";
             btnDeleteComic.Size = new Size(95, 25);
+            btnDeleteComic.Enabled = false;
             btnDeleteComic.TabIndex = 2;
-            btnDeleteComic.Text = "刪除選定漫畫";
+            btnDeleteComic.Text = "刪除選定漫畫 🗑";
             btnDeleteComic.UseVisualStyleBackColor = true;
             btnDeleteComic.Click += btnDeleteComic_Click;
             btnEditComic.AutoSize = true;
             btnEditComic.Location = new Point(111, 4);
             btnEditComic.Name = "btnEditComic";
             btnEditComic.Size = new Size(101, 26);
+            btnEditComic.Enabled = false;
             btnEditComic.TabIndex = 1;
-            btnEditComic.Text = "編輯選定漫畫";
+            btnEditComic.Text = "編輯選定漫畫 ✎";
             btnEditComic.UseVisualStyleBackColor = true;
             btnEditComic.Click += btnEditComic_Click;
             btnAddComic.AutoSize = true;
@@ -81,13 +86,14 @@
             btnAddComic.Name = "btnAddComic";
             btnAddComic.Size = new Size(105, 26);
             btnAddComic.TabIndex = 0;
-            btnAddComic.Text = "新增漫畫";
+            btnAddComic.Text = "新增漫畫 +";
             btnAddComic.UseVisualStyleBackColor = true;
             btnAddComic.Click += btnAddComic_Click;
             txtSearchComics.Location = new Point(12, 3);
             txtSearchComics.Name = "txtSearchComics";
             txtSearchComics.Size = new Size(200, 23);
             txtSearchComics.TabIndex = 0;
+            txtSearchComics.KeyDown += txtSearchComics_KeyDown;
             btnSearchComics.Location = new Point(218, 2);
             btnSearchComics.Name = "btnSearchComics";
             btnSearchComics.Size = new Size(75, 25);
@@ -132,7 +138,7 @@
         #endregion
 
         private DataGridView dgvComics;
-        private Panel panel1;
+        private FlowLayoutPanel panel1;
         private Button btnRefresh;
         private Button btnDeleteComic;
         private Button btnEditComic;

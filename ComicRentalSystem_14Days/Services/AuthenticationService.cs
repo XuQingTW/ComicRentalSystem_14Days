@@ -226,10 +226,22 @@ namespace ComicRentalSystem_14Days.Services
             }
         }
 
-        public void SaveUsers()
+        public void SaveUser(User user)
         {
-            _logger.Log("透過 AuthenticationService.SaveUsers() 將使用者變更寫入資料庫。");
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            _logger.Log($"透過 AuthenticationService.SaveUser() 將使用者 '{user.Username}' 的變更寫入資料庫。");
             using var context = CreateContext();
+            var existingUser = context.Users.FirstOrDefault(u => u.Id == user.Id);
+            if (existingUser == null)
+            {
+                _logger.LogWarning($"User with ID {user.Id} not found. Save aborted.");
+                throw new InvalidOperationException($"User with ID {user.Id} not found.");
+            }
+            context.Entry(existingUser).CurrentValues.SetValues(user);
             context.SaveChanges();
         }
     }
