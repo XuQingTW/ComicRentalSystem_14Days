@@ -4,8 +4,6 @@ namespace ComicRentalSystem_14Days.Forms
     {
         private System.ComponentModel.IContainer components = null;
 
-        private System.Windows.Forms.GroupBox grpRent;
-        private System.Windows.Forms.GroupBox grpReturn;
         private System.Windows.Forms.Label lblMember;
         private System.Windows.Forms.Label lblComic;
         private System.Windows.Forms.Label lblActualReturnTime;
