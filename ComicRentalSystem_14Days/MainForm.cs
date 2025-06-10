@@ -35,6 +35,7 @@ namespace ComicRentalSystem_14Days
         private AdminDashboardUserControl? _adminDashboardControl;
         private MemberManagementForm? _memberManagementForm;
         private RentalForm? _rentalManagementForm;
+        private ComicManagementForm? _comicManagementForm;
 
         public MainForm() : base()
         {
@@ -983,63 +984,15 @@ namespace ComicRentalSystem_14Days
             }
             else if (selectedButton == btnNavComicMgmt)
             {
-                if (lblAvailableComics != null && lblAvailableComics.Parent != mainContentPanel)
+                if (_comicManagementForm == null || _comicManagementForm.IsDisposed)
                 {
-                    mainContentPanel.Controls.Add(lblAvailableComics);
-                }
-                if (cmbAdminComicFilterStatus != null && cmbAdminComicFilterStatus.Parent != mainContentPanel)
-                {
-                    mainContentPanel.Controls.Add(cmbAdminComicFilterStatus);
-                }
-                if (dgvAvailableComics != null && dgvAvailableComics.Parent != mainContentPanel)
-                {
-                    mainContentPanel.Controls.Add(dgvAvailableComics);
-                }
-
-                var panelWidth = mainContentPanel.ClientSize.Width;
-                var panelHeight = mainContentPanel.ClientSize.Height;
-                const int margin = 8;
-
-                if (lblAvailableComics != null)
-                {
-                    lblAvailableComics.SetBounds(
-                        margin,
-                        margin,
-                        panelWidth - 2 * margin,
-                        28
+                    _comicManagementForm = new ComicManagementForm(
+                        this._logger!,
+                        this._comicService,
+                        this._currentUser
                     );
-                    lblAvailableComics.Visible = true;
                 }
-
-                if (cmbAdminComicFilterStatus != null)
-                {
-                    int comboWidth = 120;
-                    int comboHeight = 23;
-                    int comboX = panelWidth - comboWidth - margin;
-                    int comboY = (lblAvailableComics != null ? lblAvailableComics.Bottom : margin) + 8;
-                    cmbAdminComicFilterStatus.SetBounds(
-                        comboX,
-                        comboY,
-                        comboWidth,
-                        comboHeight
-                    );
-                    cmbAdminComicFilterStatus.Visible = true;
-                }
-
-                if (dgvAvailableComics != null)
-                {
-                    int dgvY = (cmbAdminComicFilterStatus != null ? cmbAdminComicFilterStatus.Bottom : (lblAvailableComics != null ? lblAvailableComics.Bottom : margin)) + 8;
-                    int dgvHeight = panelHeight - dgvY - margin;
-                    dgvAvailableComics.SetBounds(
-                        margin,
-                        dgvY,
-                        panelWidth - 2 * margin,
-                        dgvHeight
-                    );
-                    dgvAvailableComics.Visible = true;
-                    dgvAvailableComics.BringToFront();
-                }
-
+                ShowFormInMainPanel(_comicManagementForm);
                 this.Text = "漫畫租借系統 - 漫畫管理";
                 _logger?.Log("已選取漫畫管理視圖。");
             }
