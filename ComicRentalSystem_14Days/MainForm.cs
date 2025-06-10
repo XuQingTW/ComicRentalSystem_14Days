@@ -578,8 +578,8 @@ namespace ComicRentalSystem_14Days
             dgvMyRentedComics.Columns.Clear();
             dgvMyRentedComics.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
-            dgvMyRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "ComicTitle", HeaderText = "書名", FillWeight = 30 });
-            dgvMyRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Author", HeaderText = "作者", FillWeight = 20 });
+            dgvMyRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "ComicTitle", HeaderText = "漫畫名稱", FillWeight = 30 });
+            dgvMyRentedComics.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Author", HeaderText = "漫畫作者", FillWeight = 20 });
 
             var rentalDateColumn = new DataGridViewTextBoxColumn
             {
@@ -594,7 +594,7 @@ namespace ComicRentalSystem_14Days
             var returnDateColumn = new DataGridViewTextBoxColumn
             {
                 DataPropertyName = "ExpectedReturnDate",
-                HeaderText = "歸還日期",
+                HeaderText = "應還日期",
                 FillWeight = 18
             };
             returnDateColumn.DefaultCellStyle ??= new DataGridViewCellStyle();
@@ -606,7 +606,7 @@ namespace ComicRentalSystem_14Days
                 var statusColumn = new DataGridViewTextBoxColumn
                 {
                     Name = "statusColumn",
-                    HeaderText = "狀態",
+                    HeaderText = "租借狀態",
                     FillWeight = 14
                 };
                 dgvMyRentedComics.Columns.Add(statusColumn);

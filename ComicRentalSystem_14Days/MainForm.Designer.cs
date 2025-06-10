@@ -306,7 +306,7 @@ namespace ComicRentalSystem_14Days
             myRentalsTabPage.Padding = new Padding(8);
             myRentalsTabPage.Size = new Size(961, 554);
             myRentalsTabPage.TabIndex = 1;
-            myRentalsTabPage.Text = "我租的漫畫";
+            myRentalsTabPage.Text = "我租借的漫畫";
             dgvMyRentedComics.AllowUserToAddRows = false;
             dgvMyRentedComics.AllowUserToDeleteRows = false;
             dgvMyRentedComics.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
