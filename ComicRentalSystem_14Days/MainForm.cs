@@ -782,13 +782,13 @@ namespace ComicRentalSystem_14Days
                 }
                 else
                 {
-                    MessageBox.Show("Logger, AuthenticationService, 或 MemberService 未初始化，無法開啟使用者註冊。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("系統發生異常，請重新啟動應用程式。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     this._logger?.LogError("由於 logger、AppAuthService 或 _memberService 為空，無法開啟註冊表單。");
                 }
             }
             else
             {
-                MessageBox.Show("只有管理員才能註冊新使用者。", "權限不足", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("只有管理員才能註冊新使用者。\n請以管理員身份登入後再試。", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this._logger?.Log($"非管理員使用者 '{_currentUser.Username}' 嘗試開啟註冊表單。");
             }
         }
@@ -828,7 +828,7 @@ namespace ComicRentalSystem_14Days
             else
             {
                 this._logger?.Log($"使用者 '{_currentUser.Username}' (角色: {_currentUser.Role}) 嘗試檢視日誌。權限不足。");
-                MessageBox.Show("權限不足", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("權限不足，請以管理員身份登入執行此操作。", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
@@ -841,7 +841,7 @@ namespace ComicRentalSystem_14Days
             }
             else
             {
-                MessageBox.Show("權限不足", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("權限不足，請以管理員身份登入執行此操作。", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 

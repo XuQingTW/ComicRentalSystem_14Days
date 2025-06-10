@@ -110,7 +110,7 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (_comicService == null)
             {
-                MessageBox.Show("服務未初始化，無法儲存。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("系統發生異常，請重新啟動應用程式。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 LogErrorActivity("儲存按鈕已點擊，但 _comicService 為空。");
                 return;
             }

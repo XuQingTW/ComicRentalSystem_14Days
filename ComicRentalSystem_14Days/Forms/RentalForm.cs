@@ -332,7 +332,7 @@ namespace ComicRentalSystem_14Days.Forms
         {
             if (_comicService == null || _memberService == null)
             {
-                MessageBox.Show("服務未初始化，無法執行操作。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("系統發生異常，請重新啟動應用程式。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             LogActivity("租借按鈕已點擊。");
@@ -451,7 +451,7 @@ namespace ComicRentalSystem_14Days.Forms
 
         if (_comicService == null || _memberService == null)
         {
-            MessageBox.Show("服務未初始化，無法執行操作。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("系統發生異常，請重新啟動應用程式。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
         LogActivity("歸還按鈕已點擊。"); 

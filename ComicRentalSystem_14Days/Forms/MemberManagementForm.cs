@@ -181,7 +181,7 @@ namespace ComicRentalSystem_14Days.Forms
             if (_memberService == null || Logger == null || _authenticationService == null)
             {
                 LogErrorActivity("新增會員所需的基本服務不可用。", new InvalidOperationException("服務未初始化。"));
-                MessageBox.Show("無法開啟註冊表單，必要的服務未初始化。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("系統發生異常，請重新啟動應用程式。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             LogActivity("新增會員按鈕已點擊。正在為新會員開啟 RegistrationForm。");
@@ -254,9 +254,9 @@ namespace ComicRentalSystem_14Days.Forms
                     }
                     else
                     {
-                        MessageBox.Show("無法檢查會員租借狀態，漫畫服務未初始化。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("系統發生異常，請重新啟動應用程式。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         LogErrorActivity("Could not check member rental status: _comicService is null.");
-                        return; 
+                        return;
                     }
 
                     LogActivity($"嘗試刪除會員 ID: {selectedMember.Id}，姓名: '{selectedMember.Name}'。正在顯示確認對話方塊。");
@@ -330,9 +330,9 @@ namespace ComicRentalSystem_14Days.Forms
                 MessageBox.Show("請選擇一位會員。", "未選擇會員", MessageBoxButtons.OK, MessageBoxIcon.Information); 
                 return;
             }
-            if (_authenticationService == null || Logger == null) 
+            if (_authenticationService == null || Logger == null)
             {
-                 MessageBox.Show("必要的服務不可用。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error); 
+                 MessageBox.Show("系統發生異常，請重新啟動應用程式。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                  LogErrorActivity("變更使用者角色所需服務不可用。", new InvalidOperationException("服務未初始化。"));
                  return;
             }
