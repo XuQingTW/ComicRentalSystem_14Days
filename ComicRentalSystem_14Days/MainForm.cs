@@ -22,6 +22,7 @@ namespace ComicRentalSystem_14Days
         private readonly IComicService _comicService;
         private readonly MemberService _memberService;
         private readonly IReloadService _reloadService;
+        private readonly AuthenticationService _authenticationService;
         private readonly ILogger _logger;
 
         private List<AdminComicStatusViewModel>? _allAdminComicStatuses;
@@ -40,6 +41,7 @@ namespace ComicRentalSystem_14Days
             _comicService = null!;
             _memberService = null!;
             _reloadService = null!;
+            _authenticationService = null!;
             _logger = null!;
         }
 
@@ -48,6 +50,7 @@ namespace ComicRentalSystem_14Days
             IComicService comicService,
             MemberService memberService,
             IReloadService reloadService,
+            AuthenticationService authenticationService,
             User currentUser
         ) : base()
         {
@@ -55,6 +58,7 @@ namespace ComicRentalSystem_14Days
             this._comicService = comicService ?? throw new ArgumentNullException(nameof(comicService));
             this._memberService = memberService ?? throw new ArgumentNullException(nameof(memberService));
             this._reloadService = reloadService ?? throw new ArgumentNullException(nameof(reloadService));
+            this._authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
             this._currentUser = currentUser ?? throw new ArgumentNullException(nameof(currentUser));
 
             base.SetLogger(logger);
@@ -746,12 +750,12 @@ namespace ComicRentalSystem_14Days
         private void 會員管理ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this._logger?.Log("正在開啟會員管理表單。");
-            if (Program.AppAuthService != null && this._comicService != null)
+            if (this._authenticationService != null && this._comicService != null)
             {
                 MemberManagementForm memberMgmtForm = new MemberManagementForm(
                     this._logger!,
                     this._memberService,
-                    Program.AppAuthService,
+                    this._authenticationService,
                     this._comicService,
                     this._currentUser
                 );
@@ -789,11 +793,11 @@ namespace ComicRentalSystem_14Days
             this._logger?.Log("「使用者註冊」選單項目已點擊。");
             if (_currentUser.Role == UserRole.Admin)
             {
-                if (this._logger != null && Program.AppAuthService != null && this._memberService != null)
+                if (this._logger != null && this._authenticationService != null && this._memberService != null)
                 {
                     var regForm = new RegistrationForm(
                         this._logger,
-                        Program.AppAuthService,
+                        this._authenticationService,
                         this._memberService
                     );
                     regForm.ShowDialog(this);
