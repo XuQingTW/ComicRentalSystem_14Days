@@ -63,6 +63,7 @@ namespace ComicRentalSystem_14Days
             try
             {
                 var loginForm = ActivatorUtilities.CreateInstance<LoginForm>(host.Services);
+                loginForm.Icon = Helpers.IconHelper.GetAppIcon();
                 Application.Run(loginForm);
             }
             catch (Exception ex)
