@@ -41,9 +41,22 @@ namespace ComicRentalSystem_14Days.Forms
             _logger.Log("註冊表單已初始化。");
         }
 
+        private bool ValidateForm()
+        {
+            lblSummaryError.Visible = false;
+            bool valid = this.ValidateChildren();
+            if (!valid)
+            {
+                lblSummaryError.Text = "請修正標示的錯誤後再提交";
+                lblSummaryError.Visible = true;
+            }
+            return valid;
+        }
+
         private void btnRegister_Click(object sender, EventArgs e)
         {
-            if (!this.ValidateChildren()) {
+            if (!ValidateForm())
+            {
                 MessageBox.Show("請修正欄位中提示的錯誤。", "驗證錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 _logger.Log("註冊嘗試因驗證錯誤而失敗。");
                 return;
@@ -83,6 +96,7 @@ namespace ComicRentalSystem_14Days.Forms
                     txtPhoneNumber.Clear();
                     txtPassword.Clear();
                     txtConfirmPassword.Clear();
+                    lblSummaryError.Visible = false;
                 }
                 catch (Exception ex)
                 {

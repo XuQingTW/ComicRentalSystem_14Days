@@ -39,10 +39,11 @@ namespace ComicRentalSystem_14Days.Forms
 
             LogActivity("MemberManagementForm is loading runtime components.");
 
-            _memberService.MembersChanged += MemberService_MembersChanged; 
+            _memberService.MembersChanged += MemberService_MembersChanged;
 
-            SetupDataGridView(); 
-            LoadMembersData(); 
+            SetupDataGridView();
+            LoadMembersData();
+            UpdateActionButtonsState();
 
             LogActivity("會員管理表單已成功初始化。");
         }
@@ -79,6 +80,7 @@ namespace ComicRentalSystem_14Days.Forms
             dgvMembers.MultiSelect = false;
             dgvMembers.ReadOnly = true;
             dgvMembers.AllowUserToAddRows = false;
+            dgvMembers.SelectionChanged += dgvMembers_SelectionChanged;
             LogActivity("會員的 DataGridView 設定完成。");
         }
 
@@ -118,6 +120,7 @@ namespace ComicRentalSystem_14Days.Forms
                         updateGrid();
                     }
                 }
+                UpdateActionButtonsState();
                 LogActivity($"已成功使用搜尋關鍵字 '{searchTerm}' 將 {members.Count} 位會員載入 DataGridView。");
             }
             catch (Exception ex)
@@ -137,11 +140,21 @@ namespace ComicRentalSystem_14Days.Forms
             LoadMembersData();
         }
 
+        private void txtSearchMembers_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+                btnSearchMembers_Click(sender, e);
+            }
+        }
+
         private void btnClearSearchMembers_Click(object? sender, EventArgs e)
         {
             LogActivity("清除搜尋會員按鈕已點擊。");
             this.txtSearchMembers.Text = string.Empty;
             LoadMembersData();
+            UpdateActionButtonsState();
         }
 
         private async void btnRefreshMembers_Click(object sender, EventArgs e) 
@@ -341,6 +354,19 @@ namespace ComicRentalSystem_14Days.Forms
             {
                 changeRoleForm.ShowDialog(this);
             }
+        }
+
+        private void dgvMembers_SelectionChanged(object? sender, EventArgs e)
+        {
+            UpdateActionButtonsState();
+        }
+
+        private void UpdateActionButtonsState()
+        {
+            bool rowSelected = dgvMembers.SelectedRows.Count > 0;
+            btnEditMember.Enabled = rowSelected;
+            btnDeleteMember.Enabled = rowSelected;
+            btnChangeUserRole.Enabled = rowSelected;
         }
     }
 }
