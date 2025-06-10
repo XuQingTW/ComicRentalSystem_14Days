@@ -226,11 +226,6 @@ namespace ComicRentalSystem_14Days.Services
             }
         }
 
-        /// <summary>
-        /// Persists pending changes for the user table. This helper was kept
-        /// for backwards compatibility with forms that previously relied on a
-        /// separate save step when user data was stored in files.
-        /// </summary>
         public void SaveUsers()
         {
             _logger.Log("Saving user changes to database via AuthenticationService.SaveUsers().");

@@ -6,7 +6,7 @@ namespace ComicRentalSystem_14Days.Helpers
     public static class DatabaseConfig
     {
         private const string DbName = "comic_rental.db";
-        private const string AppFolderName = "ComicRentalApp"; // Same as in FileHelper for consistency
+        private const string AppFolderName = "ComicRentalApp"; 
 
         public static string GetConnectionString()
         {

@@ -1,10 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using ComicRentalSystem_14Days.Helpers; // For DatabaseConfig
+using ComicRentalSystem_14Days.Helpers; 
 
-// Assuming entities will be in this namespace or accessible
-// using ComicRentalSystem_14Days.Models;
 
-namespace ComicRentalSystem_14Days.Models // Or ComicRentalSystem_14Days.Data
+namespace ComicRentalSystem_14Days.Models 
 {
     public class ComicRentalDbContext : DbContext
     {
@@ -16,7 +14,6 @@ namespace ComicRentalSystem_14Days.Models // Or ComicRentalSystem_14Days.Data
         {
         }
 
-        // Constructor for passing options, useful for testing or specific configurations
         public ComicRentalDbContext(DbContextOptions<ComicRentalDbContext> options)
             : base(options)
         {
@@ -34,10 +31,6 @@ namespace ComicRentalSystem_14Days.Models // Or ComicRentalSystem_14Days.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Example of fluent API configuration if needed later (e.g., for composite keys, indexes)
-            // modelBuilder.Entity<Comic>().ToTable("Comics");
-            // modelBuilder.Entity<Member>().ToTable("Members");
-            // modelBuilder.Entity<User>().ToTable("Users");
         }
     }
 }
