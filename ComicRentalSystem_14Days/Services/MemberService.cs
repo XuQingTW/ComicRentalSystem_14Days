@@ -87,6 +87,14 @@ namespace ComicRentalSystem_14Days.Services
             {
                 _logger.LogWarning($"AddMember: Member with phone number '{member.PhoneNumber}' already exists.");
             }
+
+            if (!string.IsNullOrWhiteSpace(member.Username) &&
+                context.Members.Any(m => m.Username != null && m.Username.ToLower() == member.Username.ToLower()))
+            {
+                var ex = new InvalidOperationException($"A member with username '{member.Username}' already exists.");
+                _logger.LogError($"AddMember failed: Username '{member.Username}' already exists.", ex);
+                throw ex;
+            }
             context.Members.Add(member);
             try
             {
@@ -123,6 +131,14 @@ namespace ComicRentalSystem_14Days.Services
             if (context.Members.Any(m => m.PhoneNumber == member.PhoneNumber && m.Id != member.Id))
             {
                  _logger.LogWarning($"UpdateMember: Another member with phone number '{member.PhoneNumber}' already exists.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(member.Username) &&
+                context.Members.Any(m => m.Username != null && m.Username.ToLower() == member.Username.ToLower() && m.Id != member.Id))
+            {
+                var ex = new InvalidOperationException($"Username '{member.Username}' is already taken by another member.");
+                _logger.LogError($"UpdateMember failed for ID {member.Id}: username duplicate.", ex);
+                throw ex;
             }
 
             context.Entry(existingMember).CurrentValues.SetValues(member);
