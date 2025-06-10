@@ -129,7 +129,14 @@ namespace ComicRentalSystem_14Days.Services
                     user.LockoutEndDate = DateTime.UtcNow.AddMinutes(LockoutDurationMinutes);
                     _logger.Log($"User '{username}' account locked until {user.LockoutEndDate.Value} due to missing salt and failed attempts.");
                 }
-                try { using var ctx = CreateContext(); ctx.SaveChanges(); } catch (DbUpdateException dbEx) { _logger.LogError($"Failed to save login attempt changes for user {username} (missing salt).", dbEx); }
+                try
+                {
+                    context.SaveChanges();
+                }
+                catch (DbUpdateException dbEx)
+                {
+                    _logger.LogError($"Failed to save login attempt changes for user {username} (missing salt).", dbEx);
+                }
                 return null;
             }
 
@@ -140,7 +147,14 @@ namespace ComicRentalSystem_14Days.Services
             {
                 user.FailedLoginAttempts = 0;
                 user.LockoutEndDate = null;
-                try { using var ctx = CreateContext(); ctx.SaveChanges(); } catch (DbUpdateException dbEx) { _logger.LogError($"Failed to save successful login changes for user {username}.", dbEx); }
+                try
+                {
+                    context.SaveChanges();
+                }
+                catch (DbUpdateException dbEx)
+                {
+                    _logger.LogError($"Failed to save successful login changes for user {username}.", dbEx);
+                }
                 _logger.Log($"Login successful for {username}, Role: {user.Role}");
                 return user;
             }
@@ -153,8 +167,15 @@ namespace ComicRentalSystem_14Days.Services
                     user.LockoutEndDate = DateTime.UtcNow.AddMinutes(LockoutDurationMinutes);
                     _logger.Log($"User '{username}' account locked until {user.LockoutEndDate.Value} due to too many failed login attempts.");
                 }
-                try { using var ctx = CreateContext(); ctx.SaveChanges(); } catch (DbUpdateException dbEx) { _logger.LogError($"Failed to save failed login attempt changes for user {username}.", dbEx); }
-                return null; 
+                try
+                {
+                    context.SaveChanges();
+                }
+                catch (DbUpdateException dbEx)
+                {
+                    _logger.LogError($"Failed to save failed login attempt changes for user {username}.", dbEx);
+                }
+                return null;
             }
         }
 
