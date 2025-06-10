@@ -60,8 +60,8 @@ namespace ComicRentalSystem_14Days.Forms
             this.Controls.Add(this.btnCancelRental);
             this.Controls.Add(this.btnConfirmRental);
             this.Controls.Add(this.monthCalendarRental);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
+            this.MaximizeBox = true;
             this.MinimizeBox = false;
             this.Name = "RentalPeriodForm";
             this.Padding = new System.Windows.Forms.Padding(15);

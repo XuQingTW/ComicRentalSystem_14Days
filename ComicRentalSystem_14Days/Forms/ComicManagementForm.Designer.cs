@@ -18,7 +18,7 @@
         private void InitializeComponent()
         {
             dgvComics = new DataGridView();
-            panel1 = new Panel();
+            panel1 = new FlowLayoutPanel();
             btnRefresh = new Button();
             btnDeleteComic = new Button();
             btnEditComic = new Button();
@@ -44,6 +44,8 @@
             dgvComics.TabIndex = 0;
             dgvComics.SelectionChanged += dgvComics_SelectionChanged;
             panel1.AutoSize = true;
+            panel1.FlowDirection = FlowDirection.LeftToRight;
+            panel1.WrapContents = true;
             panel1.Controls.Add(btnRefresh);
             panel1.Controls.Add(btnDeleteComic);
             panel1.Controls.Add(btnEditComic);
@@ -136,7 +138,7 @@
         #endregion
 
         private DataGridView dgvComics;
-        private Panel panel1;
+        private FlowLayoutPanel panel1;
         private Button btnRefresh;
         private Button btnDeleteComic;
         private Button btnEditComic;

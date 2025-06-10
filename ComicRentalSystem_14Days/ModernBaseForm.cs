@@ -32,8 +32,8 @@ namespace ComicRentalSystem_14Days
             this.ForeColor = TextColor;
             this.Font = PrimaryFont;
             this.StartPosition = FormStartPosition.CenterScreen;
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
+            this.FormBorderStyle = FormBorderStyle.Sizable;
+            this.MaximizeBox = true;
             this.MinimizeBox = true;
             this.Padding = new Padding(10);
         }
