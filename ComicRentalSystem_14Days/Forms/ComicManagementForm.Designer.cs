@@ -65,7 +65,7 @@
             btnDeleteComic.Name = "btnDeleteComic";
             btnDeleteComic.Size = new Size(95, 25);
             btnDeleteComic.TabIndex = 2;
-            btnDeleteComic.Text = "刪除選定漫畫";
+            btnDeleteComic.Text = "刪除選定漫畫 🗑";
             btnDeleteComic.UseVisualStyleBackColor = true;
             btnDeleteComic.Click += btnDeleteComic_Click;
             btnEditComic.AutoSize = true;
@@ -73,7 +73,7 @@
             btnEditComic.Name = "btnEditComic";
             btnEditComic.Size = new Size(101, 26);
             btnEditComic.TabIndex = 1;
-            btnEditComic.Text = "編輯選定漫畫";
+            btnEditComic.Text = "編輯選定漫畫 ✎";
             btnEditComic.UseVisualStyleBackColor = true;
             btnEditComic.Click += btnEditComic_Click;
             btnAddComic.AutoSize = true;
@@ -81,7 +81,7 @@
             btnAddComic.Name = "btnAddComic";
             btnAddComic.Size = new Size(105, 26);
             btnAddComic.TabIndex = 0;
-            btnAddComic.Text = "新增漫畫";
+            btnAddComic.Text = "新增漫畫 +";
             btnAddComic.UseVisualStyleBackColor = true;
             btnAddComic.Click += btnAddComic_Click;
             txtSearchComics.Location = new Point(12, 3);
