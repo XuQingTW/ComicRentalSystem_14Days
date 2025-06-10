@@ -61,7 +61,7 @@ namespace ComicRentalSystem_14Days.Forms
 
             try
             {
-                _authService.SaveUsers();
+                _authService.SaveUser(_editingUser);
                 LogActivity($"已成功將使用者 '{_editingUser.Username}' 的角色變更為 {newRole}。");
                 MessageBox.Show("使用者角色已成功更新。", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information); 
                 this.DialogResult = DialogResult.OK;
