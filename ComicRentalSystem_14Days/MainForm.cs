@@ -112,6 +112,10 @@ namespace ComicRentalSystem_14Days
             if (btnNavLogs != null) btnNavLogs.Click += btnNavLogs_Click;
 
             SetupDataGridView();
+            if (_currentUser.Role == UserRole.Member)
+            {
+                SetupMyRentedComicsDataGridView();
+            }
 
             if (_currentUser.Role == UserRole.Admin)
             {
