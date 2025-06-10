@@ -9,8 +9,8 @@ namespace ComicRentalSystem_14Days.Services
 {
     public interface IReloadService
     {
-        void Start(Func<Task> reloadAction, TimeSpan interval);
+        Task Start(Func<Task> reloadAction, TimeSpan interval, CancellationToken cancellationToken);
 
-        void Stop();
+        Task StopAsync();
     }
 }

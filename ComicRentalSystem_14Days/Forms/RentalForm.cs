@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -57,14 +58,15 @@ namespace ComicRentalSystem_14Days.Forms
                 LoadRentalDetails(); 
 
                 _reloadService?.Start(
-                    async () => 
+                    async () =>
                     {
                         LogActivity("自動重新載入資料開始 (非同步)");
-                        if (_comicService != null) await _comicService.ReloadAsync(); 
-                        if (_memberService != null) await _memberService.ReloadAsync(); 
+                        if (_comicService != null) await _comicService.ReloadAsync();
+                        if (_memberService != null) await _memberService.ReloadAsync();
                         LogActivity("自動重新載入資料完成 (非同步)");
                     },
-                    TimeSpan.FromSeconds(30)
+                    TimeSpan.FromSeconds(30),
+                    CancellationToken.None
                 );
 
                 if (cmbMembers.Items.Count == 0)
@@ -481,11 +483,14 @@ namespace ComicRentalSystem_14Days.Forms
         }
         }
 
-        protected override void OnFormClosing(FormClosingEventArgs e)
+        protected override async void OnFormClosing(FormClosingEventArgs e)
         {
             LogActivity("租借表單正在關閉。正在取消訂閱服務事件。");
 
-            _reloadService?.Stop();
+            if (_reloadService != null)
+            {
+                await _reloadService.StopAsync();
+            }
 
             if (_comicService != null)
             {

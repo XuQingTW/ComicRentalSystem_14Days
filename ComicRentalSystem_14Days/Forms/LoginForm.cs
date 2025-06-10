@@ -61,7 +61,7 @@ namespace ComicRentalSystem_14Days.Forms
             {
                 _logger.Log($"使用者 '{username}' 成功登入。角色: {user.Role}。");
                 this.Hide(); 
-                MainForm mainForm = new MainForm(_logger, _comicService, _memberService, _reloadService, user);
+                MainForm mainForm = new MainForm(_logger, _comicService, _memberService, _reloadService, _authService, user);
                 mainForm.FormClosed += (s, args) => this.Close(); 
                 mainForm.Show();
             }
