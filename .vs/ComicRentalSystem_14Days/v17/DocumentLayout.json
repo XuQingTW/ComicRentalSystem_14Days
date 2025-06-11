@@ -1,20 +1,7 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\",
-  "Documents": [
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Forms\\RentalForm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ComicRentalSystem_14Days\\Forms\\RentalForm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\comicrentalsystem_14days\\forms\\comiceditform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:comicrentalsystem_14days\\forms\\comiceditform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\comicrentalsystem_14days\\forms\\comicmanagementform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:comicrentalsystem_14days\\forms\\comicmanagementform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    }
-  ],
+  "Documents": [],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -22,7 +9,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": -1,
           "Children": [
             {
               "$type": "Bookmark",
@@ -33,38 +20,8 @@
               "Name": "ST:128:0:{75188d03-9892-4ae2-abf1-207126247ce5}"
             },
             {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "RentalForm.cs [\u8A2D\u8A08]",
-              "DocumentMoniker": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Forms\\RentalForm.cs",
-              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Forms\\RentalForm.cs",
-              "ToolTip": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Forms\\RentalForm.cs [\u8A2D\u8A08]",
-              "RelativeToolTip": "ComicRentalSystem_14Days\\Forms\\RentalForm.cs [\u8A2D\u8A08]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-10T07:39:48.862Z",
-              "EditorCaption": " [\u8A2D\u8A08]"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "ComicEditForm.cs [\u8A2D\u8A08]",
-              "DocumentMoniker": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Forms\\ComicEditForm.cs",
-              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Forms\\ComicEditForm.cs",
-              "ToolTip": "C:\\Users\\Hyman\\OneDrive\\\u684C\u9762\\ComicRentalSystem\\ComicRentalSystem_14Days\\Forms\\ComicEditForm.cs [\u8A2D\u8A08]",
-              "RelativeToolTip": "..\\..\\..\\..\\Hyman\\OneDrive\\\u684C\u9762\\ComicRentalSystem\\ComicRentalSystem_14Days\\Forms\\ComicEditForm.cs [\u8A2D\u8A08]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-10T07:39:40.317Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "ComicManagementForm.cs [\u8A2D\u8A08]",
-              "DocumentMoniker": "C:\\Users\\ASUS\\source\\repos\\ComicRentalSystem_14Days\\ComicRentalSystem_14Days\\Forms\\ComicManagementForm.cs",
-              "RelativeDocumentMoniker": "ComicRentalSystem_14Days\\Forms\\ComicManagementForm.cs",
-              "ToolTip": "C:\\Users\\Hyman\\OneDrive\\\u684C\u9762\\ComicRentalSystem\\ComicRentalSystem_14Days\\Forms\\ComicManagementForm.cs [\u8A2D\u8A08]",
-              "RelativeToolTip": "..\\..\\..\\..\\Hyman\\OneDrive\\\u684C\u9762\\ComicRentalSystem\\ComicRentalSystem_14Days\\Forms\\ComicManagementForm.cs [\u8A2D\u8A08]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-10T07:39:22.443Z"
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
             }
           ]
         }
