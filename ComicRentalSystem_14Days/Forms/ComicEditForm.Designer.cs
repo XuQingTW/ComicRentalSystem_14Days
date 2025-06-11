@@ -17,169 +17,212 @@
 
         private void InitializeComponent()
         {
-            this.lblTitle = new System.Windows.Forms.Label();
-            this.txtTitle = new System.Windows.Forms.TextBox();
-            this.lblAuthor = new System.Windows.Forms.Label();
-            this.txtAuthor = new System.Windows.Forms.TextBox();
-            this.lblIsbn = new System.Windows.Forms.Label();
-            this.txtIsbn = new System.Windows.Forms.TextBox();
-            this.lblGenre = new System.Windows.Forms.Label();
-            this.txtGenre = new System.Windows.Forms.TextBox();
-            this.chkIsRented = new System.Windows.Forms.CheckBox();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.gbComicDetails = new System.Windows.Forms.GroupBox();
-            this.lblCoverImage = new System.Windows.Forms.Label();
-            this.pbCoverPreview = new System.Windows.Forms.PictureBox();
-            this.btnBrowseCover = new System.Windows.Forms.Button();
-            this.gbStatus = new System.Windows.Forms.GroupBox();
-
-            this.gbComicDetails.SuspendLayout();
-            this.gbStatus.SuspendLayout();
-            this.SuspendLayout();
-            this.gbComicDetails.Controls.Add(this.lblTitle);
-            this.gbComicDetails.Controls.Add(this.txtTitle);
-            this.gbComicDetails.Controls.Add(this.lblAuthor);
-            this.gbComicDetails.Controls.Add(this.txtAuthor);
-            this.gbComicDetails.Controls.Add(this.lblIsbn);
-            this.gbComicDetails.Controls.Add(this.txtIsbn);
-            this.gbComicDetails.Controls.Add(this.lblGenre);
-            this.gbComicDetails.Controls.Add(this.txtGenre);
-            this.gbComicDetails.Controls.Add(this.lblCoverImage);
-            this.gbComicDetails.Controls.Add(this.pbCoverPreview);
-            this.gbComicDetails.Controls.Add(this.btnBrowseCover);
-            this.gbComicDetails.Location = new System.Drawing.Point(15, 15);
-            this.gbComicDetails.Name = "gbComicDetails";
-            this.gbComicDetails.Padding = new System.Windows.Forms.Padding(10);
-            this.gbComicDetails.Size = new System.Drawing.Size(450, 270);
-            this.gbComicDetails.TabIndex = 0;
-            this.gbComicDetails.TabStop = false;
-            this.gbComicDetails.Text = "漫畫資訊"; 
-            this.lblTitle.Location = new System.Drawing.Point(15, 30);
-            this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(95, 23);
-            this.lblTitle.TabIndex = 0;
-            this.lblTitle.Text = "書名:"; 
-            this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.txtTitle.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                | System.Windows.Forms.AnchorStyles.Right);
-            this.txtTitle.Location = new System.Drawing.Point(120, 30);
-            this.txtTitle.Name = "txtTitle";
-            this.txtTitle.Size = new System.Drawing.Size(315, 23);
-            this.txtTitle.TabIndex = 1;
-            this.txtTitle.Validating += new System.ComponentModel.CancelEventHandler(this.txtTitle_Validating);
-            this.lblAuthor.Location = new System.Drawing.Point(15, 60);
-            this.lblAuthor.Name = "lblAuthor";
-            this.lblAuthor.Size = new System.Drawing.Size(95, 23);
-            this.lblAuthor.TabIndex = 2;
-            this.lblAuthor.Text = "作者:"; 
-            this.lblAuthor.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.txtAuthor.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                | System.Windows.Forms.AnchorStyles.Right);
-            this.txtAuthor.Location = new System.Drawing.Point(120, 60);
-            this.txtAuthor.Name = "txtAuthor";
-            this.txtAuthor.Size = new System.Drawing.Size(315, 23);
-            this.txtAuthor.TabIndex = 3;
-            this.txtAuthor.Validating += new System.ComponentModel.CancelEventHandler(this.txtAuthor_Validating);
-            this.lblIsbn.Location = new System.Drawing.Point(15, 90);
-            this.lblIsbn.Name = "lblIsbn";
-            this.lblIsbn.Size = new System.Drawing.Size(95, 23);
-            this.lblIsbn.TabIndex = 4;
-            this.lblIsbn.Text = "ISBN:"; 
-            this.lblIsbn.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.txtIsbn.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                | System.Windows.Forms.AnchorStyles.Right);
-            this.txtIsbn.Location = new System.Drawing.Point(120, 90);
-            this.txtIsbn.Name = "txtIsbn";
-            this.txtIsbn.Size = new System.Drawing.Size(315, 23);
-            this.txtIsbn.TabIndex = 5;
-            this.txtIsbn.Validating += new System.ComponentModel.CancelEventHandler(this.txtIsbn_Validating);
-            this.lblGenre.Location = new System.Drawing.Point(15, 120);
-            this.lblGenre.Name = "lblGenre";
-            this.lblGenre.Size = new System.Drawing.Size(95, 23);
-            this.lblGenre.TabIndex = 6;
-            this.lblGenre.Text = "類型:"; 
-            this.lblGenre.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.txtGenre.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                | System.Windows.Forms.AnchorStyles.Right);
-            this.txtGenre.Location = new System.Drawing.Point(120, 120);
-            this.txtGenre.Name = "txtGenre";
-            this.txtGenre.Size = new System.Drawing.Size(315, 23);
-            this.txtGenre.TabIndex = 7;
-            this.txtGenre.Validating += new System.ComponentModel.CancelEventHandler(this.txtGenre_Validating);
-
-            this.lblCoverImage.Location = new System.Drawing.Point(15, 155);
-            this.lblCoverImage.Name = "lblCoverImage";
-            this.lblCoverImage.Size = new System.Drawing.Size(95, 23);
-            this.lblCoverImage.TabIndex = 8;
-            this.lblCoverImage.Text = "封面圖片:";
-            this.lblCoverImage.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-
-            this.pbCoverPreview.Location = new System.Drawing.Point(120, 155);
-            this.pbCoverPreview.Name = "pbCoverPreview";
-            this.pbCoverPreview.Size = new System.Drawing.Size(80, 100);
-            this.pbCoverPreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pbCoverPreview.TabIndex = 9;
-            this.pbCoverPreview.TabStop = false;
-
-            this.btnBrowseCover.Location = new System.Drawing.Point(210, 190);
-            this.btnBrowseCover.Name = "btnBrowseCover";
-            this.btnBrowseCover.Size = new System.Drawing.Size(90, 25);
-            this.btnBrowseCover.TabIndex = 10;
-            this.btnBrowseCover.Text = "選擇圖片";
-            this.btnBrowseCover.UseVisualStyleBackColor = true;
-            this.btnBrowseCover.Click += new System.EventHandler(this.btnBrowseCover_Click);
-            this.gbStatus.Controls.Add(this.chkIsRented);
-            this.gbStatus.Location = new System.Drawing.Point(15, 295);
-            this.gbStatus.Name = "gbStatus";
-            this.gbStatus.Padding = new System.Windows.Forms.Padding(10);
-            this.gbStatus.Size = new System.Drawing.Size(450, 60);
-            this.gbStatus.TabIndex = 1;
-            this.gbStatus.TabStop = false;
-            this.gbStatus.Text = "租借狀態"; 
-            this.chkIsRented.AutoSize = true;
-            this.chkIsRented.Enabled = false;
-            this.chkIsRented.Location = new System.Drawing.Point(15, 25);
-            this.chkIsRented.Name = "chkIsRented";
-            this.chkIsRented.Size = new System.Drawing.Size(100, 19); 
-            this.chkIsRented.TabIndex = 0; 
-            this.chkIsRented.Text = "已租借"; 
-            this.chkIsRented.UseVisualStyleBackColor = true;
-            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
-            this.btnSave.Location = new System.Drawing.Point(279, 377);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(90, 30);
-            this.btnSave.TabIndex = 2;
-            this.btnSave.Text = "儲存"; 
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
-            this.btnCancel.Location = new System.Drawing.Point(375, 377);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(90, 30);
-            this.btnCancel.TabIndex = 3;
-            this.btnCancel.Text = "取消"; 
-            this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-            this.AcceptButton = this.btnSave;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoValidate = System.Windows.Forms.AutoValidate.EnableAllowFocusChange;
-            this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(480, 450);
-            this.Controls.Add(this.gbComicDetails);
-            this.Controls.Add(this.gbStatus);
-            this.Controls.Add(this.btnSave);
-            this.Controls.Add(this.btnCancel);
-            this.Name = "ComicEditForm";
-            this.Padding = new System.Windows.Forms.Padding(15);
-            this.Text = "編輯漫畫"; 
-            this.gbComicDetails.ResumeLayout(false);
-            this.gbComicDetails.PerformLayout();
-            this.gbStatus.ResumeLayout(false);
-            this.gbStatus.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            lblTitle = new Label();
+            txtTitle = new TextBox();
+            lblAuthor = new Label();
+            txtAuthor = new TextBox();
+            lblIsbn = new Label();
+            txtIsbn = new TextBox();
+            lblGenre = new Label();
+            txtGenre = new TextBox();
+            chkIsRented = new CheckBox();
+            btnSave = new Button();
+            btnCancel = new Button();
+            gbComicDetails = new GroupBox();
+            lblCoverImage = new Label();
+            pbCoverPreview = new PictureBox();
+            btnBrowseCover = new Button();
+            gbStatus = new GroupBox();
+            gbComicDetails.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pbCoverPreview).BeginInit();
+            gbStatus.SuspendLayout();
+            SuspendLayout();
+            // 
+            // lblTitle
+            // 
+            lblTitle.Location = new Point(15, 30);
+            lblTitle.Name = "lblTitle";
+            lblTitle.Size = new Size(95, 23);
+            lblTitle.TabIndex = 0;
+            lblTitle.Text = "書名:";
+            lblTitle.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // txtTitle
+            // 
+            txtTitle.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtTitle.Location = new Point(120, 30);
+            txtTitle.Name = "txtTitle";
+            txtTitle.Size = new Size(315, 23);
+            txtTitle.TabIndex = 1;
+            txtTitle.Validating += txtTitle_Validating;
+            // 
+            // lblAuthor
+            // 
+            lblAuthor.Location = new Point(15, 60);
+            lblAuthor.Name = "lblAuthor";
+            lblAuthor.Size = new Size(95, 23);
+            lblAuthor.TabIndex = 2;
+            lblAuthor.Text = "作者:";
+            lblAuthor.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // txtAuthor
+            // 
+            txtAuthor.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtAuthor.Location = new Point(120, 60);
+            txtAuthor.Name = "txtAuthor";
+            txtAuthor.Size = new Size(315, 23);
+            txtAuthor.TabIndex = 3;
+            txtAuthor.Validating += txtAuthor_Validating;
+            // 
+            // lblIsbn
+            // 
+            lblIsbn.Location = new Point(15, 90);
+            lblIsbn.Name = "lblIsbn";
+            lblIsbn.Size = new Size(95, 23);
+            lblIsbn.TabIndex = 4;
+            lblIsbn.Text = "ISBN:";
+            lblIsbn.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // txtIsbn
+            // 
+            txtIsbn.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtIsbn.Location = new Point(120, 90);
+            txtIsbn.Name = "txtIsbn";
+            txtIsbn.Size = new Size(315, 23);
+            txtIsbn.TabIndex = 5;
+            txtIsbn.Validating += txtIsbn_Validating;
+            // 
+            // lblGenre
+            // 
+            lblGenre.Location = new Point(15, 120);
+            lblGenre.Name = "lblGenre";
+            lblGenre.Size = new Size(95, 23);
+            lblGenre.TabIndex = 6;
+            lblGenre.Text = "類型:";
+            lblGenre.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // txtGenre
+            // 
+            txtGenre.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtGenre.Location = new Point(120, 120);
+            txtGenre.Name = "txtGenre";
+            txtGenre.Size = new Size(315, 23);
+            txtGenre.TabIndex = 7;
+            txtGenre.Validating += txtGenre_Validating;
+            // 
+            // chkIsRented
+            // 
+            chkIsRented.AutoSize = true;
+            chkIsRented.Enabled = false;
+            chkIsRented.Location = new Point(15, 25);
+            chkIsRented.Name = "chkIsRented";
+            chkIsRented.Size = new Size(65, 19);
+            chkIsRented.TabIndex = 0;
+            chkIsRented.Text = "已租借";
+            chkIsRented.UseVisualStyleBackColor = true;
+            // 
+            // btnSave
+            // 
+            btnSave.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnSave.Location = new Point(279, 377);
+            btnSave.Name = "btnSave";
+            btnSave.Size = new Size(90, 30);
+            btnSave.TabIndex = 2;
+            btnSave.Text = "儲存";
+            btnSave.UseVisualStyleBackColor = true;
+            btnSave.Click += btnSave_Click;
+            // 
+            // btnCancel
+            // 
+            btnCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnCancel.Location = new Point(375, 377);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Size = new Size(90, 30);
+            btnCancel.TabIndex = 3;
+            btnCancel.Text = "取消";
+            btnCancel.UseVisualStyleBackColor = true;
+            btnCancel.Click += btnCancel_Click;
+            // 
+            // gbComicDetails
+            // 
+            gbComicDetails.Controls.Add(lblTitle);
+            gbComicDetails.Controls.Add(txtTitle);
+            gbComicDetails.Controls.Add(lblAuthor);
+            gbComicDetails.Controls.Add(txtAuthor);
+            gbComicDetails.Controls.Add(lblIsbn);
+            gbComicDetails.Controls.Add(txtIsbn);
+            gbComicDetails.Controls.Add(lblGenre);
+            gbComicDetails.Controls.Add(txtGenre);
+            gbComicDetails.Controls.Add(lblCoverImage);
+            gbComicDetails.Controls.Add(pbCoverPreview);
+            gbComicDetails.Controls.Add(btnBrowseCover);
+            gbComicDetails.Location = new Point(15, 15);
+            gbComicDetails.Name = "gbComicDetails";
+            gbComicDetails.Padding = new Padding(10);
+            gbComicDetails.Size = new Size(450, 270);
+            gbComicDetails.TabIndex = 0;
+            gbComicDetails.TabStop = false;
+            gbComicDetails.Text = "漫畫資訊";
+            // 
+            // lblCoverImage
+            // 
+            lblCoverImage.Location = new Point(15, 155);
+            lblCoverImage.Name = "lblCoverImage";
+            lblCoverImage.Size = new Size(95, 23);
+            lblCoverImage.TabIndex = 8;
+            lblCoverImage.Text = "封面圖片:";
+            lblCoverImage.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // pbCoverPreview
+            // 
+            pbCoverPreview.Location = new Point(120, 155);
+            pbCoverPreview.Name = "pbCoverPreview";
+            pbCoverPreview.Size = new Size(80, 100);
+            pbCoverPreview.SizeMode = PictureBoxSizeMode.Zoom;
+            pbCoverPreview.TabIndex = 9;
+            pbCoverPreview.TabStop = false;
+            // 
+            // btnBrowseCover
+            // 
+            btnBrowseCover.Location = new Point(210, 190);
+            btnBrowseCover.Name = "btnBrowseCover";
+            btnBrowseCover.Size = new Size(90, 25);
+            btnBrowseCover.TabIndex = 10;
+            btnBrowseCover.Text = "選擇圖片";
+            btnBrowseCover.UseVisualStyleBackColor = true;
+            btnBrowseCover.Click += btnBrowseCover_Click;
+            // 
+            // gbStatus
+            // 
+            gbStatus.Controls.Add(chkIsRented);
+            gbStatus.Location = new Point(15, 295);
+            gbStatus.Name = "gbStatus";
+            gbStatus.Padding = new Padding(10);
+            gbStatus.Size = new Size(450, 60);
+            gbStatus.TabIndex = 1;
+            gbStatus.TabStop = false;
+            gbStatus.Text = "租借狀態";
+            // 
+            // ComicEditForm
+            // 
+            AcceptButton = btnSave;
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            AutoValidate = AutoValidate.EnableAllowFocusChange;
+            CancelButton = btnCancel;
+            ClientSize = new Size(480, 450);
+            Controls.Add(gbComicDetails);
+            Controls.Add(gbStatus);
+            Controls.Add(btnSave);
+            Controls.Add(btnCancel);
+            Name = "ComicEditForm";
+            Padding = new Padding(15);
+            gbComicDetails.ResumeLayout(false);
+            gbComicDetails.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pbCoverPreview).EndInit();
+            gbStatus.ResumeLayout(false);
+            gbStatus.PerformLayout();
+            ResumeLayout(false);
         }
 
         #endregion

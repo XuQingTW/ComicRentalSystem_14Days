@@ -90,13 +90,14 @@ namespace ComicRentalSystem_14Days.Forms
                     _memberService.AddMember(newMember);
                     _logger.Log($"已為姓名: {name}, 使用者名稱: {username}, 電話: {phoneNumber} 建立會員記錄。");
 
-                    MessageBox.Show($"使用者 '{username}' (姓名: {name}) 已成功註冊，會員資料也已建立。", "註冊成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show($"使用者 '{username}' (姓名: {name}) 已成功註冊，會員資料也已建立，將返回登入頁面。", "註冊成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     txtUsername.Clear();
                     txtName.Clear();
                     txtPhoneNumber.Clear();
                     txtPassword.Clear();
                     txtConfirmPassword.Clear();
                     lblSummaryError.Visible = false;
+                    this.Close(); // 關閉註冊表單並返回登入頁面
                 }
                 catch (Exception ex)
                 {
