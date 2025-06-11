@@ -1,10 +1,10 @@
+// 請將此段完整程式碼複製並取代您現有的 Program.cs 檔案
+
+using ComicRentalSystem_14Days.Forms;
 using ComicRentalSystem_14Days.Helpers;
 using ComicRentalSystem_14Days.Interfaces;
 using ComicRentalSystem_14Days.Logging;
 using ComicRentalSystem_14Days.Services;
-using ComicRentalSystem_14Days.Forms;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using System;
 using System.Windows.Forms;
 
@@ -15,36 +15,25 @@ namespace ComicRentalSystem_14Days
         [STAThread]
         static void Main()
         {
+            // 1. 初始化應用程式設定
             ApplicationConfiguration.Initialize();
 
-            using IHost host = Host.CreateDefaultBuilder()
-                .ConfigureServices(services =>
-                {
-                    services.AddSingleton<ILogger, FileLogger>();
-                    services.AddSingleton<FileHelper>();
-                    services.AddDbContext<Models.ComicRentalDbContext>();
-                    services.AddSingleton<IComicService, ComicService>();
-                    services.AddSingleton<MemberService>();
-                    services.AddSingleton<AuthenticationService>();
-                    services.AddSingleton<IReloadService, ReloadService>();
-                    services.AddTransient<DataMigrationService>();
-                })
-                .Build();
+            // 2. 手動建立所有需要的服務
+            ILogger logger = new FileLogger();
+            IComicService comicService = new ComicService(logger);
+            MemberService memberService = new MemberService(logger, comicService);
+            AuthenticationService authService = new AuthenticationService(logger);
+            IReloadService reloadService = new ReloadService(logger);
 
-            var logger = host.Services.GetRequiredService<ILogger>();
-            var authService = host.Services.GetRequiredService<AuthenticationService>();
-
-            logger.Log("應用程式啟動中...");
-
-            using (var scope = host.Services.CreateScope())
+            // 3. 執行您原有的資料庫遷移和管理員檢查邏輯
+            using (var dbContext = new Models.ComicRentalDbContext())
             {
-                var migrationService = scope.ServiceProvider.GetRequiredService<DataMigrationService>();
+                var migrationService = new DataMigrationService(logger, new FileHelper(), dbContext);
                 migrationService.MigrateFromFiles();
             }
-            logger.Log("遷移檢查與處理完成後，已釋放資料庫內容。");
-
             authService.EnsureAdminUserExists("admin", "admin123");
 
+            // 4. 設定全域例外處理
             Application.ThreadException += (s, e) =>
             {
                 logger.LogError("未處理的UI執行緒例外狀況", e.Exception);
@@ -60,10 +49,11 @@ namespace ComicRentalSystem_14Days
                 }
             };
 
+            // 5. 建立並執行登入表單
             try
             {
-                var loginForm = ActivatorUtilities.CreateInstance<LoginForm>(host.Services);
-                loginForm.Icon = Helpers.IconHelper.GetAppIcon();
+                var loginForm = new LoginForm(logger, authService, comicService, memberService, reloadService);
+                loginForm.Icon = IconHelper.GetAppIcon();
                 Application.Run(loginForm);
             }
             catch (Exception ex)
