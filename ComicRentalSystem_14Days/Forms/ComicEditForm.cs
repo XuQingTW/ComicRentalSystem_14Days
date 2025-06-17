@@ -2,6 +2,7 @@
 using ComicRentalSystem_14Days.Interfaces;
 using System;
 using System.IO;
+using ComicRentalSystem_14Days.Helpers;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -81,11 +82,12 @@ namespace ComicRentalSystem_14Days.Forms
             txtGenre.Text = _editableComic.Genre;
             chkIsRented.Checked = _editableComic.IsRented;
 
-            if (!string.IsNullOrEmpty(_editableComic.CoverImagePath) && File.Exists(_editableComic.CoverImagePath))
+            string fullCoverPath = ImagePathHelper.GetFullPath(_editableComic.CoverImagePath);
+            if (!string.IsNullOrEmpty(fullCoverPath) && File.Exists(fullCoverPath))
             {
                 try
                 {
-                    pbCoverPreview.Image = Image.FromFile(_editableComic.CoverImagePath);
+                    pbCoverPreview.Image = Image.FromFile(fullCoverPath);
                 }
                 catch { pbCoverPreview.Image = null; }
             }
@@ -151,6 +153,11 @@ namespace ComicRentalSystem_14Days.Forms
                         }
                     }
 
+                    if (!string.IsNullOrEmpty(_selectedCoverImagePath) && Path.IsPathRooted(_selectedCoverImagePath))
+                    {
+                        _selectedCoverImagePath = ImagePathHelper.SaveToAppFolder(_selectedCoverImagePath);
+                    }
+
                     _editableComic.Title = txtTitle.Text.Trim();
                     _editableComic.Author = txtAuthor.Text.Trim();
                     _editableComic.Isbn = txtIsbn.Text.Trim();
@@ -163,6 +170,11 @@ namespace ComicRentalSystem_14Days.Forms
                 else
                 {
                     LogActivity("正在嘗試新增漫畫。");
+                    if (!string.IsNullOrEmpty(_selectedCoverImagePath) && Path.IsPathRooted(_selectedCoverImagePath))
+                    {
+                        _selectedCoverImagePath = ImagePathHelper.SaveToAppFolder(_selectedCoverImagePath);
+                    }
+
                     Comic newComic = new Comic
                     {
                         Title = txtTitle.Text.Trim(),

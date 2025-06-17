@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using ComicRentalSystem_14Days.Controls;
+using ComicRentalSystem_14Days.Helpers;
 
 namespace ComicRentalSystem_14Days
 {
@@ -1143,9 +1144,10 @@ namespace ComicRentalSystem_14Days
                 DataGridViewRow row = dgvAvailableComics.Rows[e.RowIndex];
                 if (row.DataBoundItem is Comic comic)
                 {
-                    if (!string.IsNullOrEmpty(comic.CoverImagePath) && File.Exists(comic.CoverImagePath))
+                    string fullCoverPath = ImagePathHelper.GetFullPath(comic.CoverImagePath);
+                    if (!string.IsNullOrEmpty(fullCoverPath) && File.Exists(fullCoverPath))
                     {
-                        try { e.Value = Image.FromFile(comic.CoverImagePath); }
+                        try { e.Value = Image.FromFile(fullCoverPath); }
                         catch { e.Value = _placeholderCoverImage; }
                     }
                     else
