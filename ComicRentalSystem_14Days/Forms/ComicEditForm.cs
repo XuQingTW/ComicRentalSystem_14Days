@@ -16,6 +16,19 @@ namespace ComicRentalSystem_14Days.Forms
         private System.Windows.Forms.ErrorProvider errorProvider1;
         private string? _selectedCoverImagePath;
 
+        private static string GetCoversDirectory()
+        {
+            string dir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Covers");
+            if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+            return dir;
+        }
+
+        public static string GetAbsoluteCoverImagePath(string? path)
+        {
+            if (string.IsNullOrEmpty(path)) return string.Empty;
+            return Path.IsPathRooted(path) ? path : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
+        }
+
         public ComicEditForm() : base()
         {
             InitializeComponent();
@@ -81,11 +94,12 @@ namespace ComicRentalSystem_14Days.Forms
             txtGenre.Text = _editableComic.Genre;
             chkIsRented.Checked = _editableComic.IsRented;
 
-            if (!string.IsNullOrEmpty(_editableComic.CoverImagePath) && File.Exists(_editableComic.CoverImagePath))
+            string fullPath = GetAbsoluteCoverImagePath(_editableComic.CoverImagePath);
+            if (!string.IsNullOrEmpty(fullPath) && File.Exists(fullPath))
             {
                 try
                 {
-                    pbCoverPreview.Image = Image.FromFile(_editableComic.CoverImagePath);
+                    pbCoverPreview.Image = Image.FromFile(fullPath);
                 }
                 catch { pbCoverPreview.Image = null; }
             }
@@ -208,14 +222,21 @@ namespace ComicRentalSystem_14Days.Forms
             ofd.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp";
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                _selectedCoverImagePath = ofd.FileName;
                 try
                 {
-                    pbCoverPreview.Image = Image.FromFile(ofd.FileName);
+                    string coversDir = GetCoversDirectory();
+                    string ext = Path.GetExtension(ofd.FileName);
+                    string newName = Guid.NewGuid().ToString() + ext;
+                    string destPath = Path.Combine(coversDir, newName);
+                    File.Copy(ofd.FileName, destPath, true);
+                    _selectedCoverImagePath = Path.Combine("Covers", newName);
+                    pbCoverPreview.Image = Image.FromFile(destPath);
                 }
                 catch
                 {
-                    pbCoverPreview.Image = null;
+                    _selectedCoverImagePath = ofd.FileName;
+                    try { pbCoverPreview.Image = Image.FromFile(ofd.FileName); }
+                    catch { pbCoverPreview.Image = null; }
                 }
             }
         }

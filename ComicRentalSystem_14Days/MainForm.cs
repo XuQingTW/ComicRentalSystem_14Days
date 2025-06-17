@@ -1143,9 +1143,10 @@ namespace ComicRentalSystem_14Days
                 DataGridViewRow row = dgvAvailableComics.Rows[e.RowIndex];
                 if (row.DataBoundItem is Comic comic)
                 {
-                    if (!string.IsNullOrEmpty(comic.CoverImagePath) && File.Exists(comic.CoverImagePath))
+                    string fullPath = ComicEditForm.GetAbsoluteCoverImagePath(comic.CoverImagePath);
+                    if (!string.IsNullOrEmpty(fullPath) && File.Exists(fullPath))
                     {
-                        try { e.Value = Image.FromFile(comic.CoverImagePath); }
+                        try { e.Value = Image.FromFile(fullPath); }
                         catch { e.Value = _placeholderCoverImage; }
                     }
                     else
